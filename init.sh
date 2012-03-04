@@ -38,4 +38,4 @@ chown -R http:http ./logs && chmod 666 ./logs/* && echo "logs: owner and permiss
 
 # prepare css and js files
 touch ./public/css/all.css ./public/js/all.js && echo "files: all.css and all.js files prepared"
-chown http:http ./public/css/all.css ./public/js/all.js && chmod 600 ./public/css/all.css ./public/js/all.js && echo "logs: owner and permissions set"
+chown http:http ./public/css/all.css ./public/js/all.js && chmod 600 ./public/css/all.css ./public/js/all.js && echo "files: all.css and all.js files permissions set"
