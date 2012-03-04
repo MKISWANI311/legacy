@@ -1,8 +1,5 @@
 <?php
 
-// main application configuration
-//include '../application/config.php';
-
 /**
  * application execution mode
  */
