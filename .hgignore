@@ -2,3 +2,6 @@
 ^public/css/all\.css$
 ^public/js/all\.js$
 ^notes\.txt$
+^nbproject$
+^logs$
+^cache$
