@@ -1,0 +1,65 @@
+.dialogmodal {
+	display: none;
+	-moz-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.dialogmodal .body {
+	width: 500px;
+	border: 10px solid #eee;
+	background-color: white;
+/*	padding: 10px;*/
+}
+.dialogmodal .block {
+	padding: 10px;
+	border-bottom: 1px solid #eee;
+}
+.dialogmodal .title {
+/*	padding-bottom: 10px;
+	padding-top: 10px;
+	margin-bottom: 10px;*/
+/*	border-bottom: 1px solid #eee;*/
+/*	border-top: 1px solid #eee;*/
+/*	text-align: left;*/
+	font-size: 18px;
+	font-weight: bold;
+	color: #FF6600;
+	background-color: #fafafa;
+/*	padding-left: 10px;*/
+}
+.dialogmodal .hint {
+/*	padding-bottom: 10px;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #eee;*/
+	/*display:none;*/
+}
+.dialogmodal .hint table {
+	width: 100%;
+}
+.dialogmodal .hint img {
+	margin-right: 10px;
+}
+.dialogmodal .info { }
+/*.dialogmodal .message .warning {
+	color:red;
+	font-weight: bold;
+}
+.dialogmodal .message .ok {
+	color:navy;
+	font-weight: bold;
+}
+.dialogmodal .message img {
+	margin-right: 10px;
+}*/
+.dialogmodal .footer {
+/*	padding-top:10px;
+	padding-bottom:10px;
+	padding-right:10px;*/
+	background-color: #fafafa;
+/*	margin-top:10px;*/
+	text-align:right;
+/*	border-top: 1px solid #eee;*/
+}
+.dialogmodal .footer .button {
+	margin-left: 8px;
+}

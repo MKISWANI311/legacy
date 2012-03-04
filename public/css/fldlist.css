@@ -1,0 +1,72 @@
+.fldlist {
+	width:100%;
+}
+.fldlist .colname {
+	text-align:right;
+	padding-right: 10px;
+	width: 20px;
+}
+.fldlist .colimg {
+	padding-left: 5px;
+}
+.fldlist .colvalue {
+	padding: 5px 5px;
+}
+.fldlist .coltype {
+	padding-left: 10px;
+	width: 20px;
+}
+.fldlist .colcount {
+	padding: 5px 1px;
+	width: 5px;
+	vertical-align: top;
+	color: gray;
+	font-size: 10px;
+}
+.fldlist .divider {
+/*	height:1px;*/
+	border-bottom: 1px dotted #eee;
+	margin: 5px 0;
+}
+.fldlist .fldname {
+	margin-left: 5px;
+	font-weight:bold;
+	font-size:12px;
+/*	cursor: pointer;*/
+	color: #333;
+}
+
+/*.fldlist .fldname:hover {
+	color: #0066cc;
+}*/
+.fldlist .fldhint {
+	color:#aaa;
+	font-size:10px;
+	white-space: nowrap;
+}
+.fldlist .tbltitle {
+	margin-bottom: 3px;
+	height: 18px;
+}
+.fldlist .fldtype {
+	color: gray;
+	font-weight:bold;
+	cursor: pointer;
+}
+.fldlist .fldtag {
+	font-weight:bold;
+	font-size:13px;
+}
+.fldlist .row:hover {
+	background-color: #e3f1ff;
+}
+.fldlist .hinttbl {
+	width: 100%;
+}
+.fldlist .fldbtn {
+	padding: 1px;
+	margin-left: 2px;
+	background-color: #EEEEEE;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px 2px 2px 2px;
+}
