@@ -5,10 +5,10 @@
 // array prototypes
 Array.prototype.has = function( value ) {
 	return this.indexOf(value) >= 0;
-}
+};
 Array.prototype.empty = function() {
 	return !(this.length > 0);
-}
+};
 Array.prototype.each = function(func) {
 	for ( var i = 0, l = this.length; i < l; i++ ) func(this[i], i);
 };
@@ -19,19 +19,19 @@ if ( !Array.indexOf ) {
 			if ( this[i] == obj ) return i;
 		}
 		return -1;
-	}
+	};
 }
 
 // string prototypes
 String.prototype.trim = function() {
    return this.replace(/^\s+|\s+$/g,"");
-}
+};
 String.prototype.ltrim = function() {
    return this.replace(/^\s+/g,"");
-}
+};
 String.prototype.rtrim = function() {
    return this.replace(/\s+$/g,"");
-}
+};
 
 /**
  * Associative Array size
@@ -67,7 +67,7 @@ function onEnterFocus ( src, dest ) {
 			}
 		}
 		return true;
-	}
+	};
 }
 
 /**
@@ -85,7 +85,7 @@ function onEnterClick ( src, dest ) {
 			}
 		}
 		return true;
-	}
+	};
 }
 
 /**
@@ -116,7 +116,7 @@ function LinkSet ( obj, data, id ) {
 				pthis.ItemSelect(data[id].next);
 			};
 		}
-	}
+	};
 
 	// do the default selection
 	this.ItemSelect(id);
@@ -177,14 +177,14 @@ function element ( name, attr, data, handlers ) {
 }
 
 function table ( rows, cols, attr, handlers ) {
-	var table = element('table', attr, null, handlers);
+	var el = element('table', attr, null, handlers);
 	for ( var i = 0; i < rows; i++ ) {
-		table.insertRow(-1);
+		el.insertRow(-1);
 		for ( var j = 0; j < cols; j++ ) {
-			table.rows[i].insertCell(-1);
+			el.rows[i].insertCell(-1);
 		}
 	}
-	return table;
+	return el;
 }
 
 function tblrow ( obj, cells, attrs ) {
