@@ -5,7 +5,7 @@
 
 # project root
 base=$(realpath $(dirname $0))
-cd "$base" && echo "[$base]"
+cd "$base" && echo "fortnotes [$base]"
 
 # Create self signed SSL Certificate
 #openssl req -new -x509 -keyout lighttpd.fortnotes.dev.pem -out lighttpd.fortnotes.dev.pem -days 365 -nodes
@@ -21,7 +21,7 @@ umount cache && echo "cache: directory unmounted"
 mount -t ramfs -o size=10M,mode=0777 ramfs cache && echo "cache: directory mounted"
 #mount -t tmpfs -o size=10M,mode=0777 tmpfs cache
 
-# move data if exists
+# restore backuped data if exists
 mv offline/* cache/
 
 # cache dirs creation

@@ -4,14 +4,12 @@
 
 # project root
 base=$(realpath $(dirname $0))
-cd "$base" && echo "[$base]"
+cd "$base" && echo "fortnotes [$base]"
 
 # stop the web server
-# project root
 /etc/rc.d/lighttpd stop
 
 # prepare directory
 mkdir -p offline && chmod 700 offline && echo "offline: directory prepared"
-# copy data
-#cp -R cache offline
-mv cache/* offline/
+# backup data
+mv cache/* offline/ && echo "offline: data moved"
