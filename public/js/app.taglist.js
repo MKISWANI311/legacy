@@ -31,9 +31,8 @@ function TagList ( params ) {
 		//text_tag_list.value = '';
 		if ( console.time ) console.time('decode tags');
 		// decode tags
-		var name = '';
 		for ( var id in data_tags.data ) {
-			name = App.Decode(data_tags.data[id][data_tags.defn.name]);
+			var name = App.Decode(data_tags.data[id][data_tags.defn.name]);
 			data_tags_nmlist[name] = id = parseInt(id, 10);
 			data_tags_idlist[id] = name;
 		}
@@ -84,7 +83,7 @@ function TagList ( params ) {
 			}
 		}
 		return result;
-	}
+	};
 	this.IDs2Str = function ( data ) {
 		var result = '';
 		// check input
@@ -101,7 +100,7 @@ function TagList ( params ) {
 			if ( list.length > 0 ) result = list.join(' ');
 		}
 		return result;
-	}
+	};
 
 	/**
 	 * Converts a tags string to array of ids
@@ -143,7 +142,7 @@ function TagList ( params ) {
 
 	var TagDraw = function ( id, name ) {
 		//fb('id', id);
-		var tag = element('span', {className:'tag', tagid:id, tagnm:name, title:id + ':' + data_tags.data[id][data_tags.defn.uses]},
+		var i, tag = element('span', {className:'tag', tagid:id, tagnm:name, title:id + ':' + data_tags.data[id][data_tags.defn.uses]},
 			(( name.length > maxlength_tag ) ? name.slice(0, maxlength_tag) + '...' : name), {onclick:function(){
 				if ( $(this).hasClass('inactive') ) return;
 				$(this).toggleClass('select');
@@ -170,7 +169,7 @@ function TagList ( params ) {
 			}
 		});
 		elchild(self.dom.tags, [tag,' ']);
-	}
+	};
 
 	/**
 	 * Main init method

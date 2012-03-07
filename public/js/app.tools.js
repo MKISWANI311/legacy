@@ -3,20 +3,22 @@
  */
 
 // array prototypes
-Array.prototype.has = function( value ) {
+Array.prototype.has = function ( value ) {
 	return this.indexOf(value) >= 0;
 };
-Array.prototype.empty = function() {
+Array.prototype.empty = function () {
 	return !(this.length > 0);
 };
-Array.prototype.each = function(func) {
-	for ( var i = 0, l = this.length; i < l; i++ ) func(this[i], i);
+Array.prototype.each = function ( func ) {
+	var i, l = this.length;
+	for ( i = 0; i < l; i++ ) { func(this[i], i); }
 };
 // IE compatibility
 if ( !Array.indexOf ) {
 	Array.prototype.indexOf = function ( obj, start ) {
-		for ( var i = (start || 0); i < this.length; i++ ) {
-			if ( this[i] == obj ) return i;
+		var i;
+		for ( i = (start || 0); i < this.length; i++ ) {
+			if ( this[i] === obj ) { return i; }
 		}
 		return -1;
 	};
@@ -38,7 +40,9 @@ String.prototype.rtrim = function() {
  */
 function AASize ( array ) {
 	var size = 0;
-	if ( array ) for ( var el in array ) {size++;}
+	if ( array ) {
+		for ( var el in array ) {size++;}
+	}
 	return size;
 }
 

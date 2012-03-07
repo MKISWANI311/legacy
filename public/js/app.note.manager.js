@@ -55,7 +55,7 @@ var NoteManager = new function () {
 		// check parsed string
 		if ( tags && tags instanceof Array ) {
 			// iterate words in the input string
-			for ( i = 0; i < tags.length; i++ ) {
+			for ( var i = 0; i < tags.length; i++ ) {
 				if ( icon_tags.indexOf(tags[i]) >= 0 ) {
 					icon = 'img/tag_' + tags[i] + '.png';
 					break;
@@ -143,14 +143,14 @@ var NoteManager = new function () {
 			$(note).addClass('hidden');
 		}
 		return flag;
-	}
+	};
 
 	this.DrawNoteTags = function ( note ) {
 		//elclear(note.dom.tags.exc);
 		elclear(note.dom.tags.inc);
 		elclear(note.dom.tags.set);
 
-		var list_set = [], name = null;
+		//var list_set = [], name = null;
 
 		//texc = self.data.filter.texc;
 		//tinc = self.data.filter.tinc;
@@ -206,7 +206,7 @@ var NoteManager = new function () {
 		if ( self.dom.notes.active ) $(self.dom.notes.active).removeClass('active');
 		$(note).addClass('active');
 		self.dom.notes.active = note;
-	}
+	};
 
 	var NoteDelete = function ( data ) {
 		$.post('/note/delete', {ids:[data.id]}, function(data){
@@ -216,7 +216,7 @@ var NoteManager = new function () {
 				self.InfoSet('The request was not successful this time. The response from the server: ' + data.error, 'error');
 			}
 		});
-	}
+	};
 	this.NoteAdd = function ( data, topmost ) {
 		data_notes_latest.splice(0,0,data);
 		this.data.notes.push(data);
@@ -227,7 +227,7 @@ var NoteManager = new function () {
 			elchild(this.dom.notes, note);
 		}
 		NoteActive(note);
-	}
+	};
 
 //	this.NoteMoveTop = function ( data ) {
 //		this.data.notes.push(data);
@@ -263,7 +263,7 @@ var NoteManager = new function () {
 			}
 		}
 		return result;
-	}
+	};
 
 	var NotePrepare = function ( data ) {
 		var tbl  = element('table', {});
@@ -288,13 +288,13 @@ var NoteManager = new function () {
 		elchild(note.dom.tags, [tags.exc, tags.inc, tags.set]);
 		SetNoteIcon(note);
 
-		var tag_names = TagManager.IDs2Names(data.tags);
+		//var tag_names = TagManager.IDs2Names(data.tags);
 		//var list_set = [], list_set = [];
 		//for ( var t = 0; t < tag_names.length; t++ ) {
 			self.DrawNoteTags(note);
 		//}
 		return note;
-	}
+	};
 
 	var RenderTable = function ( data ) {
 		// determine the source of the notes data
@@ -342,9 +342,9 @@ var NoteManager = new function () {
 		//$(self.dom.help).fadeIn();
 		//document.getElementById('search_help').style.display = 'none';
 
-	}
+	};
 
-	var CheckMissingTags = function ( data ) {
+	var CheckMissingTags = function () {
 		if ( self.data.filter.winc.length > 0 || self.data.filter.wexc.length > 0 ) {
 			var words = self.data.filter.winc.concat(self.data.filter.wexc);
 			self.InfoAdd([
@@ -353,7 +353,7 @@ var NoteManager = new function () {
 			return true;
 		}
 		return false;
-	}
+	};
 
 	var Filter = function () {
 		//SetFilterTags();
@@ -408,24 +408,24 @@ var NoteManager = new function () {
 	this.InfoClear = function ( holder ) {
 		holder = holder || this.dom.info;
 		elclear(holder);
-	}
+	};
 	this.InfoAdd = function ( message, type, holder ) {
 		holder = holder || this.dom.info;
 		elchild(holder, element('div', {className:'message ' + (type || 'info')}, message));
-	}
+	};
 	this.InfoSet = function ( message, type, holder ) {
 		this.InfoClear(holder);
 		this.InfoAdd(message, type, holder);
-	}
+	};
 
 	this.FocusFilter = function () {
 		this.dom.search.input.focus();
-	}
+	};
 
 	var SetFilterTags = function ( data ) {
 		data = data || self.dom.search.input.value;
 		self.data.filter = TagManager.ParseStr(data);
-	}
+	};
 
 	var TagInclude = function ( e ) {
 		if (!e ) e = window.event; e.cancelBubble = true;
@@ -436,7 +436,7 @@ var NoteManager = new function () {
 		BuildSearchStr();
 		FilterTags();
 		Filter();
-	}
+	};
 	var BuildSearchStr = function () {
 		var words = [];
 		// prepare all words for concatenation
@@ -444,7 +444,7 @@ var NoteManager = new function () {
 		self.data.filter.tinc.each(function(item){ if ( item ) words.push(    data_tags_idlist[item]); });
 		// replace the search string by the reformatted one
 		self.dom.search.input.value = words.join(' ');
-	}
+	};
 	var TagExclude = function () {
 		var texc  = self.data.filter.texc,
 			tinc  = self.data.filter.tinc;
@@ -459,7 +459,7 @@ var NoteManager = new function () {
 		BuildSearchStr();
 		// send request
 		Filter();
-	}
+	};
 
 	var FilterTags = function () {
 		elclear(self.dom.tags.exc);
@@ -485,7 +485,7 @@ var NoteManager = new function () {
 		} else {
 			self.dom.tags.style.display = 'none';
 		}
-	}
+	};
 
 	/**
 	 * Main init method
@@ -527,7 +527,7 @@ var NoteManager = new function () {
 			this.dom.tags.title = element('span', {className:'title'}, 'tags'),
 			this.dom.tags.exc   = element('span', {className:'exc'}),
 			this.dom.tags.inc   = element('span', {className:'inc'}),
-			this.dom.tags.hint  = element('span', {className:'hint'}, 'click on a tag to exclude it from the search'),
+			this.dom.tags.hint  = element('span', {className:'hint'}, 'click on a tag to exclude it from the search')
 		]);
 
 		$(this.dom.search.input).bind('keypress', function(event) {
@@ -549,8 +549,8 @@ var NoteManager = new function () {
 
 		this.dom.info.onclick = function(){
 			self.InfoClear();
-		}
+		};
 
 		//this.dom.search.input.focus();
 	};
-}
+};

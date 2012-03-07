@@ -516,7 +516,7 @@ var NoteEditor = new function () {
 			if ( entry.data.id_type == 2 ) {
 				RequestUrlTitle(this.value);
 			}
-		}
+		};
 
 		// values history
 		entry.dom.history = element('div', {className:'history'});
@@ -538,7 +538,7 @@ var NoteEditor = new function () {
 		//delete this.data.comment;
 		var comment = null;
 		// get an empty comment block
-		for ( i = 0; i < self.dom.entries.childNodes.length; i++ ) {
+		for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
 			var entry = self.dom.entries.childNodes[i];
 			// plain text type
 			if ( entry.data.id_type == 6 && entry.dom.data.value.trim() == '' ) {
@@ -759,7 +759,7 @@ var NoteEditor = new function () {
 			}
 			// change icon if necessary
 			//SetTitleIcon();
-		}
+		};
 //		var timer = null;
 //		input.onkeydown = function() {
 //			// only for edit mode
@@ -927,7 +927,7 @@ var NoteEditor = new function () {
 			// check parsed string
 			if ( tags && tags instanceof Array ) {
 				// iterate words in the input string
-				for ( i = 0; i < tags.length; i++ ) {
+				for ( var i = 0; i < tags.length; i++ ) {
 					if ( icon_tags.indexOf(tags[i]) >= 0 ) {
 						icon = 'img/tag_' + tags[i] + '.png';
 						break;
@@ -1004,4 +1004,4 @@ var NoteEditor = new function () {
 		// event handlers
 		SetEvents();
 	};
-}
+};

@@ -56,7 +56,7 @@ var TagManager = new function () {
 		data_tags.data[id] = [enc, [], 1];
 		data_tags_nmlist[dec] = id;
 		data_tags_idlist[id] = dec;
-	}
+	};
 
 	/**
 	 * Returns the sorted list of tag ids by usage
@@ -65,7 +65,7 @@ var TagManager = new function () {
 	this.SortByUses = function () {
 		var result = [];
 		// prepare list of id/usage
-		for ( id in data_tags.data ) {
+		for ( var id in data_tags.data ) {
 			result.push({id:parseInt(id, 10), uses:data_tags.data[id][data_tags.defn.uses]});
 		}
 		// custom sort
@@ -84,11 +84,11 @@ var TagManager = new function () {
 	 * @example [1,2,'***encrypted string***',3] -> ['ftp','note','ssh','site']
 	 */
 	this.IDs2Names = function ( data ) {
-		var result = [];
+		var name, result = [];
 		// check input
 		if ( data && data instanceof Array )
 			// get tag names from ids
-			for ( i = 0; i < data.length; i++ ) {
+			for ( var i = 0; i < data.length; i++ ) {
 				// check type
 				if ( isNaN(data[i]) ) {
 					// seems this is a real-time encrypted string
@@ -127,7 +127,7 @@ var TagManager = new function () {
 			// list of unique tag names
 			var words = [], enc = null;
 			// iterate words in the input string
-			for ( i = 0; i < data.length; i++ ) {
+			for ( var i = 0; i < data.length; i++ ) {
 				// shorten too long lines
 				var name = data[i].slice(0, maxlength_tag);
 				// check if this word already processed
@@ -183,7 +183,7 @@ var TagManager = new function () {
 			}
 		}
 		return result;
-	}
+	};
 
 	this.Str2Names = function ( data ) {
 		var result = [];
@@ -235,4 +235,4 @@ var TagManager = new function () {
 		return {tinc:tinc, texc:texc, winc:winc, wexc:wexc};
 	}
 
-}
+};

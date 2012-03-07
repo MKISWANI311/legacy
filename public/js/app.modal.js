@@ -11,7 +11,7 @@ function DialogModal ( params ) {
 
 	this.SetWidth = function ( value ) {
 		this.dom.body.style.width = value + 'px';
-	}
+	};
 
 	this.Show = function ( params ) {
 		params = params || {};
@@ -20,7 +20,7 @@ function DialogModal ( params ) {
 			this.params.onShow.call(this);
 		}
 		$(this.dom.main).modal(params);
-	}
+	};
 
 	this.Close = function ( delay ) {
 		if ( delay ) {
@@ -33,15 +33,15 @@ function DialogModal ( params ) {
 			$.modal.close();
 			this.Reset();
 		}
-	}
+	};
 
 	this.Reset = function () {
 		this.SetMessage();
-	}
+	};
 
 	this.SetTitle = function ( hint ) {
 
-	}
+	};
 
 	this.SetHint = function ( hint ) {
 		if ( hint ) {
@@ -55,7 +55,7 @@ function DialogModal ( params ) {
 		} else {
 			this.dom.hint.style.display = 'none';
 		}
-	}
+	};
 
 	this.SetMessage = function ( text, type ) {
 		if ( text ) {
@@ -72,11 +72,11 @@ function DialogModal ( params ) {
 		} else {
 			this.dom.message.style.display = 'none';
 		}
-	}
+	};
 
 	this.SetLoading = function ( text ) {
 		this.SetMessage(text, 'loading');
-	}
+	};
 
 	this.SetContent = function ( content ) {
 		if ( content ) {
@@ -85,7 +85,7 @@ function DialogModal ( params ) {
 		} else {
 			this.dom.content.style.display = 'none';
 		}
-	}
+	};
 
 	this.EnableControls = function ( state ) {
 		if ( this.params.controls ) {
@@ -93,7 +93,7 @@ function DialogModal ( params ) {
 				this.params.controls[cname].dom.disabled = !state;
 			}
 		}
-	}
+	};
 
 	this.Init = function () {
 		this.dom.body  = element('div', {className:'body'}, [
@@ -141,6 +141,6 @@ function DialogModal ( params ) {
 		}
 		//fb(this);
 		//$(this.dom.body).draggable();
-	}
+	};
 	this.Init();
 }

@@ -48,7 +48,7 @@ var App = new function () {
 		} else {
 			this.data[name] = value;
 		}
-	}
+	};
 
 	/**
 	 * Get global variable
@@ -57,7 +57,7 @@ var App = new function () {
 	 */
 	this.Get = function ( name, ifnull ) {
 		return this.data[name] || localStorage.getItem(name) || ifnull;
-	}
+	};
 
 	/**
 	 * Calculate the hash from given value
@@ -65,21 +65,21 @@ var App = new function () {
 	 */
 	this.CalcHash = function ( value ) {
 		return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(value));
-	}
+	};
 
 	/**
 	 * Check if hash set
 	 */
 	this.HasHash = function () {
 		return ( hash != null && hash != '' );
-	}
+	};
 
 	/**
 	 * Check if pass set
 	 */
 	this.HasPass = function () {
 		return ( pass != null && pass != '' );
-	}
+	};
 
 	/**
 	 * Check if pass set and matches the hash
@@ -90,7 +90,7 @@ var App = new function () {
 		if ( !this.HasHash() || !value ) return false;
 		// comparing
 		return ( hash == this.CalcHash(value) );
-	}
+	};
 
 	/**
 	 * Set the hash of private pass var
@@ -101,7 +101,7 @@ var App = new function () {
 		if ( !value ) return false;
 		// set and return
 		return hash = value;
-	}
+	};
 
 	/**
 	 * Set the time to remember the password
@@ -113,7 +113,7 @@ var App = new function () {
 		if ( !newtime || newtime == NaN || newtime <= 0 ) return false;
 		time = newtime;
 		return true;
-	}
+	};
 
 	/**
 	 * Set the private pass var and start timer for clearing it in some time
@@ -138,7 +138,7 @@ var App = new function () {
 		}
 		// return password hash value
 		return hash;
-	}
+	};
 
 	/**
 	 *
@@ -161,7 +161,7 @@ var App = new function () {
 		if ( self.RequestPass && self.RequestPass instanceof Function ) {
 			self.RequestPass.call();
 		}
-	}
+	};
 
 	/**
 	 * Encrypt the given text and pass the result to callback function
@@ -189,7 +189,7 @@ var App = new function () {
 			}
 		}
 		return false;
-	}
+	};
 //	this.Encode = function ( text, callback ) {
 //		// temporary pass storing not to loose in on timer clearing
 //		var ptmp = pass;
@@ -235,7 +235,7 @@ var App = new function () {
 			}
 		}
 		return false;
-	}
+	};
 //	this.Decode = function ( text, callback ) {
 //		// temporary pass storing not to loose in on timer clearing
 //		var ptmp = pass;
@@ -259,4 +259,4 @@ var App = new function () {
 	this.Subscribe = function ( component ) {
 		this.subscribers.push(component);
 	}
-}
+};

@@ -39,7 +39,7 @@ var TemplateList = new function () {
 				self.dom.hint.innerHTML = hint_item + list.join(', ');
 			});
 		});
-	}
+	};
 
 	/**
 	 * Filters by given text
@@ -49,13 +49,13 @@ var TemplateList = new function () {
 		text = text.toLowerCase();
 		for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
 			// prepare
-			var item = self.dom.list.childNodes[i]
+			var item = self.dom.list.childNodes[i];
 			var name = item.data[data_templates.defn.name].toLowerCase();
 			var desc = item.data[data_templates.defn.description].toLowerCase();
 			// search substring and show/hide
 			$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
 		}
-	}
+	};
 
 	/**
 	 * Main init method
@@ -88,4 +88,4 @@ var TemplateList = new function () {
 		// build the list of templates
 		this.Fill();
 	}
-}
+};

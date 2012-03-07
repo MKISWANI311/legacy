@@ -18,7 +18,7 @@ function CTemplateList ( params ) {
 		// append to container
 		elchild(this.params.handle, group);
 		return group;
-	}
+	};
 
 	/**
 	 * Add new child section
@@ -38,13 +38,13 @@ function CTemplateList ( params ) {
 		if ( this.params.onclick && this.params.onclick instanceof Function ) {
 			item.onclick = this.params.onclick;
 		}
-	}
+	};
 
 	this.Init = function () {
 		// check input
 		if ( !this.params.handle ) return;
 		// set class for container
 		this.params.handle.className = 'tplist';
-	}
+	};
 	this.Init();
 }
