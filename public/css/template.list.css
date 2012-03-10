@@ -11,5 +11,5 @@
 		.templatelist > .list > .item:hover { background-color:#bfdfff; color:white }
 		.templatelist > .list > .item .line { background:url("../img/template.png") no-repeat left center; padding-left:25px }
 		.templatelist > .list > .item .name { font-weight:bold }
-		.templatelist > .list > .item .hint { font-size:9px; color:#aaa }
+		.templatelist > .list > .item .hint { font-size:11px; color:#aaa }
 	.templatelist > .hint { padding:5px; border:1px solid #eee; color:#aaa; background-color:#F9F9F9 }

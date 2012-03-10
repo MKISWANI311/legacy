@@ -108,7 +108,33 @@
 	}
 
 	$(function(){
+		$(".dropdown img.flag").addClass("flagvisibility");
 
+		$(".dropdown dt a").click(function() {
+			$(".dropdown dd ul").toggle();
+		});
+
+		$(".dropdown dd ul li a").click(function() {
+			var text = $(this).html();
+			$(".dropdown dt a span").html(text);
+			$(".dropdown dd ul").hide();
+			$("#result").html("Selected value is: " + getSelectedValue("sample"));
+		});
+
+		function getSelectedValue(id) {
+			return $("#" + id).find("dt a span.value").html();
+		}
+
+		$(document).bind('click', function(e) {
+			var $clicked = $(e.target);
+			if (! $clicked.parents().hasClass("dropdown"))
+				$(".dropdown dd ul").hide();
+		});
+
+
+		$("#flagSwitcher").click(function() {
+			$(".dropdown img.flag").toggleClass("flagvisibility");
+		});
 	});
 
 </script>
@@ -120,10 +146,43 @@
 		margin: 20px 10px;
 		padding: 5px;
 		color: #aaa;
+		display: none;
 	}
+
+	.dropdown dd, .dropdown dt, .dropdown ul { margin:0px; padding:0px; }
+	.dropdown dd { position:relative; }
+	.dropdown a, .dropdown a:visited { color:#816c5b; text-decoration:none; outline:none;}
+	.dropdown a:hover { color:#5d4617;}
+	.dropdown dt a:hover, .dropdown dt a:focus { color:#5d4617; border: 1px solid #5d4617;}
+	.dropdown dt a {background:#e4dfcb url(arrow.png) no-repeat scroll right center; display:block; padding-right:20px;
+					border:1px solid #d4ca9a; width:180px;}
+	.dropdown dt a span {cursor:pointer; display:block; padding:5px;}
+	.dropdown dd ul { background:#e4dfcb none repeat scroll 0 0; border:1px solid #d4ca9a; color:#C5C0B0; display:none;
+						left:0px; padding:5px 0px; position:absolute; top:2px; width:auto; min-width:170px; list-style:none;}
+	.dropdown span.value { display:none;}
+	.dropdown dd ul li a { padding:5px; display:block;}
+	.dropdown dd ul li a:hover { background-color:#d0c9af;}
+
+	.dropdown img.flag { border:none; vertical-align:middle; margin-left:10px; }
+	.flagvisibility { display:none;}
 </style>
 
 <div style="padding:10px">
+<!--	<dl id="sample" class="dropdown">
+		<dt><a href="#"><span>Please select the country</span></a></dt>
+		<dd>
+			<ul>
+				<li><a href="#">Brazil<img class="flag" src="br.png" alt="" /><span class="value">BR</span></a></li>
+				<li><a href="#">France<img class="flag" src="fr.png" alt="" /><span class="value">FR</span></a></li>
+				<li><a href="#">Germany<img class="flag" src="de.png" alt="" /><span class="value">DE</span></a></li>
+				<li><a href="#">India<img class="flag" src="in.png" alt="" /><span class="value">IN</span></a></li>
+				<li><a href="#">Japan<img class="flag" src="jp.png" alt="" /><span class="value">JP</span></a></li>
+				<li><a href="#">Serbia<img class="flag" src="cs.png" alt="" /><span class="value">CS</span></a></li>
+				<li><a href="#">United Kingdom<img class="flag" src="gb.png" alt="" /><span class="value">UK</span></a></li>
+				<li><a href="#">United States<img class="flag" src="us.png" alt="" /><span class="value">US</span></a></li>
+			</ul>
+		</dd>
+    </dl>-->
 	<div id="handle_notemanager"></div>
 
 	<div id="search_help">

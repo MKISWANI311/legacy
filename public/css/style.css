@@ -7,16 +7,12 @@
 	font-size: 13px;
 }
 
-.bold	{ font-weight: bold; }
-.maxw	{ width: 100%; }
-.maxh	{ height: 100%; }
-.hidden	{ display: none; }
-.right  { text-align: right; }
-.left   { text-align: left; }
-.center { text-align: center; }
-.nowrap { white-space: nowrap; }
+.bold	{ font-weight: bold }
+.maxw	{ width: 100% }
+.maxh	{ height: 100% }
+.hidden	{ display: none }
+.right  { text-align: right }
 
-/* border="0" cellspacing="0" cellpadding="0" */
 table    { border:0px; border-collapse:collapse; }
 table td { padding:0px; }
 
@@ -37,7 +33,7 @@ a.combo {
 }
 .body_content {
 	width: 100%;
-	height: 100%;/**/
+	height: 100%;
 	border-left: 2px solid #ddd;
 	border-right: 2px solid #ddd;
 	background-color: #fff;
@@ -61,9 +57,7 @@ a.combo {
 .message.warning { color:#888; background: url("../img/message.warning.png") no-repeat left top }
 .message.error   { color:#f00; background: url("../img/message.error.png") no-repeat left top }
 
-.fade {
-	background-color:#f9f9f9;
-}
+.fade { background-color:#f9f9f9 }
 
 input.button {
 	background-color: #eee;
@@ -153,83 +147,6 @@ input.fldedit {
 	width: 100%;
 	height: 100%;
 }
-table.datatable thead th {
-    border-bottom: 2px solid #ddd;
-    cursor: pointer;
-    font-weight: bold;
-    padding: 2px 12px 2px 5px;
-	text-align: left;
-	color: darkgrey;
-}
-table.datatable tfoot th {
-    border-top: 2px solid #ddd;
-    font-weight: bold;
-    padding: 2px 5px;
-	text-align: left;
-	color: darkgrey;
-}
-div.dataTables_filter input {
-	border: 1px solid #eee;
-	background-color: #fafafa;
-	width: 180px;
-	height: 20px;
-	font-size: 12px;
-}
-div.dataTables_filter {
-	text-align: right;
-	padding-bottom:5px;
-}
-
-div#datatable_dishlist_paginate * {
-	font-size: 11px;
-}
-div#datatable_dishlist_paginate {
-	padding:5px;
-}
-div#datatable_dishlist_paginate span.first, div#datatable_dishlist_paginate span.previous, div#datatable_dishlist_paginate span.next, div#datatable_dishlist_paginate span.last {
-	padding: 5px 10px;
-	border: 1px solid #eee;
-	background-color: #fafafa;
-	cursor: pointer;
-	margin: 0px 5px;
-	color: #0066cc;
-}
-div#datatable_dishlist_paginate span span.paginate_button, div#datatable_dishlist_paginate span span.paginate_active {
-	padding: 5px 10px;
-	border: 1px solid #eee;
-	background-color: #fafafa;
-	cursor: pointer;
-	margin: 0px 2px;
-	color: #0066cc;
-}
-div#datatable_dishlist_paginate span span.paginate_active {
-	font-weight: bold;
-	background-color: #f0f0f0;
-}
-select#combo_dishtype{
-	border: 1px solid #ddd;
-	background-color: white;
-	width: 100px;
-	height: 20px;
-	font-size: 12px;
-}
-input.dish_field_edit {
-	border: 1px solid #ddd;
-	background-color: white;
-	width: 300px;
-	height: 20px;
-	font-size: 12px;
-}
-input.search_field_edit {
-	border: 1px solid #ddd;
-	background-color: #f5f5f5;
-	width: 150px;
-	height: 20px;
-	font-size: 12px;
-}
-table#search_filter td {
-	padding: 3px 3px 3px 0px;
-}
 textarea#styled {
 	width: 100%;
 	height: 60px;
@@ -237,88 +154,4 @@ textarea#styled {
 	background-color: white;
 	padding: 5px;
 }
-table.datatable tr.edited {
-	background-color: #eee !important;
-	display: none;
-}
-table.datatable td.details {
-	border: 5px solid #eee;
-	background-color:#fbfbfb;
-	padding:5px;
-}
-
-table.datatable tr.heading2 td {
-    border-bottom: 1px solid #AAAAAA;
-}
-table.datatable td {
-    padding: 2px 5px;
-}
-table.datatable td.center {
-    text-align: center;
-}
-table.datatable td.name {
-    text-align: center;
-	font-size: 14px;
-	font-weight: normal;
-	color: #FF6600;
-}
-table.datatable td.id {
-	width: 25px;
-}
-table.datatable td.icon {
-	width: 25px;
-}
-table.datatable .sorting_asc {
-    background: url("../img/datatable/sort_asc2.png") no-repeat scroll right center transparent;
-}
-table.datatable .sorting_desc {
-    background: url("../img/datatable/sort_desc2.png") no-repeat scroll right center transparent;
-}
-table.datatable .sorting_asc_disabled {
-    background: url("../img/datatable/sort_asc_disabled.png") no-repeat scroll right center transparent;
-}
-table.datatable .sorting_desc_disabled {
-    background: url("../img/datatable/sort_desc_disabled.png") no-repeat scroll right center transparent;
-}
-table.datatable tbody tr { height:45px; border-bottom: 1px dotted #ddd }
-table.datatable tbody tr:last-child { border-bottom:none }
-/*table.datatable tr.odd  { background-color: #f8f8f8; }
-table.datatable tr.even { background-color: #ffffff; }*/
-
-table.datatable tr.row_selected td { background-color: #bfdfff; color: #fff; font-weight:bold; }
-/*table.datatable tr.row_selected td { background-color: #F9F9F9; color: #000; font-weight:bold; }*/
-
-/*table.datatable tr.odd.row_selected td  { background-color: rgb(215,222,236) !important; }*/
-/*table.datatable tr.odd td.sorting_1  { background-color: #f1f1f1; }
-table.datatable tr.odd td.sorting_2  { background-color: #f5f5f5; }
-table.datatable tr.odd td.sorting_3  { background-color: #fafafa; }
-table.datatable tr.even td.sorting_1 { background-color: #f8f8f8; }
-table.datatable tr.even td.sorting_2 { background-color: #fbfbfb; }
-table.datatable tr.even td.sorting_3 { background-color: #fefefe; }*/
-table.datatable tbody tr:hover {
-/*	background-color: #bfdfff;*/
-	background-color: #FFFFDF;
-	color: #000;
-}
-/*table.datatable tr.even:hover { background-color: #bfdfff; color: #fff; }
-table.datatable tr.odd:hover  { background-color: #bfdfff; color: #fff; }/**/
-/*table.datatable tr.even:hover td { border: 1px solid #AAAAAA; background-color: #FFF5EF; }
-table.datatable tr.odd:hover td { border: 1px solid #AAAAAA; background-color: #FFEBDF; }
-table.datatable tr.even:hover td.sorting_1, table.datatable tr.even:hover td.sorting_2, table.datatable tr.even:hover td.sorting_3 {
-	background-color: #FFEBDF;
-}
-table.datatable tr.odd:hover td.sorting_1, table.datatable tr.odd:hover td.sorting_2, table.datatable tr.odd:hover td.sorting_3 {
-	background-color: #FFD8BF;
-}
-/**/
-
 #simplemodal-overlay {background-color:#000;}
-#simplemodal-contai-ner {background-color:#333; border:8px solid #444; padding:12px; color:#BBBBBB;}
-h2 {
-    color: #5F87AE;
-    font-weight: normal;
-    padding-bottom: 12px;
-    text-transform: uppercase;
-	font-size: 1.4em;
-}
-

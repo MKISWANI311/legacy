@@ -10,6 +10,33 @@ var TemplateList = new function () {
 	var hint_filter = 'filter by name or description ...';
 
 	/**
+	 * Open the subscriber
+	 * master password is accessible
+	 * decrypt all the data and show it
+	 */
+	this.EventOpen = function () {
+		fb('TemplateList: EventOpen');
+		this.Fill();
+		// component state flag
+		this.open = true;
+	};
+
+	/**
+	 * Close the subscriber
+	 * master password is expired and cleared
+	 * clear all the decrypted data
+	 */
+	this.EventClose = function () {
+		fb('TemplateList: EventClose');
+		// close only if opened at the moment
+		if ( this.open ) {
+			elclear(this.dom.list);
+			// component state flag
+			this.open = false;
+		}
+	};
+
+	/**
 	 * Fills the list with templates
 	 */
 	this.Fill = function () {
@@ -18,7 +45,7 @@ var TemplateList = new function () {
 		// iterate all templates
 		data_templates.data.each(function(data){
 			// template body
-			var item = element('div', {className:'item', data:data},
+			var item = element('div', {className:'item', style:'display:none', data:data},
 				element('div', {className:'line'}, [
 					element('div', {className:'name'}, data[data_templates.defn.name]),
 					element('div', {className:'hint'}, data[data_templates.defn.description])
@@ -39,6 +66,7 @@ var TemplateList = new function () {
 				self.dom.hint.innerHTML = hint_item + list.join(', ');
 			});
 		});
+		this.Filter();
 	};
 
 	/**
@@ -46,6 +74,7 @@ var TemplateList = new function () {
 	 * @param text string to search in each template name or description
 	 */
 	this.Filter = function ( text ) {
+		text = text || (this.dom.filter.value == hint_filter ? '' : this.dom.filter.value);
 		text = text.toLowerCase();
 		for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
 			// prepare
@@ -86,6 +115,6 @@ var TemplateList = new function () {
 		elchild(this.dom.title, [element('div', {className:'text'}, 'Templates'), this.dom.filter]);
 
 		// build the list of templates
-		this.Fill();
+		//this.Fill();
 	}
 };

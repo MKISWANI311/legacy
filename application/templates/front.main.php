@@ -49,7 +49,7 @@
 
 			// to receive pass change events
 			App.Subscribe(TagManager);
-			//App.Subscribe(TagLst);
+			App.Subscribe(TemplateList);
 			App.Subscribe(NoteManager);
 			App.Subscribe(NoteEditor);
 

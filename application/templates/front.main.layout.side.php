@@ -34,29 +34,29 @@
 
 	// the DOM is ready
 	$(function(){
-		TpList = new CTemplateList({
-			handle : document.getElementById('handle_ctemplatelist'),
-			onclick : function(){
-				$('#ui-layout-east-tplist').hide();
-				$('#ui-layout-east-data').show();
-				fb(this.data);
-				NoteEditor.Create(this.data);
-			}
-		});
+//		TpList = new CTemplateList({
+//			handle : document.getElementById('handle_ctemplatelist'),
+//			onclick : function(){
+//				$('#ui-layout-east-tplist').hide();
+//				$('#ui-layout-east-data').show();
+//				fb(this.data);
+//				NoteEditor.Create(this.data);
+//			}
+//		});
 
-		var gr1 = TpList.AddGroup('Templates');
+//		var gr1 = TpList.AddGroup('Templates');
 		//var gr2 = TpList.AddGroup('My personal templates');
 
-		for ( var i = 0; i < data_templates.data.length; i++ ) {
-			//fb(data_templates.data[i]);
-			if ( data_templates.data[i][data_templates.defn.sys] == 1 ) {
-				TpList.AddItem(gr1, data_templates.data[i]);
-				//TpList.AddItem(gr1, data_templates.data[i][data_templates.defn.id], data_templates.data[i][data_templates.defn.name], data_templates.data[i][data_templates.defn.description]);
-			} else {
-				//TpList.AddItem(gr2, data_templates.data[i]);
-				//TpList.AddItem(gr2, data_templates.data[i][data_templates.defn.id], data_templates.data[i][data_templates.defn.name], data_templates.data[i][data_templates.defn.description]);
-			}
-		}
+//		for ( var i = 0; i < data_templates.data.length; i++ ) {
+//			//fb(data_templates.data[i]);
+//			if ( data_templates.data[i][data_templates.defn.sys] == 1 ) {
+//				TpList.AddItem(gr1, data_templates.data[i]);
+//				//TpList.AddItem(gr1, data_templates.data[i][data_templates.defn.id], data_templates.data[i][data_templates.defn.name], data_templates.data[i][data_templates.defn.description]);
+//			} else {
+//				//TpList.AddItem(gr2, data_templates.data[i]);
+//				//TpList.AddItem(gr2, data_templates.data[i][data_templates.defn.id], data_templates.data[i][data_templates.defn.name], data_templates.data[i][data_templates.defn.description]);
+//			}
+//		}
 	});
 
 	function back () {

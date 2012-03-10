@@ -170,7 +170,7 @@ var NoteManager = new function () {
 		self.data.filter.tinc.each(function(item){
 			if ( item ) {
 				elchild(note.dom.tags.inc, element('span',
-					{className:'tag include', title:'click on this tag to exclude it from the filtering', tagid:item},
+					{className:'tag include', title:"click on this tag to exclude it from the filtering", tagid:item},
 					data_tags_idlist[item], {onclick:TagExclude}));
 			}
 		});
@@ -539,6 +539,26 @@ var NoteManager = new function () {
 			}
 		});
 
+		var timer = null;
+		this.dom.search.input.onkeydown = function() {
+			if ( timer ) clearTimeout(timer);
+			timer = setTimeout(function(){
+				fb('checking ...');
+				var pstr = TagManager.ParseStr(self.dom.search.input.value);
+				var tinc = pstr.tinc.sort().join();
+				var texc = pstr.texc.sort().join();
+				// parsed tags don't match
+				if ( self.data.filter.tinc.sort().join() != tinc || self.data.filter.texc.sort().join() != texc ) {
+					self.data.filter = pstr;
+					fb('!!!');
+					self.InfoClear();
+					//SetFilterTags();
+					FilterTags();
+					Filter();
+				}
+			}, 300);
+		}
+
 		$(this.dom.notes).bind('keydown', function(event) {
 			fb('*');
 			// up
@@ -548,7 +568,7 @@ var NoteManager = new function () {
 		});
 
 		this.dom.info.onclick = function(){
-			self.InfoClear();
+			//self.InfoClear();
 		};
 
 		//this.dom.search.input.focus();
