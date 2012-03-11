@@ -222,17 +222,51 @@ var TagManager = new function () {
 					var tid  = data_tags_nmlist[word];
 					// tag id found in the global data
 					if ( tid ) {
-						if ( fexc ) { if ( !texc.has(tid) ) texc.push(tid); }
+						if ( fexc ) {if ( !texc.has(tid) ) texc.push(tid);}
 						else if ( !tinc.has(tid) ) tinc.push(tid);
 					} else {
 						// tag id not found so it's just a word
-						if ( fexc ) { if ( !wexc.has(word) ) wexc.push(word); }
+						if ( fexc ) {if ( !wexc.has(word) ) wexc.push(word);}
 						else if ( !winc.has(word) ) winc.push(word);
 					}
 				}
 			}
 		}
 		return {tinc:tinc, texc:texc, winc:winc, wexc:wexc};
+	}
+
+	this.Linked = function ( data ) {
+		var result = [], list = {}, i;
+		//data = data.slice();
+		if ( data && data instanceof Array ) {
+			if ( data.length === 1 ) {
+				result = data_tags.data[data[0]][data_tags.defn.links];
+			} else {
+				data.each(function(id){
+					var links = data_tags.data[id][data_tags.defn.links];
+					links.each(function(link){
+						list[link] = (list[link] ? list[link] : 0) + 1;
+					});
+				});
+				for ( i in list ) {
+					if ( list[i] === data.length ) {
+						result.push(i);
+					}
+				}
+				//fb(list);
+				//result = data[0].slice();
+				// iterate all rest
+	//			for ( var i = 1; i < data.length; i++ ) {
+	//				var links = data_tags.data[data[i]][data_tags.defn.links];
+	//
+	//			}
+	//				fb(id);
+	//				fb(data_tags.data[id][data_tags.defn.links].sort());
+				//});
+			}
+		}
+		fb(result);
+		return result;
 	}
 
 };

@@ -130,11 +130,11 @@ var NoteManager = new function () {
 		// flag to show this note or not
 		var flag = true;
 		for ( var i = 0; i < this.data.filter.tinc.length; i++ ) {
-			if ( !note.data.tags.has(this.data.filter.tinc[i]) ) { flag = false; break; }
+			if ( !note.data.tags.has(this.data.filter.tinc[i]) ) {flag = false;break;}
 		}
 		if ( flag ) {
 			for ( i = 0; i < this.data.filter.texc.length; i++ ) {
-				if ( note.data.tags.has(this.data.filter.texc[i]) ) { flag = false; break; }
+				if ( note.data.tags.has(this.data.filter.texc[i]) ) {flag = false;break;}
 			}
 		}
 		if ( flag ) {
@@ -269,7 +269,7 @@ var NoteManager = new function () {
 		var tbl  = element('table', {});
 		var icon = element('img', {width:32, height:32, className:'hidden'}, null, {onload:function(){/*$(this).fadeIn();*/$(this).removeClass('hidden');}});
 		var hint = element('div', {className:'hint'}, [TimestampToDateStr(data.mtime), ' ', element('a', {data:data}, 'delete', {onclick:function(e){
-			if (!e ) e = window.event; e.cancelBubble = true;
+			if (!e ) e = window.event;e.cancelBubble = true;
 			if ( e.stopPropagation ) e.stopPropagation();
 			NoteDelete(this.data);
 		}})]);
@@ -428,7 +428,7 @@ var NoteManager = new function () {
 	};
 
 	var TagInclude = function ( e ) {
-		if (!e ) e = window.event; e.cancelBubble = true;
+		if (!e ) e = window.event;e.cancelBubble = true;
 		if ( e.stopPropagation ) e.stopPropagation();
 
 		if ( !self.data.filter.tinc.has(this.tagid) ) self.data.filter.tinc.push(this.tagid);
@@ -440,8 +440,8 @@ var NoteManager = new function () {
 	var BuildSearchStr = function () {
 		var words = [];
 		// prepare all words for concatenation
-		self.data.filter.texc.each(function(item){ if ( item ) words.push('-'+data_tags_idlist[item]); });
-		self.data.filter.tinc.each(function(item){ if ( item ) words.push(    data_tags_idlist[item]); });
+		self.data.filter.texc.each(function(item){if ( item ) words.push('-'+data_tags_idlist[item]);});
+		self.data.filter.tinc.each(function(item){if ( item ) words.push(    data_tags_idlist[item]);});
 		// replace the search string by the reformatted one
 		self.dom.search.input.value = words.join(' ');
 	};
@@ -517,6 +517,7 @@ var NoteManager = new function () {
 		elchild(this.dom.search, [
 			this.dom.search.icon    = element('img', {className:'icon', src:'img/search.png'}),
 			this.dom.search.input   = element('input', {type:'text', className:'line'}),
+			this.dom.search.suggest = element('div', {className:'suggest'}),
 			this.dom.search.control = element('div', {className:'control'}, [element('span', {}, 'clear', {onclick:function(){
 				self.dom.search.input.value = '';
 				self.dom.search.input.focus();
@@ -556,6 +557,12 @@ var NoteManager = new function () {
 					FilterTags();
 					Filter();
 				}
+				var linked = TagManager.Linked(pstr.tinc);
+				elclear(self.dom.search.suggest);
+				linked.each(function(id){
+					elchild(self.dom.search.suggest, element('span', {}, data_tags_idlist[id]));
+					fb(data_tags_idlist[id]);
+				});
 			}, 300);
 		}
 

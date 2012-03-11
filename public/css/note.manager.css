@@ -3,17 +3,20 @@
  */
 
 .notemanager { background-color:white }
-	.notemanager .search { margin-bottom:5px; position:relative }
-		.notemanager .search .icon    { position:absolute; top:0px; margin:7px; height:16px; line-height:16px }
-		.notemanager .search .line    { padding-left:25px; padding-right:35px }
-		.notemanager .search .control { position:absolute; top:0px; right:0px; margin:5px; height:20px; line-height:20px }
-			.notemanager .search .control span { color:#ddd; cursor:pointer }
-			.notemanager .search .control span:hover { color:#aaa }
-	.notemanager .info { margin: 5px 15px }
-		.notemanager .info .message { padding-left: 45px }
-	.notemanager .help { margin: 20px 10px; padding:5px; background-color:#F9F9F9; border: 1px solid #eee }
-	.notemanager .notes { margin-top: 5px }
-		.notemanager .notes .note { border-left: 5px solid #fff; border-right: 2px solid #fff; border-bottom:1px dotted #eee; border-top:1px dotted #eee; padding:3px 5px 3px 10px }
+	.notemanager > .search { margin-bottom:5px; position:relative }
+		.notemanager > .search > .icon    { position:absolute; top:0px; margin:7px; height:16px; line-height:16px }
+		.notemanager > .search > .line    { padding-left:25px; padding-right:35px }
+		.notemanager > .search > .suggest { color:#ddd }
+			.notemanager > .search > .suggest > span { margin-right:5px; cursor:pointer }
+			.notemanager > .search > .suggest > span:hover { color:#555 }
+		.notemanager > .search > .control { position:absolute; top:0px; right:0px; margin:5px; height:20px; line-height:20px }
+			.notemanager > .search > .control > span { color:#ddd; cursor:pointer }
+			.notemanager > .search > .control > span:hover { color:#aaa }
+	.notemanager > .info { margin: 5px 15px }
+		.notemanager > .info .message { padding-left: 45px }
+	.notemanager > .help { margin: 20px 10px; padding:5px; background-color:#F9F9F9; border: 1px solid #eee }
+	.notemanager > .notes { margin-top: 5px }
+		.notemanager > .notes > .note { border-left: 5px solid #fff; border-right: 2px solid #fff; border-bottom:1px dotted #eee; border-top:1px dotted #eee; padding:3px 5px 3px 10px }
 /*		.notemanager .notes .note:hover { border-left: 5px solid #eee; border-right: 2px solid #eee; background-color: #ffffdf }*/
 /*		.notemanager .notes .note.active { background-color: #f9f9f9 }*/
 		.notemanager .notes .note.active { border-left: 5px solid #bfdfff; border-right: 2px solid #bfdfff; background-color: #ffffdf }
