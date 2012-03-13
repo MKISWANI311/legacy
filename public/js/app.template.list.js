@@ -15,7 +15,7 @@ var TemplateList = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('TemplateList: EventOpen');
+		fb('EventOpen: TemplateList');
 		this.Fill();
 		// component state flag
 		this.open = true;
@@ -27,7 +27,7 @@ var TemplateList = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('TemplateList: EventClose');
+		fb('EventClose: TemplateList');
 		// close only if opened at the moment
 		if ( this.open ) {
 			elclear(this.dom.list);

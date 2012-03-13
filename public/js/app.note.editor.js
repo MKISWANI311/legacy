@@ -21,7 +21,7 @@ var NoteEditor = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('NoteEditor: EventOpen');
+		fb('EventOpen: NoteEditor');
 		// open if there is a note
 		if ( this.data ) {
 			// iterate all entries
@@ -58,7 +58,7 @@ var NoteEditor = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('NoteEditor: EventClose');
+		fb('EventClose: NoteEditor');
 		// close only if opened at the moment and there is a note
 		if ( this.data && this.open ) {
 			// iterate all entries
@@ -262,15 +262,15 @@ var NoteEditor = new function () {
 
 				if ( is_new ) {
 					self.data.ctime = Math.round(new Date().getTime() / 1000);
-					NoteManager.NoteAdd(self.data, true);
+					NoteList.NoteAdd(self.data, true);
 				} else {
 					self.data.mtime = Math.round(new Date().getTime() / 1000);
-					NoteManager.dom.notes.removeChild(NoteManager.dom.notes.active);
-					NoteManager.NoteAdd(self.data, true);
+					NoteList.dom.notes.removeChild(NoteList.dom.notes.active);
+					NoteList.NoteAdd(self.data, true);
 				}
-				if ( NoteManager.dom.notes.active ) {
-					var note = NoteManager.dom.notes.active;
-					if ( NoteManager.NoteVisible(note) ) NoteManager.DrawNoteTags(note);
+				if ( NoteList.dom.notes.active ) {
+					var note = NoteList.dom.notes.active;
+					if ( NoteList.NoteVisible(note) ) NoteList.DrawNoteTags(note);
 				}
 			} else {
 				// invalid response from the server
@@ -487,6 +487,7 @@ var NoteEditor = new function () {
 			entry.dom.data = element('textarea', {className:'text', maxLength:limit, disabled:!this.open}, entry.data.data_dec);
 			// keyboard navigation
 			$(entry.dom.data).keydown(function(event) {
+				//TODO: selectionStart is not cross-browser
 				// up
 				if ( event.which == 38 && entry.previousSibling && this.selectionStart == 0 ) entry.previousSibling.dom.data.focus();
 				// down

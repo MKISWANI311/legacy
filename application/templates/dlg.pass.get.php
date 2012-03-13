@@ -49,7 +49,7 @@
 			 * clear all the decrypted data
 			 */
 			EventClose : function () {
-				fb('DlgPassGet: EventClose');
+				fb('EventClose: DlgPassGet');
 				DlgPassGet.Show({escClose:false});
 			},
 
@@ -77,7 +77,8 @@
 							modal.data.pass.value = '';
 							modal.Close();
 
-							NoteManager.FocusFilter();
+							//NoteManager.FocusFilter();
+							NoteFilter.SetFocus();
 
 							//fb('decrypt tags');
 //							var text_tag_list = document.getElementById('text_tag_list');

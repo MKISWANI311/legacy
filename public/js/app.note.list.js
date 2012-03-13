@@ -2,7 +2,7 @@
  * Main module to work with single note
  * creation, edit or view
  */
-var NoteManager = new function () {
+var NoteList = new function () {
 	// for limited scopes
 	var self = this;
 
@@ -17,14 +17,10 @@ var NoteManager = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('NoteManager: EventOpen');
+		fb('EventOpen: NoteList');
 		elclear(self.dom.notes);
 		// fill notes
-		RenderTable();
-		// fill search string
-		if ( self.dom.search.input.encval ) {
-			self.dom.search.input.value = App.Decode(self.dom.search.input.encval);
-		}
+		self.RenderTable();
 		// component state flag
 		this.open = true;
 	};
@@ -35,15 +31,11 @@ var NoteManager = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('NoteManager: EventClose');
+		fb('EventClose: NoteList');
 		// close only if opened at the moment
 		if ( this.open ) {
-			this.InfoClear();
 			// clear notes
 			elclear(self.dom.notes);
-			// clear search string
-			self.dom.search.input.encval = App.Encode(self.dom.search.input.value);
-			self.dom.search.input.value  = '[encrypted data]';
 			// component state flag
 			this.open = false;
 		}
@@ -80,50 +72,7 @@ var NoteManager = new function () {
 			}
 		}
 
-		//fb(self.dom.title.icon.src, icon);
-		//if ( self.dom.title.icon.src.search(icon) < 0 ) {
-			//fb(note.dom.icon, icon);
-			note.dom.icon.src = icon;
-		//}
-	};
-
-//	var TagSetClick = function ( e ) {
-//		//fb(e);
-//		//fb(this);
-//		if (!e ) e = window.event; e.cancelBubble = true;
-//		if ( e.stopPropagation ) e.stopPropagation();
-//		var tags = self.dom.search.input.value.match(/(\S+)/g) || [];
-//		if ( tags.has(this.tagnm) ) {
-//			delete tags[tags.indexOf(this.tagnm)];
-//			self.dom.search.input.value = tags.sort().join(' ').trim();
-//			SetFilterTags();
-//			Filter(self.dom.search.input.value);
-//		}
-//	};
-	var TagSetClick = function ( e ) {
-		//fb(e);
-		//fb(this);
-//		if (!e ) e = window.event; e.cancelBubble = true;
-//		if ( e.stopPropagation ) e.stopPropagation();
-//		var tags = self.dom.search.input.value.match(/(\S+)/g) || [];
-//		if ( tags.length == 0 || !tags.has(this.tagnm) ) {
-//			tags.push(this.tagnm);
-//			self.dom.search.input.value = tags.sort().join(' ').trim();
-//			SetFilterTags();
-//
-//			if ( self.data.latest ) {
-//				Filter(self.dom.search.input.value);
-//			} else {
-//				var ids = TagManager.Str2IDs(self.dom.search.input.value, true);
-//				//fb('ids', ids);
-//				//Filter(self.dom.search.input.value);
-//				// iterate all notes
-//				for ( var i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-//					var note = self.dom.notes.childNodes[i];
-//					if ( self.NoteVisible(note) ) self.DrawNoteTags(note);
-//				}
-//			}
-//		}
+		note.dom.icon.src = icon;
 	};
 
 	this.NoteVisible = function ( note ) {
@@ -150,11 +99,6 @@ var NoteManager = new function () {
 		elclear(note.dom.tags.inc);
 		elclear(note.dom.tags.set);
 
-		//var list_set = [], name = null;
-
-		//texc = self.data.filter.texc;
-		//tinc = self.data.filter.tinc;
-
 		var names = [];
 		note.data.tags.each(function(item){
 			if ( !self.data.filter.tinc.has(item) ) {
@@ -174,32 +118,6 @@ var NoteManager = new function () {
 					data_tags_idlist[item], {onclick:TagExclude}));
 			}
 		});
-
-//		for ( var i = 0; i < note.data.tags.length; i++ ) {
-//			name = data_tags_idlist[note.data.tags[i]];
-//			if ( !self.data.filter.tinc.has(note.data.tags[i]) && !self.data.filter.texc.has(note.data.tags[i]) ) {
-//				list_set.push(name);
-//			}
-//		}
-//		for ( i = 0; i < texc.length; i++ ) {
-//			name = data_tags_idlist[texc[i]];
-//			elchild(note.dom.tags.exc, element('span',
-//				{className:'tag exclude', title:'click on this tag to exclude it from the filtering', tagnm:name},
-//					name, {onclick:TagSetClick}));
-//		}
-//		//tinc.sort();
-//		for ( i = 0; i < tinc.length; i++ ) {
-//			name = data_tags_idlist[tinc[i]];
-//			elchild(note.dom.tags.inc, element('span',
-//				{className:'tag include', title:'click on this tag to exclude it from the filtering', tagnm:name},
-//					name, {onclick:TagSetClick}));
-//		}
-//		list_set.sort();
-//		for ( i = 0; i < list_set.length; i++ ) {
-//			elchild(note.dom.tags.set, element('span',
-//				{className:'tag', title:'click on this tag to include it to the search', tagnm:list_set[i]},
-//					list_set[i], {onclick:TagInclude}));
-//		}
 	};
 
 	var NoteActive = function ( note ) {
@@ -228,17 +146,6 @@ var NoteManager = new function () {
 		}
 		NoteActive(note);
 	};
-
-//	this.NoteMoveTop = function ( data ) {
-//		this.data.notes.push(data);
-//		var note = NotePrepare(data);
-//		if ( topmost && this.dom.notes.childNodes.length > 0 ) {
-//			this.dom.notes.insertBefore(note, this.dom.notes.childNodes[0]);
-//		} else {
-//			elchild(this.dom.notes, note);
-//		}
-//		NoteActive(note);
-//	}
 
 	var NoteBody = function ( data ) {
 		var result = [element('div', {className:'bold'}, 'id:' + data.id)];
@@ -287,18 +194,23 @@ var NoteManager = new function () {
 		tblrow(tbl, [icon, NoteBody(data)], [{className:'icon'}, {className:'body'}]);
 		elchild(note.dom.tags, [tags.exc, tags.inc, tags.set]);
 		SetNoteIcon(note);
-
-		//var tag_names = TagManager.IDs2Names(data.tags);
-		//var list_set = [], list_set = [];
-		//for ( var t = 0; t < tag_names.length; t++ ) {
-			self.DrawNoteTags(note);
-		//}
+		self.DrawNoteTags(note);
 		return note;
 	};
 
-	var RenderTable = function ( data ) {
+	/**
+	 * Set the notes data to build note list
+	 */
+	this.SetData = function ( data ) {
+		self.data.notes = data instanceof Array ? data : [];
+	}
+
+	this.RenderTable = function ( data ) {
+		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
+		// set mode
+		//this.data.latest = !data ? true : false;
 		// determine the source of the notes data
-		data = data || (self.data.latest ? data_notes_latest : self.data.notes);
+		//data = data || (self.data.latest ? data_notes_latest : self.data.notes);
 		// clearing the container
 		elclear(self.dom.notes);
 		// clear selection
@@ -306,120 +218,26 @@ var NoteManager = new function () {
 
 		if ( data.length != 0 ) {
 			document.getElementById('search_help').style.display = 'none';
-			self.InfoClear();
 			// determine the note beeing edited at the moment
 			var neid = NoteEditor.data && NoteEditor.data.id ? NoteEditor.data.id : null;
 			// add notes
 			for ( var i = 0; i < data.length; i++ ) {
 				var note = NotePrepare(data[i]);
+				note.raw = '' + data[i].id;
 				if ( neid == data[i].id ) NoteActive(note);
 				elchild(self.dom.notes, note);
 			}
-		} else {
-
-			self.InfoSet([
-				'There are no records with given tags.', element('br'),
-				'You can use some other tags or see your ',
-				element('a', {className:'bold'}, 'latest notes', {onclick:function(){
-					// clear search string and set focus
-					self.dom.search.input.value = '';
-					self.dom.search.input.focus();
-					SetFilterTags();
-					// switch mode
-					self.data.latest = true;
-					RenderTable();
-				}
-			})]);
-			//ShowSearchHint();
-			document.getElementById('search_help').style.display = 'block';
 		}
-		CheckMissingTags();
 	};
 
-	var ShowSearchHint = function () {
-		//self.InfoSet('how to search', 'hint', self.dom.help);
-		//self.dom.help.className = 'help';
-		//$(self.dom.help).fadeIn();
-		//document.getElementById('search_help').style.display = 'none';
-
-	};
-
-	var CheckMissingTags = function () {
-		if ( self.data.filter.winc.length > 0 || self.data.filter.wexc.length > 0 ) {
-			var words = self.data.filter.winc.concat(self.data.filter.wexc);
-			self.InfoAdd([
-				'There are words used which are not your tags: ', element('span', {className:'bold'}, words.join(', ')), element('br'),
-				'They were omitted.'], 'warning');
-			return true;
+	this.Filter = function ( text ) {
+		text = text.toLowerCase();
+		for ( var i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+			// prepare
+			var item = self.dom.notes.childNodes[i];
+			// search substring and show/hide
+			$(item).toggle(item.raw.indexOf(text) >= 0);
 		}
-		return false;
-	};
-
-	var Filter = function () {
-		//SetFilterTags();
-
-		// clearing all notes
-		elclear(self.dom.notes);
-
-		self.dom.help.style.display = 'none';
-
-		if ( self.data.filter.tinc.length > 0 || self.data.filter.texc.length > 0 ) {
-			// turn off the mode "only the last 20"
-			self.data.latest = false;
-
-			self.InfoSet('Searching notes by the given tags ...', 'loading');
-
-			$.post('/note/search/', {tinc:self.data.filter.tinc, texc:self.data.filter.texc}, function(data){
-				if ( !data.error ) {
-					self.data.notes = data;
-					RenderTable();
-				} else {
-					self.InfoSet('The request was not successful this time. The response from the server: ' + data.error, 'error');
-				}
-			});
-		} else {
-//			if ( self.data.latest ) {
-//				if ( !CheckMissingTags() ) {
-//					self.InfoSet('There are no tags specified for search.');
-//				}
-//			} else {
-				self.InfoSet([
-					'There are no tags specified for search.', element('br'),
-					'You can enter some tags or see your ',
-					element('a', {className:'bold'}, 'latest notes', {onclick:function(){
-						// clear search string and set focus
-						self.dom.search.input.value = '';
-						self.dom.search.input.focus();
-						SetFilterTags();
-						// switch mode
-						self.data.latest = true;
-						RenderTable();
-					}
-				})]);
-			CheckMissingTags();
-			//ShowSearchHint();
-			document.getElementById('search_help').style.display = 'block';
-//			}
-		}
-
-
-	};
-
-	this.InfoClear = function ( holder ) {
-		holder = holder || this.dom.info;
-		elclear(holder);
-	};
-	this.InfoAdd = function ( message, type, holder ) {
-		holder = holder || this.dom.info;
-		elchild(holder, element('div', {className:'message ' + (type || 'info')}, message));
-	};
-	this.InfoSet = function ( message, type, holder ) {
-		this.InfoClear(holder);
-		this.InfoAdd(message, type, holder);
-	};
-
-	this.FocusFilter = function () {
-		this.dom.search.input.focus();
 	};
 
 	var SetFilterTags = function ( data ) {
@@ -475,13 +293,6 @@ var NoteManager = new function () {
 						data_tags_idlist[item], {onclick:TagExclude}));
 				}
 			});
-//			self.data.filter.tinc.each(function(item){
-//				if ( item ) {
-//					elchild(self.dom.tags.inc, element('span',
-//						{className:'tag include', title:'click on this tag to exclude it from the filtering', tagid:item},
-//						data_tags_idlist[item], {onclick:TagExclude}));
-//				}
-//			});
 		} else {
 			self.dom.tags.style.display = 'none';
 		}
@@ -496,8 +307,6 @@ var NoteManager = new function () {
 		if ( !params.handle ) return;
 		// html parent object
 		this.dom = {handle:params.handle};
-		// set class for container
-		this.dom.handle.className = 'notemanager';
 
 		this.data = {
 			latest :true, // show only the last 20 notes
@@ -530,54 +339,5 @@ var NoteManager = new function () {
 			this.dom.tags.inc   = element('span', {className:'inc'}),
 			this.dom.tags.hint  = element('span', {className:'hint'}, 'click on a tag to exclude it from the search')
 		]);
-
-		$(this.dom.search.input).bind('keypress', function(event) {
-			if ( event.which == 13 ) {
-				self.InfoClear();
-				SetFilterTags();
-				FilterTags();
-				Filter();
-			}
-		});
-
-		var timer = null;
-		this.dom.search.input.onkeydown = function() {
-			if ( timer ) clearTimeout(timer);
-			timer = setTimeout(function(){
-				fb('checking ...');
-				var pstr = TagManager.ParseStr(self.dom.search.input.value);
-				var tinc = pstr.tinc.sort().join();
-				var texc = pstr.texc.sort().join();
-				// parsed tags don't match
-				if ( self.data.filter.tinc.sort().join() != tinc || self.data.filter.texc.sort().join() != texc ) {
-					self.data.filter = pstr;
-					fb('!!!');
-					self.InfoClear();
-					//SetFilterTags();
-					FilterTags();
-					Filter();
-				}
-				var linked = TagManager.Linked(pstr.tinc);
-				elclear(self.dom.search.suggest);
-				linked.each(function(id){
-					elchild(self.dom.search.suggest, element('span', {}, data_tags_idlist[id]));
-					fb(data_tags_idlist[id]);
-				});
-			}, 300);
-		}
-
-		$(this.dom.notes).bind('keydown', function(event) {
-			fb('*');
-			// up
-			if ( event.which == 38 ) fb('up');
-			// down
-			if ( event.which == 40 ) fb('down');
-		});
-
-		this.dom.info.onclick = function(){
-			//self.InfoClear();
-		};
-
-		//this.dom.search.input.focus();
 	};
 };

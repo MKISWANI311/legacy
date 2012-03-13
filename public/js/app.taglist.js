@@ -25,7 +25,7 @@ function TagList ( params ) {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('TagList: EventOpen');
+		fb('EventOpen: TagList');
 
 		//var text_tag_list = document.getElementById('text_tag_list');
 		//text_tag_list.value = '';
@@ -62,7 +62,7 @@ function TagList ( params ) {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('TagList: EventClose');
+		fb('EventClose: TagList');
 
 		data_tags_nmlist = {};
 		data_tags_idlist = {};

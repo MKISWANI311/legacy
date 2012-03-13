@@ -34,7 +34,9 @@
 			// set menu to home
 			MenuItemClick($('div#menu_item_home a')[0]);
 
-			NoteManager.Init({handle:document.getElementById('handle_notemanager')});
+			NoteFilter.Init({handle:document.querySelector('div.notefilter')});
+
+			NoteList.Init({handle:document.querySelector('div.notelist')});
 
 			TemplateList.Init({handle:document.querySelector('div.templatelist')});
 
@@ -50,7 +52,8 @@
 			// to receive pass change events
 			App.Subscribe(TagManager);
 			App.Subscribe(TemplateList);
-			App.Subscribe(NoteManager);
+			App.Subscribe(NoteFilter);
+			App.Subscribe(NoteList);
 			App.Subscribe(NoteEditor);
 
 		});

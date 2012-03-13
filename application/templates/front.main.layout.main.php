@@ -183,7 +183,8 @@
 			</ul>
 		</dd>
     </dl>-->
-	<div id="handle_notemanager"></div>
+	<div class="notefilter"></div>
+	<div class="notelist"></div>
 
 	<div id="search_help">
 		<div class="message hint">

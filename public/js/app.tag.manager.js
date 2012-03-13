@@ -20,7 +20,7 @@ var TagManager = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('TagManager: EventOpen');
+		fb('EventOpen: TagManager');
 		if ( console.time ) console.time('TagManager: decrypt tags');
 		// decrypt tags
 		for ( var id in data_tags.data ) {
@@ -38,7 +38,7 @@ var TagManager = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('TagManager: EventClose');
+		fb('EventClose: TagManager');
 		// clear service lookup tables
 		data_tags_nmlist = {};
 		data_tags_idlist = {};
@@ -234,6 +234,15 @@ var TagManager = new function () {
 		}
 		return {tinc:tinc, texc:texc, winc:winc, wexc:wexc};
 	}
+
+//	this.StrCombine = function ( data ) {
+//		var texc = [];
+//		data.texc.each(function(id){
+//			texc.push('-' + data_tags_idlist[id]);
+//		});
+//		texc.sort();
+//		return texc.join(' ') + (texc.length > 0 ? ' ' : '') + this.IDs2Str(data.tinc);
+//	}
 
 	this.Linked = function ( data ) {
 		var result = [], list = {}, i;
