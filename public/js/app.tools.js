@@ -265,3 +265,18 @@ function jsonp ( url ) {
 	}, 10000);
 }
 
+/**
+ * Set input watermark hint
+ * @param obj html element
+ * @param text string hint
+ * @param cin string color
+ */
+function watermark ( obj, text, cin ) {
+	$(obj)
+		.focus(function(){
+			if ( this.value == text ) $(this).val('').css({color:cin});
+		})
+		.focusout(function(){
+			if ( !this.value ) $(this).val(text).css({color:''});
+		});
+}

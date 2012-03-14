@@ -106,15 +106,10 @@ var TemplateList = new function () {
 
 		this.dom.filter = element('input', {type:'text', value:hint_filter});
 		// watermark and filtering
-		$(this.dom.filter)
-			.focus(function(){if(this.value==hint_filter)$(this).val('').css({color:'#999'});})
-			.focusout(function(){if(!this.value)$(this).val(hint_filter).css({color:''});})
-			.keyup(function(){self.Filter(this.value);});
+		watermark(this.dom.filter, hint_filter, '#000');
+		$(this.dom.filter).keyup(function(){self.Filter(this.value);});
 
 		// title
 		elchild(this.dom.title, [element('div', {className:'text'}, 'Templates'), this.dom.filter]);
-
-		// build the list of templates
-		//this.Fill();
 	}
 };
