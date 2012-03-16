@@ -47,6 +47,11 @@ var NoteEditor = new function () {
 			// tags block
 			this.dom.tags.input.disabled = false;
 			this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags);
+			// fill autocompleter
+			var data = [];
+			// prepare all tags
+			for ( var tid in data_tags_idlist ) data.push([data_tags_idlist[tid], tid]);
+			$(this.dom.tags.input).data('autocompleter').options.data = data;
 			// component state flag
 			this.open = true;
 		}
@@ -89,6 +94,8 @@ var NoteEditor = new function () {
 			this.dom.tags.input.disabled = true;
 			this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value);
 			this.dom.tags.input.value = '[encrypted tags]';
+			// clear autocompleter
+			$(this.dom.tags.input).data('autocompleter').options.data = [];
 			// component state flag
 			this.open = false;
 		}
@@ -614,7 +621,7 @@ var NoteEditor = new function () {
 		// this is a password entry
 		if ( entry.data.id_type == 4 ) {
 			entry.dom.btn_pwdgen = element('img', {src:'img/field_btn_pwdgen.png', className:'button', title:'generate a new password'}, null, {
-				onclick:function(){entry.dom.data.value = pwdgen(20); entry.dom.data.onchange(); }
+				onclick:function(){entry.dom.data.value = pwdgen(20);entry.dom.data.onchange();}
 			});
 			buttons.push(entry.dom.btn_pwdgen);
 		}
@@ -724,7 +731,7 @@ var NoteEditor = new function () {
 		}
 
 		// drag and drop
-		$(self.dom.entries).sortable({containment:'parent', cursor:'move', handle:'.title .icon'});
+		//$(self.dom.entries).sortable({containment:'parent', cursor:'move', handle:'.title .icon'});
 
 		// return container
 		return self.dom.entries;
@@ -761,6 +768,36 @@ var NoteEditor = new function () {
 			// change icon if necessary
 			//SetTitleIcon();
 		};
+
+		var data = [];
+		// prepare all tags
+		for ( var tid in data_tags_idlist ) data.push([data_tags_idlist[tid], tid]);
+		// add autocompletion
+		$(self.dom.tags.input).autocomplete({
+			matchInside: false,
+			selectFirst: true,
+			useDelimiter: true,
+			delimiterChar: ' ',
+			delimiterKeyCode: 32,
+			minChars: 1,
+			autoWidth: 'width',
+			delay: 200,
+			data: data,
+			showResult: function(tag){
+				// wrap to div with icon
+				return '<div class="tag">' + tag + '</div>';
+			},
+			processData: function(data){
+				// get tags array
+				var result = [], tags = self.dom.tags.input.value.match(/(\S+)/g);
+				// truncate available suggestion options
+				data.each(function(item){
+					if ( !tags.has(item[0]) ) result.push(item);
+				});
+				return result;
+			}
+		});
+
 //		var timer = null;
 //		input.onkeydown = function() {
 //			// only for edit mode
@@ -780,7 +817,7 @@ var NoteEditor = new function () {
 		// return container
 		return self.dom.controls = element('div', {className:'buttons'}, [
 			element('input', {type:'button', value:'Back', className:'button'}, null, {onclick: self.oncancel}),
-			element('input', {type:'button', value:'Save', className:'button bold', title:'press Ctrl+Enter to save'}, null, {onclick: function(){ self.Save(); }})
+			element('input', {type:'button', value:'Save', className:'button bold', title:'press Ctrl+Enter to save'}, null, {onclick: function(){self.Save();}})
 		]);
 	};
 

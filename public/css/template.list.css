@@ -12,4 +12,5 @@
 		.templatelist > .list > .item .line { background:url("../img/template.png") no-repeat left center; padding-left:25px }
 		.templatelist > .list > .item .name { font-weight:bold }
 		.templatelist > .list > .item .hint { font-size:11px; color:#aaa }
-	.templatelist > .hint { padding:5px; border:1px solid #eee; color:#aaa; background-color:#F9F9F9 }
+	.templatelist > .hint { padding:5px; border:1px solid #eee; font-size:11px; color:#aaa; background-color:#F9F9F9 }
+		.templatelist > .hint * { font-size:inherit }

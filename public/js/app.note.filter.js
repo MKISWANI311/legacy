@@ -27,6 +27,22 @@ var NoteFilter = new function () {
 		// fill search string
 		if ( this.dom.tinput.encval ) this.dom.tinput.value = App.Decode(this.dom.tinput.encval);
 		if ( this.dom.winput.encval ) this.dom.winput.value = App.Decode(this.dom.winput.encval);
+		// fill autocompleter
+//		var data = [];
+//		//data.push([':all', 0]);
+//		//data.push([':active', 0]);
+//		data.push([':deleted', 0]);
+//		data.push([':notags', 0]);
+//		data.push([':day', 0]);
+//		data.push([':week', 0]);
+//		data.push([':month', 0]);
+//		data.push([':last1m', 0]);
+		for ( var tid in data_tags_idlist ) {
+			fb(data_tags_idlist[tid], tid);
+			//data.push([data_tags_idlist[tid], tid]);
+			//data.push(['-' + data_tags_idlist[tid], tid]);
+		}
+//		$(this.dom.tinput).data('autocompleter').options.data = data;
 		// build notes
 		//TagsProceed();
 		// component state flag
@@ -50,6 +66,8 @@ var NoteFilter = new function () {
 			this.dom.tinput.value  = '[encrypted data]';
 			this.dom.winput.encval = App.Encode(this.dom.winput.value);
 			this.dom.winput.value  = '[encrypted data]';
+			// clear autocompleter
+			$(this.dom.tinput).data('autocompleter').options.data = [];
 			// component state flag
 			this.open = false;
 		}
@@ -125,9 +143,9 @@ var NoteFilter = new function () {
 	 */
 	var CheckMissingTags = function () {
 		// check
-		if ( self.data.tags.winc.length > 0 || self.data.tags.wexc.length > 0 ) {
+		if ( self.data.winc.length > 0 || self.data.wexc.length > 0 ) {
 			// merging
-			var words = self.data.tags.winc.concat(self.data.tags.wexc);
+			var words = self.data.winc.concat(self.data.wexc);
 			self.MsgSet(['Here is the list of words used which are not your tags: ', element('span', {className:'bold'}, words.join(', ')), '. They were omitted.'], 'warn');
 		}
 	};
@@ -137,7 +155,9 @@ var NoteFilter = new function () {
 	 */
 	this.NotesRequest = function ( tinc, texc ) {
 		LoadingStart();
-		$.post('/note/search/', {tinc:tinc, texc:texc}, function(data){
+		// clone current data to post
+		this.post = $.extend({}, this.data);
+		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc}, function(data){
 			if ( !data.error ) {
 				NoteList.RenderTable(data);
 				// no data, need to inform
@@ -158,6 +178,19 @@ var NoteFilter = new function () {
 	}
 
 	/**
+	 * Prepare inned data from user input
+	 */
+	var ParseSearchStr = function () {
+		// check if old and current values match
+		if ( self.dom.tinput.value !== self.dom.tinput.oldval ) {
+			fb('new search value');
+			// new data so updating
+			self.data = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
+			self.dom.tinput.oldval = self.dom.tinput.value;
+		}
+	}
+
+	/**
 	 * Keyboard input handler for tag search
 	 */
 	var TagsProceed = function () {
@@ -166,16 +199,27 @@ var NoteFilter = new function () {
 		var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
 		if ( text ) {
 			fb('checking ...');
-			var tags = TagManager.ParseStr(text);
-			var tinc = tags.tinc.sort().join();
-			var texc = tags.texc.sort().join();
+			ParseSearchStr();
+			// rework search string
+			var tinput = '', winput = '';
+			if ( self.data.texc.length > 0 ) tinput += TagManager.IDs2Names(self.data.texc, '-').join(' ');
+			if ( self.data.tinc.length > 0 ) tinput += (tinput ? ' ' : '') + TagManager.IDs2Names(self.data.tinc).join(' ');
+			self.dom.tinput.value = tinput;
+			//if ( self.data.wexc.length > 0 ) winput += TagManager.IDs2Names(self.data.wexc, '-').join(' ');
+			if ( self.data.winc.length > 0 ) winput += (winput ? ' ' : '') + self.data.winc.join(' ');
+			self.dom.winput.value = winput;
+//			var tags = TagManager.ParseStr(text);
+//			var tinc = tags.tinc.sort().join();
+//			var texc = tags.texc.sort().join();
 			// parsed tags don't match
-			if ( self.data.tags.tinc.sort().join() != tinc || self.data.tags.texc.sort().join() != texc ) {
+			if ( self.data.tinc.sort().join() !== self.post.tinc.sort().join() ||
+				 self.data.texc.sort().join() !== self.post.texc.sort().join() )
+			{
 				// there are changes
 				fb('!!!');
-				self.NotesRequest(tags.tinc, tags.texc);
+				self.NotesRequest();
 			}
-			self.data.tags = tags;
+			//self.data = tags;
 			// there may be wrong tags
 			CheckMissingTags();
 		} else {
@@ -189,7 +233,7 @@ var NoteFilter = new function () {
 	 */
 	this.TagInclude = function ( tag_id ) {
 		// not added already and exists
-		if ( !this.data.tags.tinc.has(tag_id) && data_tags_idlist[tag_id] ) {
+		if ( !this.data.tinc.has(tag_id) && data_tags_idlist[tag_id] ) {
 			// prepare
 			var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value.trim() : '');
 			// concatenation
@@ -205,7 +249,7 @@ var NoteFilter = new function () {
 	 */
 	this.TagExclude = function ( tag_id ) {
 		// not added already and exists
-		if ( !this.data.tags.texc.has(tag_id) && data_tags_idlist[tag_id] ) {
+		if ( !this.data.texc.has(tag_id) && data_tags_idlist[tag_id] ) {
 			// prepare
 			var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value.trim() : '');
 			// concatenation
@@ -232,7 +276,7 @@ var NoteFilter = new function () {
 		self.dom.tinput.value  = hint_filter_tags;
 		self.dom.tinput.focus();
 		// clear tags data
-		this.data.tags = TagManager.ParseStr();
+		this.data = TagManager.ParseStr();
 		// delete all messages
 		self.MsgReset();
 		self.MsgShow();
@@ -248,9 +292,9 @@ var NoteFilter = new function () {
 		// html parent object
 		this.dom = {handle:params.handle};
 
-		this.data = {
-			tags : TagManager.ParseStr()
-		};
+		// parsed input data and its copy on post
+		this.data = TagManager.ParseStr();
+		this.post = TagManager.ParseStr();
 
 		// build all blocks together
 		elchild(this.dom.handle, [
@@ -260,9 +304,9 @@ var NoteFilter = new function () {
 				element('img', {className:'', src:'img/2x2_grid.png'}),
 				// tags search input
 				element('div', {}, [
-					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags}),
-					this.dom.ticon   = element('div', {className:'ticon'}),
-					this.dom.suggest = element('div', {className:'suggest'}, 'suggest')
+					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:''}),
+					this.dom.ticon   = element('div', {className:'ticon'})
+					//this.dom.suggest = element('div', {className:'suggest'}, 'suggest')
 				]),
 				// words search input
 				element('div', {}, [
@@ -285,18 +329,92 @@ var NoteFilter = new function () {
 		$(this.dom.tinput).bind('keypress', function(event) {
 			if ( event.which == 13 ) {
 				TagsProceed();
+				//self.dom.suggest.style.width = self.dom.tinput.offsetWidth-30;
+				//self.dom.suggest.style.display = 'block';
+			}
+		});
+
+		$(this.dom.tinput).autocomplete({
+			matchInside: false,
+			selectFirst: true,
+			useDelimiter: true,
+			delimiterChar: ' ',
+			delimiterKeyCode: 32,
+			minChars: 1,
+			autoWidth: 'width',
+			delay: 200,
+			data: [true],
+			showResult: function(tag){
+				var cname = tag.charAt(0) === ':' ? 'cmd' : 'tag';
+				// wrap to div with icon
+				return '<div class="'+cname+'">' + tag + '</div>';
+			},
+//			beforeUseConverter: function(data){
+//				//fb(data);
+//				//if ( data.charAt(0) === '-' ) data = data.slice(1);
+//				return data;
+//			},
+			processData: function(data){
+				// get tags array
+				//var result = [];//, tags = self.dom.tinput.value.match(/(\S+)/g);
+				// parsing current input
+				//var pstr = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
+				// get linked with already selected
+//				var lnids = TagManager.Linked(self.data.tinc);
+//				var lnwrd = TagManager.IDs2Names(lnids);
+//				fb(lnwrd);
+//				fb(data);
+//				// truncate available suggestion options
+//				data.each(function(item){
+//					// find if there are special chars at the beginning of the word
+//					var fchar = item[0].charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
+//					// get the word without special chars if present
+//					var word = fexc || fcmd ? item[0].slice(1) : item[0];
+//					if ( self.data.tinc.length === 0 || fexc || fcmd || lnwrd.has(item[0]) )
+//						if ( !self.data.list.has(item[0]) && !self.data.ninc.has(word) ) result.push(item);
+//				});
+				//return data;
+//				data.each(function(item){
+//					item[0] = '*' + item[0];
+//					result.push(item);
+//				});
+				//fb(this);
+				//fb(data);
+				//return data;
+				if ( data.length > 0 ) {
+					data = [];
+					if ( !self.data.wcmd.has('deleted') ) data.push([':deleted', 0]);
+					if ( !self.data.wcmd.has('notags') )  data.push([':notags', 0]);
+					if ( !self.data.wcmd.has('day') )     data.push([':day', 0]);
+					if ( !self.data.wcmd.has('week') )    data.push([':week', 0]);
+					if ( !self.data.wcmd.has('month') )   data.push([':month', 0]);
+					var lnids = [];
+					// get linked tags to already selected
+					if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+					// iterate all tags
+					for ( var tnm in data_tags_nmlist ) {
+						// get tag id
+						var tid = data_tags_nmlist[tnm];
+						// there are no including tags selected or it's one of the linked tag
+						if ( self.data.tinc.length === 0 || lnids.has(tid) )
+							// was not added so add it
+							if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) data.push([tnm, tid], ['-'+tnm, tid]);
+					}
+				}
+				fb(data);
+				return data;
 			}
 		});
 
 		// handle input
-//		var ttimer = null;
-//		this.dom.tinput.onkeydown = function() {
-//			if ( ttimer ) clearTimeout(ttimer);
-//			ttimer = setTimeout(function(){
-//				self.data.tags = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
-//				CheckMissingTags();
-//			}, 300);
-//		}
+		var ttimer = null;
+		this.dom.tinput.onkeydown = function() {
+			if ( ttimer ) clearTimeout(ttimer);
+			ttimer = setTimeout(function(){
+				ParseSearchStr();
+				//CheckMissingTags();
+			}, 150);
+		}
 //
 //		// handle input
 //		var wtimer = null;

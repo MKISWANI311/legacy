@@ -80,10 +80,11 @@ var TagManager = new function () {
 	/**
 	 * Converts the array of tags ids to tags names
 	 * @param data array of tags (integers or encrypted strings)
+	 * @param prefix string to prepend to each tag name
 	 * @return tags names array
 	 * @example [1,2,'***encrypted string***',3] -> ['ftp','note','ssh','site']
 	 */
-	this.IDs2Names = function ( data ) {
+	this.IDs2Names = function ( data, prefix ) {
 		var name, result = [];
 		// check input
 		if ( data && data instanceof Array )
@@ -92,12 +93,12 @@ var TagManager = new function () {
 				// check type
 				if ( isNaN(data[i]) ) {
 					// seems this is a real-time encrypted string
-					if ( (name = App.Decode(data[i], true)) !== false ) result.push(name);
+					if ( (name = App.Decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
 				} else {
 					// seems normal tag id
 					if ( data_tags_idlist[data[i]] )
 						// tag found in the global list
-						result.push(data_tags_idlist[data[i]]);
+						result.push((prefix ? prefix : '') + data_tags_idlist[data[i]]);
 				}
 			}
 		return result.sort();
@@ -204,35 +205,55 @@ var TagManager = new function () {
 	};
 
 	this.ParseStr = function ( data ) {
-		var tinc = [];  // array of included tags ids
-		var texc = [];  // array of excluded tags ids
-		var winc = [];  // array of included words
-		var wexc = [];  // array of excluded words
+		var list = [],  // array of all parts
+			tinc = [],  // array of included tags ids
+			texc = [],  // array of excluded tags ids
+			ninc = [],  // array of included tags names
+			nexc = [],  // array of excluded tags names
+			winc = [],  // array of included words (not tags)
+			wexc = [],  // array of excluded words (not tags)
+			wcmd = [];  // array of command words
 
 		// check input
 		if ( data && data.match ) {
 			// split to separate words
-			data = data.match(/(\S+)/g);
-			if ( data && data instanceof Array ) {
-				data.sort();
+			list = data.match(/(\S+)/g);
+			if ( list && list instanceof Array ) {
+				list.sort();
 				// iterate words in the input string
-				for ( var i = 0; i < data.length; i++ ) {
-					var fexc = ( data[i].charAt(0) == '-' );
-					var word = fexc ? data[i].slice(1) : data[i];
-					var tid  = data_tags_nmlist[word];
-					// tag id found in the global data
-					if ( tid ) {
-						if ( fexc ) {if ( !texc.has(tid) ) texc.push(tid);}
-						else if ( !tinc.has(tid) ) tinc.push(tid);
-					} else {
-						// tag id not found so it's just a word
-						if ( fexc ) {if ( !wexc.has(word) ) wexc.push(word);}
-						else if ( !winc.has(word) ) winc.push(word);
+				for ( var i = 0; i < list.length; i++ ) {
+					// find if there are special chars at the beginning of the word
+					var fchar = list[i].charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
+					// get the word without special chars if present
+					var word = fexc || fcmd ? list[i].slice(1) : list[i];
+					// not empty
+					if ( word ) {
+						// command
+						if ( fcmd ) {
+							if ( !wcmd.has(word) ) wcmd.push(word);
+						} else {
+							// just a tag
+							var tid  = data_tags_nmlist[word];
+							// tag id found in the global data
+							if ( tid ) {
+								if ( fexc ) {
+									// excluded
+									if ( !texc.has(tid) ) { texc.push(tid); nexc.push(word); }
+								} else {
+									// included
+									if ( !tinc.has(tid) ) { tinc.push(tid); ninc.push(word); }
+								}
+							} else {
+								// tag id not found so it's just a word
+								if ( fexc ) {if ( !wexc.has(word) ) wexc.push(word);}
+								else if ( !winc.has(word) ) winc.push(word);
+							}
+						}
 					}
 				}
 			}
 		}
-		return {tinc:tinc, texc:texc, winc:winc, wexc:wexc};
+		return {list:list, tinc:tinc, texc:texc, ninc:ninc, nexc:nexc, winc:winc, wexc:wexc, wcmd:wcmd};
 	}
 
 //	this.StrCombine = function ( data ) {
@@ -259,7 +280,7 @@ var TagManager = new function () {
 				});
 				for ( i in list ) {
 					if ( list[i] === data.length ) {
-						result.push(i);
+						result.push(parseInt(i,10));
 					}
 				}
 				//fb(list);

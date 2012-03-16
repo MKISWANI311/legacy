@@ -46,9 +46,10 @@
 			.noteeditor .entries .entry .history td { padding:2px 4px }
 			.noteeditor .entries .entry .history td.ctrl { text-align:right }
 
-		.noteeditor .entries .entry .hint, .noteeditor .tags .hint { width:100%; color:#aaa; margin-top:0px }
+		.noteeditor .entries .entry .hint, .noteeditor .tags .hint { width:100%; color:#aaa; margin-top:0px; font-size:11px }
 		.noteeditor .entries .entry .hint .counter { text-align:right }
-			.noteeditor .entries .entry .hint .counter span { font-size:10px; font-weight:bold }
+			.noteeditor .entries .entry .hint span { font-size:11px }
+			.noteeditor .entries .entry .hint .counter span { font-weight:bold }
 			.noteeditor .entries .entry .hint .counter span.limit { color:red }
 
 	.noteeditor .tags .name { font-weight:bold }

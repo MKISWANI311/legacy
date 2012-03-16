@@ -20,13 +20,13 @@
 		.notefilter > table.main td.tags { padding:0 5px }
 			.notefilter > table.main td.tags > div { position:relative }
 				.notefilter > table.main td.tags > div > .line  { color:#ccc; padding-left:30px }
-				.notefilter > table.main td.tags > div > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:26px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
+				.notefilter > table.main td.tags > div > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
 				.notefilter > table.main td.tags > div > .ticon.loading { background-image:url("../img/loading.16.gif"); }
-				.notefilter > table.main td.tags > div > .suggest { position:absolute; border:1px solid #ddd; display:none }
+				.notefilter > table.main td.tags > div > .suggest { position:absolute; display:none; background-color:#fff; left:30px; box-shadow: 0 0 3px rgba(0, 0, 0, 0.5) }
 		.notefilter > table.main td.words  { width:250px }
 			.notefilter > table.main td.words > div { position:relative }
 				.notefilter > table.main td.words > div > .line  { color:#ccc; padding-left:30px }
-				.notefilter > table.main td.words > div > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:26px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }
+				.notefilter > table.main td.words > div > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }
 	.notefilter > .messages { margin-top:10px }
 	.notefilter > .messages.loading { opacity:0.4 }
 		.notefilter > .messages > .info,
