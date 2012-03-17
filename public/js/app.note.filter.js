@@ -37,14 +37,14 @@ var NoteFilter = new function () {
 //		data.push([':week', 0]);
 //		data.push([':month', 0]);
 //		data.push([':last1m', 0]);
-		for ( var tid in data_tags_idlist ) {
-			fb(data_tags_idlist[tid], tid);
-			//data.push([data_tags_idlist[tid], tid]);
-			//data.push(['-' + data_tags_idlist[tid], tid]);
-		}
+//		for ( var tid in data_tags_idlist ) {
+//			fb(data_tags_idlist[tid], tid);
+//			//data.push([data_tags_idlist[tid], tid]);
+//			//data.push(['-' + data_tags_idlist[tid], tid]);
+//		}
 //		$(this.dom.tinput).data('autocompleter').options.data = data;
 		// build notes
-		//TagsProceed();
+		//PerformSearch();
 		// component state flag
 		this.open = true;
 	};
@@ -157,7 +157,7 @@ var NoteFilter = new function () {
 		LoadingStart();
 		// clone current data to post
 		this.post = $.extend({}, this.data);
-		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc}, function(data){
+		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd}, function(data){
 			if ( !data.error ) {
 				NoteList.RenderTable(data);
 				// no data, need to inform
@@ -180,40 +180,57 @@ var NoteFilter = new function () {
 	/**
 	 * Prepare inned data from user input
 	 */
-	var ParseSearchStr = function () {
+	var ParseSearchStr = function ( rework ) {
 		// check if old and current values match
 		if ( self.dom.tinput.value !== self.dom.tinput.oldval ) {
-			fb('new search value');
+			fb('new search value parsed');
 			// new data so updating
 			self.data = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
 			self.dom.tinput.oldval = self.dom.tinput.value;
+		}
+		// need to rework search inputs
+		if ( rework ) {
+			var list = [],
+				tinc = TagManager.IDs2Names(self.data.tinc).join(' '),
+				texc = TagManager.IDs2Names(self.data.texc).join(' '),
+				winc = self.data.winc.join(' '),
+				wexc = self.data.wexc.join(' -'),
+				wcmd = self.data.wcmd.join(' :');
+			if ( wcmd ) list.push(':'+wcmd);
+			if ( texc ) list.push('-'+texc);
+			if ( tinc ) list.push(tinc);
+			self.dom.tinput.value = list.join(' ') + ' ';
+			if ( winc || wexc ) {
+				list = [];
+				if ( winc ) list.push(winc);
+				if ( wexc ) list.push('-'+wexc);
+				self.dom.winput.value = list.join(' ');
+				// style correction
+				self.dom.winput.style.color = '#000';
+			}
 		}
 	}
 
 	/**
 	 * Keyboard input handler for tag search
 	 */
-	var TagsProceed = function () {
+	var PerformSearch = function () {
 		self.MsgReset();
 		// prepare input
 		var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
 		if ( text ) {
 			fb('checking ...');
-			ParseSearchStr();
 			// rework search string
-			var tinput = '', winput = '';
-			if ( self.data.texc.length > 0 ) tinput += TagManager.IDs2Names(self.data.texc, '-').join(' ');
-			if ( self.data.tinc.length > 0 ) tinput += (tinput ? ' ' : '') + TagManager.IDs2Names(self.data.tinc).join(' ');
-			self.dom.tinput.value = tinput;
 			//if ( self.data.wexc.length > 0 ) winput += TagManager.IDs2Names(self.data.wexc, '-').join(' ');
-			if ( self.data.winc.length > 0 ) winput += (winput ? ' ' : '') + self.data.winc.join(' ');
-			self.dom.winput.value = winput;
+			//if ( self.data.winc.length > 0 ) winput += (winput ? ' ' : '') + self.data.winc.join(' ');
+			//self.dom.winput.value = winput;
 //			var tags = TagManager.ParseStr(text);
 //			var tinc = tags.tinc.sort().join();
 //			var texc = tags.texc.sort().join();
 			// parsed tags don't match
 			if ( self.data.tinc.sort().join() !== self.post.tinc.sort().join() ||
-				 self.data.texc.sort().join() !== self.post.texc.sort().join() )
+				 self.data.texc.sort().join() !== self.post.texc.sort().join() ||
+				 self.data.wcmd.sort().join() !== self.post.wcmd.sort().join() )
 			{
 				// there are changes
 				fb('!!!');
@@ -241,7 +258,7 @@ var NoteFilter = new function () {
 			// style correction
 			this.dom.tinput.style.color = '#000';
 		}
-		TagsProceed();
+		PerformSearch();
 	};
 
 	/**
@@ -257,7 +274,7 @@ var NoteFilter = new function () {
 			// style correction
 			this.dom.tinput.style.color = '#000';
 		}
-		TagsProceed();
+		PerformSearch();
 	};
 
 	/**
@@ -328,7 +345,10 @@ var NoteFilter = new function () {
 
 		$(this.dom.tinput).bind('keypress', function(event) {
 			if ( event.which == 13 ) {
-				TagsProceed();
+				// prepare inner parsed data
+				ParseSearchStr(true);
+				// do search
+				PerformSearch();
 				//self.dom.suggest.style.width = self.dom.tinput.offsetWidth-30;
 				//self.dom.suggest.style.display = 'block';
 			}
@@ -355,50 +375,26 @@ var NoteFilter = new function () {
 //				return data;
 //			},
 			processData: function(data){
-				// get tags array
-				//var result = [];//, tags = self.dom.tinput.value.match(/(\S+)/g);
-				// parsing current input
-				//var pstr = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
-				// get linked with already selected
-//				var lnids = TagManager.Linked(self.data.tinc);
-//				var lnwrd = TagManager.IDs2Names(lnids);
-//				fb(lnwrd);
-//				fb(data);
-//				// truncate available suggestion options
-//				data.each(function(item){
-//					// find if there are special chars at the beginning of the word
-//					var fchar = item[0].charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
-//					// get the word without special chars if present
-//					var word = fexc || fcmd ? item[0].slice(1) : item[0];
-//					if ( self.data.tinc.length === 0 || fexc || fcmd || lnwrd.has(item[0]) )
-//						if ( !self.data.list.has(item[0]) && !self.data.ninc.has(word) ) result.push(item);
-//				});
-				//return data;
-//				data.each(function(item){
-//					item[0] = '*' + item[0];
-//					result.push(item);
-//				});
-				//fb(this);
-				//fb(data);
-				//return data;
 				if ( data.length > 0 ) {
 					data = [];
 					if ( !self.data.wcmd.has('deleted') ) data.push([':deleted', 0]);
 					if ( !self.data.wcmd.has('notags') )  data.push([':notags', 0]);
-					if ( !self.data.wcmd.has('day') )     data.push([':day', 0]);
-					if ( !self.data.wcmd.has('week') )    data.push([':week', 0]);
-					if ( !self.data.wcmd.has('month') )   data.push([':month', 0]);
-					var lnids = [];
-					// get linked tags to already selected
-					if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
-					// iterate all tags
-					for ( var tnm in data_tags_nmlist ) {
-						// get tag id
-						var tid = data_tags_nmlist[tnm];
-						// there are no including tags selected or it's one of the linked tag
-						if ( self.data.tinc.length === 0 || lnids.has(tid) )
-							// was not added so add it
-							if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) data.push([tnm, tid], ['-'+tnm, tid]);
+					if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+						data.push([':day', 0], [':week', 0], [':month', 0]);
+					// if notags mode than no tags suggesting
+					if ( !self.data.wcmd.has('notags') ) {
+						var lnids = [];
+						// get linked tags to already selected
+						if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+						// iterate all tags
+						for ( var tnm in data_tags_nmlist ) {
+							// get tag id
+							var tid = data_tags_nmlist[tnm];
+							// there are no including tags selected or it's one of the linked tag
+							if ( self.data.tinc.length === 0 || lnids.has(tid) )
+								// was not added so add it
+								if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) data.push([tnm, tid], ['-'+tnm, tid]);
+						}
 					}
 				}
 				fb(data);
@@ -411,6 +407,7 @@ var NoteFilter = new function () {
 		this.dom.tinput.onkeydown = function() {
 			if ( ttimer ) clearTimeout(ttimer);
 			ttimer = setTimeout(function(){
+				// prepare inner parsed data
 				ParseSearchStr();
 				//CheckMissingTags();
 			}, 150);

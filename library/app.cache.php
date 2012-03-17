@@ -271,7 +271,7 @@ class cache {
 					$note_idlist), 'id_note');
 				// extent found notes with tags and entries
 				foreach ( $data as & $note ) {
-					$note['tags'] = $tags[$note['id']];
+					$note['tags'] = value($tags[$note['id']], array());
 					$note['entries'] = array_values($entries[$note['id']]);
 				}
 			}

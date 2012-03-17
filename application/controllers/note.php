@@ -132,37 +132,48 @@ class note extends controller {
 		$result = array();
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
-			// check tags in request, remove duplicates
+			// check tags and commands in request, remove duplicates
 			if ( ($tinc = value($_REQUEST['tinc'], array())) && is_array($tinc) ) $tinc = array_unique($tinc);
 			if ( ($texc = value($_REQUEST['texc'], array())) && is_array($texc) ) $texc = array_unique($texc);
-			// there are really some tags
-			if ( $tinc || $texc ) {
-				// no intersection
-				if ( !array_intersect($tinc, $texc) ) {
-					$where = array('id_user = '.$id_user, 'is_active = 1');
+			if ( ($wcmd = value($_REQUEST['wcmd'], array())) && is_array($wcmd) ) $wcmd = array_unique($wcmd);
+			// no intersection
+			if ( !array_intersect($tinc, $texc) ) {
+				// flags
+				$is_active = in_array('deleted', $wcmd) ? 0 : 1;
+				$is_notags = in_array('notags',  $wcmd);
+				// modification time
+				$mtime = 'mtime > 0';
+				if ( in_array('day',   $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 86400);
+				if ( in_array('week',  $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 604800);
+				if ( in_array('month', $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 2592000);
+				// condition building
+				$where = array('id_user = '.$id_user, 'is_active = '.$is_active, $mtime);
+				// tagless
+				if ( $is_notags ) {
+					$where[] = 'id not in (select id_note from note_tags)';
+				} else {
+					// there are really some tags
 					if ( $tinc ) $where[] = db::sql('id in (select id_note from note_tags where id_tag in @li group by id_note having count(id_tag) = @i)', $tinc, count($tinc))->scalar;
 					if ( $texc ) $where[] = db::sql('id not in (select distinct id_note from note_tags where id_tag in @li)', $texc)->scalar;
-					$sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc';
-					if ( ($result = db::query($sql)) ) {
-						// extract note ids
-						$note_idlist = matrix_column($result, 'id');
-						// find entries and tags for found notes
-						$tags    = matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note');
-						$entries = matrix_group(db::query(
-							'select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place',
-							$note_idlist), 'id_note');
-						// extent found notes with tags and entries
-						foreach ( $result as & $note ) {
-							$note['tags'] = $tags[$note['id']];
-							$note['entries'] = array_values($entries[$note['id']]);
-						}
-					}
-					//fb(hash('sha256', implode(',', $tags)));
-				} else {
-					$result['error'] = 'intersection of include and exclude tags';
 				}
+				// building all together
+				$sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc';
+				if ( ($result = db::query($sql)) ) {
+					// extract note ids
+					$note_idlist = matrix_column($result, 'id');
+					// find tags for found notes if there are some
+					$tags = !$is_notags ? matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note') : array();
+					// find entries for found notes
+					$entries = matrix_group(db::query('select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place', $note_idlist), 'id_note');
+					// extent found notes with tags and entries
+					foreach ( $result as & $note ) {
+						$note['tags'] = value($tags[$note['id']], array());
+						$note['entries'] = array_values($entries[$note['id']]);
+					}
+				}
+				//fb(hash('sha256', implode(',', $tags)));
 			} else {
-				$result['error'] = 'no tags';
+				$result['error'] = 'intersection of include and exclude tags';
 			}
 		} else {
 			$result['error'] = 'not authorized';
