@@ -39,12 +39,13 @@ var NoteFilter = new function () {
 //		data.push([':last1m', 0]);
 //		for ( var tid in data_tags_idlist ) {
 //			fb(data_tags_idlist[tid], tid);
-//			//data.push([data_tags_idlist[tid], tid]);
+//			data.push([data_tags_idlist[tid], tid]);
 //			//data.push(['-' + data_tags_idlist[tid], tid]);
 //		}
-//		$(this.dom.tinput).data('autocompleter').options.data = data;
+//		this.ac.options.data = data;
 		// build notes
 		//PerformSearch();
+		//NoteList.RenderTable(false);
 		// component state flag
 		this.open = true;
 	};
@@ -66,6 +67,7 @@ var NoteFilter = new function () {
 			this.dom.tinput.value  = '[encrypted data]';
 			this.dom.winput.encval = App.Encode(this.dom.winput.value);
 			this.dom.winput.value  = '[encrypted data]';
+			//TODO: encrypt/decrypt history
 			// clear autocompleter
 			$(this.dom.tinput).data('autocompleter').options.data = [];
 			// component state flag
@@ -178,65 +180,75 @@ var NoteFilter = new function () {
 	}
 
 	/**
-	 * Prepare inned data from user input
+	 * Prepares inner data from user input if changed since last time
 	 */
-	var ParseSearchStr = function ( rework ) {
+	var ParseSearchStr = function () {
 		// check if old and current values match
 		if ( self.dom.tinput.value !== self.dom.tinput.oldval ) {
-			fb('new search value parsed');
 			// new data so updating
 			self.data = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
 			self.dom.tinput.oldval = self.dom.tinput.value;
 		}
-		// need to rework search inputs
-		if ( rework ) {
-			var list = [],
-				tinc = TagManager.IDs2Names(self.data.tinc).join(' '),
-				texc = TagManager.IDs2Names(self.data.texc).join(' '),
-				winc = self.data.winc.join(' '),
-				wexc = self.data.wexc.join(' -'),
-				wcmd = self.data.wcmd.join(' :');
-			if ( wcmd ) list.push(':'+wcmd);
-			if ( texc ) list.push('-'+texc);
-			if ( tinc ) list.push(tinc);
-			self.dom.tinput.value = list.join(' ') + ' ';
-			if ( winc || wexc ) {
-				list = [];
-				if ( winc ) list.push(winc);
-				if ( wexc ) list.push('-'+wexc);
-				self.dom.winput.value = list.join(' ');
-				// style correction
-				self.dom.winput.style.color = '#000';
-			}
-		}
 	}
+
+	/**
+	 * Rebuilds the user input
+	 */
+	var ReworkSearchStr = function ( ctrl ) {
+		// fill history if not duplicate
+		if ( self.dom.tinput.value &&
+			(self.dom.tinput.history.length === 0 || self.dom.tinput.history[self.dom.tinput.history.length-1].trim() !== self.dom.tinput.value.trim()) )
+		{
+			self.dom.tinput.history.push(self.dom.tinput.value);
+			self.dom.tinput.histpos = self.dom.tinput.history.length;
+		}
+		// prepare
+		var list = [],
+			tinc = TagManager.IDs2Names(self.data.tinc).join(' '),
+			texc = TagManager.IDs2Names(self.data.texc).join(' -'),
+			winc = self.data.winc.join(' '),
+			wexc = self.data.wexc.join(' -'),
+			wcmd = self.data.wcmd.join(' :');
+		// fill temp data
+		if ( wcmd ) list.push(':'+wcmd);
+		if ( texc ) list.push('-'+texc);
+		if ( tinc ) list.push(tinc);
+		// reset input
+		self.dom.tinput.value = '';
+		// there was some data entered
+		if ( list.length > 0 ) self.dom.tinput.value = list.join(' ') + ' ';
+		// filter field
+		if ( winc || wexc ) {
+			list = [];
+			if ( winc ) list.push(winc);
+			if ( wexc ) list.push('-'+wexc);
+			self.dom.winput.value = list.join(' ');
+			// style correction
+			self.dom.winput.style.color = '#000';
+		}
+		// force filter clearing
+		if ( ctrl ) {
+			self.dom.winput.value = hint_filter_words;
+			self.dom.winput.style.color = '#ccc';
+		}
+	};
 
 	/**
 	 * Keyboard input handler for tag search
 	 */
 	var PerformSearch = function () {
 		self.MsgReset();
-		// prepare input
-		var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
-		if ( text ) {
+		// not empty input
+		if ( self.dom.tinput.value !== hint_filter_tags && self.dom.tinput.value !== '' ) {
 			fb('checking ...');
-			// rework search string
-			//if ( self.data.wexc.length > 0 ) winput += TagManager.IDs2Names(self.data.wexc, '-').join(' ');
-			//if ( self.data.winc.length > 0 ) winput += (winput ? ' ' : '') + self.data.winc.join(' ');
-			//self.dom.winput.value = winput;
-//			var tags = TagManager.ParseStr(text);
-//			var tinc = tags.tinc.sort().join();
-//			var texc = tags.texc.sort().join();
 			// parsed tags don't match
 			if ( self.data.tinc.sort().join() !== self.post.tinc.sort().join() ||
 				 self.data.texc.sort().join() !== self.post.texc.sort().join() ||
 				 self.data.wcmd.sort().join() !== self.post.wcmd.sort().join() )
 			{
 				// there are changes
-				fb('!!!');
 				self.NotesRequest();
 			}
-			//self.data = tags;
 			// there may be wrong tags
 			CheckMissingTags();
 		} else {
@@ -321,7 +333,7 @@ var NoteFilter = new function () {
 				element('img', {className:'', src:'img/2x2_grid.png'}),
 				// tags search input
 				element('div', {}, [
-					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:''}),
+					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:'', history:[], histpos:0}),
 					this.dom.ticon   = element('div', {className:'ticon'})
 					//this.dom.suggest = element('div', {className:'suggest'}, 'suggest')
 				]),
@@ -343,17 +355,7 @@ var NoteFilter = new function () {
 		watermark(this.dom.tinput, hint_filter_tags,  '#000');
 		watermark(this.dom.winput, hint_filter_words, '#000');
 
-		$(this.dom.tinput).bind('keypress', function(event) {
-			if ( event.which == 13 ) {
-				// prepare inner parsed data
-				ParseSearchStr(true);
-				// do search
-				PerformSearch();
-				//self.dom.suggest.style.width = self.dom.tinput.offsetWidth-30;
-				//self.dom.suggest.style.display = 'block';
-			}
-		});
-
+		// autocompleter init
 		$(this.dom.tinput).autocomplete({
 			matchInside: false,
 			selectFirst: true,
@@ -365,18 +367,17 @@ var NoteFilter = new function () {
 			delay: 200,
 			data: [true],
 			showResult: function(tag){
-				var cname = tag.charAt(0) === ':' ? 'cmd' : 'tag';
 				// wrap to div with icon
-				return '<div class="'+cname+'">' + tag + '</div>';
+				return '<div class="' + (tag.charAt(0) === ':' ? 'cmd' : 'tag') + '">' + tag + '</div>';
 			},
-//			beforeUseConverter: function(data){
-//				//fb(data);
-//				//if ( data.charAt(0) === '-' ) data = data.slice(1);
-//				return data;
-//			},
 			processData: function(data){
+				// only if there should be some results
 				if ( data.length > 0 ) {
+					// prepare inner parsed data
+					ParseSearchStr();
+					// preparing
 					data = [];
+					// commands
 					if ( !self.data.wcmd.has('deleted') ) data.push([':deleted', 0]);
 					if ( !self.data.wcmd.has('notags') )  data.push([':notags', 0]);
 					if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
@@ -397,21 +398,65 @@ var NoteFilter = new function () {
 						}
 					}
 				}
-				fb(data);
 				return data;
 			}
 		});
+		// autocompleter for global use
+		this.ac = $(this.dom.tinput).data('autocompleter');
 
-		// handle input
-		var ttimer = null;
-		this.dom.tinput.onkeydown = function() {
-			if ( ttimer ) clearTimeout(ttimer);
-			ttimer = setTimeout(function(){
+		// tag key input handler
+		$(this.dom.tinput).bind('keydown', function(event) {
+			// enter
+			if ( event.which == 13 ) {
 				// prepare inner parsed data
 				ParseSearchStr();
-				//CheckMissingTags();
-			}, 150);
-		}
+				ReworkSearchStr(event.ctrlKey);
+				// do search
+				PerformSearch();
+			}
+			// up
+			if ( event.which == 38 ) {
+				// no autocompleter and valid history cursor
+				if ( !self.ac.active_ && this.histpos > 0 ) {
+					// move up cursor position to the first non-duplicate item in the history
+					while ( this.history[--this.histpos] && this.history[this.histpos].trim() === this.value.trim() ) {}
+					// valid position found
+					if ( this.histpos >= 0 ) this.value = this.history[this.histpos];
+				}
+			}
+			// down
+			if ( event.which == 40 ) {
+				// no autocompleter and valid history cursor
+				if ( !self.ac.active_ && this.histpos < this.history.length-1 ) {
+					// move down cursor position to the first non-duplicate item in the history
+					while ( this.history[++this.histpos] && this.history[this.histpos].trim() === this.value.trim() ) {}
+					// valid position found
+					if ( this.histpos < this.history.length ) this.value = this.history[this.histpos];
+				}
+			}
+			// ctrl + space
+			if ( event.ctrlKey && event.which == 32 ) {
+				// show autocompleter if possible
+				self.ac.activate();
+			}
+		});
+
+//		this.dom.tinput.onkeyup = function(){
+//			// set last history line
+//			this.history[this.history.length-1] = this.value;
+//			fb(this.history);
+//		};
+
+		// handle input
+//		var ttimer = null;
+//		this.dom.tinput.onkeydown = function() {
+//			if ( ttimer ) clearTimeout(ttimer);
+//			ttimer = setTimeout(function(){
+//				// prepare inner parsed data
+//				ParseSearchStr();
+//				//CheckMissingTags();
+//			}, 150);
+//		}
 //
 //		// handle input
 //		var wtimer = null;

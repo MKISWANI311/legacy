@@ -20,7 +20,7 @@ var NoteList = new function () {
 		fb('EventOpen: NoteList');
 		elclear(self.dom.notes);
 		// fill notes
-		self.RenderTable();
+		self.RenderTable(false);
 		// component state flag
 		this.open = true;
 	};
@@ -54,7 +54,6 @@ var NoteList = new function () {
 				}
 			}
 		}
-
 		var entries = note.data.entries;
 		//fb(note);
 		for ( var j in entries ) {
@@ -181,7 +180,8 @@ var NoteList = new function () {
 			NoteDelete(this.data);
 		}})]);
 		var tags = element('div', {className:'tags'});
-		var note = element('div', {className:'note', data:data}, [hint, tbl, tags], {onclick:function(){
+		//var note = element('div', {className:'note', data:data}, [hint, tbl, tags], {onclick:function(){
+		var note = element('div', {className:'note', data:data}, tags, {onclick:function(){
 			NoteActive(this);
 			NoteEditor.Load(this.data);
 			$('#ui-layout-east-tplist').hide();
@@ -191,7 +191,7 @@ var NoteList = new function () {
 		tags.exc = element('span', {className:'exc'});
 		tags.inc = element('span', {className:'inc'});
 		tags.set = element('span', {className:'set'});
-		tblrow(tbl, [icon, NoteBody(data)], [{className:'icon'}, {className:'body'}]);
+		//tblrow(tbl, [icon, NoteBody(data)], [{className:'icon'}, {className:'body'}]);
 		elchild(note.dom.tags, [tags.exc, tags.inc, tags.set]);
 		SetNoteIcon(note);
 		self.DrawNoteTags(note);
@@ -240,10 +240,10 @@ var NoteList = new function () {
 		}
 	};
 
-	var SetFilterTags = function ( data ) {
-		data = data || self.dom.search.input.value;
-		self.data.filter = TagManager.ParseStr(data);
-	};
+//	var SetFilterTags = function ( data ) {
+//		data = data || self.dom.search.input.value;
+//		self.data.filter = TagManager.ParseStr(data);
+//	};
 
 	var TagInclude = function ( e ) {
 		if (!e ) e = window.event;e.cancelBubble = true;
@@ -255,6 +255,7 @@ var NoteList = new function () {
 		FilterTags();
 		Filter();
 	};
+
 	var BuildSearchStr = function () {
 		var words = [];
 		// prepare all words for concatenation
@@ -263,6 +264,7 @@ var NoteList = new function () {
 		// replace the search string by the reformatted one
 		self.dom.search.input.value = words.join(' ');
 	};
+
 	var TagExclude = function () {
 		var texc  = self.data.filter.texc,
 			tinc  = self.data.filter.tinc;
@@ -316,28 +318,28 @@ var NoteList = new function () {
 
 		// build all blocks together
 		elchild(this.dom.handle, [
-			this.dom.search = element('div', {className:'search'}),
-			this.dom.tags   = element('div', {className:'tags hidden'}),
-			this.dom.info   = element('div', {className:'info'}),
-			this.dom.help   = element('div', {className:'help hidden'}),
+			//this.dom.search = element('div', {className:'search'}),
+			//this.dom.tags   = element('div', {className:'tags hidden'}),
+			//this.dom.info   = element('div', {className:'info'}),
+			//this.dom.help   = element('div', {className:'help hidden'}),
 			this.dom.notes  = element('div', {className:'notes'})
 		]);
 
-		elchild(this.dom.search, [
-			this.dom.search.icon    = element('img', {className:'icon', src:'img/search.png'}),
-			this.dom.search.input   = element('input', {type:'text', className:'line'}),
-			this.dom.search.suggest = element('div', {className:'suggest'}),
-			this.dom.search.control = element('div', {className:'control'}, [element('span', {}, 'clear', {onclick:function(){
-				self.dom.search.input.value = '';
-				self.dom.search.input.focus();
-			}})])
-		]);
+//		elchild(this.dom.search, [
+//			this.dom.search.icon    = element('img', {className:'icon', src:'img/search.png'}),
+//			this.dom.search.input   = element('input', {type:'text', className:'line'}),
+//			this.dom.search.suggest = element('div', {className:'suggest'}),
+//			this.dom.search.control = element('div', {className:'control'}, [element('span', {}, 'clear', {onclick:function(){
+//				self.dom.search.input.value = '';
+//				self.dom.search.input.focus();
+//			}})])
+//		]);
 
-		elchild(this.dom.tags, [
-			this.dom.tags.title = element('span', {className:'title'}, 'tags'),
-			this.dom.tags.exc   = element('span', {className:'exc'}),
-			this.dom.tags.inc   = element('span', {className:'inc'}),
-			this.dom.tags.hint  = element('span', {className:'hint'}, 'click on a tag to exclude it from the search')
-		]);
+//		elchild(this.dom.tags, [
+//			this.dom.tags.title = element('span', {className:'title'}, 'tags'),
+//			this.dom.tags.exc   = element('span', {className:'exc'}),
+//			this.dom.tags.inc   = element('span', {className:'inc'}),
+//			this.dom.tags.hint  = element('span', {className:'hint'}, 'click on a tag to exclude it from the search')
+//		]);
 	};
 };
