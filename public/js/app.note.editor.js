@@ -269,16 +269,16 @@ var NoteEditor = new function () {
 
 				if ( is_new ) {
 					self.data.ctime = Math.round(new Date().getTime() / 1000);
-					NoteList.NoteAdd(self.data, true);
+					NoteList.NoteCreate(self.data);
 				} else {
 					self.data.mtime = Math.round(new Date().getTime() / 1000);
-					NoteList.dom.notes.removeChild(NoteList.dom.notes.active);
-					NoteList.NoteAdd(self.data, true);
+					//NoteList.dom.notes.removeChild(NoteList.dom.notes.active);
+					NoteList.NoteUpdate(self.data);
 				}
-				if ( NoteList.dom.notes.active ) {
-					var note = NoteList.dom.notes.active;
-					if ( NoteList.NoteVisible(note) ) NoteList.DrawNoteTags(note);
-				}
+//				if ( NoteList.dom.notes.active ) {
+//					var note = NoteList.dom.notes.active;
+//					if ( NoteList.NoteVisible(note) ) NoteList.DrawNoteTags(note);
+//				}
 			} else {
 				// invalid response from the server
 			}

@@ -158,7 +158,11 @@ var NoteFilter = new function () {
 	this.NotesRequest = function ( tinc, texc ) {
 		LoadingStart();
 		// clone current data to post
-		this.post = $.extend({}, this.data);
+		this.post = {};
+		for ( var item in this.data ) {
+			this.post[item] = this.data[item].slice();
+		}
+		// ajax post request
 		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd}, function(data){
 			if ( !data.error ) {
 				NoteList.BuildTable(data);
@@ -181,13 +185,15 @@ var NoteFilter = new function () {
 
 	/**
 	 * Prepares inner data from user input if changed since last time
+	 * @param text string to parse 
 	 */
-	var ParseSearchStr = function () {
+	var ParseSearchStr = function ( text ) {
+		text = text || self.dom.tinput.value;
 		// check if old and current values match
-		if ( self.dom.tinput.value !== self.dom.tinput.oldval ) {
+		if ( text !== self.dom.tinput.oldval ) {
 			// new data so updating
-			self.data = TagManager.ParseStr(self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value : '');
-			self.dom.tinput.oldval = self.dom.tinput.value;
+			self.data = TagManager.ParseStr(text !== hint_filter_tags ? text : '');
+			self.dom.tinput.oldval = text;
 		}
 	}
 
@@ -216,7 +222,11 @@ var NoteFilter = new function () {
 		// reset input
 		self.dom.tinput.value = '';
 		// there was some data entered
-		if ( list.length > 0 ) self.dom.tinput.value = list.join(' ') + ' ';
+		if ( list.length > 0 ) {
+			self.dom.tinput.value = list.join(' ') + ' ';
+			// just in case style correction
+			self.dom.tinput.style.color = '#000';
+		}
 		// filter field
 		if ( winc || wexc ) {
 			list = [];
@@ -252,48 +262,76 @@ var NoteFilter = new function () {
 			// there may be wrong tags
 			CheckMissingTags();
 		} else {
+			// show latest
 			NoteList.BuildTable(false);
+			// reset inner data
+			self.data = TagManager.ParseStr();
+			self.post = TagManager.ParseStr();
 		}
 		self.MsgShow();
 	};
 
 	/**
 	 * Adds the given tag to the search
+	 * @param tagnm string tag name to be processed
 	 */
-	this.TagInclude = function ( tag_id ) {
-		// not added already and exists
-		if ( !this.data.tinc.has(tag_id) && data_tags_idlist[tag_id] ) {
-			// prepare
-			var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value.trim() : '');
-			// concatenation
-			this.dom.tinput.value = (text.length > 0 ? text + ' ' : '') + data_tags_idlist[tag_id];
-			// style correction
-			this.dom.tinput.style.color = '#000';
+	this.TagInclude = function ( tagnm ) {
+		// determine tag id
+		var tagid = data_tags_nmlist[tagnm];
+		// not added already and valid id
+		if ( tagid && !this.data.tinc.has(tagid) ) {
+			// prepare inner parsed data
+			this.data.tinc.push(tagid);
+			this.data.ninc.push(tagnm);
+			// reforman input
+			ReworkSearchStr();
 		}
 		PerformSearch();
 	};
 
 	/**
-	 * Adds the given tag to the search
+	 * Remove the given tag from the search
+	 * @param tagnm string tag name to be processed
 	 */
-	this.TagExclude = function ( tag_id ) {
-		// not added already and exists
-		if ( !this.data.texc.has(tag_id) && data_tags_idlist[tag_id] ) {
-			// prepare
-			var text = (self.dom.tinput.value !== hint_filter_tags ? self.dom.tinput.value.trim() : '');
-			// concatenation
-			this.dom.tinput.value = (text.length > 0 ? text + ' ' : '') + '-' + data_tags_idlist[tag_id];
-			// style correction
-			this.dom.tinput.style.color = '#000';
+	this.TagExclude = function ( tagnm ) {
+		// determine tag id
+		var tagid = data_tags_nmlist[tagnm];
+		// exists in the search line and valid id
+		if ( tagid && this.data.tinc.has(tagid) ) {
+			// locate tag name and id in the inner parsed data
+			var tinci = this.data.tinc.indexOf(tagid);
+			var ninci = this.data.ninc.indexOf(tagnm);
+			// and clear
+			if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
+			if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
+			// reforman input
+			ReworkSearchStr();
 		}
 		PerformSearch();
 	};
 
 	/**
-	 * Removes the given tag to the search
+	 * Subtract the given tag in the search
+	 * @param tagnm string tag name to be processed
 	 */
-	this.TagRemove = function ( tag ) {
-
+	this.TagSubtract = function ( tagnm ) {
+		// determine tag id
+		var tagid = data_tags_nmlist[tagnm];
+		// not subtracted already and valid id
+		if ( tagid && !this.data.texc.has(tagid) ) {
+			// locate tag name and id in the inner parsed data
+			var tinci = this.data.tinc.indexOf(tagid);
+			var ninci = this.data.ninc.indexOf(tagnm);
+			// and clear
+			if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
+			if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
+			// prepare inner parsed data
+			this.data.texc.push(tagid);
+			this.data.nexc.push(tagnm);
+			// reforman input
+			ReworkSearchStr();
+		}
+		PerformSearch();
 	};
 
 	/**

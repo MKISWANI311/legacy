@@ -138,17 +138,6 @@ var NoteList = new function () {
 			}
 		});
 	};
-	this.NoteAdd = function ( data, topmost ) {
-		data_notes_latest.splice(0,0,data);
-		this.data.notes.push(data);
-		var note = NotePrepare(data);
-		if ( topmost && this.dom.notes.childNodes.length > 0 ) {
-			this.dom.notes.insertBefore(note, this.dom.notes.childNodes[0]);
-		} else {
-			elchild(this.dom.notes, note);
-		}
-		NoteActive(note);
-	};
 
 	var NoteBody = function ( data ) {
 		var result = [element('div', {className:'bold'}, 'id:' + data.id)];
@@ -202,63 +191,184 @@ var NoteList = new function () {
 		return note;
 	};
 
-	/**
-	 * Set the notes data to build note list
-	 */
-	this.SetData = function ( data ) {
-		self.data.notes = data instanceof Array ? data : [];
-	}
+	var TagHandle = function ( event ) {
+		event.stopPropagation();
+		if ( event.ctrlKey ) {
+			NoteFilter.TagSubtract(this.tagnm);
+		} else {
+			if ( this.finc ) {
+				NoteFilter.TagInclude(this.tagnm);
+			} else {
+				NoteFilter.TagExclude(this.tagnm);
+			}
+		}
+	};
 
 	var BuildNoteTags = function ( data ) {
-		var list = [];
+		var list = [], exc = [];
 		if ( data.length > 0 ) {
-			var inc = [], exc = [];
 			// separate tags
 			data.each(function(item){
 				if ( !NoteFilter.data.tinc.has(item) ) exc.push(data_tags_idlist[item]);
 			});
-			//
-			//elclear(note.dom.tags.exc);
-			//elclear(note.dom.tags.inc);
-			//elclear(note.dom.tags.set);
-
-//			var names = [];
+			// forms the list of tags alreade selected
 			NoteFilter.data.ninc.each(function(item){
-				list.push(element('span', {className:'tag include', title:hint_tag_exclude}, item, {onclick:TagExclude}));
+				// create html wrapper for tag
+				item = element('span', {className:'tag include', tagnm:item, title:hint_tag_exclude}, item);
+				// mouse click handler
+				$(item).bind('click', TagHandle);
+				list.push(item);
 			});
+			// forms the list of tags available for selection
 			exc.sort().each(function(item){
-				list.push(element('span', {className:'tag', title:hint_tag_include}, item, {onclick:TagExclude}));
+				// create html wrapper for tag
+				item = element('span', {className:'tag', finc:true, tagnm:item, title:hint_tag_include}, item);
+				// mouse click handler
+				$(item).bind('click', TagHandle);
+				list.push(item);
 			});
-//			names.sort().each(function(item){
-//				elchild(note.dom.tags.set, element('span',
-//					{className:'tag', title:'click on this tag to include it to the search', tagid:data_tags_nmlist[item]},
-//					item, {onclick:TagInclude}));
-//			});
-//
-//	//		self.data.filter.tinc.each(function(item){
-//	//			if ( item ) {
-//	//				elchild(note.dom.tags.inc, element('span',
-//	//					{className:'tag include', title:"click on this tag to exclude it from the filtering", tagid:item},
-//	//					data_tags_idlist[item], {onclick:TagExclude}));
-//	//			}
-//	//		});
 		}
 		return list.length > 0 ? list : hint_tag_missing;
 	}
 
+	var GetNoteIcon = function ( data ) {
+		var icon = 'img/tag_note.png',
+			tags = TagManager.IDs2Names(data.tags);
+		// iterate words in the tag list
+		tags.each(function(item){
+			if ( icon_tags.has(item) ) {
+				// get the first match
+				icon = 'img/tag_' + item + '.png';return;
+			}
+		});
+		return icon;
+	}
+
+	var ShowCtrlPanel = function () {
+		var i, item;
+		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+			item = self.dom.notes.childNodes[i];
+			if ( item.data.checked ) {
+				self.dom.tpctrl.style.display = 'table-cell';
+				return;
+			}
+		}
+		self.dom.tpctrl.style.display = 'none';
+	}
+
+	var NoteSetActive = function ( note, range ) {
+		// reset all checked notes
+		NoteClearChecked();
+		// flag true if the node is the same as already active
+		var fsame = false;
+		// last active note
+		var alast = null;
+		// there is already active note
+		if ( self.dom.notes.active ) {
+			// it's the save as already active
+			fsame = ( self.dom.notes.active.data.id === note.data.id );
+			if ( !fsame ) {
+				// another note
+				alast = self.dom.notes.active;
+				$(self.dom.notes.active).removeClass('active');
+				self.dom.notes.active.data.active = false;
+			}
+		}
+		// not the same as already active
+		if ( !fsame ) {
+			// update attributes
+			self.dom.notes.active = note;
+			$(note).addClass('active');
+			note.data.active = true;
+			// show note details
+			NoteEditor.Load(note.data);
+			$('#ui-layout-east-tplist').hide();
+			$('#ui-layout-east-data').show();
+		}
+		// holding Shift key
+		if ( range ) {
+			var i, item, cflag = false;
+			// iterate all notes
+			for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+				// cursor
+				item = self.dom.notes.childNodes[i];
+				// flag showing that the cursor is inside the range
+				if ( item.data.id === alast.data.id || item.data.id === note.data.id ) cflag = !cflag;
+				// check inside the range or edge items
+				if ( cflag || item.data.id === alast.data.id || item.data.id === note.data.id ) {
+					NoteSetChecked(item);
+				}
+			}
+		} else {
+			NoteSetChecked(note);
+		}
+	}
+
+	var NoteClearChecked = function () {
+		// reset all
+		var i, item;
+		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+			item = self.dom.notes.childNodes[i];
+			$(item).removeClass('checked');
+			item.data.active  = false;
+			item.data.checked = false;
+		}
+	}
+
+	var NoteSetChecked = function ( note ) {
+		$(note).toggleClass('checked');
+		note.data.checked = note.data.checked ? false : true;
+	}
+
 	this.BuildNote = function ( data ) {
-		fb(data);
-		return element('div', {className:'note'}, [
-			element('div', {className:'note'}, [
-				element('div', {className:'icon'}, [
-					element('img', {className:'icon', src:'img/tag_note.png'}),
-					element('img', {className:'tick', src:'img/tag.12.png'})
-				]),
-				element('div', {className:'body'}, data.id),
-				element('div', {className:'time'}, TimestampToDateStr(data.mtime)),
-				element('div', {className:'tags'}, BuildNoteTags(data.tags))
+		// note html wrapper
+		var note = element('div', {className:'note', data:data, dom:{}});
+		elchild(note, [
+			element('div', {className:'icon'}, [
+				note.dom.icon = element('img', {className:'icon', src:GetNoteIcon(data)}),
+				note.dom.tick = element('div', {className:'tick'})
+			]),
+			element('div', {className:'body'}, [
+				note.dom.info = element('div', {className:'info'}, data.id),
+				note.dom.time = element('div', {className:'time'}, TimestampToDateStr(data.mtime)),
+				note.dom.tags = element('div', {className:'tags'}, BuildNoteTags(data.tags))
 			])
 		]);
+		// whole note ckick
+		$(note).bind('click', function(event){
+			//fb(event);
+			if ( event.ctrlKey ) {
+				NoteSetChecked(this);
+			} else {
+				NoteSetActive(this, event.shiftKey);
+			}
+			ShowCtrlPanel();
+		});
+		// checkbox click
+		$(note.dom.tick).bind('click', function(event){
+			event.stopPropagation();
+			NoteSetChecked(note);
+			ShowCtrlPanel();
+		});
+		return note;
+	}
+
+	this.NoteCreate = function ( data ) {
+		// update latest and current note lists
+		data_notes_latest.splice(0,0,data);
+		this.data.notes.splice(0,0,data);
+		// build note and add it to the list top
+		var note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
+		NoteSetActive(note);
+	};
+
+	this.NoteUpdate = function ( data ) {
+		// remove current active note
+		this.dom.notes.removeChild(this.dom.notes.active);
+		this.dom.notes.active = null;
+		// build note and add it to the list top
+		var note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
+		NoteSetActive(note);
 	}
 
 	this.BuildTable = function ( data ) {
@@ -307,16 +417,7 @@ var NoteList = new function () {
 //		self.data.filter = TagManager.ParseStr(data);
 //	};
 
-	var TagInclude = function ( e ) {
-		if (!e ) e = window.event;e.cancelBubble = true;
-		if ( e.stopPropagation ) e.stopPropagation();
 
-		//if ( !self.data.filter.tinc.has(this.tagid) ) self.data.filter.tinc.push(this.tagid);
-		self.dom.search.input.focus();
-		BuildSearchStr();
-		FilterTags();
-		Filter();
-	};
 
 	var BuildSearchStr = function () {
 		var words = [];
@@ -327,21 +428,25 @@ var NoteList = new function () {
 		self.dom.search.input.value = words.join(' ');
 	};
 
-	var TagExclude = function () {
-		//var texc  = self.data.filter.texc,
-		//	tinc  = self.data.filter.tinc;
-		// locate
-		var iexc = texc.indexOf(this.tagid);
-		var iinc = tinc.indexOf(this.tagid);
-		// and clear
-		if ( iexc >= 0 ) texc.splice(iexc, 1);
-		if ( iinc >= 0 ) tinc.splice(iinc, 1);
-		// remove current tag
-		this.parentNode.removeChild(this);
-		BuildSearchStr();
-		// send request
-		Filter();
-	};
+//	var TagExclude = function ( e ) {
+//		if (!e ) e = window.event;e.cancelBubble = true;
+//		if ( e.stopPropagation ) e.stopPropagation();
+//
+//		NoteFilter.TagExclude(this.tagnm);
+//		//var texc  = self.data.filter.texc,
+//		//	tinc  = self.data.filter.tinc;
+//		// locate
+////		var iexc = texc.indexOf(this.tagid);
+////		var iinc = tinc.indexOf(this.tagid);
+////		// and clear
+////		if ( iexc >= 0 ) texc.splice(iexc, 1);
+////		if ( iinc >= 0 ) tinc.splice(iinc, 1);
+////		// remove current tag
+////		this.parentNode.removeChild(this);
+////		BuildSearchStr();
+////		// send request
+////		Filter();
+//	};
 
 	var FilterTags = function () {
 		elclear(self.dom.tags.exc);
@@ -374,7 +479,8 @@ var NoteList = new function () {
 
 		this.data = {
 			latest :true, // show only the last 20 notes
-			notes  :[]    // all requested notes data array
+			notes  :[]   // all requested notes data array
+			//checked:[]    // list of checked notes id
 			//filter :TagManager.ParseStr()
 		};
 
@@ -386,11 +492,14 @@ var NoteList = new function () {
 			//this.dom.help   = element('div', {className:'help hidden'}),
 			this.dom.tpbar = element('div', {className:'tpbar'}, [
 				this.dom.tpinfo = element('div', {className:'info'}, 'info'),
-				this.dom.tpctrl = element('div', {className:'ctrl'}, 'ctrl')
+				this.dom.tpctrl = element('div', {className:'ctrl'}, 'control panel')
 			]),
-			this.dom.notes = element('div', {className:'notes'}),
+			this.dom.notes = element('div', {className:'notes', active:null}),
 			this.dom.btbar = element('div', {className:'btbar'})
 		]);
+
+		this.dom.notes.onselectstart = function () {return false;} // ie
+		this.dom.notes.onmousedown   = function () {return false;} // mozilla
 
 //		elchild(this.dom.search, [
 //			this.dom.search.icon    = element('img', {className:'icon', src:'img/search.png'}),

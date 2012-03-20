@@ -5,26 +5,29 @@
  .notelist {}
 	.notelist > .tpbar { table-layout:fixed; display:table; height:20px; width:100% }
 		.notelist > .tpbar > .info { display:table-cell; vertical-align:middle }
-		.notelist > .tpbar > .ctrl { display:table-cell; width:100px; background-color:#ddd }
+		.notelist > .tpbar > .ctrl { display:table-cell; width:100px; background-color:#ddd; display:none }
 	.notelist > .notes { margin-top:5px }
-		.notelist > .notes > .note { border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; padding:5px }
+		.notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; padding:5px }
 		.notelist > .notes > .note:hover  { background-color:#ffffdf }
-			.notelist > .notes > .note:hover .time { color:#000 }
-/*		.notelist > .notes > .note.active { background-color: #ffffdf; border-left: 5px solid #bfdfff; border-right: 2px solid #bfdfff  }*/
-/*		.notelist > .notes > .note.active { background-color:#ffffdf; outline:#ffffdf }*/
-		.notelist > .notes > .note.active { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }
-			.notelist > .notes > .note .icon { float:left; line-height:42px; width:32px; margin-right:10px; text-align:center }
-				.notelist > .notes > .note div.icon img.icon { display:block }
-				.notelist > .notes > .note div.icon img.tick { display:none }
-			.notelist > .notes > .note div.icon:hover img.icon { display:none }
-			.notelist > .notes > .note div.icon:hover img.tick { display:block }
-			.notelist > .notes > .note .body { padding-bottom:5px }
-			.notelist > .notes > .note .time { line-height: 21px; float:right; font-size:11px; color:#aaa }
-			.notelist > .notes > .note .tags { line-height: 21px; color:#aaa }
-				.notelist > .notes > .note .tags .tag { color:#000; border-left:2px solid #ccc; background-color:#ddd; line-height:20px; padding: 1px 7px 0; cursor:pointer; margin-right:5px; display:inline-block }
-				.notelist > .notes > .note .tags .tag:hover   { background-color:#bfdfff; color:#fff }
-				.notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }
-				.notelist > .notes > .note .tags .tag.include:hover { background-color:#ffcc66 }
+			.notelist > .notes > .note:hover .time { color:#000 !important }
+		.notelist > .notes > .note.checked { background-color:#ffffdf }
+			.notelist > .notes > .note.checked img.icon { display:none  !important }
+			.notelist > .notes > .note.checked div.tick { display:block !important; background-image:url("../img/tick.true.png") !important; }
+		.notelist > .notes > .note.active  { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }
+			.notelist > .notes > .note > .icon { display:table-cell; vertical-align:middle; width:45px; padding-left:5px; padding-right:8px }
+				.notelist > .notes > .note > .icon img.icon { margin: 0 auto; display:block }
+				.notelist > .notes > .note > .icon div.tick { margin: 0 auto; display:none; width:25px; height:25px; opacity:0.5; background-image:url("../img/tick.false.png"); background-repeat:no-repeat; background-position: center center }
+				.notelist > .notes > .note > .icon:hover img.icon { display:none }
+				.notelist > .notes > .note > .icon:hover div.tick { display:block }
+				.notelist > .notes > .note > .icon:hover div.tick:hover { opacity:1 }
+			.notelist > .notes > .note > .body { display:table-cell }
+				.notelist > .notes > .note > .body .info { padding:5px 0 }
+				.notelist > .notes > .note > .body .time { padding:0 5px; line-height: 21px; float:right; font-size:11px; color:#aaa }
+				.notelist > .notes > .note > .body .tags { padding-bottom:5px; line-height: 21px; color:#aaa }
+					.notelist > .notes > .note .tags .tag { color:#000; border-left:2px solid #ccc; background-color:#ddd; line-height:20px; padding: 1px 7px 0; cursor:pointer; margin-right:5px; display:inline-block }
+					.notelist > .notes > .note .tags .tag:hover   { background-color:#bfdfff; color:#fff }
+					.notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }
+					.notelist > .notes > .note .tags .tag.include:hover { background-color:#ffcc66 }
 	.notelist > .btbar { table-layout:fixed; display:none; height:20px; width:100% }
 
 /*.notelist { background-color:white }

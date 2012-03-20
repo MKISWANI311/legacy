@@ -148,7 +148,7 @@ function elchild ( obj, value ) {
 }
 
 function elclear ( obj ) {
-	if ( obj.hasChildNodes() ) {
+	if ( obj && obj.hasChildNodes() ) {
 		while ( obj.hasChildNodes() ) {
 			obj.removeChild(obj.firstChild);
 		}
