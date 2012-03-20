@@ -11,6 +11,10 @@ var NoteList = new function () {
 	// false - no plain data, everything is encrypted
 	this.open = true;
 
+	var hint_tag_include = 'click on this tag to include it to the search';
+	var hint_tag_exclude = 'click on this tag to exclude it from the search';
+	var hint_tag_missing = 'there are no tags specified for this note';
+
 	/**
 	 * Open the subscriber
 	 * master password is accessible
@@ -20,7 +24,7 @@ var NoteList = new function () {
 		fb('EventOpen: NoteList');
 		elclear(self.dom.notes);
 		// fill notes
-		self.RenderTable(false);
+		self.BuildTable(false);
 		// component state flag
 		this.open = true;
 	};
@@ -77,14 +81,14 @@ var NoteList = new function () {
 	this.NoteVisible = function ( note ) {
 		// flag to show this note or not
 		var flag = true;
-		for ( var i = 0; i < this.data.filter.tinc.length; i++ ) {
-			if ( !note.data.tags.has(this.data.filter.tinc[i]) ) {flag = false;break;}
-		}
-		if ( flag ) {
-			for ( i = 0; i < this.data.filter.texc.length; i++ ) {
-				if ( note.data.tags.has(this.data.filter.texc[i]) ) {flag = false;break;}
-			}
-		}
+//		for ( var i = 0; i < this.data.filter.tinc.length; i++ ) {
+//			if ( !note.data.tags.has(this.data.filter.tinc[i]) ) {flag = false;break;}
+//		}
+//		if ( flag ) {
+//			for ( i = 0; i < this.data.filter.texc.length; i++ ) {
+//				if ( note.data.tags.has(this.data.filter.texc[i]) ) {flag = false;break;}
+//			}
+//		}
 		if ( flag ) {
 			$(note).removeClass('hidden');
 		} else {
@@ -100,9 +104,9 @@ var NoteList = new function () {
 
 		var names = [];
 		note.data.tags.each(function(item){
-			if ( !self.data.filter.tinc.has(item) ) {
-				names.push(data_tags_idlist[item]);
-			}
+//			if ( !self.data.filter.tinc.has(item) ) {
+//				names.push(data_tags_idlist[item]);
+//			}
 		});
 		names.sort().each(function(item){
 			elchild(note.dom.tags.set, element('span',
@@ -110,13 +114,13 @@ var NoteList = new function () {
 				item, {onclick:TagInclude}));
 		});
 
-		self.data.filter.tinc.each(function(item){
-			if ( item ) {
-				elchild(note.dom.tags.inc, element('span',
-					{className:'tag include', title:"click on this tag to exclude it from the filtering", tagid:item},
-					data_tags_idlist[item], {onclick:TagExclude}));
-			}
-		});
+//		self.data.filter.tinc.each(function(item){
+//			if ( item ) {
+//				elchild(note.dom.tags.inc, element('span',
+//					{className:'tag include', title:"click on this tag to exclude it from the filtering", tagid:item},
+//					data_tags_idlist[item], {onclick:TagExclude}));
+//			}
+//		});
 	};
 
 	var NoteActive = function ( note ) {
@@ -205,7 +209,60 @@ var NoteList = new function () {
 		self.data.notes = data instanceof Array ? data : [];
 	}
 
-	this.RenderTable = function ( data ) {
+	var BuildNoteTags = function ( data ) {
+		var list = [];
+		if ( data.length > 0 ) {
+			var inc = [], exc = [];
+			// separate tags
+			data.each(function(item){
+				if ( !NoteFilter.data.tinc.has(item) ) exc.push(data_tags_idlist[item]);
+			});
+			//
+			//elclear(note.dom.tags.exc);
+			//elclear(note.dom.tags.inc);
+			//elclear(note.dom.tags.set);
+
+//			var names = [];
+			NoteFilter.data.ninc.each(function(item){
+				list.push(element('span', {className:'tag include', title:hint_tag_exclude}, item, {onclick:TagExclude}));
+			});
+			exc.sort().each(function(item){
+				list.push(element('span', {className:'tag', title:hint_tag_include}, item, {onclick:TagExclude}));
+			});
+//			names.sort().each(function(item){
+//				elchild(note.dom.tags.set, element('span',
+//					{className:'tag', title:'click on this tag to include it to the search', tagid:data_tags_nmlist[item]},
+//					item, {onclick:TagInclude}));
+//			});
+//
+//	//		self.data.filter.tinc.each(function(item){
+//	//			if ( item ) {
+//	//				elchild(note.dom.tags.inc, element('span',
+//	//					{className:'tag include', title:"click on this tag to exclude it from the filtering", tagid:item},
+//	//					data_tags_idlist[item], {onclick:TagExclude}));
+//	//			}
+//	//		});
+		}
+		return list.length > 0 ? list : hint_tag_missing;
+	}
+
+	this.BuildNote = function ( data ) {
+		fb(data);
+		return element('div', {className:'note'}, [
+			element('div', {className:'note'}, [
+				element('div', {className:'icon'}, [
+					element('img', {className:'icon', src:'img/tag_note.png'}),
+					element('img', {className:'tick', src:'img/tag.12.png'})
+				]),
+				element('div', {className:'body'}, data.id),
+				element('div', {className:'time'}, TimestampToDateStr(data.mtime)),
+				element('div', {className:'tags'}, BuildNoteTags(data.tags))
+			])
+		]);
+	}
+
+	this.BuildTable = function ( data ) {
+		// check input and determine mode - last or requested
 		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
 		// set mode
 		//this.data.latest = !data ? true : false;
@@ -214,19 +271,24 @@ var NoteList = new function () {
 		// clearing the container
 		elclear(self.dom.notes);
 		// clear selection
-		delete self.dom.notes.active;
+		//delete self.dom.notes.active;
 
-		if ( data.length != 0 ) {
-			document.getElementById('search_help').style.display = 'none';
+		if ( data.length > 0 ) {
+			//document.getElementById('search_help').style.display = 'none';
 			// determine the note beeing edited at the moment
 			var neid = NoteEditor.data && NoteEditor.data.id ? NoteEditor.data.id : null;
-			// add notes
-			for ( var i = 0; i < data.length; i++ ) {
-				var note = NotePrepare(data[i]);
-				note.raw = '' + data[i].id;
-				if ( neid == data[i].id ) NoteActive(note);
+			// iterate all notes
+			data.each(function(item){
+				var note = self.BuildNote(item);
+//				var note = NotePrepare(data[i]);
+//				note.raw = '' + data[i].id;
+//				if ( neid == data[i].id ) NoteActive(note);
 				elchild(self.dom.notes, note);
-			}
+			});
+			// add notes
+//			for ( var i = 0; i < data.length; i++ ) {
+//
+//			}
 		}
 	};
 
@@ -249,7 +311,7 @@ var NoteList = new function () {
 		if (!e ) e = window.event;e.cancelBubble = true;
 		if ( e.stopPropagation ) e.stopPropagation();
 
-		if ( !self.data.filter.tinc.has(this.tagid) ) self.data.filter.tinc.push(this.tagid);
+		//if ( !self.data.filter.tinc.has(this.tagid) ) self.data.filter.tinc.push(this.tagid);
 		self.dom.search.input.focus();
 		BuildSearchStr();
 		FilterTags();
@@ -259,15 +321,15 @@ var NoteList = new function () {
 	var BuildSearchStr = function () {
 		var words = [];
 		// prepare all words for concatenation
-		self.data.filter.texc.each(function(item){if ( item ) words.push('-'+data_tags_idlist[item]);});
-		self.data.filter.tinc.each(function(item){if ( item ) words.push(    data_tags_idlist[item]);});
+		//self.data.filter.texc.each(function(item){if ( item ) words.push('-'+data_tags_idlist[item]);});
+		//self.data.filter.tinc.each(function(item){if ( item ) words.push(    data_tags_idlist[item]);});
 		// replace the search string by the reformatted one
 		self.dom.search.input.value = words.join(' ');
 	};
 
 	var TagExclude = function () {
-		var texc  = self.data.filter.texc,
-			tinc  = self.data.filter.tinc;
+		//var texc  = self.data.filter.texc,
+		//	tinc  = self.data.filter.tinc;
 		// locate
 		var iexc = texc.indexOf(this.tagid);
 		var iinc = tinc.indexOf(this.tagid);
@@ -285,19 +347,19 @@ var NoteList = new function () {
 		elclear(self.dom.tags.exc);
 		elclear(self.dom.tags.inc);
 
-		if ( !self.data.filter.texc.empty() || !self.data.filter.tinc.empty() ) {
-			self.dom.tags.style.display = 'block';
-
-			self.data.filter.texc.each(function(item){
-				if ( item ) {
-					elchild(self.dom.tags.exc, element('span',
-						{className:'tag exclude', title:'click on this tag to exclude it from the filtering', tagid:item},
-						data_tags_idlist[item], {onclick:TagExclude}));
-				}
-			});
-		} else {
-			self.dom.tags.style.display = 'none';
-		}
+//		if ( !self.data.filter.texc.empty() || !self.data.filter.tinc.empty() ) {
+//			self.dom.tags.style.display = 'block';
+//
+//			self.data.filter.texc.each(function(item){
+//				if ( item ) {
+//					elchild(self.dom.tags.exc, element('span',
+//						{className:'tag exclude', title:'click on this tag to exclude it from the filtering', tagid:item},
+//						data_tags_idlist[item], {onclick:TagExclude}));
+//				}
+//			});
+//		} else {
+//			self.dom.tags.style.display = 'none';
+//		}
 	};
 
 	/**
@@ -312,8 +374,8 @@ var NoteList = new function () {
 
 		this.data = {
 			latest :true, // show only the last 20 notes
-			notes  :[],   // all notes data array
-			filter :TagManager.ParseStr()
+			notes  :[]    // all requested notes data array
+			//filter :TagManager.ParseStr()
 		};
 
 		// build all blocks together
@@ -322,7 +384,12 @@ var NoteList = new function () {
 			//this.dom.tags   = element('div', {className:'tags hidden'}),
 			//this.dom.info   = element('div', {className:'info'}),
 			//this.dom.help   = element('div', {className:'help hidden'}),
-			this.dom.notes  = element('div', {className:'notes'})
+			this.dom.tpbar = element('div', {className:'tpbar'}, [
+				this.dom.tpinfo = element('div', {className:'info'}, 'info'),
+				this.dom.tpctrl = element('div', {className:'ctrl'}, 'ctrl')
+			]),
+			this.dom.notes = element('div', {className:'notes'}),
+			this.dom.btbar = element('div', {className:'btbar'})
 		]);
 
 //		elchild(this.dom.search, [

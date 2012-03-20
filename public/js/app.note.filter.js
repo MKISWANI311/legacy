@@ -45,7 +45,7 @@ var NoteFilter = new function () {
 //		this.ac.options.data = data;
 		// build notes
 		//PerformSearch();
-		//NoteList.RenderTable(false);
+		//NoteList.BuildTable(false);
 		// component state flag
 		this.open = true;
 	};
@@ -161,12 +161,12 @@ var NoteFilter = new function () {
 		this.post = $.extend({}, this.data);
 		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd}, function(data){
 			if ( !data.error ) {
-				NoteList.RenderTable(data);
+				NoteList.BuildTable(data);
 				// no data, need to inform
 				if ( data.length == 0 ) self.MsgSet([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){
 					self.Reset();
 					//NoteList.SetData([]);
-					NoteList.RenderTable(false);
+					NoteList.BuildTable(false);
 				}})]);
 			} else {
 				// server error
@@ -252,7 +252,7 @@ var NoteFilter = new function () {
 			// there may be wrong tags
 			CheckMissingTags();
 		} else {
-			NoteList.RenderTable(false);
+			NoteList.BuildTable(false);
 		}
 		self.MsgShow();
 	};
@@ -327,22 +327,35 @@ var NoteFilter = new function () {
 
 		// build all blocks together
 		elchild(this.dom.handle, [
-			// first line with search inputs
-			tblrow(element('table', {className:'main'}), [
-				// icon
-				element('img', {className:'', src:'img/2x2_grid.png'}),
+			element('div', {className:'search'}, [
 				// tags search input
-				element('div', {}, [
-					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:'', history:[], histpos:0}),
-					this.dom.ticon   = element('div', {className:'ticon'})
-					//this.dom.suggest = element('div', {className:'suggest'}, 'suggest')
-				]),
+				element('div', {className:'tblock'}, element('div', {className:'body'}, [
+					this.dom.tinput = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:'', history:[], histpos:0}),
+					this.dom.ticon  = element('div', {className:'ticon'})
+				])),
 				// words search input
-				element('div', {}, [
-					this.dom.winput  = element('input', {type:'text', className:'line', value:hint_filter_words}),
-					this.dom.wicon   = element('div', {className:'wicon'}),
-				])
-			], [{className:'switch'}, {className:'tags'}, {className:'words'}]),
+				element('div', {className:'wblock'}, element('div', {className:'body'}, [
+					this.dom.winput = element('input', {type:'text', className:'line', value:hint_filter_words}),
+					this.dom.wicon  = element('div', {className:'wicon'}),
+				]))
+			]),
+
+			// first line with search inputs
+//			tblrow(element('table', {className:'main'}), [
+//				// icon
+//				element('img', {className:'', src:'img/2x2_grid.png'}),
+//				// tags search input
+//				element('div', {}, [
+//					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:'', history:[], histpos:0}),
+//					this.dom.ticon   = element('div', {className:'ticon'})
+//					//this.dom.suggest = element('div', {className:'suggest'}, 'suggest')
+//				]),
+//				// words search input
+//				element('div', {}, [
+//					this.dom.winput  = element('input', {type:'text', className:'line', value:hint_filter_words}),
+//					this.dom.wicon   = element('div', {className:'wicon'}),
+//				])
+//			], [{className:'switch'}, {className:'tags'}, {className:'words'}]),
 			// hidden messages
 			this.dom.messages = element('div', {className:'messages'}, [
 				this.dom.fail = element('div', {className:'fail'}, 'test 3'),

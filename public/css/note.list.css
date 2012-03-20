@@ -2,7 +2,32 @@
  * list of note entries
  */
 
-.notelist { background-color:white }
+ .notelist {}
+	.notelist > .tpbar { table-layout:fixed; display:table; height:20px; width:100% }
+		.notelist > .tpbar > .info { display:table-cell; vertical-align:middle }
+		.notelist > .tpbar > .ctrl { display:table-cell; width:100px; background-color:#ddd }
+	.notelist > .notes { margin-top:5px }
+		.notelist > .notes > .note { border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; padding:5px }
+		.notelist > .notes > .note:hover  { background-color:#ffffdf }
+			.notelist > .notes > .note:hover .time { color:#000 }
+/*		.notelist > .notes > .note.active { background-color: #ffffdf; border-left: 5px solid #bfdfff; border-right: 2px solid #bfdfff  }*/
+/*		.notelist > .notes > .note.active { background-color:#ffffdf; outline:#ffffdf }*/
+		.notelist > .notes > .note.active { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }
+			.notelist > .notes > .note .icon { float:left; line-height:42px; width:32px; margin-right:10px; text-align:center }
+				.notelist > .notes > .note div.icon img.icon { display:block }
+				.notelist > .notes > .note div.icon img.tick { display:none }
+			.notelist > .notes > .note div.icon:hover img.icon { display:none }
+			.notelist > .notes > .note div.icon:hover img.tick { display:block }
+			.notelist > .notes > .note .body { padding-bottom:5px }
+			.notelist > .notes > .note .time { line-height: 21px; float:right; font-size:11px; color:#aaa }
+			.notelist > .notes > .note .tags { line-height: 21px; color:#aaa }
+				.notelist > .notes > .note .tags .tag { color:#000; border-left:2px solid #ccc; background-color:#ddd; line-height:20px; padding: 1px 7px 0; cursor:pointer; margin-right:5px; display:inline-block }
+				.notelist > .notes > .note .tags .tag:hover   { background-color:#bfdfff; color:#fff }
+				.notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }
+				.notelist > .notes > .note .tags .tag.include:hover { background-color:#ffcc66 }
+	.notelist > .btbar { table-layout:fixed; display:none; height:20px; width:100% }
+
+/*.notelist { background-color:white }
 	.notelist > .search { margin-bottom:5px; position:relative; display:none }
 		.notelist > .search > .icon    { position:absolute; top:0px; margin:7px; height:16px; line-height:16px }
 		.notelist > .search > .line    { padding-left:25px; padding-right:35px }
@@ -17,8 +42,8 @@
 	.notelist > .help { margin: 20px 10px; padding:5px; background-color:#F9F9F9; border: 1px solid #eee }
 	.notelist > .notes { margin-top: 5px }
 		.notelist > .notes > .note { border-left: 5px solid #fff; border-right: 2px solid #fff; border-bottom:1px dotted #eee; border-top:1px dotted #eee; padding:5px 5px 5px 10px }
-/*		.notelist .notes .note:hover { border-left: 5px solid #eee; border-right: 2px solid #eee; background-color: #ffffdf }*/
-/*		.notelist .notes .note.active { background-color: #f9f9f9 }*/
+		.notelist .notes .note:hover { border-left: 5px solid #eee; border-right: 2px solid #eee; background-color: #ffffdf }
+		.notelist .notes .note.active { background-color: #f9f9f9 }
 		.notelist .notes .note.active { border-left: 5px solid #bfdfff; border-right: 2px solid #bfdfff; background-color: #ffffdf }
 			.notelist .notes .note table { height:36px; width:100% }
 				.notelist .notes .note table .icon { width:45px }
@@ -29,6 +54,8 @@
 				.notelist .notes .note .tags .exc { }
 				.notelist .notes .note .tags .inc { }
 				.notelist .notes .note .tags .set { }
+	.notelist > .ctrls { margin-left:0px }
+
 	.notelist > .tags { margin-left:0px }
 		.notelist .tags .title { width:60px; display:inline-block; text-align:center; color:#bbb }
 		.notelist .tags .exc   { }
@@ -46,18 +73,18 @@
 		margin-right: 5px;
 		display: inline-block;
 	}
-/*	.notelist .tag.select {
+	.notelist .tag.select {
 		border: 1px solid #999;
 		background-color: #bbb !important;
 		color: white !important;
-	}*/
+	}
 	.notelist .tag:hover {
 		background-color: #bfdfff;
 	}
 	.notelist .tag.include {
 		background-color: #bfdfff;
-/*		border: 1px solid #bfdfff;*/
-/*		border-left: 2px solid #bfdfff;*/
+		border: 1px solid #bfdfff;
+		border-left: 2px solid #bfdfff;
 		color: #fff;
 		font-weight: bold;
 	}
@@ -66,4 +93,4 @@
 		color: #fff;
 		font-weight: bold;
 	}
-
+*/

@@ -3,15 +3,19 @@
  */
 
 .notefilter { margin-bottom:10px }
-/*	.notefilter > .search {}
-	.notefilter > .search > .wblock { height:30px; background-color:#aaa; float:right; width:250px }
-	.notefilter > .search > .tblock { height:30px; background-color:#ccc }
-		.notefilter > .search > .tblock > .body { position:relative }
-		.notefilter > .search > .tblock > .body > .line  { color:#ccc; padding-left:30px; padding-right:30px }
-		.notefilter > .search > .tblock > .body > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:26px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
-		.notefilter > .search > .tblock > .body > .ticon.loading { background-image:url("../img/loading.16.gif"); }*/
+	.notefilter > .search { table-layout:fixed; display:table; height:30px; width:100% }
+		.notefilter > .search .line { font-family:"Courier New","Andale Mono",monospace }
+		.notefilter > .search > .tblock { display:table-cell; padding-right:5px }
+			.notefilter > .search > .tblock > .body { position:relative }
+				.notefilter > .search > .tblock > .body > .line  { color:#ccc; padding-left:30px }
+				.notefilter > .search > .tblock > .body > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
+				.notefilter > .search > .tblock > .body > .ticon.loading { background-image:url("../img/loading.16.gif") }
+		.notefilter > .search > .wblock { display:table-cell; width:250px }
+			.notefilter > .search > .wblock > .body { position:relative }
+				.notefilter > .search > .wblock > .body > .line  { color:#ccc; padding-left:30px }
+				.notefilter > .search > .wblock > .body > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }
 
-	.notefilter > table.main { width:100% }
+/*	.notefilter > table.main { width:100% }
 		.notefilter > table.main .line { font-family:"Courier New","Andale Mono",monospace }
 		.notefilter > table.main td.switch { width:30px; background-color:#eee; text-align:center }
 			.notefilter > table.main td.switch img { opacity:0.5 }
@@ -26,7 +30,7 @@
 		.notefilter > table.main td.words  { width:250px }
 			.notefilter > table.main td.words > div { position:relative }
 				.notefilter > table.main td.words > div > .line  { color:#ccc; padding-left:30px }
-				.notefilter > table.main td.words > div > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }
+				.notefilter > table.main td.words > div > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }*/
 	.notefilter > .messages { margin-top:10px }
 	.notefilter > .messages.loading { opacity:0.4 }
 		.notefilter > .messages > .info,
