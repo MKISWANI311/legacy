@@ -10,7 +10,9 @@
 		.notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; padding:5px }
 		.notelist > .notes > .note:hover  { background-color:#ffffdf }
 			.notelist > .notes > .note:hover .time { color:#000 !important }
+		.notelist > .notes > .note.hidden  { display:none }
 		.notelist > .notes > .note.checked { background-color:#ffffdf }
+		.notelist > .notes > .note.edited  { background-color:#e4ffe4 }
 			.notelist > .notes > .note.checked img.icon { display:none  !important }
 			.notelist > .notes > .note.checked div.tick { display:block !important; background-image:url("../img/tick.true.png") !important; }
 		.notelist > .notes > .note.active  { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }

@@ -34,30 +34,23 @@
 			// set menu to home
 			MenuItemClick($('div#menu_item_home a')[0]);
 
-			NoteFilter.Init({handle:document.querySelector('div.notefilter')});
+			// main components initialization
+			NoteFilter.
+				Init({handle:document.querySelector('div.notefilter')});
+			NoteList.
+				Init({handle:document.querySelector('div.notelist')});
+			TemplateList.
+				Init({handle:document.querySelector('div.templatelist')});
+			NoteEditor.
+				Init({handle:document.querySelector('div.noteeditor')});
 
-			NoteList.Init({handle:document.querySelector('div.notelist')});
-
-			TemplateList.Init({handle:document.querySelector('div.templatelist')});
-
-			NoteEditor.Init({
-				handle   : document.getElementById('handle_noteeditor'),
-				onsave   : function(){},
-				oncancel : function(){
-					$('#ui-layout-east-tplist').show();
-					$('#ui-layout-east-data').hide();
-				}
-			});
-
-			// to receive pass change events
+			// to receive password change events
 			App.Subscribe(TagManager);
 			App.Subscribe(TemplateList);
 			App.Subscribe(NoteFilter);
 			App.Subscribe(NoteList);
 			App.Subscribe(NoteEditor);
-
 		});
-
 
 		// logoff
 		function SignOut () {

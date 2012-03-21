@@ -185,7 +185,7 @@ var NoteFilter = new function () {
 
 	/**
 	 * Prepares inner data from user input if changed since last time
-	 * @param text string to parse 
+	 * @param text string to parse
 	 */
 	var ParseSearchStr = function ( text ) {
 		text = text || self.dom.tinput.value;
@@ -227,6 +227,8 @@ var NoteFilter = new function () {
 			// just in case style correction
 			self.dom.tinput.style.color = '#000';
 		}
+		// synchronyze the previous value with the current
+		self.dom.tinput.oldval = self.dom.tinput.value;
 		// filter field
 		if ( winc || wexc ) {
 			list = [];

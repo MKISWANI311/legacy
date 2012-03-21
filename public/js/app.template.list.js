@@ -54,8 +54,7 @@ var TemplateList = new function () {
 			elchild(self.dom.list, item);
 			// template item handlers
 			$(item).click(function(){
-				$('#ui-layout-east-tplist').hide();
-				$('#ui-layout-east-data').show();
+				self.Show(false);
 				NoteEditor.Create(this.data);
 			});
 			$(item).mouseenter(function(){
@@ -85,6 +84,14 @@ var TemplateList = new function () {
 			$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
 		}
 	};
+
+	/**
+	 * Shows/hides the component
+	 * @param state visibility flag: true - show, false - hide
+	 */
+	this.Show = function ( state ) {
+		this.dom.handle.style.display = state ? 'block' : 'none';
+	}
 
 	/**
 	 * Main init method

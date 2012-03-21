@@ -2,7 +2,7 @@
  * Main module to work with single note
  * creation, edit or view
  */
-.noteeditor { padding:10px; background-color:white }
+.noteeditor { padding:10px; background-color:white; display:none }
 	.noteeditor .caption { padding-bottom:5px }
 		.noteeditor .caption td.icon { width:45px;height:35px }
 		.noteeditor .caption td.info { width:60px; text-align:right; white-space:nowrap }

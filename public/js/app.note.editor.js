@@ -816,8 +816,13 @@ var NoteEditor = new function () {
 	var BlockControls = function () {
 		// return container
 		return self.dom.controls = element('div', {className:'buttons'}, [
-			element('input', {type:'button', value:'Back', className:'button'}, null, {onclick: self.oncancel}),
-			element('input', {type:'button', value:'Save', className:'button bold', title:'press Ctrl+Enter to save'}, null, {onclick: function(){self.Save();}})
+			element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){
+				var note = NoteList.GetNoteByID(self.data.id);
+				NoteList.NoteStateSet(note, 'active', false);
+				NoteList.NoteStateSet(note, 'edited', false);
+				self.Escape();
+			}}),
+			element('input', {type:'button', value:'Save', className:'button bold', title:'press Ctrl+Enter to save'}, null, {onclick:function(){self.Save();}})
 		]);
 	};
 
@@ -841,9 +846,8 @@ var NoteEditor = new function () {
 		// cancel
 		$(self.dom.handle).bind('keydown', function(event) {
 			if ( event.which == 27 ) {
-				self.Destroy();
-				$('#ui-layout-east-tplist').show();
-				$('#ui-layout-east-data').hide();
+				// exit from here
+				self.Escape();
 			}
 		});
 	};
@@ -861,12 +865,14 @@ var NoteEditor = new function () {
 		}
 	};
 
-	this.Destroy = function () {
+	this.Escape = function () {
 		// clear previous content
 		elclear(this.dom.handle);
 		delete this.data;
 		delete this.post;
 		this.open = true;
+		self.Show(false);
+		TemplateList.Show(true);
 	};
 
 	/**
@@ -958,6 +964,13 @@ var NoteEditor = new function () {
 		if ( console.timeEnd ) console.timeEnd('entry load');
 	};
 
+	/**
+	 * Returns the open at the moment note id
+	 */
+	this.GetNoteID = function () {
+		return ( this.data && this.data.id ? this.data.id : null );
+	}
+
 	var SetTitleIcon = function ( icon ) {
 		if ( !icon ) {
 			icon = 'img/tag_note.png';
@@ -1006,6 +1019,8 @@ var NoteEditor = new function () {
 			// focus to the first input
 			//dom.entries.childNodes[0].dom.data.focus();
 		}
+		TemplateList.Show(false);
+		self.Show(true);
 	};
 
 //	var BuildTemplates = function () {
@@ -1025,6 +1040,14 @@ var NoteEditor = new function () {
 //	}
 
 	/**
+	 * Shows/hides the component
+	 * @param state visibility flag: true - show, false - hide
+	 */
+	this.Show = function ( state ) {
+		this.dom.handle.style.display = state ? 'block' : 'none';
+	}
+
+	/**
 	 * Main init method
 	 * @param params list of configuration parameters
 	 */
@@ -1037,8 +1060,6 @@ var NoteEditor = new function () {
 		this.onsave = params.onsave || null;
 		// handler on cancel note adding or edit
 		this.oncancel = params.oncancel || null;
-		// set class for container
-		this.dom.handle.className = 'noteeditor';
 		// event handlers
 		SetEvents();
 	};
