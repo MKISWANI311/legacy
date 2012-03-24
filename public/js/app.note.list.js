@@ -274,7 +274,7 @@ var NoteList = new function () {
 		var i, item;
 		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
 			item = self.dom.notes.childNodes[i];
-			if ( item.state.checked ) {
+			if ( item.state.marked ) {
 				self.dom.tpctrl.style.display = 'table-cell';
 				return;
 			}
@@ -284,114 +284,46 @@ var NoteList = new function () {
 
 	/**
 	 * Set the default note state, removes additional classes and resets the state flags
-	 * @param note if given than it's the only note to be reset
+	 * @param notes if given than it's the only note list to be reset
 	 */
-	var NoteStateClear = function ( note ) {
-		// all notes or only the given one
-		var i, list = note ? [note] : self.dom.notes.childNodes;
+	this.ClearNotesState = function ( notes ) {
+		// all notes or the given one/ones
+		//var i, list = note ? (note instanceof Array ? note : [note]) : self.dom.notes.childNodes;
+		var i, list = notes || self.dom.notes.childNodes;
 		// iterate formed list
 		for ( i = 0; i < list.length; i++ ) {
 			// reset class and state flags
-			list[i].className    = 'note';
-			list[i].state.active  = false;
-			list[i].state.edited  = false;
-			list[i].state.checked = false;
+			list[i].className = 'note';
+			list[i].state.active = list[i].state.marked = false;
 		}
 	}
 
 	/**
-	 * Sets the flag and clall to the given note
-	 * @param note to be processed
-	 * @param type string name active | edited | checked
+	 * Sets the flag and clall to the given note/notes
+	 * @param notes to be processed
+	 * @param type string name active | marked
 	 * @param state optional bool flag, if set true - set, false - unset
 	 */
-	this.NoteStateSet = function ( note, type, state ) {
+	this.SetNotesState = function ( notes, type, state ) {
 		// check input
-		if ( note ) {
-			// determine the state to switch to
-			note.state[type] = state || (note.state[type] ? false : true);
-			// invert class
-			$(note).toggleClass(type, note.state[type]);
+		if ( notes.length > 0 ) {
+			notes.each(function(note){
+				// determine the state to switch to
+				note.state[type] = state !== undefined ? state : (note.state[type] ? false : true);
+				// invert class
+				$(note).toggleClass(type, note.state[type]);
+			});
 		}
 	}
 
-	/**
-	 * Highlights the active note or note range
-	 * range means to select all the notes between old and new selected notes
-	 * @param note to be processed
-	 * @param range flag to process the range
-	 */
-	var NoteStateActive = function ( note, range ) {
-		// reset all notes states
-		NoteStateClear();
-		// flag true if the node is the same as already active
-		var fsame = false;
-		// last active note
-		var alast = null;
-		// there is already active note
-		if ( self.dom.notes.active ) {
-			// it's the save as already active
-			fsame = ( self.dom.notes.active.data.id === note.data.id );
-			if ( !fsame ) {
-				// another note
-				alast = self.dom.notes.active;
-				$(self.dom.notes.active).removeClass('active');
-				self.dom.notes.active.state.active = false;
-			}
+	this.GetNotesByState = function ( type ) {
+		// all notes or only the given one
+		var i, result = [], list = self.dom.notes.childNodes;
+		// iterate formed list
+		for ( i = 0; i < list.length; i++ ) {
+			if ( list[i].state[type] === true ) result.push(list[i]);
 		}
-		// not the same as already active
-		if ( !fsame ) {
-			// update attributes
-			self.dom.notes.active = note;
-			$(note).addClass('active');
-			note.state.active = true;
-			// check if the edited note is not already active
-			if ( NoteEditor.GetNoteID() !== note.data.id ) {
-				// show note details
-				NoteEditor.Load(note.data);
-				$('#ui-layout-east-tplist').hide();
-				$('#ui-layout-east-data').show();
-			}
-		}
-		// holding Shift key
-		if ( range ) {
-			var i, item, cflag = false;
-			// iterate all notes
-			for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-				// cursor
-				item = self.dom.notes.childNodes[i];
-				// flag showing that the cursor is inside the range
-				if ( item.data.id === alast.data.id || item.data.id === note.data.id ) cflag = !cflag;
-				// check inside the range or edge items
-				if ( cflag || item.data.id === alast.data.id || item.data.id === note.data.id ) {
-					self.NoteStateSet(item, 'checked');
-				}
-			}
-		} else {
-			self.NoteStateSet(note, 'checked');
-		}
-	}
-
-	/**
-	 * Whole note ckick handler
-	 */
-	var NoteClickHandler = function ( event ) {
-		//fb(event);
-		if ( event.ctrlKey ) {
-			self.NoteStateSet(this, 'checked');
-		} else {
-			NoteStateActive(this, event.shiftKey);
-		}
-		ShowCtrlPanel();
-	}
-
-	/**
-	 * Note checkbox ckick handler
-	 */
-	var NoteTickClickHandler = function ( event ) {
-		event.stopPropagation();
-		self.NoteStateSet(this.note, 'checked');
-		ShowCtrlPanel();
+		return result;
 	}
 
 	/**
@@ -405,6 +337,95 @@ var NoteList = new function () {
 			if ( list[i].data.id === id ) return list[i];
 		}
 		return false;
+	}
+
+	/**
+	 * Highlights the active note or note range
+	 * range means to select all the notes between old and new selected notes
+	 * @param note to be processed
+	 * @param range flag to process the range
+	 */
+	var NoteStateActive = function ( note, range ) {
+		// last active note list
+		var alast = self.GetNotesByState('active');
+		// flag true if the node is the same as already active
+		var fsame = alast.length > 0 && alast[0].data.id === note.data.id;
+		// reset all notes states
+		self.ClearNotesState();
+		// there is already active note
+		fb('alast', alast, alast.length > 0 && alast[0].data.id === note.data.id);
+		fb('fsame', fsame);
+		// not the same as already active
+//		if ( !fsame ) {
+//			self.SetNotesState([note], 'marked');
+			fb('!!!');
+			// check if the edited note is not already active
+			if ( NoteEditor.GetNoteID() !== note.data.id ) {
+				// show note details
+				NoteEditor.Load(note.data);
+			}
+//		}
+		self.SetNotesState([note], 'active');
+//		if ( alast.length > 0 ) {
+//			// get the first one
+//			alast = alast[0];
+//			// it's the same as already active
+//			fsame = ( alast.data.id === note.data.id );
+//			if ( !fsame ) {
+//				// another note
+//				alast = self.dom.notes.active;
+//				$(self.dom.notes.active).removeClass('active');
+//				self.dom.notes.active.state.active = false;
+//			}
+//		}
+
+		// holding Shift key
+		if ( range ) {
+			var i, item, cflag = false;
+			// iterate all notes
+			for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+				// cursor
+				item = self.dom.notes.childNodes[i];
+				// flag showing that the cursor is inside the range
+				if ( item.data.id === alast[0].data.id || item.data.id === note.data.id ) cflag = !cflag;
+				// check inside the range or edge items
+				if ( cflag || item.data.id === alast[0].data.id || item.data.id === note.data.id ) {
+					self.SetNotesState([item], 'marked');
+				}
+			}
+		} else {
+			self.SetNotesState([note], 'marked');
+		}
+	}
+
+	/**
+	 * Whole note ckick handler
+	 */
+	var NoteClickHandler = function ( event ) {
+		//fb(event);
+		if ( event.ctrlKey ) {
+			self.SetNotesState([this], 'marked');
+		} else {
+//			var notes = self.GetNotesByState('edited');
+//			if ( notes.length >= 1 ) {
+//
+//			}
+//			self.ClearNotesState();
+			NoteStateActive(this, event.shiftKey);
+			//self.SetNotesState(self.GetNotesByState('edited'), 'edited', false);
+			//self.SetNotesState([this], 'edited');
+			//NoteEditor.Load(this.data);
+		}
+		ShowCtrlPanel();
+	}
+
+	/**
+	 * Note checkbox ckick handler
+	 */
+	var NoteTickClickHandler = function ( event ) {
+		event.stopPropagation();
+		self.SetNotesState([this.note], 'marked');
+		ShowCtrlPanel();
 	}
 
 	/**
@@ -508,8 +529,8 @@ var NoteList = new function () {
 		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
 		// clearing the container
 		elclear(self.dom.notes);
-		// clear current active note
-		delete self.dom.notes.active;
+		// hide control panel
+		ShowCtrlPanel();
 		// there are some notes
 		if ( data.length > 0 ) {
 			// determine the note id beeing edited at the moment
@@ -520,7 +541,7 @@ var NoteList = new function () {
 				note = self.BuildNote(item);
 				elchild(self.dom.notes, note);
 				// highlight the edited at the moment note
-				if ( neid === item.id ) self.NoteStateSet(note, 'edited');
+				if ( neid === item.id ) self.SetNotesState([note], 'active');
 			});
 		}
 	};
@@ -603,7 +624,6 @@ var NoteList = new function () {
 		this.data = {
 			latest :true, // show only the last 20 notes
 			notes  :[]   // all requested notes data array
-			//checked:[]    // list of checked notes id
 			//filter :TagManager.ParseStr()
 		};
 
@@ -617,7 +637,7 @@ var NoteList = new function () {
 				this.dom.tpinfo = element('div', {className:'info'}, 'info'),
 				this.dom.tpctrl = element('div', {className:'ctrl'}, 'control panel')
 			]),
-			this.dom.notes = element('div', {className:'notes', active:null}),
+			this.dom.notes = element('div', {className:'notes'}),
 			this.dom.btbar = element('div', {className:'btbar'})
 		]);
 

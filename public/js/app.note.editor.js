@@ -816,12 +816,7 @@ var NoteEditor = new function () {
 	var BlockControls = function () {
 		// return container
 		return self.dom.controls = element('div', {className:'buttons'}, [
-			element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){
-				var note = NoteList.GetNoteByID(self.data.id);
-				NoteList.NoteStateSet(note, 'active', false);
-				NoteList.NoteStateSet(note, 'edited', false);
-				self.Escape();
-			}}),
+			element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){self.Escape();}}),
 			element('input', {type:'button', value:'Save', className:'button bold', title:'press Ctrl+Enter to save'}, null, {onclick:function(){self.Save();}})
 		]);
 	};
@@ -866,6 +861,13 @@ var NoteEditor = new function () {
 	};
 
 	this.Escape = function () {
+		// get note from the list using current id
+		var note = NoteList.GetNoteByID(self.data.id);
+		// found
+		if ( note !== false ) {
+			// remove acitve cursor
+			NoteList.SetNotesState([note], 'active', false);
+		}
 		// clear previous content
 		elclear(this.dom.handle);
 		delete this.data;
@@ -1021,6 +1023,7 @@ var NoteEditor = new function () {
 		}
 		TemplateList.Show(false);
 		self.Show(true);
+
 	};
 
 //	var BuildTemplates = function () {

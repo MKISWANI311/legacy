@@ -5,17 +5,17 @@
  .notelist {}
 	.notelist > .tpbar { table-layout:fixed; display:table; height:20px; width:100% }
 		.notelist > .tpbar > .info { display:table-cell; vertical-align:middle }
-		.notelist > .tpbar > .ctrl { display:table-cell; width:100px; background-color:#ddd; display:none }
+		.notelist > .tpbar > .ctrl { display:table-cell; width:110px; background-color:#ddd; display:none; text-align:center; vertical-align:middle }
 	.notelist > .notes { margin-top:5px }
 		.notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; padding:5px }
 		.notelist > .notes > .note:hover  { background-color:#ffffdf }
 			.notelist > .notes > .note:hover .time { color:#000 !important }
-		.notelist > .notes > .note.hidden  { display:none }
-		.notelist > .notes > .note.checked { background-color:#ffffdf }
-		.notelist > .notes > .note.edited  { background-color:#e4ffe4 }
-			.notelist > .notes > .note.checked img.icon { display:none  !important }
-			.notelist > .notes > .note.checked div.tick { display:block !important; background-image:url("../img/tick.true.png") !important; }
-		.notelist > .notes > .note.active  { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }
+		.notelist > .notes > .note.hidden { display:none }
+		.notelist > .notes > .note.marked { background-color:#ffffdf }
+			.notelist > .notes > .note.marked img.icon { display:none  !important }
+			.notelist > .notes > .note.marked div.tick { display:block !important; background-image:url("../img/tick.true.png") !important; }
+		.notelist > .notes > .note.active { background-color:#e4ffe4 }
+/*		.notelist > .notes > .note.active  { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }*/
 			.notelist > .notes > .note > .icon { display:table-cell; vertical-align:middle; width:45px; padding-left:5px; padding-right:8px }
 				.notelist > .notes > .note > .icon img.icon { margin: 0 auto; display:block }
 				.notelist > .notes > .note > .icon div.tick { margin: 0 auto; display:none; width:25px; height:25px; opacity:0.5; background-image:url("../img/tick.false.png"); background-repeat:no-repeat; background-position: center center }
