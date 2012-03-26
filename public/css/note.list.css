@@ -23,9 +23,12 @@
 				.notelist > .notes > .note > .icon:hover div.tick { display:block }
 				.notelist > .notes > .note > .icon:hover div.tick:hover { opacity:1 }
 			.notelist > .notes > .note > .body { display:table-cell }
-				.notelist > .notes > .note > .body .info { padding:5px 0 }
-				.notelist > .notes > .note > .body .time { padding:0 5px; line-height: 21px; float:right; font-size:11px; color:#aaa }
-				.notelist > .notes > .note > .body .tags { padding-bottom:5px; line-height: 21px; color:#aaa }
+				.notelist > .notes > .note > .body > .info { padding:5px 0 }
+					.notelist > .notes > .note > .body > .info > .warn { color:#f00 }
+					.notelist > .notes > .note > .body > .info > .name { margin-right:5px; color:#aaa }
+					.notelist > .notes > .note > .body > .info > .data { margin-right:10px }
+				.notelist > .notes > .note > .body > .time { padding:0 5px; line-height: 21px; float:right; font-size:11px; color:#aaa }
+				.notelist > .notes > .note > .body > .tags { padding-bottom:5px; line-height: 21px; color:#aaa }
 					.notelist > .notes > .note .tags .tag { color:#000; border-left:2px solid #ccc; background-color:#ddd; line-height:20px; padding: 1px 7px 0; cursor:pointer; margin-right:5px; display:inline-block }
 					.notelist > .notes > .note .tags .tag:hover   { background-color:#bfdfff; color:#fff }
 					.notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }

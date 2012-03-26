@@ -245,6 +245,13 @@ var NoteFilter = new function () {
 		}
 	};
 
+	this.DoSearch = function ( ctrl ) {
+		ParseSearchStr();
+		ReworkSearchStr(ctrl);
+		// do search
+		PerformSearch();
+	}
+
 	/**
 	 * Keyboard input handler for tag search
 	 */
@@ -272,6 +279,13 @@ var NoteFilter = new function () {
 		}
 		self.MsgShow();
 	};
+
+	/**
+	 * Keyboard input handler for found notes filtering
+	 */
+	var PerformFilter = function () {
+		NoteList.SetNotesVisibility(null, self.dom.winput.value);
+	}
 
 	/**
 	 * Adds the given tag to the search
@@ -461,11 +475,12 @@ var NoteFilter = new function () {
 		$(this.dom.tinput).bind('keydown', function(event) {
 			// enter
 			if ( event.which == 13 ) {
+				self.DoSearch(event.ctrlKey);
 				// prepare inner parsed data
-				ParseSearchStr();
-				ReworkSearchStr(event.ctrlKey);
-				// do search
-				PerformSearch();
+//				ParseSearchStr();
+//				ReworkSearchStr(event.ctrlKey);
+//				// do search
+//				PerformSearch();
 			}
 			// up
 			if ( event.which == 38 ) {
@@ -511,13 +526,19 @@ var NoteFilter = new function () {
 //			}, 150);
 //		}
 //
-//		// handle input
+		// handle input
 //		var wtimer = null;
 //		this.dom.winput.onkeydown = function() {
 //			if ( wtimer ) clearTimeout(wtimer);
 //			wtimer = setTimeout(function(){
-//				NoteList.Filter(self.dom.winput.value);
+//
 //			}, 300);
 //		}
+
+		// tag key input handler
+		$(this.dom.winput).bind('keydown', function(event) {
+			// enter
+			if ( event.which == 13 ) self.DoSearch(false);
+		});
 	};
 };

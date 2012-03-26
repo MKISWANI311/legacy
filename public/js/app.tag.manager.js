@@ -204,6 +204,39 @@ var TagManager = new function () {
 		return result;
 	};
 
+	/**
+	 * Splits the string with words into two lists - inc and exc
+	 * @param data string with words
+	 * @example data = "table window -chair -door" -> {winc:["table","window"],wexc:["chair","door"]}
+	 */
+	this.SeparateWords = function ( data ) {
+		var list = [],  // array of all parts
+			winc = [],  // array of included words (not tags)
+			wexc = [];  // array of excluded words (not tags)
+		// check input
+		if ( data && data.match ) {
+			// split to separate words
+			list = data.match(/(\S+)/g);
+			if ( list && list instanceof Array ) {
+				// iterate words in the input string
+				list.each(function(word){
+					// find out if there is minus at the beginning of the word
+					if ( word.charAt(0) === '-' ) {
+						// get the word without minus
+						word = word.slice(1);
+						// append
+						if ( word && !wexc.has(word) ) wexc.push(word);
+					} else if ( word && !winc.has(word) ) {
+						// append
+						winc.push(word);
+					}
+				});
+			}
+		}
+		// build result struct
+		return { winc:winc, wexc:wexc };
+	}
+
 	this.ParseStr = function ( data ) {
 		var list = [],  // array of all parts
 			tinc = [],  // array of included tags ids
@@ -222,7 +255,7 @@ var TagManager = new function () {
 				list.sort();
 				// iterate words in the input string
 				for ( var i = 0; i < list.length; i++ ) {
-					// find if there are special chars at the beginning of the word
+					// find out if there are special chars at the beginning of the word
 					var fchar = list[i].charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
 					// get the word without special chars if present
 					var word = fexc || fcmd ? list[i].slice(1) : list[i];
@@ -253,7 +286,14 @@ var TagManager = new function () {
 				}
 			}
 		}
-		return {list:list, tinc:tinc, texc:texc, ninc:ninc, nexc:nexc, winc:winc, wexc:wexc, wcmd:wcmd};
+		// build result struct
+		return {
+			list:list,
+			tinc:tinc, texc:texc,
+			ninc:ninc, nexc:nexc,
+			winc:winc, wexc:wexc,
+			wcmd:wcmd
+		};
 	}
 
 //	this.StrCombine = function ( data ) {

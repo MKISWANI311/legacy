@@ -11,9 +11,10 @@ var NoteList = new function () {
 	// false - no plain data, everything is encrypted
 	this.open = true;
 
-	var hint_tag_include = 'click on this tag to include it to the search';
-	var hint_tag_exclude = 'click on this tag to exclude it from the search';
-	var hint_tag_missing = 'there are no tags specified for this note';
+	var hint_tag_include  = 'click on this tag to include it to the search';
+	var hint_tag_exclude  = 'click on this tag to exclude it from the search';
+	var hint_info_missing = 'there is no data';
+	var hint_tags_missing = 'there are no tags';
 
 	/**
 	 * Open the subscriber
@@ -22,9 +23,9 @@ var NoteList = new function () {
 	 */
 	this.EventOpen = function () {
 		fb('EventOpen: NoteList');
-		elclear(self.dom.notes);
+		elclear(this.dom.notes);
 		// fill notes
-		self.BuildTable(false);
+		this.BuildTable(false);
 		// component state flag
 		this.open = true;
 	};
@@ -38,13 +39,31 @@ var NoteList = new function () {
 		fb('EventClose: NoteList');
 		// close only if opened at the moment
 		if ( this.open ) {
+			// clear decoded entries data in the latest notes
+			data_notes_latest.each(ClearNoteDecData);
+			// clear decoded entries data in the requested notes
+			this.data.notes.each(ClearNoteDecData);
 			// clear notes
-			elclear(self.dom.notes);
+			elclear(this.dom.notes);
 			// component state flag
 			this.open = false;
 		}
 	};
 
+	/**
+	 * Unset all decrypted note data
+	 * @param note link to the note object
+	 */
+	var ClearNoteDecData = function ( note ) {
+		// all note entries
+		note.entries.each(function(entry){
+			// remove if exist
+			delete entry.name_dec;
+			delete entry.data_dec;
+		});
+		// all data for filtering
+		delete note.fulltext;
+	}
 
 	var SetNoteIcon = function ( note ) {
 //		var icon = 'img/tag_note.png',
@@ -193,12 +212,41 @@ var NoteList = new function () {
 //	};
 
 	/**
-	 * Tag button click handle
+	 * Makes a visualization of the given note entries details
+	 * @param note array note attributes
+	 * @return array of html tags
+	 */
+	var BuildNoteInfo = function ( note ) {
+		var list = [], fulltext = [];
+		// iterate all note entries
+		note.entries.each(function(entry){
+			// decrypt data
+			var name = App.Decode(entry.name);
+			var data = App.Decode(entry.data);
+			// prepare fulltext data
+			fulltext.push(name.toLowerCase());
+			fulltext.push(data.toLowerCase());
+			// there is data and it's not a password
+			if ( entry.id_type !== 4 && data ) {
+				var sname = name.length > 30 ? name.slice(0, 25) + '...' : name;
+				var sdata = data.length > 50 ? data.slice(0, 35) + '...' : data;
+				if ( entry.id_type === 2 ) {
+					sdata = element('a', {className:'', href:data}, sdata);
+				}
+				list.push(element('span', {className:'name'}, sname + ':'));
+				list.push(element('span', {className:'data'}, sdata));
+			}
+		});
+		note.fulltext = fulltext.join("\n");
+		// warning if no data
+		return list.length > 0 ? list : element('div', {className:'warn'}, hint_info_missing);
+	}
+
+	/**
+	 * Tag button click handler
 	 * include, exclude and subtract
 	 */
-	var TagClickHandle = function ( event ) {
-		// prevent bubbling
-		event.stopPropagation();
+	var TagClickHandler = function ( event ) {
 		// ctrl holding
 		if ( event.ctrlKey ) {
 			NoteFilter.TagSubtract(this.tagnm);
@@ -211,11 +259,9 @@ var NoteList = new function () {
 				NoteFilter.TagExclude(this.tagnm);
 			}
 		}
+		// prevent bubbling
+		return false;
 	};
-
-	var BuildNoteBody = function ( data ) {
-
-	}
 
 	/**
 	 * Makes a list of note tags buttons with handlers
@@ -235,7 +281,7 @@ var NoteList = new function () {
 				// create html wrapper for tag
 				item = element('span', {className:'tag include', tagnm:item, title:hint_tag_exclude}, item);
 				// mouse click handler
-				$(item).bind('click', TagClickHandle);
+				$(item).bind('click', TagClickHandler);
 				list.push(item);
 			});
 			// forms the list of tags available for selection
@@ -243,12 +289,12 @@ var NoteList = new function () {
 				// create html wrapper for tag
 				item = element('span', {className:'tag', finc:true, tagnm:item, title:hint_tag_include}, item);
 				// mouse click handler
-				$(item).bind('click', TagClickHandle);
+				$(item).bind('click', TagClickHandler);
 				list.push(item);
 			});
 		}
 		// list of tags or missing hint
-		return list.length > 0 ? list : hint_tag_missing;
+		return list.length > 0 ? list : hint_tags_missing;
 	}
 
 	/**
@@ -270,7 +316,10 @@ var NoteList = new function () {
 		return icon;
 	}
 
-	var ShowCtrlPanel = function () {
+	/**
+	 * Shows/hides checked notes controls
+	 */
+	this.ShowCtrlPanel = function () {
 		var i, item;
 		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
 			item = self.dom.notes.childNodes[i];
@@ -288,12 +337,12 @@ var NoteList = new function () {
 	 */
 	this.ClearNotesState = function ( notes ) {
 		// all notes or the given one/ones
-		//var i, list = note ? (note instanceof Array ? note : [note]) : self.dom.notes.childNodes;
 		var i, list = notes || self.dom.notes.childNodes;
 		// iterate formed list
 		for ( i = 0; i < list.length; i++ ) {
-			// reset class and state flags
+			// reset class
 			list[i].className = 'note';
+			// reset state flags
 			list[i].state.active = list[i].state.marked = false;
 		}
 	}
@@ -316,6 +365,10 @@ var NoteList = new function () {
 		}
 	}
 
+	/**
+	 * Returns the list of notes with the given state
+	 * @param type string state name active | marked
+	 */
 	this.GetNotesByState = function ( type ) {
 		// all notes or only the given one
 		var i, result = [], list = self.dom.notes.childNodes;
@@ -327,7 +380,7 @@ var NoteList = new function () {
 	}
 
 	/**
-	 * Return the html note block by id if found or false otherwise
+	 * Returns the html note block by id if found or false otherwise
 	 * @param id int note attribute
 	 */
 	this.GetNoteByID = function ( id ) {
@@ -345,87 +398,104 @@ var NoteList = new function () {
 	 * @param note to be processed
 	 * @param range flag to process the range
 	 */
-	var NoteStateActive = function ( note, range ) {
-		// last active note list
-		var alast = self.GetNotesByState('active');
-		// flag true if the node is the same as already active
-		var fsame = alast.length > 0 && alast[0].data.id === note.data.id;
-		// reset all notes states
-		self.ClearNotesState();
-		// there is already active note
-		fb('alast', alast, alast.length > 0 && alast[0].data.id === note.data.id);
-		fb('fsame', fsame);
-		// not the same as already active
-//		if ( !fsame ) {
-//			self.SetNotesState([note], 'marked');
-			fb('!!!');
-			// check if the edited note is not already active
-			if ( NoteEditor.GetNoteID() !== note.data.id ) {
-				// show note details
-				NoteEditor.Load(note.data);
-			}
+//	var NoteStateActive = function ( note, range ) {
+//		// last active note list
+//		var alast = self.GetNotesByState('active');
+//		// flag true if the node is the same as already active
+//		var fsame = alast.length > 0 && alast[0].data.id === note.data.id;
+//		// reset all notes states
+//		self.ClearNotesState();
+//		// there is already active note
+//		// check if the edited note is not already active
+//		if ( NoteEditor.GetNoteID() !== note.data.id ) {
+//			// show note details
+//			NoteEditor.Load(note.data);
 //		}
-		self.SetNotesState([note], 'active');
-//		if ( alast.length > 0 ) {
-//			// get the first one
-//			alast = alast[0];
-//			// it's the same as already active
-//			fsame = ( alast.data.id === note.data.id );
-//			if ( !fsame ) {
-//				// another note
-//				alast = self.dom.notes.active;
-//				$(self.dom.notes.active).removeClass('active');
-//				self.dom.notes.active.state.active = false;
+//		// make active
+//		self.SetNotesState([note], 'active');
+//		// holding Shift key
+//		if ( range ) {
+//			var i, item, cflag = false;
+//			// iterate all notes
+//			for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+//				// cursor
+//				item = self.dom.notes.childNodes[i];
+//				// flag showing that the cursor is inside the range
+//				if ( item.data.id === alast[0].data.id || item.data.id === note.data.id ) cflag = !cflag;
+//				// check inside the range or edge items
+//				if ( cflag || item.data.id === alast[0].data.id || item.data.id === note.data.id ) {
+//					self.SetNotesState([item], 'marked');
+//				}
 //			}
+//		} else {
+//			// check the only clicked note
+//			self.SetNotesState([note], 'marked');
 //		}
-
-		// holding Shift key
-		if ( range ) {
-			var i, item, cflag = false;
-			// iterate all notes
-			for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-				// cursor
-				item = self.dom.notes.childNodes[i];
-				// flag showing that the cursor is inside the range
-				if ( item.data.id === alast[0].data.id || item.data.id === note.data.id ) cflag = !cflag;
-				// check inside the range or edge items
-				if ( cflag || item.data.id === alast[0].data.id || item.data.id === note.data.id ) {
-					self.SetNotesState([item], 'marked');
-				}
-			}
-		} else {
-			self.SetNotesState([note], 'marked');
-		}
-	}
+//	}
 
 	/**
 	 * Whole note ckick handler
+	 * highlights the active note or note range
+	 * holding Ctrl checks/unchecks the selected notes
+	 * holding Shift selects all the notes between old and new selected notes
+	 * @param event jquery event object
 	 */
 	var NoteClickHandler = function ( event ) {
-		//fb(event);
+		// holding Ctrl key
 		if ( event.ctrlKey ) {
 			self.SetNotesState([this], 'marked');
+		// simple mouse click
 		} else {
-//			var notes = self.GetNotesByState('edited');
-//			if ( notes.length >= 1 ) {
-//
-//			}
-//			self.ClearNotesState();
-			NoteStateActive(this, event.shiftKey);
-			//self.SetNotesState(self.GetNotesByState('edited'), 'edited', false);
-			//self.SetNotesState([this], 'edited');
-			//NoteEditor.Load(this.data);
+			// last active note list
+			var alast = self.GetNotesByState('active');
+			// flag true if the node is the same as already active
+			var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
+			// reset all notes states
+			self.ClearNotesState();
+			// there is already active note
+			// check if the edited note is not already active
+			if ( NoteEditor.GetNoteID() !== this.data.id ) {
+				// show note details
+				NoteEditor.Load(this.data);
+			}
+			// make active
+			self.SetNotesState([this], 'active');
+			// holding Shift key
+			if ( event.shiftKey ) {
+				var i, item, cflag = false;
+				// iterate all notes
+				for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+					// cursor
+					item = self.dom.notes.childNodes[i];
+					// flag showing that the cursor is inside the range
+					if ( item.data.id === alast[0].data.id || item.data.id === this.data.id ) cflag = !cflag;
+					// check inside the range or edge items
+					if ( cflag || item.data.id === alast[0].data.id || item.data.id === this.data.id ) {
+						self.SetNotesState([item], 'marked');
+					}
+				}
+			} else {
+				// check the only clicked note
+				self.SetNotesState([this], 'marked');
+			}
+
 		}
-		ShowCtrlPanel();
+		// show/hide checked notes controls
+		self.ShowCtrlPanel();
+		// prevent bubbling
+		//return false;
 	}
 
 	/**
 	 * Note checkbox ckick handler
 	 */
-	var NoteTickClickHandler = function ( event ) {
-		event.stopPropagation();
+	var NoteTickClickHandler = function () {
+		// check/uncheck
 		self.SetNotesState([this.note], 'marked');
-		ShowCtrlPanel();
+		// show/hide checked notes controls
+		self.ShowCtrlPanel();
+		// prevent bubbling
+		return false;
 	}
 
 	/**
@@ -442,7 +512,7 @@ var NoteList = new function () {
 				note.dom.tick = element('div', {className:'tick', note:note})
 			]),
 			element('div', {className:'body'}, [
-				note.dom.info = element('div', {className:'info'}, data.id),
+				note.dom.info = element('div', {className:'info'}, BuildNoteInfo(data)),
 				note.dom.time = element('div', {className:'time'}, TimestampToDateStr(data.mtime)),
 				note.dom.tags = element('div', {className:'tags'}, BuildNoteTags(data))
 			])
@@ -461,9 +531,9 @@ var NoteList = new function () {
 		//this.data.notes.splice(0,0,data);
 		// build note and add it activated to the list top
 		var note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
-		NoteStateActive(note);
+		//NoteStateActive(note);
 		// need to show controls for top note
-		ShowCtrlPanel();
+		this.ShowCtrlPanel();
 	};
 
 	this.NoteUpdate = function ( data ) {
@@ -477,6 +547,8 @@ var NoteList = new function () {
 			elchild(elclear(note.dom.tags), BuildNoteTags(data));
 			// time
 			elchild(elclear(note.dom.time), TimestampToDateStr(data.mtime));
+			// info
+			elchild(elclear(note.dom.info), BuildNoteInfo(data));
 			// move to the top
 			this.dom.notes.insertBefore(note, this.dom.notes.childNodes[0]);
 
@@ -491,7 +563,7 @@ var NoteList = new function () {
 		//NoteStateActive(note);
 		//this.dom.notes.active = null;
 		// need to show controls for top note
-		ShowCtrlPanel();
+		this.ShowCtrlPanel();
 	}
 
 	var NoteVisibility = function ( note ) {
@@ -520,6 +592,44 @@ var NoteList = new function () {
 		return flag;
 	};
 
+	this.SetNotesVisibility = function ( notes, filter ) {
+		// all notes or the given one/ones
+		notes = notes || this.dom.notes.childNodes;
+		var i, visible,  // flag for visibility
+			hlist = [],  // list of the notes that should be hidden
+			// splits filter string into two lists - winc and wexc
+			words = TagManager.SeparateWords(filter);
+		// iterate formed list
+		for ( i = 0; i < notes.length; i++ ) {
+			// by default is visible
+			visible = true;
+			// check by tags
+
+			// check by filter string if still visible
+			if ( visible ) {
+				// check included words
+				words.winc.each(function(word){
+					// not found in fulltext so exit
+					if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) { visible = false; return; }
+				});
+				// still visible
+				if ( visible ) {
+					// check excluded words
+					words.wexc.each(function(word){
+						// found in fulltext so exit
+						if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) { visible = false; return; }
+					});
+				}
+			}
+			// apply visibility flag
+			$(notes[i]).toggle(visible);
+			// fill the list of notes to be hidden
+			if ( !visible ) hlist.push(notes[i]);
+		}
+		// clear inner state for hidden notes
+		this.ClearNotesState(hlist);
+	}
+
 	/**
 	 * Fills the note list with generated notes
 	 * @param data array of notes or false if gloabal latest list should be used
@@ -530,7 +640,7 @@ var NoteList = new function () {
 		// clearing the container
 		elclear(self.dom.notes);
 		// hide control panel
-		ShowCtrlPanel();
+		this.ShowCtrlPanel();
 		// there are some notes
 		if ( data.length > 0 ) {
 			// determine the note id beeing edited at the moment
@@ -546,13 +656,28 @@ var NoteList = new function () {
 		}
 	};
 
-	this.Filter = function ( text ) {
-		text = text.toLowerCase();
-		for ( var i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-			// prepare
-			var item = self.dom.notes.childNodes[i];
-			// search substring and show/hide
-			$(item).toggle(item.raw.indexOf(text) >= 0);
+	this.Filter = function ( winc, wexc ) {
+		for ( var i = 0, list = self.dom.notes.childNodes; i < list.length; i++ ) {
+			var visible = true;
+			// check included words
+			winc.each(function(word){
+				// found in fulltext so exit
+				if ( list[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {
+					visible = false; return;
+				}
+			});
+			// still visible
+			if ( visible ) {
+				// check excluded words
+				wexc.each(function(word){
+					// found in fulltext so exit
+					if ( list[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {
+						visible = false; return;
+					}
+				});
+			}
+			// apply visibility flag
+			$(list[i]).toggle(visible);
 		}
 	};
 
