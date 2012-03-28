@@ -592,13 +592,13 @@ var NoteList = new function () {
 		return flag;
 	};
 
-	this.SetNotesVisibility = function ( notes, filter ) {
+	this.SetNotesVisibility = function ( notes ) {
 		// all notes or the given one/ones
 		notes = notes || this.dom.notes.childNodes;
 		var i, visible,  // flag for visibility
-			hlist = [],  // list of the notes that should be hidden
+			hlist = [];  // list of the notes that should be hidden
 			// splits filter string into two lists - winc and wexc
-			words = TagManager.SeparateWords(filter);
+			//words = TagManager.SeparateWords(filter);
 		// iterate formed list
 		for ( i = 0; i < notes.length; i++ ) {
 			// by default is visible
@@ -608,21 +608,22 @@ var NoteList = new function () {
 			// check by filter string if still visible
 			if ( visible ) {
 				// check included words
-				words.winc.each(function(word){
+				NoteFilter.data.winc.each(function(word){
 					// not found in fulltext so exit
 					if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) { visible = false; return; }
 				});
 				// still visible
 				if ( visible ) {
 					// check excluded words
-					words.wexc.each(function(word){
+					NoteFilter.data.wexc.each(function(word){
 						// found in fulltext so exit
 						if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) { visible = false; return; }
 					});
 				}
 			}
 			// apply visibility flag
-			$(notes[i]).toggle(visible);
+			//$(notes[i]).toggleClass('hidden', !visible);
+			notes[i].style.display = visible ? '' : 'none';
 			// fill the list of notes to be hidden
 			if ( !visible ) hlist.push(notes[i]);
 		}
@@ -649,6 +650,7 @@ var NoteList = new function () {
 			data.each(function(item){
 				// append the created note to the list
 				note = self.BuildNote(item);
+				self.SetNotesVisibility([note]);
 				elchild(self.dom.notes, note);
 				// highlight the edited at the moment note
 				if ( neid === item.id ) self.SetNotesState([note], 'active');

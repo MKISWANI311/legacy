@@ -11,8 +11,9 @@ var NoteFilter = new function () {
 	// false - no plain data, everything is encrypted
 	this.open = true;
 
-	var hint_filter_tags  = 'searching notes with tags separated by space';
-	var hint_filter_words = 'filtering the found notes';
+	// watermarks input hints
+	var hint_tinput = 'searching notes with tags separated by space';
+	var hint_winput = 'filtering the found notes';
 
 	var msg_info_no_data      = 'There are no records with given tags. You can use some other tags or see your ';
 	var msg_fail_server_error = 'The request was not successful. The response from the server: ';
@@ -184,21 +185,102 @@ var NoteFilter = new function () {
 	}
 
 	/**
-	 * Prepares inner data from user input if changed since last time
-	 * @param text string to parse
+	 * Updates inner data from user input if changed since last time
 	 */
-	var ParseSearchStr = function ( text ) {
-		text = text || self.dom.tinput.value;
+	this.UpdateParsedInput = function () {
+		// watermark check and clearing, truncating
+		var tval = this.dom.tinput.value !== hint_tinput ? this.dom.tinput.value.trim() : '';
+		var wval = this.dom.winput.value !== hint_winput ? this.dom.winput.value.trim() : '';
 		// check if old and current values match
-		if ( text !== self.dom.tinput.oldval ) {
-			// new data so updating
-			self.data = TagManager.ParseStr(text !== hint_filter_tags ? text : '');
-			self.dom.tinput.oldval = text;
+		if ( tval !== this.dom.tinput.oldval ||
+			 wval !== this.dom.winput.oldval )
+		 {
+			// updating parsed data
+			this.data = this.GetParsedInput(tval, wval);
+			// save current values
+			this.dom.tinput.oldval = tval;
+			this.dom.winput.oldval = wval;
 		}
 	}
 
 	/**
+	 * Parses the user input into inner data lists
+	 * @param tval string of tags input
+	 * @param wval string of words input
+	 * @return hash of lists
+	 */
+	this.GetParsedInput = function ( tval, wval ) {
+		var list = [],  // array of all parts
+			tinc = [],  // array of included tags ids
+			texc = [],  // array of excluded tags ids
+			ninc = [],  // array of included tags names
+			nexc = [],  // array of excluded tags names
+			winc = [],  // array of included words (not tags)
+			wexc = [],  // array of excluded words (not tags)
+			wcmd = [];  // array of command words
+		// prepare sorted list of words
+		list = TagManager.Str2Names(tval).sort();
+		list.each(function(word){
+			// find out if there are special chars at the beginning of the word
+			var fchar = word.charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
+			// get the word without special chars if present
+			if ( fexc || fcmd ) word = word.slice(1);
+			// not empty
+			if ( word ) {
+				// command
+				if ( fcmd ) {
+					wcmd.push(word);
+				} else {
+					// just a tag
+					var tid = data_tags_nmlist[word];
+					// tag id found in the global data
+					if ( tid ) {
+						if ( fexc ) {
+							// excluded
+							texc.push(tid); nexc.push(word);
+						} else {
+							// included
+							tinc.push(tid); ninc.push(word);
+						}
+					} else {
+						// tag id not found so it's just a word
+						if ( fexc )
+							wexc.push(word);
+						else
+							winc.push(word);
+					}
+				}
+			}
+		});
+		// there are no words in the main input
+		if ( winc.length === 0 && wexc.length === 0 ) {
+			// try to get some words from additional input
+			list = TagManager.Str2Names(wval);
+			list.each(function(word){
+				// find out if there is minus at the beginning of the word
+				if ( word.charAt(0) === '-' ) {
+					// get the word without minus
+					word = word.slice(1);
+					// append excluded
+					if ( word ) wexc.push(word);
+				} else {
+					// append included
+					if ( word ) winc.push(word);
+				}
+			});
+		}
+		// build result struct
+		return {
+			tinc:tinc, texc:texc,
+			ninc:ninc, nexc:nexc,
+			winc:winc, wexc:wexc,
+			wcmd:wcmd
+		};
+	}
+
+	/**
 	 * Rebuilds the user input
+	 * @param ctrl bool flag clear word filter if true
 	 */
 	var ReworkSearchStr = function ( ctrl ) {
 		// fill history if not duplicate
@@ -219,34 +301,45 @@ var NoteFilter = new function () {
 		if ( wcmd ) list.push(':'+wcmd);
 		if ( texc ) list.push('-'+texc);
 		if ( tinc ) list.push(tinc);
-		// reset input
-		self.dom.tinput.value = '';
 		// there was some data entered
 		if ( list.length > 0 ) {
 			self.dom.tinput.value = list.join(' ') + ' ';
-			// just in case style correction
+			// style correction
 			self.dom.tinput.style.color = '#000';
+		} else {
+			// reset input
+			self.dom.tinput.value = hint_tinput;
+			// style correction
+			self.dom.tinput.style.color = '#ccc';
 		}
+		// watermark correction
+		//self.dom.tinput.;
 		// synchronyze the previous value with the current
 		self.dom.tinput.oldval = self.dom.tinput.value;
 		// filter field
 		if ( winc || wexc ) {
 			list = [];
-			if ( winc ) list.push(winc);
 			if ( wexc ) list.push('-'+wexc);
+			if ( winc ) list.push(winc);
 			self.dom.winput.value = list.join(' ');
 			// style correction
 			self.dom.winput.style.color = '#000';
 		}
 		// force filter clearing
 		if ( ctrl ) {
-			self.dom.winput.value = hint_filter_words;
+			// clear lists
+			self.data.winc = [];
+			self.data.wexc = [];
+			// update input
+			self.dom.winput.value = hint_winput;
 			self.dom.winput.style.color = '#ccc';
 		}
 	};
 
 	this.DoSearch = function ( ctrl ) {
-		ParseSearchStr();
+		// prepare
+		this.UpdateParsedInput();
+		// update user input if necessary
 		ReworkSearchStr(ctrl);
 		// do search
 		PerformSearch();
@@ -258,7 +351,7 @@ var NoteFilter = new function () {
 	var PerformSearch = function () {
 		self.MsgReset();
 		// not empty input
-		if ( self.dom.tinput.value !== hint_filter_tags && self.dom.tinput.value !== '' ) {
+		if ( self.dom.tinput.value !== hint_tinput && self.dom.tinput.value !== '' ) {
 			fb('checking ...');
 			// parsed tags don't match
 			if ( self.data.tinc.sort().join() !== self.post.tinc.sort().join() ||
@@ -267,6 +360,8 @@ var NoteFilter = new function () {
 			{
 				// there are changes
 				self.NotesRequest();
+			} else {
+				NoteList.SetNotesVisibility();
 			}
 			// there may be wrong tags
 			CheckMissingTags();
@@ -274,8 +369,8 @@ var NoteFilter = new function () {
 			// show latest
 			NoteList.BuildTable(false);
 			// reset inner data
-			self.data = TagManager.ParseStr();
-			self.post = TagManager.ParseStr();
+			self.data = self.GetParsedInput();  // ???
+			self.post = self.GetParsedInput();  // ???
 		}
 		self.MsgShow();
 	};
@@ -283,9 +378,9 @@ var NoteFilter = new function () {
 	/**
 	 * Keyboard input handler for found notes filtering
 	 */
-	var PerformFilter = function () {
-		NoteList.SetNotesVisibility(null, self.dom.winput.value);
-	}
+//	var PerformFilter = function () {
+//		NoteList.SetNotesVisibility(null, self.dom.winput.value);
+//	}
 
 	/**
 	 * Adds the given tag to the search
@@ -355,11 +450,11 @@ var NoteFilter = new function () {
 	 */
 	this.Reset = function () {
 		// clear search string and set focus
-		self.dom.winput.value = hint_filter_words;
-		self.dom.tinput.value  = hint_filter_tags;
+		//self.dom.tinput.value = hint_tinput;
+		//self.dom.winput.value = hint_winput;
 		self.dom.tinput.focus();
 		// clear tags data
-		this.data = TagManager.ParseStr();
+		this.post = this.GetParsedInput();
 		// delete all messages
 		self.MsgReset();
 		self.MsgShow();
@@ -376,40 +471,24 @@ var NoteFilter = new function () {
 		this.dom = {handle:params.handle};
 
 		// parsed input data and its copy on post
-		this.data = TagManager.ParseStr();
-		this.post = TagManager.ParseStr();
+		this.data = this.GetParsedInput();
+		this.post = this.GetParsedInput();
 
 		// build all blocks together
 		elchild(this.dom.handle, [
+			// main block
 			element('div', {className:'search'}, [
 				// tags search input
 				element('div', {className:'tblock'}, element('div', {className:'body'}, [
-					this.dom.tinput = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:'', history:[], histpos:0}),
+					this.dom.tinput = element('input', {type:'text', className:'line', value:hint_tinput, oldval:'', history:[], histpos:0}),
 					this.dom.ticon  = element('div', {className:'ticon'})
 				])),
 				// words search input
 				element('div', {className:'wblock'}, element('div', {className:'body'}, [
-					this.dom.winput = element('input', {type:'text', className:'line', value:hint_filter_words}),
+					this.dom.winput = element('input', {type:'text', className:'line', value:hint_winput, oldval:''}),
 					this.dom.wicon  = element('div', {className:'wicon'}),
 				]))
 			]),
-
-			// first line with search inputs
-//			tblrow(element('table', {className:'main'}), [
-//				// icon
-//				element('img', {className:'', src:'img/2x2_grid.png'}),
-//				// tags search input
-//				element('div', {}, [
-//					this.dom.tinput  = element('input', {type:'text', className:'line', value:hint_filter_tags, oldval:'', history:[], histpos:0}),
-//					this.dom.ticon   = element('div', {className:'ticon'})
-//					//this.dom.suggest = element('div', {className:'suggest'}, 'suggest')
-//				]),
-//				// words search input
-//				element('div', {}, [
-//					this.dom.winput  = element('input', {type:'text', className:'line', value:hint_filter_words}),
-//					this.dom.wicon   = element('div', {className:'wicon'}),
-//				])
-//			], [{className:'switch'}, {className:'tags'}, {className:'words'}]),
 			// hidden messages
 			this.dom.messages = element('div', {className:'messages'}, [
 				this.dom.fail = element('div', {className:'fail'}, 'test 3'),
@@ -419,8 +498,8 @@ var NoteFilter = new function () {
 		]);
 
 		// input hints
-		watermark(this.dom.tinput, hint_filter_tags,  '#000');
-		watermark(this.dom.winput, hint_filter_words, '#000');
+		watermark(this.dom.tinput, hint_tinput, '#000');
+		watermark(this.dom.winput, hint_winput, '#000');
 
 		// autocompleter init
 		$(this.dom.tinput).autocomplete({
@@ -441,7 +520,7 @@ var NoteFilter = new function () {
 				// only if there should be some results
 				if ( data.length > 0 ) {
 					// prepare inner parsed data
-					ParseSearchStr();
+					self.UpdateParsedInput();
 					// preparing
 					data = [];
 					// commands
@@ -477,7 +556,7 @@ var NoteFilter = new function () {
 			if ( event.which == 13 ) {
 				self.DoSearch(event.ctrlKey);
 				// prepare inner parsed data
-//				ParseSearchStr();
+//				UpdateParsedInput();
 //				ReworkSearchStr(event.ctrlKey);
 //				// do search
 //				PerformSearch();
@@ -521,7 +600,7 @@ var NoteFilter = new function () {
 //			if ( ttimer ) clearTimeout(ttimer);
 //			ttimer = setTimeout(function(){
 //				// prepare inner parsed data
-//				ParseSearchStr();
+//				UpdateParsedInput();
 //				//CheckMissingTags();
 //			}, 150);
 //		}

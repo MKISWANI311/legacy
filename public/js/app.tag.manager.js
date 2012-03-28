@@ -186,19 +186,25 @@ var TagManager = new function () {
 		return result;
 	};
 
+	/**
+	 * Converts a string to array of words
+	 * @param data input string
+	 * @return array of words
+	 * @example "ftp -note :ssh !site" -> ["ftp","-note",":ssh","!site"]
+	 */
 	this.Str2Names = function ( data ) {
 		var result = [];
 		// check input
 		if ( data && data.match ) {
-			//
+			// split to words
 			data = data.match(/(\S+)/g);
+			// not empty list of words
 			if ( data && data instanceof Array ) {
 				// iterate words in the input string
-				for ( var i = 0; i < data.length; i++ ) {
-					if ( !result.has(data[i]) ) {
-						result.push(data[i]);
-					}
-				}
+				data.each(function(word){
+					// prevent duplication
+					if ( !result.has(word) ) result.push(word);
+				});
 			}
 		}
 		return result;
@@ -213,87 +219,22 @@ var TagManager = new function () {
 		var list = [],  // array of all parts
 			winc = [],  // array of included words (not tags)
 			wexc = [];  // array of excluded words (not tags)
-		// check input
-		if ( data && data.match ) {
-			// split to separate words
-			list = data.match(/(\S+)/g);
-			if ( list && list instanceof Array ) {
-				// iterate words in the input string
-				list.each(function(word){
-					// find out if there is minus at the beginning of the word
-					if ( word.charAt(0) === '-' ) {
-						// get the word without minus
-						word = word.slice(1);
-						// append
-						if ( word && !wexc.has(word) ) wexc.push(word);
-					} else if ( word && !winc.has(word) ) {
-						// append
-						winc.push(word);
-					}
-				});
+		// prepare list of words
+		list = this.Str2Names(data);
+		list.each(function(word){
+			// find out if there is minus at the beginning of the word
+			if ( word.charAt(0) === '-' ) {
+				// get the word without minus
+				word = word.slice(1);
+				// append excluded
+				if ( word ) wexc.push(word);
+			} else {
+				// append included
+				if ( word ) winc.push(word);
 			}
-		}
+		});
 		// build result struct
 		return { winc:winc, wexc:wexc };
-	}
-
-	this.ParseStr = function ( data ) {
-		var list = [],  // array of all parts
-			tinc = [],  // array of included tags ids
-			texc = [],  // array of excluded tags ids
-			ninc = [],  // array of included tags names
-			nexc = [],  // array of excluded tags names
-			winc = [],  // array of included words (not tags)
-			wexc = [],  // array of excluded words (not tags)
-			wcmd = [];  // array of command words
-
-		// check input
-		if ( data && data.match ) {
-			// split to separate words
-			list = data.match(/(\S+)/g);
-			if ( list && list instanceof Array ) {
-				list.sort();
-				// iterate words in the input string
-				for ( var i = 0; i < list.length; i++ ) {
-					// find out if there are special chars at the beginning of the word
-					var fchar = list[i].charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
-					// get the word without special chars if present
-					var word = fexc || fcmd ? list[i].slice(1) : list[i];
-					// not empty
-					if ( word ) {
-						// command
-						if ( fcmd ) {
-							if ( !wcmd.has(word) ) wcmd.push(word);
-						} else {
-							// just a tag
-							var tid  = data_tags_nmlist[word];
-							// tag id found in the global data
-							if ( tid ) {
-								if ( fexc ) {
-									// excluded
-									if ( !texc.has(tid) ) { texc.push(tid); nexc.push(word); }
-								} else {
-									// included
-									if ( !tinc.has(tid) ) { tinc.push(tid); ninc.push(word); }
-								}
-							} else {
-								// tag id not found so it's just a word
-								if ( fexc ) {if ( !wexc.has(word) ) wexc.push(word);}
-								else if ( !winc.has(word) ) winc.push(word);
-							}
-						}
-					}
-				}
-			}
-		}
-		// build result struct
-		return {
-			list:list,
-			tinc:tinc, texc:texc,
-			ninc:ninc, nexc:nexc,
-			winc:winc, wexc:wexc,
-			wcmd:wcmd
-		};
 	}
 
 //	this.StrCombine = function ( data ) {
