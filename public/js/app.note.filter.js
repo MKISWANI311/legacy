@@ -14,6 +14,13 @@ var NoteFilter = new function () {
 	// watermarks input hints
 	var hint_tinput = 'searching notes with tags separated by space';
 	var hint_winput = 'filtering the found notes';
+	var hint_cmd = {
+		':day'     : 'allows to get notes modified during the last 24 hours',
+		':week'    : 'allows to get notes modified during the last week',
+		':month'   : 'allows to get notes modified during the last month',
+		':notags'  : 'shows the notes without tags',
+		':deleted' : 'shows the previously deleted notes'
+	};
 
 	var msg_info_no_data      = 'There are no records with given tags. You can use some other tags or see your ';
 	var msg_fail_server_error = 'The request was not successful. The response from the server: ';
@@ -513,8 +520,12 @@ var NoteFilter = new function () {
 			delay: 200,
 			data: [true],
 			showResult: function(tag){
+				var hint = '', fcmd = tag.charAt(0) === ':';
+				if ( fcmd ) {
+					hint = '<div class="hint">' + hint_cmd[tag] + '</div>';
+				}
 				// wrap to div with icon
-				return '<div class="' + (tag.charAt(0) === ':' ? 'cmd' : 'tag') + '">' + tag + '</div>';
+				return '<div class="' + (fcmd ? 'cmd' : 'tag') + '">' + tag + hint + '</div>';
 			},
 			processData: function(data){
 				// only if there should be some results

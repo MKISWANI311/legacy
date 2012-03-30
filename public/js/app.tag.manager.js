@@ -137,7 +137,7 @@ var TagManager = new function () {
 						// tag found in the global data
 						result.push(data_tags_nmlist[name]);
 					} else {
-						// not found so encrypt if not skipped
+						// not found so encrypt and cache if not skipped
 						if ( !skip_new && (enc = App.Encode(name, true)) !== false ) {
 							result.push(enc);
 						}
@@ -159,44 +159,41 @@ var TagManager = new function () {
 	 * @example skip_new=false "ftp note ssh site" -> [1,2,'***encrypted string***',3]
 	 */
 	this.Str2IDs = function ( data, skip_new ) {
-		var result = [];
-		// check input
-		if ( data && data.match ) {
-			// do convert
-			result = this.Names2IDs(data.match(/(\S+)/g), skip_new);
-		}
-		return result;
+		// do convert
+		return this.Names2IDs(this.Str2Names(data), skip_new);
 	};
 
-	this.NamesMissed = function ( names, data ) {
-		var result = [];
-		// check input
-		if ( data && data.match ) {
-			// split to separate words
-			data = data.match(/(\S+)/g);
-			if ( data && data instanceof Array ) {
-				// iterate words in the input string
-				for ( var i = 0; i < data.length; i++ ) {
-					if ( !names.has(data[i]) ) {
-						result.push(data[i]);
-					}
-				}
-			}
-		}
-		return result;
-	};
+//	this.NamesMissed = function ( names, data ) {
+//		var result = [];
+//		// check input
+//		if ( data && data.match ) {
+//			// split to separate words
+//			data = data.match(/(\S+)/g);
+//			if ( data && data instanceof Array ) {
+//				// iterate words in the input string
+//				for ( var i = 0; i < data.length; i++ ) {
+//					if ( !names.has(data[i]) ) {
+//						result.push(data[i]);
+//					}
+//				}
+//			}
+//		}
+//		return result;
+//	};
 
 	/**
 	 * Converts a string to array of words
 	 * @param data input string
 	 * @return array of words
-	 * @example "ftp -note :ssh !site" -> ["ftp","-note",":ssh","!site"]
+	 * @example 'ftp -note :ssh !site' -> ["ftp","-note",":ssh","!site"]
+	 * @example 'ftp "my note" :ssh' -> ["ftp","my note",":ssh"]
 	 */
 	this.Str2Names = function ( data ) {
 		var result = [];
 		// check input
 		if ( data && data.match ) {
 			// split to words
+			//data = data.match(/(?:"[^"]+"|[\S]+)/g);
 			data = data.match(/(\S+)/g);
 			// not empty list of words
 			if ( data && data instanceof Array ) {

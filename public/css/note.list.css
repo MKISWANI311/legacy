@@ -7,7 +7,7 @@
 		.notelist > .tpbar > .info { display:table-cell; vertical-align:middle }
 		.notelist > .tpbar > .ctrl { display:table-cell; width:110px; background-color:#ddd; display:none; text-align:center; vertical-align:middle }
 	.notelist > .notes { margin-top:5px }
-		.notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dotted #eee; border-top: 1px dotted #eee; padding:5px }
+		.notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dashed #eee; border-top: 1px dashed #eee; padding:5px }
 		.notelist > .notes > .note:hover  { background-color:#ffffdf }
 			.notelist > .notes > .note:hover .time { color:#000 !important }
 		.notelist > .notes > .note.hidden { display:none }

@@ -38,6 +38,13 @@
 .acResults ul li .tag {
 	background-image: url('../img/tag.12.png');
 }
+.acResults ul li .cmd .hint {
+	float: right;
+	font-size: 11px;
+	font-weight: normal;
+	width: 350px;
+	color: #aaa;
+}
 
 .acLoading {
 	background : url('indicator.gif') right center no-repeat;
