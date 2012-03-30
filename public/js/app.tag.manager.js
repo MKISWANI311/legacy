@@ -12,7 +12,7 @@ var TagManager = new function () {
 	// component state flag
 	// true  - everything is decoded
 	// false - no plain data, everything is encrypted
-	this.open = true;
+	this.open = false;
 
 	/**
 	 * Open the subscriber
@@ -208,31 +208,103 @@ var TagManager = new function () {
 	};
 
 	/**
+	 * Parses the user input into inner data lists
+	 * @param data string of tags input
+	 * @return hash of lists
+	 */
+	this.StrParse = function ( data ) {
+		var tinc = [],  // array of included tags ids
+			texc = [],  // array of excluded tags ids
+			ninc = [],  // array of included tags names
+			nexc = [],  // array of excluded tags names
+			winc = [],  // array of included words (not tags)
+			wexc = [],  // array of excluded words (not tags)
+			wcmd = [];  // array of command words
+		// prepare sorted list of words and iterate
+		this.Str2Names(data).sort().each(function(word){
+			// find out if there are special chars at the beginning of the word
+			var fchar = word.charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
+			// get the word without special chars if present
+			if ( fexc || fcmd ) word = word.slice(1);
+			// not empty
+			if ( word ) {
+				// command
+				if ( fcmd ) {
+					wcmd.push(word);
+				} else {
+					// just a tag
+					var tid = data_tags_nmlist[word];
+					// tag id found in the global data
+					if ( tid ) {
+						if ( fexc ) {
+							// excluded
+							texc.push(tid); nexc.push(word);
+						} else {
+							// included
+							tinc.push(tid); ninc.push(word);
+						}
+					} else {
+						// tag id not found so it's just a word
+						if ( fexc )
+							wexc.push(word);
+						else
+							winc.push(word);
+					}
+				}
+			}
+		});
+		// build result struct
+		return {
+			tinc:tinc, texc:texc,
+			ninc:ninc, nexc:nexc,
+			winc:winc, wexc:wexc,
+			wcmd:wcmd
+		};
+	}
+
+	/**
+	 * Build the user input string from the parsed inner data
+	 * @param data hash of lists
+	 * @return string of tags input
+	 */
+	this.StrBuild = function ( data ) {
+		var list = [];
+		// check input and fill the list with the corresponding data
+		if ( data.wcmd && data.wcmd instanceof Array ) data.wcmd.sort().each(function(item){ list.push(':'+item); });
+		if ( data.ninc && data.ninc instanceof Array ) data.ninc.sort().each(function(item){ list.push(    item); });
+		if ( data.nexc && data.nexc instanceof Array ) data.nexc.sort().each(function(item){ list.push('-'+item); });
+		if ( data.winc && data.winc instanceof Array ) data.winc.sort().each(function(item){ list.push(    item); });
+		if ( data.wexc && data.wexc instanceof Array ) data.wexc.sort().each(function(item){ list.push('-'+item); });
+		// implode data into one line separated by spaces
+		return list.join(' ');
+	}
+
+	/**
 	 * Splits the string with words into two lists - inc and exc
 	 * @param data string with words
 	 * @example data = "table window -chair -door" -> {winc:["table","window"],wexc:["chair","door"]}
 	 */
-	this.SeparateWords = function ( data ) {
-		var list = [],  // array of all parts
-			winc = [],  // array of included words (not tags)
-			wexc = [];  // array of excluded words (not tags)
-		// prepare list of words
-		list = this.Str2Names(data);
-		list.each(function(word){
-			// find out if there is minus at the beginning of the word
-			if ( word.charAt(0) === '-' ) {
-				// get the word without minus
-				word = word.slice(1);
-				// append excluded
-				if ( word ) wexc.push(word);
-			} else {
-				// append included
-				if ( word ) winc.push(word);
-			}
-		});
-		// build result struct
-		return { winc:winc, wexc:wexc };
-	}
+//	this.SeparateWords = function ( data ) {
+//		var list = [],  // array of all parts
+//			winc = [],  // array of included words (not tags)
+//			wexc = [];  // array of excluded words (not tags)
+//		// prepare list of words
+//		list = this.Str2Names(data);
+//		list.each(function(word){
+//			// find out if there is minus at the beginning of the word
+//			if ( word.charAt(0) === '-' ) {
+//				// get the word without minus
+//				word = word.slice(1);
+//				// append excluded
+//				if ( word ) wexc.push(word);
+//			} else {
+//				// append included
+//				if ( word ) winc.push(word);
+//			}
+//		});
+//		// build result struct
+//		return { winc:winc, wexc:wexc };
+//	}
 
 //	this.StrCombine = function ( data ) {
 //		var texc = [];

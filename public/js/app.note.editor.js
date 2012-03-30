@@ -13,7 +13,7 @@ var NoteEditor = new function () {
 	// component state flag
 	// true - everything is decoded
 	// false - no plain data, everything is encrypted
-	this.open = true;
+	this.open = false;
 
 	/**
 	 * Open the subscriber
@@ -52,9 +52,9 @@ var NoteEditor = new function () {
 			// prepare all tags
 			for ( var tid in data_tags_idlist ) data.push([data_tags_idlist[tid], tid]);
 			$(this.dom.tags.input).data('autocompleter').options.data = data;
-			// component state flag
-			this.open = true;
 		}
+		// component state flag
+		this.open = true;
 	};
 
 	/**
@@ -96,9 +96,9 @@ var NoteEditor = new function () {
 			this.dom.tags.input.value = '[encrypted tags]';
 			// clear autocompleter
 			$(this.dom.tags.input).data('autocompleter').options.data = [];
-			// component state flag
-			this.open = false;
 		}
+		// component state flag
+		this.open = false;
 	};
 
 	/**
@@ -872,7 +872,7 @@ var NoteEditor = new function () {
 		elclear(this.dom.handle);
 		delete this.data;
 		delete this.post;
-		this.open = true;
+		//this.open = true;
 		self.Show(false);
 		TemplateList.Show(true);
 	};

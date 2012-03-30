@@ -9,7 +9,7 @@ var NoteList = new function () {
 	// component state flag
 	// true  - everything is decoded
 	// false - no plain data, everything is encrypted
-	this.open = true;
+	this.open = false;
 
 	var hint_tag_include  = 'click on this tag to include it to the search';
 	var hint_tag_exclude  = 'click on this tag to exclude it from the search';
@@ -25,7 +25,7 @@ var NoteList = new function () {
 		fb('EventOpen: NoteList');
 		elclear(this.dom.notes);
 		// fill notes
-		this.BuildTable(false);
+		//this.BuildTable(false);
 		// component state flag
 		this.open = true;
 	};

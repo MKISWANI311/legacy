@@ -17,7 +17,7 @@ function TagList ( params ) {
 	// component state flag
 	// true - everything is decoded
 	// false - no plain data, everything is encrypted
-	this.open = true;
+	this.open = false;
 
 	/**
 	 * Open the subscriber

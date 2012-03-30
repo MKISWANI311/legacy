@@ -9,11 +9,13 @@ var NoteFilter = new function () {
 	// component state flag
 	// true  - everything is decoded
 	// false - no plain data, everything is encrypted
-	this.open = true;
+	this.open = false;
 
 	// watermarks input hints
-	var hint_tinput = 'searching notes with tags separated by space';
-	var hint_winput = 'filtering the found notes';
+	var hint_tinput   = 'searching notes with tags separated by space';
+	var hint_wexclude = 'click on this word to remove it from the filtering';
+	//var hint_winput = 'filtering the found notes';
+	// autocompleter command hints
 	var hint_cmd = {
 		':day'     : 'allows to get notes modified during the last 24 hours',
 		':week'    : 'allows to get notes modified during the last week',
@@ -34,25 +36,11 @@ var NoteFilter = new function () {
 		fb('EventOpen: NoteFilter');
 		// fill search string
 		if ( this.dom.tinput.encval ) this.dom.tinput.value = App.Decode(this.dom.tinput.encval);
-		if ( this.dom.winput.encval ) this.dom.winput.value = App.Decode(this.dom.winput.encval);
-		// fill autocompleter
-//		var data = [];
-//		//data.push([':all', 0]);
-//		//data.push([':active', 0]);
-//		data.push([':deleted', 0]);
-//		data.push([':notags', 0]);
-//		data.push([':day', 0]);
-//		data.push([':week', 0]);
-//		data.push([':month', 0]);
-//		data.push([':last1m', 0]);
-//		for ( var tid in data_tags_idlist ) {
-//			fb(data_tags_idlist[tid], tid);
-//			data.push([data_tags_idlist[tid], tid]);
-//			//data.push(['-' + data_tags_idlist[tid], tid]);
-//		}
-//		this.ac.options.data = data;
+		// inner parsed data
+		this.data = TagManager.StrParse(this.dom.tinput.value);
+		this.post = TagManager.StrParse();
 		// build notes
-		//PerformSearch();
+		PerformSearch();
 		//NoteList.BuildTable(false);
 		// component state flag
 		this.open = true;
@@ -68,13 +56,16 @@ var NoteFilter = new function () {
 		// close only if opened at the moment
 		if ( this.open ) {
 			// delete messages
-			self.MsgReset();
-			self.MsgShow();
+			self.MsgClear();
+			//self.MsgShow();
 			// clear search string
 			this.dom.tinput.encval = App.Encode(this.dom.tinput.value);
 			this.dom.tinput.value  = '[encrypted data]';
-			this.dom.winput.encval = App.Encode(this.dom.winput.value);
-			this.dom.winput.value  = '[encrypted data]';
+			// inner parsed data
+			this.data = {};
+			this.post = {};
+			//this.dom.winput.encval = App.Encode(this.dom.winput.value);
+			//this.dom.winput.value  = '[encrypted data]';
 			//TODO: encrypt/decrypt history
 			// clear autocompleter
 			$(this.dom.tinput).data('autocompleter').options.data = [];
@@ -83,15 +74,16 @@ var NoteFilter = new function () {
 		}
 	};
 
-	this.MsgReset = function ( msg ) {
-		msg = msg || false;
-		if ( msg ) {
-			this.dom[msg].ok = false;
-		} else {
-			for ( var i = 0; i < this.dom.messages.childNodes.length; i++ ) {
-				this.dom.messages.childNodes[i].ok = false;
-			}
-		}
+	this.MsgClear = function () {
+		elclear(this.dom.messages);
+//		msg = msg || false;
+//		if ( msg ) {
+//			this.dom[msg].ok = false;
+//		} else {
+//			for ( var i = 0; i < this.dom.messages.childNodes.length; i++ ) {
+//				this.dom.messages.childNodes[i].ok = false;
+//			}
+//		}
 	}
 
 	/**
@@ -112,6 +104,14 @@ var NoteFilter = new function () {
 //		this.dom.info.style.display = 'none';
 //		this.dom.warn.style.display = 'none';
 //		this.dom.fail.style.display = 'none';
+	};
+
+	/**
+	 * Append the given message
+	 */
+	this.MsgAdd = function ( text, type ) {
+		type = type || 'info';
+		elchild(this.dom.messages, element('div', {className:type}, text));
 	};
 
 	/**
@@ -148,142 +148,58 @@ var NoteFilter = new function () {
 	}
 
 	/**
-	 * Checks input for wrong tags
-	 * shows them comma-separated
-	 */
-	var CheckMissingTags = function () {
-		// check
-		if ( self.data.winc.length > 0 || self.data.wexc.length > 0 ) {
-			// merging
-			var words = self.data.winc.concat(self.data.wexc);
-			self.MsgSet(['Here is the list of words used which are not your tags: ', element('span', {className:'bold'}, words.join(', ')), '. They were omitted.'], 'warn');
-		}
-	};
-
-	/**
 	 * Sends ajax request to receive notes by tags
 	 */
 	this.NotesRequest = function ( tinc, texc ) {
 		LoadingStart();
-		// clone current data to post
 		this.post = {};
-		for ( var item in this.data ) {
-			this.post[item] = this.data[item].slice();
-		}
+		// clone current data to post
+		for ( var item in this.data ) this.post[item] = this.data[item].slice();
 		// ajax post request
 		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd}, function(data){
 			if ( !data.error ) {
 				NoteList.BuildTable(data);
 				// no data, need to inform
-				if ( data.length == 0 ) self.MsgSet([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){
+				if ( data.length == 0 ) self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){
 					self.Reset();
 					//NoteList.SetData([]);
 					NoteList.BuildTable(false);
 				}})]);
 			} else {
 				// server error
-				self.MsgSet(msg_fail_server_error + data.error, 'fail');
+				self.MsgAdd(msg_fail_server_error + data.error, 'fail');
 			}
 			// there may be wrong tags
-			CheckMissingTags();
-			self.MsgShow();
+			//CheckMissingTags();
+			//self.MsgShow();
 			LoadingStop();
 		});
 	}
 
 	/**
 	 * Updates inner data from user input if changed since last time
+	 * @return string current input truncated value
 	 */
 	this.UpdateParsedInput = function () {
 		// watermark check and clearing, truncating
-		var tval = this.dom.tinput.value !== hint_tinput ? this.dom.tinput.value.trim() : '';
-		var wval = this.dom.winput.value !== hint_winput ? this.dom.winput.value.trim() : '';
+		//var tval = this.dom.tinput.value !== hint_tinput ? this.dom.tinput.value.trim() : '';
+		var tval = this.dom.tinput.value.trim();
+		//var wval = this.dom.winput.value !== hint_winput ? this.dom.winput.value.trim() : '';
 		// check if old and current values match
-		if ( tval !== this.dom.tinput.oldval ||
-			 wval !== this.dom.winput.oldval )
+		if ( tval !== this.dom.tinput.oldval //||
+			 //wval !== this.dom.winput.oldval
+		 )
 		 {
 			// updating parsed data
-			this.data = this.GetParsedInput(tval, wval);
+			this.data = TagManager.StrParse(tval);
 			// save current values
 			this.dom.tinput.oldval = tval;
-			this.dom.winput.oldval = wval;
+			//this.dom.winput.oldval = wval;
 		}
+		return tval;
 	}
 
-	/**
-	 * Parses the user input into inner data lists
-	 * @param tval string of tags input
-	 * @param wval string of words input
-	 * @return hash of lists
-	 */
-	this.GetParsedInput = function ( tval, wval ) {
-		var list = [],  // array of all parts
-			tinc = [],  // array of included tags ids
-			texc = [],  // array of excluded tags ids
-			ninc = [],  // array of included tags names
-			nexc = [],  // array of excluded tags names
-			winc = [],  // array of included words (not tags)
-			wexc = [],  // array of excluded words (not tags)
-			wcmd = [];  // array of command words
-		// prepare sorted list of words
-		list = TagManager.Str2Names(tval).sort();
-		list.each(function(word){
-			// find out if there are special chars at the beginning of the word
-			var fchar = word.charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
-			// get the word without special chars if present
-			if ( fexc || fcmd ) word = word.slice(1);
-			// not empty
-			if ( word ) {
-				// command
-				if ( fcmd ) {
-					wcmd.push(word);
-				} else {
-					// just a tag
-					var tid = data_tags_nmlist[word];
-					// tag id found in the global data
-					if ( tid ) {
-						if ( fexc ) {
-							// excluded
-							texc.push(tid); nexc.push(word);
-						} else {
-							// included
-							tinc.push(tid); ninc.push(word);
-						}
-					} else {
-						// tag id not found so it's just a word
-						if ( fexc )
-							wexc.push(word);
-						else
-							winc.push(word);
-					}
-				}
-			}
-		});
-		// there are no words in the main input
-		if ( winc.length === 0 && wexc.length === 0 ) {
-			// try to get some words from additional input
-			list = TagManager.Str2Names(wval);
-			list.each(function(word){
-				// find out if there is minus at the beginning of the word
-				if ( word.charAt(0) === '-' ) {
-					// get the word without minus
-					word = word.slice(1);
-					// append excluded
-					if ( word ) wexc.push(word);
-				} else {
-					// append included
-					if ( word ) winc.push(word);
-				}
-			});
-		}
-		// build result struct
-		return {
-			tinc:tinc, texc:texc,
-			ninc:ninc, nexc:nexc,
-			winc:winc, wexc:wexc,
-			wcmd:wcmd
-		};
-	}
+
 
 	/**
 	 * Rebuilds the user input
@@ -328,9 +244,9 @@ var NoteFilter = new function () {
 			list = [];
 			if ( wexc ) list.push('-'+wexc);
 			if ( winc ) list.push(winc);
-			self.dom.winput.value = list.join(' ');
+			//self.dom.winput.value = list.join(' ');
 			// style correction
-			self.dom.winput.style.color = '#000';
+			//self.dom.winput.style.color = '#000';
 		}
 		// force filter clearing
 		if ( ctrl ) {
@@ -338,16 +254,22 @@ var NoteFilter = new function () {
 			self.data.winc = [];
 			self.data.wexc = [];
 			// update input
-			self.dom.winput.value = hint_winput;
-			self.dom.winput.style.color = '#ccc';
+			//self.dom.winput.value = hint_winput;
+			//self.dom.winput.style.color = '#ccc';
 		}
 	};
 
 	this.DoSearch = function ( ctrl ) {
 		// prepare
-		this.UpdateParsedInput();
+		var tval = this.UpdateParsedInput();
+		// fill history if not empty and not duplicate
+		if ( tval && (self.dom.tinput.history.length === 0 || self.dom.tinput.history[self.dom.tinput.history.length-1].trim() !== tval) ) {
+			self.dom.tinput.history.push(self.dom.tinput.value);
+			self.dom.tinput.histpos = self.dom.tinput.history.length;
+		}
 		// update user input if necessary
-		ReworkSearchStr(ctrl);
+		if ( ctrl ) this.dom.tinput.value = TagManager.StrBuild(this.data);
+		//ReworkSearchStr(ctrl);
 		// do search
 		PerformSearch();
 	}
@@ -356,11 +278,11 @@ var NoteFilter = new function () {
 	 * Keyboard input handler for tag search
 	 */
 	var PerformSearch = function () {
-		self.MsgReset();
+		// delete old messages
+		self.MsgClear();
 		// not empty input
-		if ( self.dom.tinput.value !== hint_tinput && self.dom.tinput.value !== '' ) {
-			fb('checking ...');
-			// parsed tags don't match
+		if ( self.dom.tinput.value.trim() !== '' ) {
+			// parsed tags and already posted don't match
 			if ( self.data.tinc.sort().join() !== self.post.tinc.sort().join() ||
 				 self.data.texc.sort().join() !== self.post.texc.sort().join() ||
 				 self.data.wcmd.sort().join() !== self.post.wcmd.sort().join() )
@@ -368,18 +290,23 @@ var NoteFilter = new function () {
 				// there are changes
 				self.NotesRequest();
 			} else {
+				// manual filtering all the table as it was not recreated
 				NoteList.SetNotesVisibility();
 			}
-			// there may be wrong tags
-			CheckMissingTags();
+			// check input for wrong tags
+			if ( self.data.winc.length > 0 || self.data.wexc.length > 0 ) {
+				var list = []; // shows them comma-separated
+				self.data.winc.sort().each(function(item){list.push(element('a', {title:hint_wexclude, word:item, fexc:false},    item, {onclick:WordExclude}));});
+				self.data.wexc.sort().each(function(item){list.push(element('a', {title:hint_wexclude, word:item, fexc:true}, '-'+item, {onclick:WordExclude}));});
+				self.MsgAdd(['Here is the list of words used which are not your tags:', list, '. It was used for text filtering.']);
+			}
 		} else {
 			// show latest
 			NoteList.BuildTable(false);
 			// reset inner data
-			self.data = self.GetParsedInput();  // ???
-			self.post = self.GetParsedInput();  // ???
+			self.data = TagManager.StrParse();
+			self.post = TagManager.StrParse();
 		}
-		self.MsgShow();
 	};
 
 	/**
@@ -402,13 +329,15 @@ var NoteFilter = new function () {
 			this.data.tinc.push(tagid);
 			this.data.ninc.push(tagnm);
 			// reforman input
-			ReworkSearchStr();
+			this.dom.tinput.value = TagManager.StrBuild(this.data);
+			//ReworkSearchStr();
 		}
+		//this.SetInputStyle();
 		PerformSearch();
 	};
 
 	/**
-	 * Remove the given tag from the search
+	 * Removes the given tag from the search
 	 * @param tagnm string tag name to be processed
 	 */
 	this.TagExclude = function ( tagnm ) {
@@ -423,13 +352,15 @@ var NoteFilter = new function () {
 			if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
 			if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
 			// reforman input
-			ReworkSearchStr();
+			this.dom.tinput.value = TagManager.StrBuild(this.data);
+			//ReworkSearchStr();
 		}
+		//this.SetInputStyle();
 		PerformSearch();
 	};
 
 	/**
-	 * Subtract the given tag in the search
+	 * Subtracts the given tag in the search
 	 * @param tagnm string tag name to be processed
 	 */
 	this.TagSubtract = function ( tagnm ) {
@@ -447,24 +378,62 @@ var NoteFilter = new function () {
 			this.data.texc.push(tagid);
 			this.data.nexc.push(tagnm);
 			// reforman input
-			ReworkSearchStr();
+			this.dom.tinput.value = TagManager.StrBuild(this.data);
+			//ReworkSearchStr();
 		}
+		//this.SetInputStyle();
 		PerformSearch();
 	};
+
+	/**
+	 * Removes the clicked word from the search
+	 */
+	var WordExclude = function () {
+		var list = this.fexc ? self.data.wexc : self.data.winc,
+			wind = list.indexOf(this.word);
+		if ( wind >= 0 ) {
+			// delete word from inner data
+			list.splice(wind, 1);
+			// remove html element
+			this.parentNode.removeChild(this);
+			// remove message if there are no more words
+			if ( self.data.winc.length == 0 && self.data.wexc.length == 0 ) {
+				self.MsgClear();
+			}
+			// reforman input
+			self.dom.tinput.value = TagManager.StrBuild(self.data);
+			// filtering all the table
+			NoteList.SetNotesVisibility();
+		}
+	};
+
+//	this.SetInputStyle = function () {
+//		var fhint = true;
+//		if ( this.dom.tinput.value.trim() ) {
+//			// style correction
+//			this.dom.tinput.style.color = '#000';
+//		} else {
+//			// style correction
+//			this.dom.tinput.style.color = '#ccc';
+//			// set hint
+//			this.dom.tinput.value = hint_tinput;
+//		}
+//	}
 
 	/**
 	 * Set default search hints and remove messages
 	 */
 	this.Reset = function () {
 		// clear search string and set focus
-		//self.dom.tinput.value = hint_tinput;
+		self.dom.tinput.value = '';
 		//self.dom.winput.value = hint_winput;
 		self.dom.tinput.focus();
 		// clear tags data
-		this.post = this.GetParsedInput();
+		this.data = TagManager.StrParse();
+		this.post = TagManager.StrParse();
 		// delete all messages
-		self.MsgReset();
-		self.MsgShow();
+		self.MsgClear();
+		//self.MsgShow();
 	}
 
 	/**
@@ -478,35 +447,34 @@ var NoteFilter = new function () {
 		this.dom = {handle:params.handle};
 
 		// parsed input data and its copy on post
-		this.data = this.GetParsedInput();
-		this.post = this.GetParsedInput();
+		this.data = TagManager.StrParse();
+		this.post = TagManager.StrParse();
 
 		// build all blocks together
 		elchild(this.dom.handle, [
 			// main block
 			element('div', {className:'search'}, [
 				// tags search input
-				element('div', {className:'tblock'}, element('div', {className:'body'}, [
-					this.dom.tinput = element('input', {type:'text', className:'line', value:hint_tinput, oldval:'', history:[], histpos:0}),
-					this.dom.ticon  = element('div', {className:'ticon'})
-				])),
-				// words search input
-				element('div', {className:'wblock'}, element('div', {className:'body'}, [
-					this.dom.winput = element('input', {type:'text', className:'line', value:hint_winput, oldval:''}),
-					this.dom.wicon  = element('div', {className:'wicon'}),
-				]))
+				this.dom.tinput = element('input', {type:'text', className:'line', value:'', oldval:'', history:[], histpos:0}),
+				this.dom.ticon  = element('div', {className:'ticon'})
+//,
+//				// words search input
+//				element('div', {className:'wblock'}, element('div', {className:'body'}, [
+//					this.dom.winput = element('input', {type:'text', className:'line', value:hint_winput, oldval:''}),
+//					this.dom.wicon  = element('div', {className:'wicon'}),
+//				]))
 			]),
 			// hidden messages
 			this.dom.messages = element('div', {className:'messages'}, [
-				this.dom.fail = element('div', {className:'fail'}, 'test 3'),
-				this.dom.warn = element('div', {className:'warn'}, 'test 2'),
-				this.dom.info = element('div', {className:'info'}, 'test 1')
+//				this.dom.fail = element('div', {className:'fail'}, 'test 3'),
+//				this.dom.warn = element('div', {className:'warn'}, 'test 2'),
+//				this.dom.info = element('div', {className:'info'}, 'test 1')
 			])
 		]);
 
 		// input hints
-		watermark(this.dom.tinput, hint_tinput, '#000');
-		watermark(this.dom.winput, hint_winput, '#000');
+		//watermark(this.dom.tinput, hint_tinput, '#000');
+		//watermark(this.dom.winput, hint_winput, '#000');
 
 		// autocompleter init
 		$(this.dom.tinput).autocomplete({
@@ -625,10 +593,10 @@ var NoteFilter = new function () {
 //			}, 300);
 //		}
 
-		// tag key input handler
-		$(this.dom.winput).bind('keydown', function(event) {
-			// enter
-			if ( event.which == 13 ) self.DoSearch(false);
-		});
+//		// tag key input handler
+//		$(this.dom.winput).bind('keydown', function(event) {
+//			// enter
+//			if ( event.which == 13 ) self.DoSearch(false);
+//		});
 	};
 };

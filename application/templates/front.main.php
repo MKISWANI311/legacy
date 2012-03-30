@@ -47,8 +47,8 @@
 			// to receive password change events
 			App.Subscribe(TagManager);
 			App.Subscribe(TemplateList);
-			App.Subscribe(NoteFilter);
 			App.Subscribe(NoteList);
+			App.Subscribe(NoteFilter);
 			App.Subscribe(NoteEditor);
 		});
 

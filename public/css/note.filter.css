@@ -3,7 +3,12 @@
  */
 
 .notefilter { margin-bottom:10px }
-	.notefilter > .search { table-layout:fixed; display:table; height:30px; width:100% }
+	.notefilter > .search { height:30px; position:relative }
+		.notefilter > .search > .line  { padding-left:30px; font-family:"Courier New","Andale Mono",monospace }
+		.notefilter > .search > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
+		.notefilter > .search > .ticon.loading { background-image:url("../img/loading.16.gif") }
+
+/*.notefilter > .search { table-layout:fixed; display:table; height:30px; width:100% }
 		.notefilter > .search .line { font-family:"Courier New","Andale Mono",monospace }
 		.notefilter > .search > .tblock { display:table-cell; padding-right:5px }
 			.notefilter > .search > .tblock > .body { position:relative }
@@ -13,7 +18,8 @@
 		.notefilter > .search > .wblock { display:table-cell; width:250px }
 			.notefilter > .search > .wblock > .body { position:relative }
 				.notefilter > .search > .wblock > .body > .line  { color:#ccc; padding-left:30px }
-				.notefilter > .search > .wblock > .body > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }
+				.notefilter > .search > .wblock > .body > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }*/
+
 
 /*	.notefilter > table.main { width:100% }
 		.notefilter > table.main .line { font-family:"Courier New","Andale Mono",monospace }
@@ -35,10 +41,11 @@
 	.notefilter > .messages.loading { opacity:0.4 }
 		.notefilter > .messages > .info,
 		.notefilter > .messages > .warn,
-		.notefilter > .messages > .fail { display:none; margin-top:5px; border:1px solid #eee; padding:5px 5px 5px 30px; background: #F9F9F9 no-repeat scroll 5px center }
+		.notefilter > .messages > .fail { margin-top:5px; border:1px solid #eee; padding:5px 5px 5px 30px; background: #F9F9F9 no-repeat scroll 5px center }
 		.notefilter > .messages > .info { background-image: url("../img/message.info.16.png") }
 		.notefilter > .messages > .warn { background-image: url("../img/message.warn.16.png") }
 		.notefilter > .messages > .fail { background-image: url("../img/message.fail.16.png") }
+		.notefilter > .messages a { margin-left:5px }
 
 
 
