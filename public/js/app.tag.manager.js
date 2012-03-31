@@ -20,7 +20,6 @@ var TagManager = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('EventOpen: TagManager');
 		if ( console.time ) console.time('TagManager: decrypt tags');
 		// decrypt tags
 		for ( var id in data_tags.data ) {
@@ -38,7 +37,6 @@ var TagManager = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('EventClose: TagManager');
 		// clear service lookup tables
 		data_tags_nmlist = {};
 		data_tags_idlist = {};

@@ -22,7 +22,6 @@ var NoteList = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('EventOpen: NoteList');
 		elclear(this.dom.notes);
 		// fill notes
 		//this.BuildTable(false);
@@ -36,7 +35,6 @@ var NoteList = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('EventClose: NoteList');
 		// close only if opened at the moment
 		if ( this.open ) {
 			// clear decoded entries data in the latest notes
@@ -446,39 +444,43 @@ var NoteList = new function () {
 			self.SetNotesState([this], 'marked');
 		// simple mouse click
 		} else {
-			// last active note list
-			var alast = self.GetNotesByState('active');
-			// flag true if the node is the same as already active
-			var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
-			// reset all notes states
-			self.ClearNotesState();
-			// there is already active note
-			// check if the edited note is not already active
-			if ( NoteEditor.GetNoteID() !== this.data.id ) {
-				// show note details
-				NoteEditor.Load(this.data);
-			}
-			// make active
-			self.SetNotesState([this], 'active');
-			// holding Shift key
-			if ( event.shiftKey ) {
-				var i, item, cflag = false;
-				// iterate all notes
-				for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-					// cursor
-					item = self.dom.notes.childNodes[i];
-					// flag showing that the cursor is inside the range
-					if ( item.data.id === alast[0].data.id || item.data.id === this.data.id ) cflag = !cflag;
-					// check inside the range or edge items
-					if ( cflag || item.data.id === alast[0].data.id || item.data.id === this.data.id ) {
-						self.SetNotesState([item], 'marked');
-					}
+			// check current note modifications
+			var has_changes = NoteEditor.HasChanges();
+			// not changed or user confirmed his wish
+			if ( !has_changes || (has_changes && NoteEditor.ConfirmExit()) ) {
+				// last active note list
+				var alast = self.GetNotesByState('active');
+				// flag true if the node is the same as already active
+				var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
+				// reset all notes states
+				self.ClearNotesState();
+				// there is already active note
+				// check if the edited note is not already active
+				if ( NoteEditor.GetNoteID() !== this.data.id ) {
+					// show note details
+					NoteEditor.Load(this.data);
 				}
-			} else {
-				// check the only clicked note
-				self.SetNotesState([this], 'marked');
+				// make active
+				self.SetNotesState([this], 'active');
+				// holding Shift key
+				if ( event.shiftKey ) {
+					var i, item, cflag = false;
+					// iterate all notes
+					for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+						// cursor
+						item = self.dom.notes.childNodes[i];
+						// flag showing that the cursor is inside the range
+						if ( item.data.id === alast[0].data.id || item.data.id === this.data.id ) cflag = !cflag;
+						// check inside the range or edge items
+						if ( cflag || item.data.id === alast[0].data.id || item.data.id === this.data.id ) {
+							self.SetNotesState([item], 'marked');
+						}
+					}
+				} else {
+					// check the only clicked note
+					self.SetNotesState([this], 'marked');
+				}
 			}
-
 		}
 		// show/hide checked notes controls
 		self.ShowCtrlPanel();
@@ -531,6 +533,8 @@ var NoteList = new function () {
 		//this.data.notes.splice(0,0,data);
 		// build note and add it activated to the list top
 		var note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
+		this.SetNotesState([note], 'active');
+		this.SetNotesState([note], 'marked');
 		//NoteStateActive(note);
 		// need to show controls for top note
 		this.ShowCtrlPanel();

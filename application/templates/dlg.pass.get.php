@@ -49,7 +49,6 @@
 			 * clear all the decrypted data
 			 */
 			EventClose : function () {
-				fb('EventClose: DlgPassGet');
 				DlgPassGet.Show({escClose:false});
 			},
 

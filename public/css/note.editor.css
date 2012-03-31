@@ -18,7 +18,7 @@
 		.noteeditor .entries .entry .undo { text-align:right; line-height:20px; height:20px }
 		.noteeditor .entries .entry .title, .noteeditor .tags .title { height:20px; width:100%; margin-bottom:3px }
 			.noteeditor .entries .entry .title .icon, .noteeditor .tags .title .icon { width:25px }
-			.noteeditor .entries .entry .title .icon { cursor:move }
+			.noteeditor .entries .entry .title .icon { /*cursor:move/**/ }
 			.noteeditor .entries .entry .title .icon img, .noteeditor .tags .title .icon img { width:16px; height:16px }
 			.noteeditor .entries .entry .title .name input { background-color:#fff; border:none; font-size:12px; font-weight:bold; height:18px; width:100% }
 			.noteeditor .entries .entry .title .name input:hover { color:#0066cc }

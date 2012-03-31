@@ -10,6 +10,12 @@ var NoteEditor = new function () {
 	var maxlength_tags  = 1024,  // total length of all tags in the input field
 		maxlength_title = 256;   // entry name max length
 
+	// flag to indicate if the note entries was moved
+	var reposition = false;
+
+	// messages
+	var msg_has_changes = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
+
 	// component state flag
 	// true - everything is decoded
 	// false - no plain data, everything is encrypted
@@ -21,7 +27,6 @@ var NoteEditor = new function () {
 	 * decrypt all the data and show it
 	 */
 	this.EventOpen = function () {
-		fb('EventOpen: NoteEditor');
 		// open if there is a note
 		if ( this.data ) {
 			// iterate all entries
@@ -63,7 +68,6 @@ var NoteEditor = new function () {
 	 * clear all the decrypted data
 	 */
 	this.EventClose = function () {
-		fb('EventClose: NoteEditor');
 		// close only if opened at the moment and there is a note
 		if ( this.data && this.open ) {
 			// iterate all entries
@@ -200,6 +204,8 @@ var NoteEditor = new function () {
 	 * 3. processing the response
 	 */
 	this.Save = function () {
+		// do nothing if there are no modifications
+		if ( !this.HasChanges() && !reposition ) return;
 		// disable controls to preven double posting
 		EnableControls(false);
 		SetTitleIcon('img/message.loading.gif');
@@ -267,14 +273,19 @@ var NoteEditor = new function () {
 					self.dom.tags.icon.src = 'img/field_tag.png';
 				}, 2000);
 
-				if ( is_new ) {
-					self.data.ctime = Math.round(new Date().getTime() / 1000);
-					NoteList.NoteCreate(self.data);
-				} else {
-					self.data.mtime = Math.round(new Date().getTime() / 1000);
-					//NoteList.dom.notes.removeChild(NoteList.dom.notes.active);
-					NoteList.NoteUpdate(self.data);
-				}
+				// flag set
+				reposition = false;
+
+				NoteFilter.NotesRequest();
+//				if ( is_new ) {
+//					self.data.ctime = Math.round(new Date().getTime() / 1000);
+//					NoteList.NoteCreate(self.data);
+//				} else {
+//					self.data.mtime = Math.round(new Date().getTime() / 1000);
+//					//NoteList.dom.notes.removeChild(NoteList.dom.notes.active);
+//					NoteList.NoteUpdate(self.data);
+//				}
+
 //				if ( NoteList.dom.notes.active ) {
 //					var note = NoteList.dom.notes.active;
 //					if ( NoteList.NoteVisible(note) ) NoteList.DrawNoteTags(note);
@@ -422,6 +433,7 @@ var NoteEditor = new function () {
 		// can be moved
 		if ( entry.previousSibling ) {
 			self.dom.entries.insertBefore(entry, entry.previousSibling);
+			reposition = true;
 		}
 	};
 
@@ -433,6 +445,7 @@ var NoteEditor = new function () {
 		// can be moved
 		if ( entry.nextSibling ) {
 			self.dom.entries.insertBefore(entry, entry.nextSibling.nextSibling);
+			reposition = true;
 		}
 	};
 
@@ -860,21 +873,38 @@ var NoteEditor = new function () {
 		}
 	};
 
+	/**
+	 * Asks user about modifications
+	 */
+	this.ConfirmExit = function () {
+		return confirm(msg_has_changes);
+	}
+
+	/**
+	 * Leaves the current note editing
+	 * asks user about modifications if present
+	 */
 	this.Escape = function () {
-		// get note from the list using current id
-		var note = NoteList.GetNoteByID(self.data.id);
-		// found
-		if ( note !== false ) {
-			// remove acitve cursor
-			NoteList.SetNotesState([note], 'active', false);
+		// check current note modifications
+		var has_changes = NoteEditor.HasChanges();
+		// not changed or user confirmed his wish
+		if ( !has_changes || (has_changes && this.ConfirmExit()) ) {
+			// get note from the list using current id
+			var note = NoteList.GetNoteByID(self.data.id);
+			// found
+			if ( note !== false ) {
+				// remove acitve cursor
+				NoteList.SetNotesState([note], 'active', false);
+			}
+			// clear previous content
+			elclear(this.dom.handle);
+			delete this.data;
+			delete this.post;
+			//this.open = true;
+			reposition = false;
+			self.Show(false);
+			TemplateList.Show(true);
 		}
-		// clear previous content
-		elclear(this.dom.handle);
-		delete this.data;
-		delete this.post;
-		//this.open = true;
-		self.Show(false);
-		TemplateList.Show(true);
 	};
 
 	/**
@@ -971,7 +1001,7 @@ var NoteEditor = new function () {
 	 */
 	this.GetNoteID = function () {
 		return ( this.data && this.data.id ? this.data.id : null );
-	}
+	};
 
 	var SetTitleIcon = function ( icon ) {
 		if ( !icon ) {
@@ -998,6 +1028,7 @@ var NoteEditor = new function () {
 	 */
 	var Build = function () {
 		with ( self ) {
+			reposition = false;
 			// all blocks
 			BlockTitle();
 			BlockEntries();
@@ -1048,7 +1079,36 @@ var NoteEditor = new function () {
 	 */
 	this.Show = function ( state ) {
 		this.dom.handle.style.display = state ? 'block' : 'none';
-	}
+	};
+
+	/**
+	 * Checks if there are any unsaved modificatons
+	 * @return bool flag
+	 */
+	this.HasChanges = function () {
+		var i, entry, flag = false;
+		// note is opened
+		if ( this.data ) {
+			// iterate all entries
+			for ( i = 0; i < this.dom.entries.childNodes.length; i++ ) {
+				entry = this.dom.entries.childNodes[i];
+				//fb(entry.post.data_dec, entry.dom.data.value);
+				//fb(entry.post.name_dec, entry.dom.name.value);
+				if ( (entry.post.data_dec != null && entry.post.data_dec != entry.dom.data.value) ||
+					 (entry.post.name_dec != null && entry.post.name_dec != entry.dom.name.value) ||
+					 (entry.post.id_type  != entry.data.id_type) )
+				{
+					// change flag and skip all the rest checks
+					flag = true; break;
+				}
+			}
+			//fb(this.dom.tags.input.value, this.post.tags, TagsChanged(this.dom.tags.input.value, this.post.tags));
+			// still no changes so check tags
+			if ( !flag && TagsChanged(this.dom.tags.input.value, this.post.tags) ) flag = true;
+		}
+
+		return flag;
+	};
 
 	/**
 	 * Main init method

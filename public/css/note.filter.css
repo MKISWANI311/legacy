@@ -4,9 +4,9 @@
 
 .notefilter { margin-bottom:10px }
 	.notefilter > .search { height:30px; position:relative }
-		.notefilter > .search > .line  { padding-left:30px; font-family:"Courier New","Andale Mono",monospace }
-		.notefilter > .search > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
-		.notefilter > .search > .ticon.loading { background-image:url("../img/loading.16.gif") }
+		.notefilter > .search > .line { padding-left:30px; font-family:"Courier New","Andale Mono",monospace }
+		.notefilter > .search > .icon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
+		.notefilter > .search > .icon.loading { background-image:url("../img/loading.16.gif") }
 
 /*.notefilter > .search { table-layout:fixed; display:table; height:30px; width:100% }
 		.notefilter > .search .line { font-family:"Courier New","Andale Mono",monospace }
