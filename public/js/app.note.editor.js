@@ -10,8 +10,10 @@ var NoteEditor = new function () {
 	var maxlength_tags  = 1024,  // total length of all tags in the input field
 		maxlength_title = 256;   // entry name max length
 
-	// flag to indicate if the note entries was moved
-	var reposition = false;
+	// flag to indicate if there are some changes
+	// note entries was moved or type is changed
+	// entry added or deleted
+	var changed = false;
 
 	// messages
 	var msg_has_changes = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
@@ -118,11 +120,12 @@ var NoteEditor = new function () {
 		// different size
 		if ( data.length != post.length ) return true;
 		// check parsed string
-		for ( var i = 0; i < data.length; i++ ) {
+		for ( var id = null, i = 0; i < data.length; i++ ) {
+			id = data_tags_nmlist[data[i]];
 			// new tag not posted to the server
-			if ( !data_tags_nmlist[data[i]] ) return true;
-			// differ from the posted tag at this index
-			if ( post[i] != data_tags_nmlist[data[i]] ) return true;
+			if ( !id ) return true;
+			// posted tags not include this id
+			if ( !post.has(id) ) return true;
 		}
 		return false;
 	};
@@ -205,7 +208,7 @@ var NoteEditor = new function () {
 	 */
 	this.Save = function () {
 		// do nothing if there are no modifications
-		if ( !this.HasChanges() && !reposition ) return;
+		if ( !this.HasChanges() ) return;
 		// disable controls to preven double posting
 		EnableControls(false);
 		SetTitleIcon('img/message.loading.gif');
@@ -273,8 +276,8 @@ var NoteEditor = new function () {
 					self.dom.tags.icon.src = 'img/field_tag.png';
 				}, 2000);
 
-				// flag set
-				reposition = false;
+				// flag reset
+				changed = false;
 
 				NoteFilter.NotesRequest();
 //				if ( is_new ) {
@@ -339,6 +342,8 @@ var NoteEditor = new function () {
 							// insert and remove
 							self.dom.entries.insertBefore(entry_new, entry);
 							self.dom.entries.removeChild(entry);
+							// set flag
+							changed = true;
 						}
 					}
 				});
@@ -423,6 +428,7 @@ var NoteEditor = new function () {
 		self.dom.entries.insertBefore(entry_new, entry);
 		$(entry_new.dom.name).addClass('changed');
 		$(entry_new.dom.data).addClass('changed');
+		changed = true;
 	};
 
 	/**
@@ -433,7 +439,7 @@ var NoteEditor = new function () {
 		// can be moved
 		if ( entry.previousSibling ) {
 			self.dom.entries.insertBefore(entry, entry.previousSibling);
-			reposition = true;
+			changed = true;
 		}
 	};
 
@@ -445,7 +451,7 @@ var NoteEditor = new function () {
 		// can be moved
 		if ( entry.nextSibling ) {
 			self.dom.entries.insertBefore(entry, entry.nextSibling.nextSibling);
-			reposition = true;
+			changed = true;
 		}
 	};
 
@@ -460,6 +466,7 @@ var NoteEditor = new function () {
 			$(entry.dom.body).toggleClass('hidden');
 			// set flag
 			entry.deleted = true;
+			changed = true;
 		}
 	};
 
@@ -901,7 +908,7 @@ var NoteEditor = new function () {
 			delete this.data;
 			delete this.post;
 			//this.open = true;
-			reposition = false;
+			changed = false;
 			self.Show(false);
 			TemplateList.Show(true);
 		}
@@ -1028,7 +1035,7 @@ var NoteEditor = new function () {
 	 */
 	var Build = function () {
 		with ( self ) {
-			reposition = false;
+			changed = false;
 			// all blocks
 			BlockTitle();
 			BlockEntries();
@@ -1086,27 +1093,30 @@ var NoteEditor = new function () {
 	 * @return bool flag
 	 */
 	this.HasChanges = function () {
-		var i, entry, flag = false;
+		var i, entry, flag = changed;
 		// note is opened
 		if ( this.data ) {
-			// iterate all entries
-			for ( i = 0; i < this.dom.entries.childNodes.length; i++ ) {
-				entry = this.dom.entries.childNodes[i];
-				//fb(entry.post.data_dec, entry.dom.data.value);
-				//fb(entry.post.name_dec, entry.dom.name.value);
-				if ( (entry.post.data_dec != null && entry.post.data_dec != entry.dom.data.value) ||
-					 (entry.post.name_dec != null && entry.post.name_dec != entry.dom.name.value) ||
-					 (entry.post.id_type  != entry.data.id_type) )
-				{
-					// change flag and skip all the rest checks
-					flag = true; break;
+			// not sure if has changes already
+			if ( !changed ) {
+				// iterate all entries
+				for ( i = 0; i < this.dom.entries.childNodes.length; i++ ) {
+					entry = this.dom.entries.childNodes[i];
+					//fb(i, entry.post.data_dec, entry.dom.data.value);
+					//fb(i, entry.post.name_dec, entry.dom.name.value);
+					//fb(i, entry.post.id_type, entry.data.id_type);
+					if ( (entry.post.data_dec != null && entry.post.data_dec != entry.dom.data.value) ||
+						 (entry.post.name_dec != null && entry.post.name_dec != entry.dom.name.value) ||
+						 (entry.post.id_type  != entry.data.id_type) )
+					{
+						// change flag and skip all the rest checks
+						flag = true; break;
+					}
 				}
+				// still no changes so check tags
+				//fb(TagsChanged(this.dom.tags.input.value, this.post.tags), this.dom.tags.input.value, this.post.tags);
+				if ( !flag && TagsChanged(this.dom.tags.input.value, this.post.tags) ) flag = true;
 			}
-			//fb(this.dom.tags.input.value, this.post.tags, TagsChanged(this.dom.tags.input.value, this.post.tags));
-			// still no changes so check tags
-			if ( !flag && TagsChanged(this.dom.tags.input.value, this.post.tags) ) flag = true;
 		}
-
 		return flag;
 	};
 

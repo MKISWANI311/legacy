@@ -16,6 +16,8 @@ var NoteList = new function () {
 	var hint_info_missing = 'there is no data';
 	var hint_tags_missing = 'there are no tags';
 
+	var msg_checked_notes_remove = 'You are going to delete all checked notes in the note list. Do you really want to continue?';
+
 	/**
 	 * Open the subscriber
 	 * master password is accessible
@@ -41,6 +43,8 @@ var NoteList = new function () {
 			data_notes_latest.each(ClearNoteDecData);
 			// clear decoded entries data in the requested notes
 			this.data.notes.each(ClearNoteDecData);
+			// show/hide info and controls
+			this.UpdateCtrlBlock(true);
 			// clear notes
 			elclear(this.dom.notes);
 			// component state flag
@@ -147,14 +151,16 @@ var NoteList = new function () {
 //		self.dom.notes.active = note;
 //	};
 
-	var NoteDelete = function ( data ) {
-		$.post('/note/delete', {ids:[data.id]}, function(data){
-			if ( !data.error ) {
-				fb(data);
-			} else {
-				self.InfoSet('The request was not successful this time. The response from the server: ' + data.error, 'error');
-			}
-		});
+	var NotesDelete = function ( list ) {
+		if ( list.length > 0 ) {
+			$.post('/note/delete', {ids:list}, function(data){
+				if ( !data.error ) {
+					fb(data);
+				} else {
+					self.InfoSet('The request was not successful this time. The response from the server: ' + data.error, 'error');
+				}
+			});
+		}
 	};
 
 	var NoteBody = function ( data ) {
@@ -315,18 +321,51 @@ var NoteList = new function () {
 	}
 
 	/**
-	 * Shows/hides checked notes controls
+	 * Shows/hides checked notes controls and general notes info
 	 */
-	this.ShowCtrlPanel = function () {
-		var i, item;
-		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-			item = self.dom.notes.childNodes[i];
-			if ( item.state.marked ) {
-				self.dom.tpctrl.style.display = 'table-cell';
-				return;
-			}
+	this.UpdateCtrlBlock = function ( ctrlonly ) {
+		var total = self.dom.notes.childNodes.length;
+		if ( !ctrlonly ) {
+			var visible = this.GetNotesVisible();
+			elchild(elclear(self.dom.tpinfo), [
+				element('span', {}, [element('p', {}, 'notes '), visible.length+' of ' + total]),
+				element('span', {}, [
+					element('p', {}, 'select '),
+					element('a', {}, 'all', {onclick:function(){
+						self.SetNotesState(visible, 'marked', true);
+						self.UpdateCtrlBlock(true);
+					}}),
+					element('p', {className:'div'}, '|'),
+					element('a', {}, 'none', {onclick:function(){
+						self.SetNotesState(visible, 'marked', false);
+						self.UpdateCtrlBlock(true);
+					}}),
+					element('p', {className:'div'}, '|'),
+					element('a', {}, 'invert', {onclick:function(){
+						self.SetNotesState(visible, 'marked');
+						self.UpdateCtrlBlock(true);
+					}})
+				]),
+			]);
 		}
-		self.dom.tpctrl.style.display = 'none';
+		var checked = this.GetNotesByState('marked');
+		if ( checked.length > 0 ) {
+			this.dom.btndelete.style.display = 'block';
+		} else {
+			this.dom.btndelete.style.display = 'none';
+		}
+		// show/hide block depending on notes amount
+		this.dom.tpbar.style.display = total == 0 ? 'none' : 'block';
+//		var i, item, active = 0, visib;
+//		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+//			item = self.dom.notes.childNodes[i];
+//			if ( !item.style.display ) active++;
+//			if ( item.state.marked ) {
+//				self.dom.tpctrl.style.display = 'block';
+//				return;
+//			}
+//		}
+//		self.dom.tpctrl.style.display = 'none';
 	}
 
 	/**
@@ -391,6 +430,18 @@ var NoteList = new function () {
 	}
 
 	/**
+	 * Returns the list of visible notes
+	 */
+	this.GetNotesVisible = function () {
+		// iterate note list
+		for ( var i = 0, result = [], list = this.dom.notes.childNodes; i < list.length; i++ ) {
+			// fill the visible notes list
+			if ( !list[i].style.display ) result.push(list[i]);
+		}
+		return result;
+	}
+
+	/**
 	 * Highlights the active note or note range
 	 * range means to select all the notes between old and new selected notes
 	 * @param note to be processed
@@ -444,18 +495,17 @@ var NoteList = new function () {
 			self.SetNotesState([this], 'marked');
 		// simple mouse click
 		} else {
+			// currently active note list
+			var alast = self.GetNotesByState('active');
+			// flag true if the clicked note is the same as already active
+			var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
 			// check current note modifications
 			var has_changes = NoteEditor.HasChanges();
 			// not changed or user confirmed his wish
-			if ( !has_changes || (has_changes && NoteEditor.ConfirmExit()) ) {
-				// last active note list
-				var alast = self.GetNotesByState('active');
-				// flag true if the node is the same as already active
-				var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
+			if ( !has_changes || fsame || (has_changes && NoteEditor.ConfirmExit()) ) {
 				// reset all notes states
 				self.ClearNotesState();
-				// there is already active note
-				// check if the edited note is not already active
+					// check if the edited note is not already active
 				if ( NoteEditor.GetNoteID() !== this.data.id ) {
 					// show note details
 					NoteEditor.Load(this.data);
@@ -483,7 +533,7 @@ var NoteList = new function () {
 			}
 		}
 		// show/hide checked notes controls
-		self.ShowCtrlPanel();
+		self.UpdateCtrlBlock();
 		// prevent bubbling
 		//return false;
 	}
@@ -495,7 +545,7 @@ var NoteList = new function () {
 		// check/uncheck
 		self.SetNotesState([this.note], 'marked');
 		// show/hide checked notes controls
-		self.ShowCtrlPanel();
+		self.UpdateCtrlBlock();
 		// prevent bubbling
 		return false;
 	}
@@ -537,7 +587,7 @@ var NoteList = new function () {
 		this.SetNotesState([note], 'marked');
 		//NoteStateActive(note);
 		// need to show controls for top note
-		this.ShowCtrlPanel();
+		this.UpdateCtrlBlock();
 	};
 
 	this.NoteUpdate = function ( data ) {
@@ -567,7 +617,7 @@ var NoteList = new function () {
 		//NoteStateActive(note);
 		//this.dom.notes.active = null;
 		// need to show controls for top note
-		this.ShowCtrlPanel();
+		this.UpdateCtrlBlock();
 	}
 
 	var NoteVisibility = function ( note ) {
@@ -614,14 +664,14 @@ var NoteList = new function () {
 				// check included words
 				NoteFilter.data.winc.each(function(word){
 					// not found in fulltext so exit
-					if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) { visible = false; return; }
+					if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {visible = false;return;}
 				});
 				// still visible
 				if ( visible ) {
 					// check excluded words
 					NoteFilter.data.wexc.each(function(word){
 						// found in fulltext so exit
-						if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) { visible = false; return; }
+						if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {visible = false;return;}
 					});
 				}
 			}
@@ -633,6 +683,7 @@ var NoteList = new function () {
 		}
 		// clear inner state for hidden notes
 		this.ClearNotesState(hlist);
+		this.UpdateCtrlBlock();
 	}
 
 	/**
@@ -644,8 +695,6 @@ var NoteList = new function () {
 		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
 		// clearing the container
 		elclear(self.dom.notes);
-		// hide control panel
-		this.ShowCtrlPanel();
 		// there are some notes
 		if ( data.length > 0 ) {
 			// determine the note id beeing edited at the moment
@@ -660,6 +709,8 @@ var NoteList = new function () {
 				if ( neid === item.id ) self.SetNotesState([note], 'active');
 			});
 		}
+		// show/hide control panel
+		this.UpdateCtrlBlock();
 	};
 
 	this.Filter = function ( winc, wexc ) {
@@ -669,7 +720,7 @@ var NoteList = new function () {
 			winc.each(function(word){
 				// found in fulltext so exit
 				if ( list[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {
-					visible = false; return;
+					visible = false;return;
 				}
 			});
 			// still visible
@@ -678,7 +729,7 @@ var NoteList = new function () {
 				wexc.each(function(word){
 					// found in fulltext so exit
 					if ( list[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {
-						visible = false; return;
+						visible = false;return;
 					}
 				});
 			}
@@ -742,6 +793,24 @@ var NoteList = new function () {
 //		}
 	};
 
+	var BtnDeleteHandler = function () {
+		// ask user
+		if ( confirm(msg_checked_notes_remove) ) {
+			var list = [];
+			// iterate all checked notes
+			self.GetNotesByState('marked').each(function(note){
+				// fill id list
+				if ( note.data.id ) list.push(note.data.id);
+			});
+			NotesDelete(list);
+		}
+	}
+
+	var BtnRestoreHandler = function () {
+		var checked = self.GetNotesByState('marked');
+		fb(checked);
+	}
+
 	/**
 	 * Main init method
 	 * @param params list of configuration parameters
@@ -765,8 +834,11 @@ var NoteList = new function () {
 			//this.dom.info   = element('div', {className:'info'}),
 			//this.dom.help   = element('div', {className:'help hidden'}),
 			this.dom.tpbar = element('div', {className:'tpbar'}, [
-				this.dom.tpinfo = element('div', {className:'info'}, 'info'),
-				this.dom.tpctrl = element('div', {className:'ctrl'}, 'control panel')
+				this.dom.tpctrl = element('div', {className:'ctrl'}, [
+					this.dom.btndelete  = element('input', {type:'button', value:'Delete',  className:'button hidden'}, null, {onclick:BtnDeleteHandler}),
+					this.dom.btnrestore = element('input', {type:'button', value:'Restore', className:'button hidden'}, null, {onclick:BtnRestoreHandler})
+				]),
+				this.dom.tpinfo = element('div', {className:'info'})
 			]),
 			this.dom.notes = element('div', {className:'notes'}),
 			this.dom.btbar = element('div', {className:'btbar'})

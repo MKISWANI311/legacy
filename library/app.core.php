@@ -181,14 +181,23 @@ class response {
 	/**
 	 * Prepares and sends given data to the client side
 	 * @param mixed $data data to be converted to json and sent to user
-	 * @param boolean $convert flag shows if it is necessary to convert data to json, if false - data is already json
+	 * @param boolean $israw flag shows if it is necessary to convert data to json, if false - data is already json
+	 * @param boolean $gzip flag shows if it is necessary to gzip the data and add gzip headers
 	 */
-	public static function json ( $data, $convert = true ) {
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . 'GMT');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Pragma: no-cache');
+	public static function json ( $data, $israw = true, $gzip = false ) {
+		// prepare data if necessary
+		if ( $israw ) $data = json_encode($data, JSON_NUMERIC_CHECK);
+		if ( $gzip  ) $data = gzencode($data, 9);
+		// send headers
 		header('Content-Type: application/json; charset=utf-8');
-		echo $convert ? json_encode($data, JSON_NUMERIC_CHECK) : $data;
+		if ( $gzip ) header('Content-Encoding: gzip');
+		header('Content-Length: '.strlen($data));
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . 'GMT');
+		header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+		header('Pragma: no-cache');
+		// send data
+		echo $data;
+		return $data;
 	}
 
 	/**

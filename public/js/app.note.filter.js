@@ -42,6 +42,8 @@ var NoteFilter = new function () {
 		this.post = TagManager.StrParse();
 		// build notes
 		PerformSearch();
+		// show/hide info and controls
+		NoteList.UpdateCtrlBlock(true);
 		// component state flag
 		this.open = true;
 	};

@@ -3,10 +3,15 @@
  */
 
  .notelist {}
-	.notelist > .tpbar { table-layout:fixed; display:table; height:20px; width:100% }
-		.notelist > .tpbar > .info { display:table-cell; vertical-align:middle }
-		.notelist > .tpbar > .ctrl { display:table-cell; width:110px; background-color:#ddd; display:none; text-align:center; vertical-align:middle }
-	.notelist > .notes { margin-top:5px }
+	.notelist > .tpbar { height:22px; line-height:22px }
+		.notelist > .tpbar > .ctrl { float:right }
+		.notelist > .tpbar > .info {  }
+			.notelist > .tpbar > .ctrl > .button { margin-left:5px }
+			.notelist > .tpbar > .info > span { display:inline-block; margin-right:5px; border:1px solid #eee; padding:0 5px; line-height:22px; background-color:#F9F9F9 }
+			.notelist > .tpbar > .info a { }
+			.notelist > .tpbar > .info p { color:#aaa; display:inline; margin-right:5px }
+			.notelist > .tpbar > .info p.div { color:#ddd; margin:0 5px }
+	.notelist > .notes { margin-top:10px }
 		.notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dashed #eee; border-top: 1px dashed #eee; padding:5px }
 		.notelist > .notes > .note:hover  { background-color:#ffffdf }
 			.notelist > .notes > .note:hover .time { color:#000 !important }

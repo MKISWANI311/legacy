@@ -39,6 +39,8 @@ class user extends controller {
 					session_set_cookie_params(1209600);
 					// first time session creation
 					session_start();
+					// create cache dir for user searches
+					mkdir(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']));
 				}
 				$_SESSION['user'] = $result;
 			}
