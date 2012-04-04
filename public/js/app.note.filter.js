@@ -117,20 +117,20 @@ var NoteFilter = new function () {
 	 * Sends ajax request to receive notes by tags and
 	 * makes a note list using the received data
 	 */
-	this.NotesRequest = function () {
+	this.NotesRequest = function ( isall ) {
 		// show loading progress
 		LoadingStart();
 		// clone current data to post data
 		for ( var item in this.data ) this.post[item] = this.data[item].slice();
 		// ajax post request
-		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd}, function(data){
+		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd, all:isall}, function(data){
 			if ( !data.error ) {
 				// make note list using the received data
-				NoteList.BuildTable(data);
+				NoteList.BuildTable(data.notes, data.total);
 				// no data, need to inform and suggest to see for example the latest notes
-				if ( data.length == 0 ) self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){
+				if ( data.total == 0 ) self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){
 					self.Reset();
-					NoteList.BuildTable(false);
+					self.NotesRequest();
 				}})]);
 			} else {
 				// server error
@@ -185,11 +185,12 @@ var NoteFilter = new function () {
 		// delete old messages
 		self.MsgClear();
 		// not empty input
-		if ( self.dom.input.value.trim() != '' ) {
+//		if ( self.dom.input.value.trim() != '' ) {
 			// parsed tags and already posted don't match
 			if ( self.data.tinc.sort().join() != self.post.tinc.sort().join() ||
 				 self.data.texc.sort().join() != self.post.texc.sort().join() ||
-				 self.data.wcmd.sort().join() != self.post.wcmd.sort().join() )
+				 self.data.wcmd.sort().join() != self.post.wcmd.sort().join() ||
+				 self.dom.input.value.trim()  == '' )
 			{
 				// there are changes
 				self.NotesRequest();
@@ -204,13 +205,13 @@ var NoteFilter = new function () {
 				self.data.wexc.sort().each(function(item){list.push(element('a', {title:hint_wexclude, word:item, fexc:true}, '-'+item, {onclick:WordExclude}));});
 				self.MsgAdd(['Here is the list of words used which are not your tags:', list, '. It was used for text filtering.']);
 			}
-		} else {
-			// show latest
-			NoteList.BuildTable(false);
-			// reset inner data
-			self.data = TagManager.StrParse();
-			self.post = TagManager.StrParse();
-		}
+//		} else {
+//			// show latest
+//			NoteList.BuildTable(false);
+//			// reset inner data
+//			self.data = TagManager.StrParse();
+//			self.post = TagManager.StrParse();
+//		}
 	};
 
 	/**

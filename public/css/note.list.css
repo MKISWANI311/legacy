@@ -9,6 +9,7 @@
 			.notelist > .tpbar > .ctrl > .button { margin-left:5px }
 			.notelist > .tpbar > .info > span { display:inline-block; margin-right:5px; border:1px solid #eee; padding:0 5px; line-height:22px; background-color:#F9F9F9 }
 			.notelist > .tpbar > .info a { }
+			.notelist > .tpbar > .info b { cursor:default }
 			.notelist > .tpbar > .info p { color:#aaa; display:inline; margin-right:5px }
 			.notelist > .tpbar > .info p.div { color:#ddd; margin:0 5px }
 	.notelist > .notes { margin-top:10px }

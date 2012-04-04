@@ -95,24 +95,22 @@ class note extends controller {
 	 * Deletes the note
 	 * @param int $id_note link to the note
 	 */
-	function delete () {
+	function delete ( $flag = '' ) {
 		$result = array();
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
 			// check notes in request
 			if ( !empty($_REQUEST['ids']) && is_array($ids = $_REQUEST['ids']) ) {
 				// there are some affected notes
-				if ( db::update('notes', array('is_active'=>0, 'mtime'=>INIT_TIMESTAMP),
-						'id_user = @i and id in @li and is_active = 1', $id_user, $ids) )
-				{
+				if ( db::update('notes', array('is_active'=>($flag == 'undo' ? 1 : 0), 'mtime'=>INIT_TIMESTAMP), 'id_user = @i and id in @li', $id_user, $ids) ) {
 					// clear searches cache
 					array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
 					// should clear cache
 					cache::user_clear('notes_latest');
-					$result['deleted'] = db::affected();
-					// compare actually deleted with requested
-					if ( $result['deleted'] != count($ids) ) {
-						$result['error'] = 'different number of notes deleted and requested';
+					$result['count'] = db::affected();
+					// compare actually modified with requested
+					if ( $result['count'] != count($ids) ) {
+						$result['error'] = 'different number of notes processed and requested';
 					}
 				} else {
 					$result['error'] = 'no active notes found, nothing deleted';
@@ -139,8 +137,10 @@ class note extends controller {
 			if ( ($tinc = value($_REQUEST['tinc'], array())) && is_array($tinc) ) $tinc = array_unique($tinc);
 			if ( ($texc = value($_REQUEST['texc'], array())) && is_array($texc) ) $texc = array_unique($texc);
 			if ( ($wcmd = value($_REQUEST['wcmd'], array())) && is_array($wcmd) ) $wcmd = array_unique($wcmd);
+			// flag to return all the records
+			$isall = value($_REQUEST['all']);
 			// cache file name generated from query request, used for saving data if the first time or receiving otherwise
-			$hash = hash('md5', sprintf('tinc:%s texc:%s wcmd:%s', implode(',',$tinc), implode(',',$texc), implode(',',$wcmd)));
+			$hash = hash('md5', sprintf('tinc:%s texc:%s wcmd:%s all:%s', implode(',',$tinc), implode(',',$texc), implode(',',$wcmd), $isall));
 			// full cache file name
 			$file = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . $hash;
 			// no intersection
@@ -172,19 +172,23 @@ class note extends controller {
 						if ( $tinc ) $where[] = db::sql('id in (select id_note from note_tags where id_tag in @li group by id_note having count(id_tag) = @i)', $tinc, count($tinc))->scalar;
 						if ( $texc ) $where[] = db::sql('id not in (select distinct id_note from note_tags where id_tag in @li)', $texc)->scalar;
 					}
-					// building all together
-					$sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc limit 20';
-					if ( ($result = db::query($sql)) ) {
-						// extract note ids
-						$note_idlist = matrix_column($result, 'id');
-						// find tags for found notes if there are some
-						$tags = !$is_notags ? matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note') : array();
-						// find entries for found notes
-						$entries = matrix_group(db::query('select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place', $note_idlist), 'id_note');
-						// extent found notes with tags and entries
-						foreach ( $result as & $note ) {
-							$note['tags'] = value($tags[$note['id']], array());
-							$note['entries'] = array_values($entries[$note['id']]);
+					// get total records amount
+					$result['total'] = current(current(db::query($sql = 'select count(*) as total from notes where ' . implode(' and ', $where))));
+					if ( $result['total'] > 0 ) {
+						// building all together
+						$sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc' . ($isall ? '' : ' limit 20');
+						if ( ($result['notes'] = db::query($sql)) ) {
+							// extract note ids
+							$note_idlist = matrix_column($result['notes'], 'id');
+							// find tags for found notes if there are some
+							$tags = !$is_notags ? matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note') : array();
+							// find entries for found notes
+							$entries = matrix_group(db::query('select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place', $note_idlist), 'id_note');
+							// extent found notes with tags and entries
+							foreach ( $result['notes'] as & $note ) {
+								$note['tags'] = value($tags[$note['id']], array());
+								$note['entries'] = array_values($entries[$note['id']]);
+							}
 						}
 					}
 					// send result to the user and cache prepared json to file

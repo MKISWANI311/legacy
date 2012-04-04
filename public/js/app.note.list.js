@@ -11,12 +11,19 @@ var NoteList = new function () {
 	// false - no plain data, everything is encrypted
 	this.open = false;
 
-	var hint_tag_include  = 'click on this tag to include it to the search';
-	var hint_tag_exclude  = 'click on this tag to exclude it from the search';
-	var hint_info_missing = 'there is no data';
-	var hint_tags_missing = 'there are no tags';
+	var hint_tag_include   = 'click on this tag to include it to the search';
+	var hint_tag_exclude   = 'click on this tag to exclude it from the search';
+	var hint_info_missing  = 'there is no data';
+	var hint_tags_missing  = 'there are no tags';
+	var hint_notes_visible = 'the limited amount of visible notes received according the search options (usually the first 20)';
+	var hint_notes_total   = 'the general amount of notes satisfying the giving search options';
+	var hint_notes_filtered= 'the amount of notes excluded from the note list due to the search filter';
 
-	var msg_checked_notes_remove = 'You are going to delete all checked notes in the note list. Do you really want to continue?';
+	var msg_checked_notes_remove  = 'You are going to delete all checked notes in the note list. Do you really want to continue?';
+	var msg_checked_notes_restore = 'You are going to restore all checked notes in the note list. Do you really want to continue?';
+
+	var msg_checked_notes_removed = 'The selected notes were successfully removed: ';
+	var msg_checked_notes_restored= 'The selected notes were successfully restored: ';
 
 	/**
 	 * Open the subscriber
@@ -25,6 +32,8 @@ var NoteList = new function () {
 	 */
 	this.EventOpen = function () {
 		elclear(this.dom.notes);
+		// show info and controls
+		this.dom.tpbar.style.display = 'block';
 		// fill notes
 		//this.BuildTable(false);
 		// component state flag
@@ -40,11 +49,12 @@ var NoteList = new function () {
 		// close only if opened at the moment
 		if ( this.open ) {
 			// clear decoded entries data in the latest notes
-			data_notes_latest.each(ClearNoteDecData);
+//			data_notes_latest.each(ClearNoteDecData);
 			// clear decoded entries data in the requested notes
 			this.data.notes.each(ClearNoteDecData);
-			// show/hide info and controls
-			this.UpdateCtrlBlock(true);
+			// hide info and controls
+			this.dom.tpbar.style.display = 'none';
+			//this.UpdateCtrlBlock(true);
 			// clear notes
 			elclear(this.dom.notes);
 			// component state flag
@@ -151,13 +161,14 @@ var NoteList = new function () {
 //		self.dom.notes.active = note;
 //	};
 
-	var NotesDelete = function ( list ) {
+	var NotesDelete = function ( list, undo ) {
 		if ( list.length > 0 ) {
-			$.post('/note/delete', {ids:list}, function(data){
+			$.post('/note/delete' + (undo ? '/undo' : ''), {ids:list}, function(data){
 				if ( !data.error ) {
-					fb(data);
+					NoteFilter.NotesRequest();
+					NoteFilter.MsgAdd((undo ? msg_checked_notes_restored : msg_checked_notes_removed) + data.count);
 				} else {
-					self.InfoSet('The request was not successful this time. The response from the server: ' + data.error, 'error');
+					self.InfoSet('The request was not successful. The response from the server: ' + data.error, 'error');
 				}
 			});
 		}
@@ -324,11 +335,18 @@ var NoteList = new function () {
 	 * Shows/hides checked notes controls and general notes info
 	 */
 	this.UpdateCtrlBlock = function ( ctrlonly ) {
-		var total = self.dom.notes.childNodes.length;
+		//var total = self.dom.notes.childNodes.length;
 		if ( !ctrlonly ) {
 			var visible = this.GetNotesVisible();
 			elchild(elclear(self.dom.tpinfo), [
-				element('span', {}, [element('p', {}, 'notes '), visible.length+' of ' + total]),
+				element('span', {}, [
+					element('p', {}, 'notes '),
+					element('b', {title:hint_notes_visible}, visible.length), ' of ', element('b', {title:hint_notes_total}, this.data.total),
+					( visible.length < this.data.notes.length ? [element('p', {className:'div'}, '|'), element('b', {title:hint_notes_filtered}, this.data.notes.length - visible.length), ' filtered'] : null),
+					( this.data.notes.length < this.data.total ? [element('p', {className:'div'}, '|'), element('a', {className:'bold'}, 'load all', {onclick:function(){
+						NoteFilter.NotesRequest(true);
+					}})] : null)
+				]),
 				element('span', {}, [
 					element('p', {}, 'select '),
 					element('a', {}, 'all', {onclick:function(){
@@ -349,13 +367,11 @@ var NoteList = new function () {
 			]);
 		}
 		var checked = this.GetNotesByState('marked');
-		if ( checked.length > 0 ) {
-			this.dom.btndelete.style.display = 'block';
-		} else {
-			this.dom.btndelete.style.display = 'none';
-		}
+		this.dom.btndelete.style.display  = 'none';
+		this.dom.btnrestore.style.display = 'none';
+		if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
 		// show/hide block depending on notes amount
-		this.dom.tpbar.style.display = total == 0 ? 'none' : 'block';
+		this.dom.tpbar.style.display = this.data.total == 0 ? 'none' : 'block';
 //		var i, item, active = 0, visib;
 //		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
 //			item = self.dom.notes.childNodes[i];
@@ -579,7 +595,7 @@ var NoteList = new function () {
 
 	this.NoteCreate = function ( data ) {
 		// update latest and current note lists
-		data_notes_latest.splice(0,0,data);
+//		data_notes_latest.splice(0,0,data);
 		//this.data.notes.splice(0,0,data);
 		// build note and add it activated to the list top
 		var note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
@@ -688,19 +704,23 @@ var NoteList = new function () {
 
 	/**
 	 * Fills the note list with generated notes
-	 * @param data array of notes or false if gloabal latest list should be used
+	 * @param notes array of notes or false if gloabal latest list should be used
+	 * @param total int general amount of notes
 	 */
-	this.BuildTable = function ( data ) {
+	this.BuildTable = function ( notes, total ) {
 		// check input and determine mode - last or requested
-		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
+//		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
+		notes = notes instanceof Array ? notes : [];
+		this.data.notes = notes;
+		this.data.total = total;
 		// clearing the container
 		elclear(self.dom.notes);
 		// there are some notes
-		if ( data.length > 0 ) {
+		if ( total > 0 ) {
 			// determine the note id beeing edited at the moment
 			var note, neid = NoteEditor.GetNoteID();
 			// iterate all notes
-			data.each(function(item){
+			notes.each(function(item){
 				// append the created note to the list
 				note = self.BuildNote(item);
 				self.SetNotesVisibility([note]);
@@ -807,8 +827,16 @@ var NoteList = new function () {
 	}
 
 	var BtnRestoreHandler = function () {
-		var checked = self.GetNotesByState('marked');
-		fb(checked);
+		// ask user
+		if ( confirm(msg_checked_notes_restore) ) {
+			var list = [];
+			// iterate all checked notes
+			self.GetNotesByState('marked').each(function(note){
+				// fill id list
+				if ( note.data.id ) list.push(note.data.id);
+			});
+			NotesDelete(list, true);
+		}
 	}
 
 	/**
@@ -822,8 +850,9 @@ var NoteList = new function () {
 		this.dom = {handle:params.handle};
 
 		this.data = {
-			latest :true, // show only the last 20 notes
-			notes  :[]   // all requested notes data array
+			latest : true, // show only the last 20 notes
+			total  : 0,    // show only the last 20 notes
+			notes  : []   // all requested notes data array
 			//filter :TagManager.ParseStr()
 		};
 
