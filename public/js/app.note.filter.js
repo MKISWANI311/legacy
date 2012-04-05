@@ -114,6 +114,30 @@ var NoteFilter = new function () {
 	}
 
 	/**
+	 * Resets the current search options
+	 * and get the lates notes
+	 */
+	this.RequestLatest = function () {
+		this.Reset();
+		this.NotesRequest();
+	}
+
+	/**
+	 * Resets the current search options
+	 * and get the deleted notes using :deleted tag
+	 */
+	this.RequestDeleted = function () {
+		//this.Reset();
+		this.MsgClear();
+		// update user input
+		this.dom.input.value = ':deleted';
+		// prepare inner data
+		this.UpdateParsedInput();
+		// get data and build note list
+		this.NotesRequest();
+	}
+
+	/**
 	 * Sends ajax request to receive notes by tags and
 	 * makes a note list using the received data
 	 */
@@ -128,10 +152,7 @@ var NoteFilter = new function () {
 				// make note list using the received data
 				NoteList.BuildTable(data.notes, data.total);
 				// no data, need to inform and suggest to see for example the latest notes
-				if ( data.total == 0 ) self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){
-					self.Reset();
-					self.NotesRequest();
-				}})]);
+				if ( data.total == 0 ) self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){self.RequestLatest();}})]);
 			} else {
 				// server error
 				self.MsgAdd(msg_fail_server_error + data.error, 'fail');

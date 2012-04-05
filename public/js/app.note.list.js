@@ -22,8 +22,8 @@ var NoteList = new function () {
 	var msg_checked_notes_remove  = 'You are going to delete all checked notes in the note list. Do you really want to continue?';
 	var msg_checked_notes_restore = 'You are going to restore all checked notes in the note list. Do you really want to continue?';
 
-	var msg_checked_notes_removed = 'The selected notes were successfully removed: ';
-	var msg_checked_notes_restored= 'The selected notes were successfully restored: ';
+	var msg_checked_notes_removed = 'The selected notes were successfully removed ';
+	var msg_checked_notes_restored= 'The selected notes were successfully restored ';
 
 	/**
 	 * Open the subscriber
@@ -34,8 +34,6 @@ var NoteList = new function () {
 		elclear(this.dom.notes);
 		// show info and controls
 		this.dom.tpbar.style.display = 'block';
-		// fill notes
-		//this.BuildTable(false);
 		// component state flag
 		this.open = true;
 	};
@@ -48,13 +46,19 @@ var NoteList = new function () {
 	this.EventClose = function () {
 		// close only if opened at the moment
 		if ( this.open ) {
-			// clear decoded entries data in the latest notes
-//			data_notes_latest.each(ClearNoteDecData);
 			// clear decoded entries data in the requested notes
-			this.data.notes.each(ClearNoteDecData);
+			this.data.notes.each(function(note){
+				// all note entries
+				note.entries.each(function(entry){
+					// remove if exist
+					delete entry.name_dec;
+					delete entry.data_dec;
+				});
+				// all data for filtering
+				delete note.fulltext;
+			});
 			// hide info and controls
 			this.dom.tpbar.style.display = 'none';
-			//this.UpdateCtrlBlock(true);
 			// clear notes
 			elclear(this.dom.notes);
 			// component state flag
@@ -63,176 +67,44 @@ var NoteList = new function () {
 	};
 
 	/**
-	 * Unset all decrypted note data
-	 * @param note link to the note object
+	 * Deletes or restores the given list of notes depending on the undo flag
+	 * @param list array of note ids
+	 * @param undo bool flag: true - restore notes, delete otherwise
 	 */
-	var ClearNoteDecData = function ( note ) {
-		// all note entries
-		note.entries.each(function(entry){
-			// remove if exist
-			delete entry.name_dec;
-			delete entry.data_dec;
-		});
-		// all data for filtering
-		delete note.fulltext;
-	}
-
-	var SetNoteIcon = function ( note ) {
-//		var icon = 'img/tag_note.png',
-//			tags = TagManager.IDs2Names(note.data.tags);
-//		// check parsed string
-//		if ( tags && tags instanceof Array ) {
-//			// iterate words in the input string
-//			for ( var i = 0; i < tags.length; i++ ) {
-//				if ( icon_tags.indexOf(tags[i]) >= 0 ) {
-//					icon = 'img/tag_' + tags[i] + '.png';
-//					break;
-//				}
-//			}
-//		}
-		var entries = note.data.entries;
-		//fb(note);
-		for ( var j in entries ) {
-			if ( entries[j].id_type == 2 ) {
-				var url = App.Decode(entries[j].data);
-				if ( url.search('http://') >= 0 || url.search('https://') >= 0 ) {
-					url = url.replace('http://', '');
-					url = url.replace('https://', '');
-					url = url.split('/');
-					if ( url[0] ) {
-						icon = 'http://www.getfavicon.org/?url='+url[0]+'/favicon.32.png';
-						break;
-					}
-				}
-			}
-		}
-
-		note.dom.icon.src = icon;
-	};
-
-//	this.NoteVisible = function ( note ) {
-//		// flag to show this note or not
-//		var flag = true;
-////		for ( var i = 0; i < this.data.filter.tinc.length; i++ ) {
-////			if ( !note.data.tags.has(this.data.filter.tinc[i]) ) {flag = false;break;}
-////		}
-////		if ( flag ) {
-////			for ( i = 0; i < this.data.filter.texc.length; i++ ) {
-////				if ( note.data.tags.has(this.data.filter.texc[i]) ) {flag = false;break;}
-////			}
-////		}
-//		if ( flag ) {
-//			$(note).removeClass('hidden');
-//		} else {
-//			$(note).addClass('hidden');
-//		}
-//		return flag;
-//	};
-
-//	this.DrawNoteTags = function ( note ) {
-//		//elclear(note.dom.tags.exc);
-//		elclear(note.dom.tags.inc);
-//		elclear(note.dom.tags.set);
-//
-//		var names = [];
-//		note.data.tags.each(function(item){
-////			if ( !self.data.filter.tinc.has(item) ) {
-////				names.push(data_tags_idlist[item]);
-////			}
-//		});
-//		names.sort().each(function(item){
-//			elchild(note.dom.tags.set, element('span',
-//				{className:'tag', title:'click on this tag to include it to the search', tagid:data_tags_nmlist[item]},
-//				item, {onclick:TagInclude}));
-//		});
-//
-////		self.data.filter.tinc.each(function(item){
-////			if ( item ) {
-////				elchild(note.dom.tags.inc, element('span',
-////					{className:'tag include', title:"click on this tag to exclude it from the filtering", tagid:item},
-////					data_tags_idlist[item], {onclick:TagExclude}));
-////			}
-////		});
-//	};
-
-//	var NoteActive = function ( note ) {
-//		if ( self.dom.notes.active ) $(self.dom.notes.active).removeClass('active');
-//		$(note).addClass('active');
-//		self.dom.notes.active = note;
-//	};
-
 	var NotesDelete = function ( list, undo ) {
+		// check input
 		if ( list.length > 0 ) {
+			// send request
 			$.post('/note/delete' + (undo ? '/undo' : ''), {ids:list}, function(data){
+				// remove old messages
+				NoteFilter.MsgClear();
+				// on success
 				if ( !data.error ) {
+					// prepare message body
+					var message = [(undo ? msg_checked_notes_restored : msg_checked_notes_removed) + '(amount:' + data.count + '). '];
+					// after deletion allow to go to the deleted notes
+					if ( !undo ) message.push(' It is still possible to ', element('a', {className:'bold'}, 'restore them', {onclick:function(){NoteFilter.RequestDeleted();}}));
+					// close currently edited note if affected
+					if ( list.has(NoteEditor.GetNoteID()) ) NoteEditor.Escape();
+					// show status message
+					NoteFilter.MsgAdd(message);
+					// refresh note list
 					NoteFilter.NotesRequest();
-					NoteFilter.MsgAdd((undo ? msg_checked_notes_restored : msg_checked_notes_removed) + data.count);
 				} else {
-					self.InfoSet('The request was not successful. The response from the server: ' + data.error, 'error');
+					NoteFilter.MsgAdd('The request was not successful. The response from the server: ' + data.error, 'error');
 				}
 			});
 		}
 	};
 
-	var NoteBody = function ( data ) {
-		var result = [element('div', {className:'bold'}, 'id:' + data.id)];
-		for ( var i = 0; i < data.entries.length; i++ ) {
-			var entry = data.entries[i];
-			if ( entry.id_type != 4 ) {
-				var text = App.Decode(entry.data);
-				if ( text ) {
-					text = text.slice(0, 100);
-					if ( entry.id_type == 6 ) {
-						result.push(element('div', {className:'entry'}, [
-							element('span', {className:'name'}, App.Decode(entry.name) + ': '),
-							element('span', {className:'data bold'}, text)
-						]));
-					} else {
-						result.push(element('span', {className:'entry'}, [
-							element('span', {className:'name'}, App.Decode(entry.name) + ': '),
-							element('span', {className:'data bold'}, text)
-						]));
-					}
-				}
-			}
-		}
-		return result;
-	};
-
-//	var NotePrepare = function ( data ) {
-//		var tbl  = element('table', {});
-//		var icon = element('img', {width:32, height:32, className:'hidden'}, null, {onload:function(){/*$(this).fadeIn();*/$(this).removeClass('hidden');}});
-//		var hint = element('div', {className:'hint'}, [TimestampToDateStr(data.mtime), ' ', element('a', {data:data}, 'delete', {onclick:function(e){
-//			if (!e ) e = window.event;e.cancelBubble = true;
-//			if ( e.stopPropagation ) e.stopPropagation();
-//			NoteDelete(this.data);
-//		}})]);
-//		var tags = element('div', {className:'tags'});
-//		//var note = element('div', {className:'note', data:data}, [hint, tbl, tags], {onclick:function(){
-//		var note = element('div', {className:'note', data:data}, tags, {onclick:function(){
-//			NoteActive(this);
-//			NoteEditor.Load(this.data);
-//			$('#ui-layout-east-tplist').hide();
-//			$('#ui-layout-east-data').show();
-//		}});
-//		note.dom = {icon:icon, hint:hint, tags:tags};
-//		tags.exc = element('span', {className:'exc'});
-//		tags.inc = element('span', {className:'inc'});
-//		tags.set = element('span', {className:'set'});
-//		//tblrow(tbl, [icon, NoteBody(data)], [{className:'icon'}, {className:'body'}]);
-//		elchild(note.dom.tags, [tags.exc, tags.inc, tags.set]);
-//		SetNoteIcon(note);
-//		self.DrawNoteTags(note);
-//		return note;
-//	};
-
 	/**
 	 * Makes a visualization of the given note entries details
 	 * @param note array note attributes
-	 * @return array of html tags
+	 * @param icon img node for note icon
+	 * @return array of html nodes or hint string
 	 */
-	var BuildNoteInfo = function ( note ) {
-		var list = [], fulltext = [];
+	var BuildNoteInfo = function ( note, icon ) {
+		var list = [], fulltext = [], url = null;
 		// iterate all note entries
 		note.entries.each(function(entry){
 			// decrypt data
@@ -243,15 +115,33 @@ var NoteList = new function () {
 			fulltext.push(data.toLowerCase());
 			// there is data and it's not a password
 			if ( entry.id_type !== 4 && data ) {
+				// truncate
 				var sname = name.length > 30 ? name.slice(0, 25) + '...' : name;
 				var sdata = data.length > 50 ? data.slice(0, 35) + '...' : data;
+				// url
 				if ( entry.id_type === 2 ) {
-					sdata = element('a', {className:'', href:data}, sdata);
+					// the first available url
+					if ( !url ) url = data;
+					// http/https/ftp
+					if ( data.search('http://') >= 0 || data.search('https://') >= 0 || data.search('ftp://') >= 0 ) {
+						sdata = element('a', {className:'', href:data}, sdata);
+					} else {
+						// just server name
+						sdata = element('b', {}, sdata);
+					}
 				}
 				list.push(element('span', {className:'name'}, sname + ':'));
 				list.push(element('span', {className:'data'}, sdata));
 			}
 		});
+		// has valid url (the first one)
+		if ( url ) {
+			// get rid of all possible prefixes and split to parts
+			url = url.replace('ftp://', '').replace('http://', '').replace('https://', '').split('/');
+			// get the first part and try to get image
+			if ( url[0] && url[0] != 'localhost' ) icon.src = 'http://www.getfavicon.org/?url='+url[0]+'/favicon.32.png';
+		}
+		// build search full text data
 		note.fulltext = fulltext.join("\n");
 		// warning if no data
 		return list.length > 0 ? list : element('div', {className:'warn'}, hint_info_missing);
@@ -281,7 +171,7 @@ var NoteList = new function () {
 	/**
 	 * Makes a list of note tags buttons with handlers
 	 * @param note array note attributes
-	 * @return array of html tags
+	 * @return array of html tag nodes or hint string
 	 */
 	var BuildNoteTags = function ( note ) {
 		var list = [], exc = [], inc = [];
@@ -315,6 +205,7 @@ var NoteList = new function () {
 	/**
 	 * Returns the corresponding note icon image address
 	 * @param note array note attributes
+	 * @return url string
 	 */
 	var GetNoteIcon = function ( note ) {
 		// prepare
@@ -325,7 +216,7 @@ var NoteList = new function () {
 			// it's a tag from the global set
 			if ( icon_tags.has(item) ) {
 				// get the first match
-				icon = 'img/tag_' + item + '.png';return;
+				icon = 'img/tag_' + item + '.png'; return;
 			}
 		});
 		return icon;
@@ -333,32 +224,45 @@ var NoteList = new function () {
 
 	/**
 	 * Shows/hides checked notes controls and general notes info
+	 * @param ctrlonly flag to skip or not the control buttons
 	 */
 	this.UpdateCtrlBlock = function ( ctrlonly ) {
 		//var total = self.dom.notes.childNodes.length;
 		if ( !ctrlonly ) {
+			// list of visible notes
 			var visible = this.GetNotesVisible();
+			// clear and fill
 			elchild(elclear(self.dom.tpinfo), [
+				// block with amount
 				element('span', {}, [
+					// title
 					element('p', {}, 'notes '),
+					// amount of visible notes
 					element('b', {title:hint_notes_visible}, visible.length), ' of ', element('b', {title:hint_notes_total}, this.data.total),
+					// total amount of notes
 					( visible.length < this.data.notes.length ? [element('p', {className:'div'}, '|'), element('b', {title:hint_notes_filtered}, this.data.notes.length - visible.length), ' filtered'] : null),
+					// link to load all available notes
 					( this.data.notes.length < this.data.total ? [element('p', {className:'div'}, '|'), element('a', {className:'bold'}, 'load all', {onclick:function(){
 						NoteFilter.NotesRequest(true);
 					}})] : null)
 				]),
+				// block with selection
 				element('span', {}, [
+					// title
 					element('p', {}, 'select '),
+					// link to select all notes
 					element('a', {}, 'all', {onclick:function(){
 						self.SetNotesState(visible, 'marked', true);
 						self.UpdateCtrlBlock(true);
 					}}),
 					element('p', {className:'div'}, '|'),
+					// link to remove selection from all notes
 					element('a', {}, 'none', {onclick:function(){
 						self.SetNotesState(visible, 'marked', false);
 						self.UpdateCtrlBlock(true);
 					}}),
 					element('p', {className:'div'}, '|'),
+					// link to invert selection
 					element('a', {}, 'invert', {onclick:function(){
 						self.SetNotesState(visible, 'marked');
 						self.UpdateCtrlBlock(true);
@@ -366,22 +270,15 @@ var NoteList = new function () {
 				]),
 			]);
 		}
+		// get the list of checked notes
 		var checked = this.GetNotesByState('marked');
+		// hide all buttons
 		this.dom.btndelete.style.display  = 'none';
 		this.dom.btnrestore.style.display = 'none';
+		// show only the corresponding one
 		if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
 		// show/hide block depending on notes amount
 		this.dom.tpbar.style.display = this.data.total == 0 ? 'none' : 'block';
-//		var i, item, active = 0, visib;
-//		for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-//			item = self.dom.notes.childNodes[i];
-//			if ( !item.style.display ) active++;
-//			if ( item.state.marked ) {
-//				self.dom.tpctrl.style.display = 'block';
-//				return;
-//			}
-//		}
-//		self.dom.tpctrl.style.display = 'none';
 	}
 
 	/**
@@ -421,6 +318,7 @@ var NoteList = new function () {
 	/**
 	 * Returns the list of notes with the given state
 	 * @param type string state name active | marked
+	 * @return array of nodes
 	 */
 	this.GetNotesByState = function ( type ) {
 		// all notes or only the given one
@@ -435,6 +333,7 @@ var NoteList = new function () {
 	/**
 	 * Returns the html note block by id if found or false otherwise
 	 * @param id int note attribute
+	 * @return node with data or false on failure
 	 */
 	this.GetNoteByID = function ( id ) {
 		// iterate note list
@@ -447,6 +346,7 @@ var NoteList = new function () {
 
 	/**
 	 * Returns the list of visible notes
+	 * @return array of nodes
 	 */
 	this.GetNotesVisible = function () {
 		// iterate note list
@@ -456,47 +356,6 @@ var NoteList = new function () {
 		}
 		return result;
 	}
-
-	/**
-	 * Highlights the active note or note range
-	 * range means to select all the notes between old and new selected notes
-	 * @param note to be processed
-	 * @param range flag to process the range
-	 */
-//	var NoteStateActive = function ( note, range ) {
-//		// last active note list
-//		var alast = self.GetNotesByState('active');
-//		// flag true if the node is the same as already active
-//		var fsame = alast.length > 0 && alast[0].data.id === note.data.id;
-//		// reset all notes states
-//		self.ClearNotesState();
-//		// there is already active note
-//		// check if the edited note is not already active
-//		if ( NoteEditor.GetNoteID() !== note.data.id ) {
-//			// show note details
-//			NoteEditor.Load(note.data);
-//		}
-//		// make active
-//		self.SetNotesState([note], 'active');
-//		// holding Shift key
-//		if ( range ) {
-//			var i, item, cflag = false;
-//			// iterate all notes
-//			for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-//				// cursor
-//				item = self.dom.notes.childNodes[i];
-//				// flag showing that the cursor is inside the range
-//				if ( item.data.id === alast[0].data.id || item.data.id === note.data.id ) cflag = !cflag;
-//				// check inside the range or edge items
-//				if ( cflag || item.data.id === alast[0].data.id || item.data.id === note.data.id ) {
-//					self.SetNotesState([item], 'marked');
-//				}
-//			}
-//		} else {
-//			// check the only clicked note
-//			self.SetNotesState([note], 'marked');
-//		}
-//	}
 
 	/**
 	 * Whole note ckick handler
@@ -569,6 +428,7 @@ var NoteList = new function () {
 	/**
 	 * Forms the note wrapper
 	 * @param data array of note parameters
+	 * @return formed node with data
 	 */
 	this.BuildNote = function ( data ) {
 		// note body
@@ -577,10 +437,11 @@ var NoteList = new function () {
 		elchild(note, [
 			element('div', {className:'icon'}, [
 				note.dom.icon = element('img', {className:'icon', src:GetNoteIcon(data)}),
+				//note.dom.icon = BuildNoteIcon(data),
 				note.dom.tick = element('div', {className:'tick', note:note})
 			]),
 			element('div', {className:'body'}, [
-				note.dom.info = element('div', {className:'info'}, BuildNoteInfo(data)),
+				note.dom.info = element('div', {className:'info'}, BuildNoteInfo(data, note.dom.icon)),
 				note.dom.time = element('div', {className:'time'}, TimestampToDateStr(data.mtime)),
 				note.dom.tags = element('div', {className:'tags'}, BuildNoteTags(data))
 			])
@@ -593,88 +454,21 @@ var NoteList = new function () {
 		return note;
 	}
 
-	this.NoteCreate = function ( data ) {
-		// update latest and current note lists
-//		data_notes_latest.splice(0,0,data);
-		//this.data.notes.splice(0,0,data);
-		// build note and add it activated to the list top
-		var note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
-		this.SetNotesState([note], 'active');
-		this.SetNotesState([note], 'marked');
-		//NoteStateActive(note);
-		// need to show controls for top note
-		this.UpdateCtrlBlock();
-	};
-
-	this.NoteUpdate = function ( data ) {
-		// get the updating note
-		var note = this.GetNoteByID(data.id);
-		// remove current active note if exist
-		if ( note ) {
-			// icon
-			note.dom.icon.src = GetNoteIcon(data);
-			// tags
-			elchild(elclear(note.dom.tags), BuildNoteTags(data));
-			// time
-			elchild(elclear(note.dom.time), TimestampToDateStr(data.mtime));
-			// info
-			elchild(elclear(note.dom.info), BuildNoteInfo(data));
-			// move to the top
-			this.dom.notes.insertBefore(note, this.dom.notes.childNodes[0]);
-
-			//this.dom.notes.removeChild(note);
-			// build note and add it activated to the list top
-			//note = this.dom.notes.insertBefore(this.BuildNote(data), this.dom.notes.childNodes[0]);
-		} else {
-			note = this.NoteCreate(data);
-		}
-
-		//if ( NoteVisibility(note) ) {}
-		//NoteStateActive(note);
-		//this.dom.notes.active = null;
-		// need to show controls for top note
-		this.UpdateCtrlBlock();
-	}
-
-	var NoteVisibility = function ( note ) {
-		// flag to show this note or not
-		var flag = true;
-		if ( NoteFilter.data.tinc.length > 0 || NoteFilter.data.texc.length > 0 ) {
-			note.data.tags.each(function(item){
-				fb(item, !NoteFilter.data.tinc.has(item), NoteFilter.data.texc.has(item));
-				if ( !NoteFilter.data.tinc.has(item) || NoteFilter.data.texc.has(item) ) {
-					flag = false;
-					return;
-				}
-			});
-		}
-
-//		for ( var i = 0; i < this.data.filter.tinc.length; i++ ) {
-//			if ( !note.data.tags.has(this.data.filter.tinc[i]) ) {flag = false;break;}
-//		}
-//		if ( flag ) {
-//			for ( i = 0; i < this.data.filter.texc.length; i++ ) {
-//				if ( note.data.tags.has(this.data.filter.texc[i]) ) {flag = false;break;}
-//			}
-//		}
-		$(note).toggleClass('hidden', !flag);
-		fb(flag);
-		return flag;
-	};
-
+	/**
+	 * Shows/hides notes according to the filter
+	 * @param notes array of notes that should be processed, all if not given
+	 */
 	this.SetNotesVisibility = function ( notes ) {
 		// all notes or the given one/ones
 		notes = notes || this.dom.notes.childNodes;
 		var i, visible,  // flag for visibility
 			hlist = [];  // list of the notes that should be hidden
-			// splits filter string into two lists - winc and wexc
-			//words = TagManager.SeparateWords(filter);
 		// iterate formed list
 		for ( i = 0; i < notes.length; i++ ) {
 			// by default is visible
 			visible = true;
 			// check by tags
-
+			//TODO:???
 			// check by filter string if still visible
 			if ( visible ) {
 				// check included words
@@ -692,7 +486,6 @@ var NoteList = new function () {
 				}
 			}
 			// apply visibility flag
-			//$(notes[i]).toggleClass('hidden', !visible);
 			notes[i].style.display = visible ? '' : 'none';
 			// fill the list of notes to be hidden
 			if ( !visible ) hlist.push(notes[i]);
@@ -708,9 +501,9 @@ var NoteList = new function () {
 	 * @param total int general amount of notes
 	 */
 	this.BuildTable = function ( notes, total ) {
-		// check input and determine mode - last or requested
-//		data = data instanceof Array ? (this.data.notes = data) : (data === false ? data_notes_latest : this.data.notes);
+		// check input
 		notes = notes instanceof Array ? notes : [];
+		// set global data
 		this.data.notes = notes;
 		this.data.total = total;
 		// clearing the container
@@ -733,109 +526,20 @@ var NoteList = new function () {
 		this.UpdateCtrlBlock();
 	};
 
-	this.Filter = function ( winc, wexc ) {
-		for ( var i = 0, list = self.dom.notes.childNodes; i < list.length; i++ ) {
-			var visible = true;
-			// check included words
-			winc.each(function(word){
-				// found in fulltext so exit
-				if ( list[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {
-					visible = false;return;
-				}
-			});
-			// still visible
-			if ( visible ) {
-				// check excluded words
-				wexc.each(function(word){
-					// found in fulltext so exit
-					if ( list[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {
-						visible = false;return;
-					}
-				});
-			}
-			// apply visibility flag
-			$(list[i]).toggle(visible);
-		}
-	};
-
-//	var SetFilterTags = function ( data ) {
-//		data = data || self.dom.search.input.value;
-//		self.data.filter = TagManager.ParseStr(data);
-//	};
-
-
-
-	var BuildSearchStr = function () {
-		var words = [];
-		// prepare all words for concatenation
-		//self.data.filter.texc.each(function(item){if ( item ) words.push('-'+data_tags_idlist[item]);});
-		//self.data.filter.tinc.each(function(item){if ( item ) words.push(    data_tags_idlist[item]);});
-		// replace the search string by the reformatted one
-		self.dom.search.input.value = words.join(' ');
-	};
-
-//	var TagExclude = function ( e ) {
-//		if (!e ) e = window.event;e.cancelBubble = true;
-//		if ( e.stopPropagation ) e.stopPropagation();
-//
-//		NoteFilter.TagExclude(this.tagnm);
-//		//var texc  = self.data.filter.texc,
-//		//	tinc  = self.data.filter.tinc;
-//		// locate
-////		var iexc = texc.indexOf(this.tagid);
-////		var iinc = tinc.indexOf(this.tagid);
-////		// and clear
-////		if ( iexc >= 0 ) texc.splice(iexc, 1);
-////		if ( iinc >= 0 ) tinc.splice(iinc, 1);
-////		// remove current tag
-////		this.parentNode.removeChild(this);
-////		BuildSearchStr();
-////		// send request
-////		Filter();
-//	};
-
-	var FilterTags = function () {
-		elclear(self.dom.tags.exc);
-		elclear(self.dom.tags.inc);
-
-//		if ( !self.data.filter.texc.empty() || !self.data.filter.tinc.empty() ) {
-//			self.dom.tags.style.display = 'block';
-//
-//			self.data.filter.texc.each(function(item){
-//				if ( item ) {
-//					elchild(self.dom.tags.exc, element('span',
-//						{className:'tag exclude', title:'click on this tag to exclude it from the filtering', tagid:item},
-//						data_tags_idlist[item], {onclick:TagExclude}));
-//				}
-//			});
-//		} else {
-//			self.dom.tags.style.display = 'none';
-//		}
-	};
-
+	/**
+	 * Deletes or restore selected notes depending on undo flag
+	 */
 	var BtnDeleteHandler = function () {
 		// ask user
-		if ( confirm(msg_checked_notes_remove) ) {
+		if ( confirm(this.undo ? msg_checked_notes_restore : msg_checked_notes_remove) ) {
 			var list = [];
 			// iterate all checked notes
 			self.GetNotesByState('marked').each(function(note){
 				// fill id list
 				if ( note.data.id ) list.push(note.data.id);
 			});
-			NotesDelete(list);
-		}
-	}
-
-	var BtnRestoreHandler = function () {
-		// ask user
-		if ( confirm(msg_checked_notes_restore) ) {
-			var list = [];
-			// iterate all checked notes
-			self.GetNotesByState('marked').each(function(note){
-				// fill id list
-				if ( note.data.id ) list.push(note.data.id);
-			});
-			NotesDelete(list, true);
+			// send request
+			NotesDelete(list, this.undo);
 		}
 	}
 
@@ -850,47 +554,30 @@ var NoteList = new function () {
 		this.dom = {handle:params.handle};
 
 		this.data = {
-			latest : true, // show only the last 20 notes
-			total  : 0,    // show only the last 20 notes
-			notes  : []   // all requested notes data array
-			//filter :TagManager.ParseStr()
+			total : 0,  // total amount on notes
+			notes : []  // all requested notes data array
 		};
 
 		// build all blocks together
 		elchild(this.dom.handle, [
-			//this.dom.search = element('div', {className:'search'}),
-			//this.dom.tags   = element('div', {className:'tags hidden'}),
-			//this.dom.info   = element('div', {className:'info'}),
-			//this.dom.help   = element('div', {className:'help hidden'}),
+			// top panel
 			this.dom.tpbar = element('div', {className:'tpbar'}, [
+				// controls
 				this.dom.tpctrl = element('div', {className:'ctrl'}, [
-					this.dom.btndelete  = element('input', {type:'button', value:'Delete',  className:'button hidden'}, null, {onclick:BtnDeleteHandler}),
-					this.dom.btnrestore = element('input', {type:'button', value:'Restore', className:'button hidden'}, null, {onclick:BtnRestoreHandler})
+					this.dom.btndelete  = element('input', {type:'button', value:'Delete', undo:false, className:'button hidden'}, null, {onclick:BtnDeleteHandler}),
+					this.dom.btnrestore = element('input', {type:'button', value:'Restore', undo:true, className:'button hidden'}, null, {onclick:BtnDeleteHandler})
 				]),
+				// general info, load all, select all/none/invert
 				this.dom.tpinfo = element('div', {className:'info'})
 			]),
+			// note list
 			this.dom.notes = element('div', {className:'notes'}),
+			// bottom panel
 			this.dom.btbar = element('div', {className:'btbar'})
 		]);
 
+		// disable selection
 		this.dom.notes.onselectstart = function () {return false;} // ie
 		this.dom.notes.onmousedown   = function () {return false;} // mozilla
-
-//		elchild(this.dom.search, [
-//			this.dom.search.icon    = element('img', {className:'icon', src:'img/search.png'}),
-//			this.dom.search.input   = element('input', {type:'text', className:'line'}),
-//			this.dom.search.suggest = element('div', {className:'suggest'}),
-//			this.dom.search.control = element('div', {className:'control'}, [element('span', {}, 'clear', {onclick:function(){
-//				self.dom.search.input.value = '';
-//				self.dom.search.input.focus();
-//			}})])
-//		]);
-
-//		elchild(this.dom.tags, [
-//			this.dom.tags.title = element('span', {className:'title'}, 'tags'),
-//			this.dom.tags.exc   = element('span', {className:'exc'}),
-//			this.dom.tags.inc   = element('span', {className:'inc'}),
-//			this.dom.tags.hint  = element('span', {className:'hint'}, 'click on a tag to exclude it from the search')
-//		]);
 	};
 };

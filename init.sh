@@ -23,7 +23,7 @@ echo "cache directory mounting"
 echo "restoring backuped data if exists"
 
 # cache dirs creation
-mkdir -p cache/{searches,tags,templates,template_entries,notes_latest} && echo -ne $ok || echo -ne $fail
+mkdir -p cache/{searches,tags,templates,template_entries} && echo -ne $ok || echo -ne $fail
 echo "cache slave directories creation"
 # set owner and permissions
 chown http:http cache/* && chmod 755 cache/* && echo -ne $ok || echo -ne $fail

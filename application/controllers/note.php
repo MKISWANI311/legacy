@@ -75,7 +75,7 @@ class note extends controller {
 					// clear searches cache
 					array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
 					// clear cache
-					cache::user_clear('notes_latest');
+					//cache::user_clear('notes_latest');
 					// tags return only if there are changes
 					if ( ($tags = $this->tags_save($id_user, $result['id'])) )
 						$result['tags'] = $tags;
@@ -106,7 +106,7 @@ class note extends controller {
 					// clear searches cache
 					array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
 					// should clear cache
-					cache::user_clear('notes_latest');
+					//cache::user_clear('notes_latest');
 					$result['count'] = db::affected();
 					// compare actually modified with requested
 					if ( $result['count'] != count($ids) ) {
