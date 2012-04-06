@@ -249,48 +249,6 @@ class cache {
 		return $data ? $data : '{}';
 	}
 
-	/**
-	 * List of the 20 most recent user notes with entries
-	 * @param int $id_user link to user otherwise taken from session
-	 * @return string json
-	 */
-	public static function db_notes_latest ( $id_user = null ) {
-		// get user either from parameter or from session
-		if ( !$id_user ) $id_user = $_SESSION['user']['id'];
-		// obtaining data
-		if ( null === ($data = self::user('notes_latest')) ) {
-			// cache is empty, filling with 20 active recent notes
-			$sql = 'select id,ctime,mtime,atime from notes where id_user = @i and is_active = 1 order by mtime desc limit 20';
-			if ( ($data = db::query($sql, $id_user)) ) {
-				// extract note ids
-				$note_idlist = matrix_column($data, 'id');
-				// find entries and tags for found notes
-				$tags    = matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note');
-				$entries = matrix_group(db::query(
-					'select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place',
-					$note_idlist), 'id_note');
-				// extent found notes with tags and entries
-				foreach ( $data as & $note ) {
-					$note['tags'] = value($tags[$note['id']], array());
-					$note['entries'] = array_values($entries[$note['id']]);
-				}
-			}
-			// saving the json packed data
-			$data = self::user('notes_latest', json_encode($data, JSON_NUMERIC_CHECK));
-		}
-		return $data ? $data : '{}';
-	}
-
-	/**
-	 * List of given table columns
-	 * @param string $table name of the table
-	 */
-//	public static function db_table_columns ( $table ) {
-//		if ( null === ($data = self::apc('table_columns_'.$table)) )
-//			$data = self::apc('table_columns_'.$table, db::columnList($table));
-//		return $data;
-//	}
-
 }
 
 ?>
