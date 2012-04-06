@@ -10,8 +10,6 @@
 		var data_entry_types      = <?php echo cache::db_entry_types() ?>;
 		var data_templates        = <?php echo cache::db_templates() ?>;
 		var data_template_entries = <?php echo cache::db_template_entries() ?>;
-		var data_notes_latest     = <?php echo cache::db_notes_latest() ?>;
-		//var data_note_entries     = <?php //echo json_encode($note_entries, JSON_NUMERIC_CHECK) ?>;
 
 		// compacted list of all encoded tags with links and use counters
 		var data_tags = <?php echo cache::db_tags() ?>;
