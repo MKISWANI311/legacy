@@ -30,6 +30,12 @@ class user extends controller {
 				));
 				$result['time'] = 0;
 				$result['hash'] = null;
+				// clone templates
+//				$tlist = db::query('select id, @i as id_user,place,name,tag,description from templates where id_user = 0', $result['id']);
+//				db::insert('templates', $tlist);
+//				foreach ( $tlist as $tpl ) {
+//
+//				}
 			}
 
 			if ( !empty($result['id']) ) {
