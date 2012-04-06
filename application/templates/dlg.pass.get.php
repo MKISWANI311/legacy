@@ -34,13 +34,12 @@
 
 			onShow   : function(){
 				new LinkSet(DlgPassGet.data.linkset, {
-					60:    {next:300,   title: '1 minute'},
 					300:   {next:1200,  title: '5 minutes'},
 					1200:  {next:3600,  title: '20 minutes'},
 					3600:  {next:18000, title: '1 hour'},
 					18000: {next:86400, title: '5 hours'},
-					86400: {next:60,   title: '1 day'}
-				}, App.Get('pass_store_time', 60));
+					86400: {next:300,   title: '1 day'}
+				}, App.Get('pass_store_time', 300));
 			},
 
 			/**
