@@ -136,10 +136,21 @@ var NoteList = new function () {
 		});
 		// has valid url (the first one)
 		if ( url ) {
-			// get rid of all possible prefixes and split to parts
-			url = url.replace('ftp://', '').replace('http://', '').replace('https://', '').split('/');
-			// get the first part and try to get image
-			if ( url[0] && url[0] != 'localhost' ) icon.src = 'http://www.getfavicon.org/?url='+url[0]+'/favicon.32.png';
+			// get rid of all unnecessary parts
+			url = url.split('/');
+			// parts are valid
+			if ( url[2] && url[2] != 'localhost' ) {
+				// try to get image, won't repclace the current one if no icon found
+				element('img', {className:'icon', src:'https://getfavicon.appspot.com/' + url[0] + '//' + url[2] + '?defaulticon=none'}, null, {onload:function(){
+					// icon loaded so get current icon parent
+					var parent = icon.parentNode;
+					// and replace the current one
+					parent.removeChild(icon);
+					// with new
+					elchild(parent, this);
+					//self.dom.entries.insertBefore(entry, entry.previousSibling);
+				}})
+			}
 		}
 		// build search full text data
 		note.fulltext = fulltext.join("\n");
@@ -216,7 +227,7 @@ var NoteList = new function () {
 			// it's a tag from the global set
 			if ( icon_tags.has(item) ) {
 				// get the first match
-				icon = 'img/tag_' + item + '.png'; return;
+				icon = 'img/tag_' + item + '.png';return;
 			}
 		});
 		return icon;
