@@ -24,7 +24,7 @@ var NoteFilter = new function () {
 	};
 
 	// message texts
-	var msg_info_no_data      = 'There are no records with given tags. You can use some other tags or see your ';
+	var msg_info_no_data      = 'There are no records to meet the given search options. You can change these options or see your ';
 	var msg_fail_server_error = 'The request was not successful. The response from the server: ';
 
 	/**
@@ -151,8 +151,10 @@ var NoteFilter = new function () {
 			if ( !data.error ) {
 				// make note list using the received data
 				NoteList.BuildTable(data.notes, data.total);
-				// no data, need to inform and suggest to see for example the latest notes
-				if ( data.total == 0 ) self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){self.RequestLatest();}})]);
+				// check if no data but show message only if there were some search options uses
+				if ( data.total == 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
+					// no data, need to inform and suggest to see for example the latest notes
+					self.MsgAdd([msg_info_no_data, element('a', {className:'bold'}, 'latest notes', {onclick:function(){self.RequestLatest();}})]);
 			} else {
 				// server error
 				self.MsgAdd(msg_fail_server_error + data.error, 'fail');

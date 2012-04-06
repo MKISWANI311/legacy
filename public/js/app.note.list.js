@@ -120,11 +120,11 @@ var NoteList = new function () {
 				var sdata = data.length > 50 ? data.slice(0, 35) + '...' : data;
 				// url
 				if ( entry.id_type === 2 ) {
-					// the first available url
-					if ( !url ) url = data;
-					// http/https/ftp
-					if ( data.search('http://') >= 0 || data.search('https://') >= 0 || data.search('ftp://') >= 0 ) {
+					// http/https/ftp and have point
+					if ( (data.search('http://') >= 0 || data.search('https://') >= 0 || data.search('ftp://') >= 0) && data.search('.') >= 0 ) {
 						sdata = element('a', {className:'', href:data}, sdata);
+						// the first available url
+						if ( !url ) url = data;
 					} else {
 						// just server name
 						sdata = element('b', {}, sdata);
