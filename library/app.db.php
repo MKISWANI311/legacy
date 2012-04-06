@@ -97,7 +97,7 @@ class db {
 			self::$onfailure = self::$onfailure && is_callable(self::$onfailure) ? self::$onfailure : null;
 			// creates a pdo instance to represent a connection to the requested database
 			self::$pdo = new PDO(self::$dsn, self::$user, self::$pass, array(
-				PDO::ATTR_PERSISTENT => true,
+				PDO::ATTR_PERSISTENT => false,
 				PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION  // throw exceptions	on errors
 			));
 			// call user-defined init handler if given
@@ -125,7 +125,7 @@ class db {
 		if ( self::$onsuccess ) call_user_func(self::$onsuccess, array(
 			'sql' => 'start transaction', 'time' => $mtime, 'affected' => null));
 		return $result;
-	} 
+	}
 
 	/**
 	 * Commits an SQL transaction
