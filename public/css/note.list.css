@@ -1,5 +1,5 @@
 /**
- * list of note entries
+ * list of note entries with info and control block
  */
 
  .notelist {}
@@ -21,9 +21,8 @@
 			.notelist > .notes > .note.marked img.icon { display:none  !important }
 			.notelist > .notes > .note.marked div.tick { display:block !important; background-image:url("../img/tick.true.png") !important; }
 		.notelist > .notes > .note.active { background-color:#e4ffe4 }
-/*		.notelist > .notes > .note.active  { background-color:#ffffdf; border-top: 1px solid #bfdfff; border-bottom: 1px solid #bfdfff }*/
 			.notelist > .notes > .note > .icon { display:table-cell; vertical-align:middle; width:45px; padding-left:5px; padding-right:8px }
-				.notelist > .notes > .note > .icon img.icon { margin: 0 auto; display:block }
+				.notelist > .notes > .note > .icon img.icon { margin: 0 auto; display:block; width:32px }
 				.notelist > .notes > .note > .icon div.tick { margin: 0 auto; display:none; width:25px; height:25px; opacity:0.5; background-image:url("../img/tick.false.png"); background-repeat:no-repeat; background-position: center center }
 				.notelist > .notes > .note > .icon:hover img.icon { display:none }
 				.notelist > .notes > .note > .icon:hover div.tick { display:block }
@@ -40,71 +39,3 @@
 					.notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }
 					.notelist > .notes > .note .tags .tag.include:hover { background-color:#ffcc66 }
 	.notelist > .btbar { table-layout:fixed; display:none; height:20px; width:100% }
-
-/*.notelist { background-color:white }
-	.notelist > .search { margin-bottom:5px; position:relative; display:none }
-		.notelist > .search > .icon    { position:absolute; top:0px; margin:7px; height:16px; line-height:16px }
-		.notelist > .search > .line    { padding-left:25px; padding-right:35px }
-		.notelist > .search > .suggest { color:#ddd }
-			.notelist > .search > .suggest > span { margin-right:5px; cursor:pointer }
-			.notelist > .search > .suggest > span:hover { color:#555 }
-		.notelist > .search > .control { position:absolute; top:0px; right:0px; margin:5px; height:20px; line-height:20px }
-			.notelist > .search > .control > span { color:#ddd; cursor:pointer }
-			.notelist > .search > .control > span:hover { color:#aaa }
-	.notelist > .info { margin: 5px 15px }
-		.notelist > .info .message { padding-left: 45px }
-	.notelist > .help { margin: 20px 10px; padding:5px; background-color:#F9F9F9; border: 1px solid #eee }
-	.notelist > .notes { margin-top: 5px }
-		.notelist > .notes > .note { border-left: 5px solid #fff; border-right: 2px solid #fff; border-bottom:1px dotted #eee; border-top:1px dotted #eee; padding:5px 5px 5px 10px }
-		.notelist .notes .note:hover { border-left: 5px solid #eee; border-right: 2px solid #eee; background-color: #ffffdf }
-		.notelist .notes .note.active { background-color: #f9f9f9 }
-		.notelist .notes .note.active { border-left: 5px solid #bfdfff; border-right: 2px solid #bfdfff; background-color: #ffffdf }
-			.notelist .notes .note table { height:36px; width:100% }
-				.notelist .notes .note table .icon { width:45px }
-				.notelist .notes .note table .body {  }
-				.notelist .notes .note table .body .entry { margin-right: 5px }
-			.notelist .notes .note .hint { color:grey; text-align:right; font-size:9px }
-			.notelist .notes .note .tags { padding-left:45px }
-				.notelist .notes .note .tags .exc { }
-				.notelist .notes .note .tags .inc { }
-				.notelist .notes .note .tags .set { }
-	.notelist > .ctrls { margin-left:0px }
-
-	.notelist > .tags { margin-left:0px }
-		.notelist .tags .title { width:60px; display:inline-block; text-align:center; color:#bbb }
-		.notelist .tags .exc   { }
-		.notelist .tags .inc   { }
-		.notelist .tags .hint  { color:#bbb; margin-left:5px }
-	.notelist .tag {}
-
-	.notelist .tag {
-		border-left: 2px solid #ccc;
-		background-color: #ddd;
-		line-height: 20px;
-		height: 20px;
-		padding: 2px 7px 0;
-		cursor: pointer;
-		margin-right: 5px;
-		display: inline-block;
-	}
-	.notelist .tag.select {
-		border: 1px solid #999;
-		background-color: #bbb !important;
-		color: white !important;
-	}
-	.notelist .tag:hover {
-		background-color: #bfdfff;
-	}
-	.notelist .tag.include {
-		background-color: #bfdfff;
-		border: 1px solid #bfdfff;
-		border-left: 2px solid #bfdfff;
-		color: #fff;
-		font-weight: bold;
-	}
-	.notelist .tag.exclude {
-		background-color: #ffcc66;
-		color: #fff;
-		font-weight: bold;
-	}
-*/
