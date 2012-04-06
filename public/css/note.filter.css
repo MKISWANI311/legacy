@@ -3,40 +3,13 @@
  */
 
 .notefilter { margin-bottom:10px }
-	.notefilter > .search { height:30px; position:relative }
+	.notefilter > .search { height:30px; position:relative; padding-left:35px }
+		.notefilter > .search > .home { background-color:#eee; position:absolute; left:0px; top:0px; height:30px; line-height:30px; width:30px }
+		.notefilter > .search > .home > div { opacity:0.5; height:30px; line-height:30px; width:30px; background-image:url("../img/2x2_grid.png"); background-repeat:no-repeat; background-position: center center }
+		.notefilter > .search > .home > div:hover { opacity:1 }
 		.notefilter > .search > .line { padding-left:30px; font-family:"Courier New","Andale Mono",monospace }
-		.notefilter > .search > .icon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
+		.notefilter > .search > .icon { background-color:#eee; position:absolute; left:37px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
 		.notefilter > .search > .icon.loading { background-image:url("../img/loading.16.gif") }
-
-/*.notefilter > .search { table-layout:fixed; display:table; height:30px; width:100% }
-		.notefilter > .search .line { font-family:"Courier New","Andale Mono",monospace }
-		.notefilter > .search > .tblock { display:table-cell; padding-right:5px }
-			.notefilter > .search > .tblock > .body { position:relative }
-				.notefilter > .search > .tblock > .body > .line  { color:#ccc; padding-left:30px }
-				.notefilter > .search > .tblock > .body > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
-				.notefilter > .search > .tblock > .body > .ticon.loading { background-image:url("../img/loading.16.gif") }
-		.notefilter > .search > .wblock { display:table-cell; width:250px }
-			.notefilter > .search > .wblock > .body { position:relative }
-				.notefilter > .search > .wblock > .body > .line  { color:#ccc; padding-left:30px }
-				.notefilter > .search > .wblock > .body > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }*/
-
-
-/*	.notefilter > table.main { width:100% }
-		.notefilter > table.main .line { font-family:"Courier New","Andale Mono",monospace }
-		.notefilter > table.main td.switch { width:30px; background-color:#eee; text-align:center }
-			.notefilter > table.main td.switch img { opacity:0.5 }
-			.notefilter > table.main td.switch img:hover { opacity:1 }
-		.notefilter > table.main td.switch:hover { background-color:#ddd; opacity:1 }
-		.notefilter > table.main td.tags { padding:0 5px }
-			.notefilter > table.main td.tags > div { position:relative }
-				.notefilter > table.main td.tags > div > .line  { color:#ccc; padding-left:30px }
-				.notefilter > table.main td.tags > div > .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
-				.notefilter > table.main td.tags > div > .ticon.loading { background-image:url("../img/loading.16.gif"); }
-				.notefilter > table.main td.tags > div > .suggest { position:absolute; display:none; background-color:#fff; left:30px; box-shadow: 0 0 3px rgba(0, 0, 0, 0.5) }
-		.notefilter > table.main td.words  { width:250px }
-			.notefilter > table.main td.words > div { position:relative }
-				.notefilter > table.main td.words > div > .line  { color:#ccc; padding-left:30px }
-				.notefilter > table.main td.words > div > .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:28px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position: center center }*/
 	.notefilter > .messages { margin-top:10px }
 	.notefilter > .messages.loading { opacity:0.4 }
 		.notefilter > .messages > .info,
@@ -46,32 +19,3 @@
 		.notefilter > .messages > .warn { background-image: url("../img/message.warn.16.png") }
 		.notefilter > .messages > .fail { background-image: url("../img/message.fail.16.png") }
 		.notefilter > .messages a { margin-left:5px }
-
-
-
-/*.notefilter { margin-bottom:10px }
-	.notefilter > table.main { width:100% }
-		.notefilter > table.main td.switch { width:40px; background-color:#eee; text-align:center; opacity:1;  background: #eee url("http://cdn4.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/home.png") no-repeat center center }
-		.notefilter > table.main td.switch { width:30px; background-color:#eee; text-align:center; opacity:1;  background: #eee url("../img/2x2_grid.png") no-repeat center center }
-		.notefilter > table.main td.switch { width:30px; background-color:#eee; text-align:center }
-			.notefilter > table.main td.switch img { opacity:0.5 }
-			.notefilter > table.main td.switch img:hover { opacity:1 }
-		.notefilter > table.main td.delete { width:40px; background-color:#eee; text-align:center; opacity:1;  background: #eee url("http://cdn4.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/trash.png") no-repeat center center }
-		.notefilter > table.main td.switch:hover { background-color:#ddd; opacity:1 }
-		.notefilter > table.main td.tags   { padding:0 5px }
-			.notefilter > table.main td.tags div.block { position:relative }
-				.notefilter > table.main td.tags div.block input { color:#ccc; padding-left:30px; padding-right:30px }
-				.notefilter > table.main td.tags div.block .ticon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:26px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
-				.notefilter > table.main td.tags div.block .ticon.loading { background-image:url("../img/loading.16.gif"); }
-				.notefilter > table.main td.tags div.block .suggest { position:absolute; border:1px solid #ddd; display:none }
-				.notefilter > table.main td.tags div.block .loading { position:absolute; display:none; right:7px; top:7px }
-		.notefilter > table.main td.words  { width:250px }
-			.notefilter > table.main td.words div.block {}
-			.notefilter > table.main td.words input { color:#ccc; padding-left:25px; background-image:url("../img/search.png"); background-repeat:no-repeat; background-position:5px center }
-			.notefilter > table.main td.words div.block .wicon { background-color:#eee; position:absolute; left:2px; top:2px; height:26px; line-height:26px; width:26px; background-image:url("../img/field_tag.png"); background-repeat:no-repeat; background-position: center center }
-	.notefilter > .messages { margin-top:10px }
-	.notefilter > .messages.loading { opacity:0.4 }
-		.notefilter > .messages > .info, .notefilter > .messages > .warn, .notefilter > .messages > .fail { display:none; margin-top:5px; border:1px solid #eee; padding:5px 5px 5px 30px; background: #F9F9F9 no-repeat scroll 5px center }
-		.notefilter > .messages > .info { background-image: url("../img/message.info.16.png") }
-		.notefilter > .messages > .warn { background-image: url("../img/message.warn.16.png") }
-		.notefilter > .messages > .fail { background-image: url("../img/message.fail.16.png") }*/

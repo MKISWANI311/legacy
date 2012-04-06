@@ -11,8 +11,9 @@ var NoteFilter = new function () {
 	// false - no plain data, everything is encrypted
 	this.open = false;
 
-	// word exclude hover hint
+	// hints
 	var hint_wexclude = 'click on this word to remove it from the filtering';
+	var hint_home     = 'reset all search parameters and filters and request the latest active notes';
 
 	// autocompleter commands hints
 	var hint_cmd = {
@@ -359,9 +360,10 @@ var NoteFilter = new function () {
 		elchild(this.dom.handle, [
 			// main block
 			element('div', {className:'search'}, [
-				// tags search input
-				this.dom.input = element('input', {type:'text', className:'line', data:{encval:'', oldval:'', history:[], histpos:0}}),
-				this.dom.icon  = element('div', {className:'icon'})
+				// home button and tags search input
+				this.dom.home  = element('div',   {className:'home'}, element('div', {title:hint_home}, null, {onclick:function(){self.RequestLatest()}})),
+				this.dom.input = element('input', {className:'line', type:'text', data:{encval:'', oldval:'', history:[], histpos:0}}),
+				this.dom.icon  = element('div',   {className:'icon'})
 			]),
 			// hidden messages
 			this.dom.messages = element('div', {className:'messages'})
