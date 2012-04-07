@@ -100,21 +100,8 @@
 		function CacheClear ( param ) {
 			$.post('/front/clear/' + param, function(){});
 		}
-
 	</script>
-	<style type="text/css">
-		.ui-layout-resizer {
-			width:5px !important;
-			background-color: #eee !important;
-		}
-		.ui-layout-toggler {
-			background-color: #ddd !important;
-		}
-		.ui-layout-pane {
-			border-style: none !important;
-			padding: 0px !important;
-		}
-	</style>
+
 	<?php response::template('dlg.pass.set') ?>
 	<?php response::template('dlg.pass.get') ?>
 	<?php response::template('dlg.note.add') ?>
@@ -149,8 +136,8 @@
 					</div>
 				</td>
 			</tr>
-			<tr>
-				<td id="block_menu" colspan="2" style="background-color:#eee; height:30px; vertical-align:bottom; display:none">
+			<tr style="display:none">
+				<td id="block_menu" colspan="2" style="background-color:#eee; height:30px; vertical-align:bottom">
 					<div style="float:left" id="menu_items">
 						<div id="menu_item_home"   class="menu-item"><a onclick="MenuItemClick(this); return false">Home</a></div>
 						<div id="menu_item_config" class="menu-item"><a onclick="MenuItemClick(this); return false">Settings</a></div>
