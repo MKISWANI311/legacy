@@ -122,7 +122,7 @@
 <body>
 	<table class="maxh maxw"><tr><td class="body_wrapper">
 		<table class="body_content">
-			<tr class="fade" style="height:30px">
+			<tr class="fade" style="height:30px; border-bottom:1px solid #EEEEEE">
 				<td align="left" style="padding:0px 5px">
 					<a href="/">
 						<span style="font-size:17px; color:#aaa; font-weight:normal; text-shadow: 0 1px 2px #666666;">
@@ -135,12 +135,12 @@
 					<div style="position:relative;">
 						<div id="block_welcome">
 							<?php if ( !empty($_SESSION['user']['time']) ) echo '<span style="color:grey">session was started</span>&nbsp;&nbsp;<span style="font-weight:bold;font-size:10px;color:#333">' . date('Y.m.d H:i', $_SESSION['user']['time']) . '</span>'?>
-							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
+<!--							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:Settings()"><b>Settings</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:CacheClear()"><b>Clear all</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
-							<a href="javascript:CacheClear('user')"><b>Clear user</b></a>
+							<a href="javascript:CacheClear('user')"><b>Clear user</b></a>-->
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:App.ExpirePass()"><b>Close</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
@@ -150,7 +150,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td id="block_menu" colspan="2" style="background-color:#eee; height:30px; vertical-align:bottom">
+				<td id="block_menu" colspan="2" style="background-color:#eee; height:30px; vertical-align:bottom; display:none">
 					<div style="float:left" id="menu_items">
 						<div id="menu_item_home"   class="menu-item"><a onclick="MenuItemClick(this); return false">Home</a></div>
 						<div id="menu_item_config" class="menu-item"><a onclick="MenuItemClick(this); return false">Settings</a></div>

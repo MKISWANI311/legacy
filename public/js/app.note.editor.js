@@ -18,6 +18,12 @@ var NoteEditor = new function () {
 	// messages
 	var msg_has_changes = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
 
+	// hover hints
+	var hint_back  = 'Will discard all your current changes and show the template list.';
+	var hint_new   = 'Will create a new note based on the current one.';
+	var hint_clone = 'Will save the current note as a copy.';
+	var hint_save  = 'Will save all your changes. You can also press Ctrl+Enter';
+
 	// component state flag
 	// true - everything is decoded
 	// false - no plain data, everything is encrypted
@@ -301,6 +307,7 @@ var NoteEditor = new function () {
 			//$(self.dom.controls).removeClass('loading');
 			// change icon if necessary
 			SetTitleIcon();
+			//self.Escape();
 		});
 	};
 
@@ -834,10 +841,17 @@ var NoteEditor = new function () {
 	 * Block of button controls
 	 */
 	var BlockControls = function () {
-		// return container
-		return self.dom.controls = element('div', {className:'buttons'}, [
-			element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){self.Escape();}}),
-			element('input', {type:'button', value:'Save', className:'button bold', title:'press Ctrl+Enter to save'}, null, {onclick:function(){self.Save();}})
+		// container
+		self.dom.tcontrols = element('div', {className:'tbuttons'}, [
+			element('input', {type:'button', value:'Back',      className:'button left', title:hint_back}, null, {onclick:function(){self.Escape();}}),
+			element('input', {type:'button', value:'New',       className:'button left', title:hint_new}, null, {onclick:function(){self.New();}}),
+			element('input', {type:'button', value:'Duplicate', className:'button left', title:hint_clone}, null, {onclick:function(){self.Clone();}}),
+			element('input', {type:'button', value:'Save',      className:'button bold', title:hint_save}, null, {onclick:function(){self.Save();}})
+		]);
+
+		self.dom.bcontrols = element('div', {className:'bbuttons'}, [
+			//element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){self.Escape();}}),
+			element('input', {type:'button', value:'Save', className:'button bold', title:hint_save}, null, {onclick:function(){self.Save();}})
 		]);
 	};
 
@@ -872,8 +886,8 @@ var NoteEditor = new function () {
 	 * @param state bool flag
 	 */
 	var EnableControls = function ( state ) {
-		if ( self.dom.controls ) {
-			var controls = self.dom.controls.childNodes;
+		if ( self.dom.bcontrols ) {
+			var controls = self.dom.bcontrols.childNodes;
 			for ( var i = 0;  i < controls.length; i++ ) {
 				controls[i].disabled = !state;
 			}
@@ -888,10 +902,62 @@ var NoteEditor = new function () {
 	}
 
 	/**
+	 * Saves the current note as new
+	 */
+	this.Clone = function () {
+		// clear note and entries ids
+		delete this.data.id;
+		this.data.entries.each(function(entry){delete entry.id;});
+		// set flag
+		changed = true;
+		// saving
+		this.Save();
+		// focus to the first input
+		this.dom.entries.childNodes[0].dom.data.focus();
+	}
+
+	/**
+	 * Prepares a new note with the same set of entries as the current note has
+	 */
+	this.New = function () {
+		var name, data, entries = [];
+		// iterate the current entry list
+		this.data.entries.each(function(entry){
+			// prepare name and data
+			name = data_entry_types.data[entry.id_type][data_entry_types.defn.name];
+			// generate some password if pass type
+			data = ( entry.id_type == 4 ) ? pwdgen(20) : '';
+			// append the entry list
+			entries.push({
+				id_type : entry.id_type,
+				name    : App.Encode(name),
+				name_dec: name,
+				data    : App.Encode(data),
+				data_dec: data
+			});
+		});
+		// if user confirmed the exit
+		if ( this.Escape(true) ) {
+			// replace the entry list with the new one
+			this.data.entries = entries;
+			// compile all blocks together
+			Build();
+			// update the icon
+			SetTitleIcon();
+			// set flag
+			changed = true;
+			// focus to the first input
+			this.dom.entries.childNodes[0].dom.data.focus();
+		}
+	}
+
+	/**
 	 * Leaves the current note editing
 	 * asks user about modifications if present
+	 * @param noswitch bool flag to not return back to the template list
+	 * @return bool true if the note was escaped
 	 */
-	this.Escape = function () {
+	this.Escape = function ( noswitch ) {
 		// check current note modifications
 		var has_changes = NoteEditor.HasChanges();
 		// not changed or user confirmed his wish
@@ -905,13 +971,20 @@ var NoteEditor = new function () {
 			}
 			// clear previous content
 			elclear(this.dom.handle);
-			delete this.data;
-			delete this.post;
+			// set data
+			this.data = {tags:[], entries: []};
+			// data to be send on save
+			this.post = {tags:[]};
 			//this.open = true;
 			changed = false;
-			self.Show(false);
-			TemplateList.Show(true);
+			// not full escape
+			if ( !noswitch ) {
+				self.Show(false);
+				TemplateList.Show(true);
+			}
+			return true;
 		}
+		return false;
 	};
 
 	/**
@@ -922,7 +995,7 @@ var NoteEditor = new function () {
 		// set data
 		this.data = {tags:[], entries: []};
 		// data to be send on save
-		self.post = {tags:[]};
+		this.post = {tags:[]};
 		// local vars
 		var id_template = template[data_templates.defn.id],
 			id_type, name, data, tag;
@@ -967,6 +1040,8 @@ var NoteEditor = new function () {
 		// tags plain string
 		this.dom.tags.input.value = tag;
 		SetTitleIcon();
+		// focus to the first input
+		this.dom.entries.childNodes[0].dom.data.focus();
 		if ( console.timeEnd ) console.timeEnd('entry create');
 	};
 
@@ -1018,7 +1093,7 @@ var NoteEditor = new function () {
 			if ( tags && tags instanceof Array ) {
 				// iterate words in the input string
 				for ( var i = 0; i < tags.length; i++ ) {
-					if ( icon_tags.indexOf(tags[i]) >= 0 ) {
+					if ( icon_tags.has(tags[i]) ) {
 						icon = 'img/tag_' + tags[i] + '.png';
 						break;
 					}
@@ -1048,37 +1123,18 @@ var NoteEditor = new function () {
 			// build all blocks together
 			elchild(dom.handle, [
 				dom.title,
-					element('div', {className:'divider'}),
+				dom.tcontrols,
 				dom.entries,
 					element('div', {className:'divider'}),
 				dom.tags,
 					element('div', {className:'divider'}),
-				dom.controls
+				dom.bcontrols
 			]);
-
-			// focus to the first input
-			//dom.entries.childNodes[0].dom.data.focus();
 		}
 		TemplateList.Show(false);
 		self.Show(true);
 
 	};
-
-//	var BuildTemplates = function () {
-//		var gr1 = TpList.AddGroup('Common templates');
-//		var gr2 = TpList.AddGroup('My personal templates');
-//
-//		for ( var i = 0; i < data_templates.data.length; i++ ) {
-//			//fb(data_templates.data[i]);
-//			if ( data_templates.data[i][data_templates.defn.sys] == 1 ) {
-//				TpList.AddItem(gr1, data_templates.data[i]);
-//				//TpList.AddItem(gr1, data_templates.data[i][data_templates.defn.id], data_templates.data[i][data_templates.defn.name], data_templates.data[i][data_templates.defn.description]);
-//			} else {
-//				TpList.AddItem(gr2, data_templates.data[i]);
-//				//TpList.AddItem(gr2, data_templates.data[i][data_templates.defn.id], data_templates.data[i][data_templates.defn.name], data_templates.data[i][data_templates.defn.description]);
-//			}
-//		}
-//	}
 
 	/**
 	 * Shows/hides the component
@@ -1095,7 +1151,7 @@ var NoteEditor = new function () {
 	this.HasChanges = function () {
 		var i, entry, flag = changed;
 		// note is opened
-		if ( this.data ) {
+		if ( this.data && this.data.entries && this.data.entries.length > 0 ) {
 			// not sure if has changes already
 			if ( !changed ) {
 				// iterate all entries
@@ -1109,7 +1165,7 @@ var NoteEditor = new function () {
 						 (entry.post.id_type  != entry.data.id_type) )
 					{
 						// change flag and skip all the rest checks
-						flag = true; break;
+						flag = true;break;
 					}
 				}
 				// still no changes so check tags

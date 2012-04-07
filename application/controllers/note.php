@@ -187,7 +187,7 @@ class note extends controller {
 							// extent found notes with tags and entries
 							foreach ( $result['notes'] as & $note ) {
 								$note['tags'] = value($tags[$note['id']], array());
-								$note['entries'] = array_values($entries[$note['id']]);
+								$note['entries'] = array_values(value($entries[$note['id']], array()));
 							}
 						}
 					}
