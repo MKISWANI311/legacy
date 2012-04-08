@@ -84,11 +84,9 @@
 									} else {
 										modal.data.attempts++;
 										if ( modal.data.attempts == 1 )
-											modal.SetMessage('Invalid user name or password.<br>'+
-												'<span style="font-weight:normal">There maybe already a user with the same name or there are some technical problems on the server.</span>');
+											modal.SetMessage(['Invalid user name or password.', element('br'), 'There maybe already a user with the same name or there are some technical problems on the server.'], 'error');
 										else
-											modal.SetMessage('Invalid user name or password.<br>'+
-												'<span style="font-weight:normal">Logged attempts: ' + modal.data.attempts+'</span>');
+											modal.SetMessage(['Invalid user name or password.', element('br'), 'Logged attempts: ' + modal.data.attempts], 'error');
 									}
 								} else {
 									modal.SetMessage('Invalid responce from the server.');

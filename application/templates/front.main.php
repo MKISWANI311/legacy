@@ -13,6 +13,9 @@
 
 		// compacted list of all encoded tags with links and use counters
 		var data_tags = <?php echo cache::db_tags() ?>;
+		// need to correct type if empty
+		if ( data_tags.data.length != undefined && data_tags.data.length == 0 )
+			{ data_tags.data = {}; data_tags.defn = {name:0, links:1, uses:2}; }
 		// decoded to these two lists
 		var data_tags_nmlist = {}; // {note:1, site:2, email:3}
 		var data_tags_idlist = {}; // {1:note, 2:site, 3:email}
