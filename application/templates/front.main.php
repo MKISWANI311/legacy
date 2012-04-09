@@ -132,7 +132,7 @@
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:CacheClear('user')"><b>Clear user</b></a>-->
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
-							<a href="javascript:App.ExpirePass()"><b>Close</b></a>
+							<a href="javascript:App.ExpirePass()"><b>Lock</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:SignOut()"><b>Exit</b></a>
 						</div>
