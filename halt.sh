@@ -11,7 +11,7 @@ cd "$base" && echo -e "base\t$base"
 
 # stop the web server
 rc.d stop php-fpm && rc.d stop lighttpd && echo -ne $ok || echo -ne $fail
-echo "php-fpm and http server stopping"
+echo "php-fpm and http server have stopping"
 
 # prepare directory
 mkdir -p offline && chmod 700 offline && echo -ne $ok || echo -ne $fail

@@ -49,3 +49,7 @@ touch public/css/all.css public/js/all.js && echo -ne $ok || echo -ne $fail
 echo "files all.css and all.js files preparation"
 chown http:http public/css/all.css public/js/all.js && chmod 600 public/css/all.css public/js/all.js && echo -ne $ok || echo -ne $fail
 echo "files all.css and all.js files permissions set"
+
+# start the web server
+rc.d start php-fpm && rc.d start lighttpd && echo -ne $ok || echo -ne $fail
+echo "php-fpm and http server have started"
