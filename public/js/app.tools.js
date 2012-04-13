@@ -109,6 +109,8 @@ function LinkSet ( obj, data, id ) {
 	 * @param id to select
 	 */
 	this.ItemSelect = function ( id ) {
+		// if somebody alredy have 1 munute (probably should be removed in the future)
+		if ( id == 60 ) data[60] = {next:300,  title: '1 minute'};
 		// check input
 		if ( id && data && data[id] ) {
 			// set value and html
