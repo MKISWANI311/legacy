@@ -220,7 +220,7 @@ class response {
 		$time_all = $ftimes[$file_all];
 		unset($ftimes[$file_all]);
 		// find modifications
-		$need_regenerate = false;
+		$need_regenerate = filesize($file_all) == 0 ? true : false;
 		foreach ( $ftimes as $ftime ) {
 			if ( $ftime > $time_all ) {
 				// there are newer files then combinded file
