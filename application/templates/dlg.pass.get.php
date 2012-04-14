@@ -52,17 +52,12 @@
 			},
 
 			controls : {
-				/*'Cancel' : {
-					onClick : function(){
-						this.modal.Close();
-					}
-				},/**/
 				'Continue' : {
 					main    : true,
 					onClick : function(){
 						var modal = this.modal;
 						var pass  = modal.data.pass.value;
-
+						// check pass
 						if ( App.CheckPass(pass) ) {
 							if ( modal.data.linkset.value ) {
 								//fb(modal.data.linkset.value);
@@ -74,35 +69,8 @@
 							// reset value
 							modal.data.pass.value = '';
 							modal.Close();
-
 							//NoteManager.FocusFilter();
 							NoteFilter.SetFocus();
-
-							//fb('decrypt tags');
-//							var text_tag_list = document.getElementById('text_tag_list');
-//							text_tag_list.value = '';
-//							console.time('decode tags');
-//							// decode tags
-//							var name = '';
-//							for ( var id in data_tags_encoded.data ) {
-//								name = App.Decode(data_tags_encoded.data[id][data_tags_encoded.defn.name]);
-//								//fb(name, data_tags_encoded.data[id][data_tags_encoded.defn.name]);
-//								data_tags_nmlist[name] = parseInt(id, 10);
-//								data_tags_idlist[id] = name;
-//								//localStorage[sjcl.decrypt('ptmp', data_tags_encoded.data[id][data_tags_encoded.defn.name])] = parseInt(id, 10);
-//								//text_tag_list.value += name + "\n";
-//								text_tag_list.value += id + ':' + name + "\n";
-//							}
-//							// clear to minimaze memory
-//							//delete data_tags_encoded.data;
-//							console.timeEnd('decode tags');
-
-//							NoteTable.data = {};
-//							for ( var i = 0; i < data_notes_latest.length; i++) {
-//								NoteTable.data[data_notes_latest[i].id] = data_notes_latest[i];
-//							}
-//							NoteTableFill();
-
 						} else {
 							modal.data.pass.focus();
 							modal.data.attempts++;
@@ -116,7 +84,6 @@
 			}
 		});
 
-
 		// check if master password was ever set
 		if ( App.HasHash() ) {
 			// ask pass
@@ -126,10 +93,6 @@
 			DlgPassSet.Show({escClose:false});
 		}
 
-		//DlgPassGet.Show({escClose:false});
 		App.Subscribe(DlgPassGet);
-//		App.RequestPass = function(){
-//			DlgPassGet.Show({escClose:false});
-//		};
 	});
 </script>

@@ -109,9 +109,9 @@ class app {
 	public static function run ()
 	{
 		// check if session id set
-		if ( !empty($_COOKIE[session_name()]) ) {
+		//if ( !empty($_COOKIE[session_name()]) ) {
 			session_start();
-		}
+		//}
 
 		// prepare uri parts from incoming request
 		self::$uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));

@@ -44,6 +44,10 @@
 	font-size:11px;
 	white-space: nowrap;
 }
+.fldlist .fldwhint {
+	color:#aaa;
+	font-size:11px;
+}
 .fldlist .tbltitle {
 	margin-bottom: 3px;
 	height: 18px;

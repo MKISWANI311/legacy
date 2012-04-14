@@ -107,7 +107,6 @@
 
 	<?php response::template('dlg.pass.set') ?>
 	<?php response::template('dlg.pass.get') ?>
-	<?php response::template('dlg.note.add') ?>
 </head>
 <body>
 	<table class="maxh maxw"><tr><td class="body_wrapper">
@@ -153,11 +152,13 @@
 					<div class="menu-item-body" id="menu_item_home_body">
 						<table class="maxw">
 							<tr>
-								<td style="vertical-align:top">
-									<?php response::template('front.main.layout.main') ?>
+								<td style="padding:10px; vertical-align:top">
+									<div class="notefilter"></div>
+									<div class="notelist"></div>
 								</td>
-								<td style="width:400px; vertical-align:top; min-height: 800px;">
-									<?php response::template('front.main.layout.side') ?>
+								<td style="padding:10px; width:400px; vertical-align:top; min-height:800px;">
+									<div class="templatelist"></div>
+									<div class="noteeditor"></div>
 								</td>
 							</tr>
 						</table>
@@ -175,7 +176,7 @@
 				</td>
 			</tr>
 			<tr class="fade" style="height:30px; text-align:center; color:#999;">
-				<td colspan="2" style="border-top: 1px solid #eee;">Copyright © 2012 DarkPark. All rights reserved. Simple test template.</td>
+				<td colspan="2" style="border-top: 1px solid #eee;">Copyright © 2012 FortNotes. All rights reserved.</td>
 			</tr>
 			<tr><td class="gradient" style="height:30px" colspan="2">
 				&nbsp;

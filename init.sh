@@ -15,7 +15,7 @@ mkdir -p cache && chmod 700 cache && echo -ne $ok || echo -ne $fail
 echo "cache directory preparation"
 
 # bind the directory to memory
-mount -t ramfs -o size=10M,mode=0777 ramfs cache && echo -ne $ok || echo -ne $fail
+mount -t ramfs -o mode=0777 ramfs cache && echo -ne $ok || echo -ne $fail
 echo "cache directory mounting"
 
 # restore backuped data if exists

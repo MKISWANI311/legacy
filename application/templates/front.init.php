@@ -39,7 +39,7 @@
 				</td>
 			</tr>
 			<tr class="fade" style="height:30px; text-align:center; color:#999">
-				<td colspan="3">Copyright © 2012 DarkPark. All rights reserved. Simple test template.</td>
+				<td colspan="3">Copyright © 2012 FortNotes. All rights reserved.</td>
 			</tr>
 		</table>
 	</td></tr>

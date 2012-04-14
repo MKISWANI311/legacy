@@ -122,7 +122,7 @@ var NoteList = new function () {
 				if ( entry.id_type === 2 ) {
 					// http/https/ftp and have point
 					if ( (data.search('http://') >= 0 || data.search('https://') >= 0 || data.search('ftp://') >= 0) && data.search('.') >= 0 ) {
-						sdata = element('a', {className:'', href:data}, sdata);
+						sdata = element('a', {target:'_blank', href:data}, sdata);
 						// the first available url
 						if ( !url ) url = data;
 					} else {

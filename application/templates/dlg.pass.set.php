@@ -6,7 +6,7 @@
 		DlgPassSet = new DialogModal({
 			width    : 600,
 			title    : 'Master password',
-			hint     : "To start working with notes please enter your master password. It will be used for all your data encoding. It won't be sent to the server and only its hash will be stored for the purpose of consistency. We don't know your password and will never ask you to send it to us but at the same time we won't be able to remind it to you.",
+			hint     : "You've enered your private account section and now to start working with notes it's necessary to create your master password. It will be used for all your data encoding. It won't be sent to the server and only its hash will be stored for the purpose of consistency. We don't know your password and will never ask you to send it to us but at the same time we won't be able to remind it to you.",
 
 			onCreate : function(){
 				 this.data.fldlist = new FieldList({
@@ -33,15 +33,16 @@
 						element('span', {className:'fldhint'}, 'your secret key once more')],
 					this.data.pass2
 				], {});
-				this.SetContent(this.data.fldlist.dom.table);
+				//this.SetContent(this.data.fldlist.dom.table);
+				$(this.dom.footer).hide();
+				var self = this;
+				this.SetContent(element('a', {}, "I understand that master password can't be restored and will keep it safe", {onclick:function(){
+					self.SetContent(self.data.fldlist.dom.table);
+					$(self.dom.footer).show();
+				}}));
 			},
 
 			controls : {
-//				'Cancel' : {
-//					onClick : function(){
-//						this.modal.Close();
-//					}
-//				},
 				'Create' : {
 					main    : true,
 					onClick : function(){

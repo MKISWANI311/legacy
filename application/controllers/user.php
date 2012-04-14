@@ -23,13 +23,19 @@ class user extends controller {
 					db::update('users', array('ltime' => $result['time']), 'id = @i limit 1', $user['id']);
 				}
 			} else if ( !$user && $authmode == 'register' ) {
-				$result['id'] = db::insert('users', array(
-					'name'  => $username,
-					'pass'  => $password,
-					'ctime' => INIT_TIMESTAMP,
-				));
-				$result['time'] = 0;
-				$result['hash'] = null;
+				if ( strtolower($_REQUEST['code']) == strtolower($_SESSION['captcha']['code']) ) {
+					unset($_SESSION['captcha']);
+					$result['id'] = db::insert('users', array(
+						'name'  => $username,
+						'pass'  => $password,
+						'ctime' => INIT_TIMESTAMP,
+					));
+					$result['time'] = 0;
+					$result['hash'] = null;
+				} else {
+					$result['code'] = false;
+				}
+
 				// clone templates
 //				$tlist = db::query('select id, @i as id_user,place,name,tag,description from templates where id_user = 0', $result['id']);
 //				db::insert('templates', $tlist);
@@ -70,6 +76,20 @@ class user extends controller {
 
 			}
 		}
+		response::json($result);
+	}
+
+	/**
+	 * Captcha imgage to test if a user
+	 */
+	function captcha () {
+		$result = array();
+		include(PATH_PUBLIC . 'captcha/captcha.php');
+		$_SESSION['captcha'] = captcha(array(
+			'min_length' => 6,
+			'max_length' => 6
+		));
+		$result['src'] = $_SESSION['captcha']['image_src'];
 		response::json($result);
 	}
 
