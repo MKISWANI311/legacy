@@ -494,7 +494,7 @@
         }
         return false;
     };
-
+    
     /**
      * Set timeout to activate autocompleter
      */
@@ -777,6 +777,14 @@
     };
 
     /**
+     * Get all items from the results list
+     * @param result
+     */
+    $.Autocompleter.prototype.getItems = function() {
+        return $('>ul>li', this.dom.$results);
+    };
+
+    /**
      * Show all results
      * @param results
      * @param filter
@@ -811,7 +819,7 @@
                 autoWidth = this.dom.$elem.outerWidth() - this.dom.$results.outerWidth() + this.dom.$results.width();
                 this.dom.$results.css(this.options.autoWidth, autoWidth);
             }
-            $('li', this.dom.$results).hover(
+            this.getItems().hover(
                 function() { self.focusItem(this); },
                 function() { /* void */ }
             );
@@ -862,7 +870,7 @@
     };
 
     $.Autocompleter.prototype.focusMove = function(modifier) {
-        var $items = $('li', this.dom.$results);
+        var $items = this.getItems();
         modifier = sanitizeInteger(modifier, 0);
         if (modifier) {
             for (var i = 0; i < $items.length; i++) {
@@ -876,7 +884,7 @@
     };
 
     $.Autocompleter.prototype.focusItem = function(item) {
-        var $item, $items = $('li', this.dom.$results);
+        var $item, $items = this.getItems();
         if ($items.length) {
             $items.removeClass(this.selectClass_).removeClass(this.options.selectClass);
             if (typeof item === 'number') {
@@ -929,10 +937,10 @@
             }
         }
         this.setValue(displayValue);
-        elem.focus();
         this.setCaret(d.start + displayValue.length + extraCaretPos);
         this.callHook('onItemSelect', { value: value, data: data });
         this.deactivate(true);
+        elem.focus();    
     };
 
     $.Autocompleter.prototype.displayValue = function(value, data) {
@@ -976,8 +984,8 @@
         if (input.setSelectionRange) {
             input.focus();
             input.setSelectionRange(start, end);
-        } else if (this.createTextRange) {
-            var range = this.createTextRange();
+        } else if (input.createTextRange) {
+            var range = input.createTextRange();
             range.collapse(true);
             range.moveEnd('character', end);
             range.moveStart('character', start);
@@ -1025,7 +1033,7 @@
         return {
             start: s,
             end: e
-        };
+        };        
     };
 
     /**

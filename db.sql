@@ -3,9 +3,6 @@ drop database if exists fortnotes;
 create database fortnotes character set 'ascii' collate 'ascii_general_ci';
 use fortnotes;
 
-/* engine=innodb */
-/* engine=memory */
-
 create table phpunit (
 	id int unsigned not null auto_increment,
 	id_type smallint unsigned default 1,

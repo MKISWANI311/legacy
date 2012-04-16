@@ -3,7 +3,7 @@
 /**
  * application execution mode
  */
-define('DEBUG', true);
+const DEBUG = true;
 
 /**
  * core initialization time mark
