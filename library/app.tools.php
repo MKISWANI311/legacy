@@ -123,7 +123,8 @@ function matrix_column ( $data, $field ) {
 }
 
 /**
- *
+ * Creates compacted arrays
+ * replace key names with indexes and creates additional dictionary
  * @param type $data
  * @param type $defn
  * @return type
@@ -153,19 +154,6 @@ function array_pack ( $data, $defn = array() ) {
 	$result['defn'] = $defn;
 	return $result;
 }
-
-//function json_pack ( $data ) {
-//	$result = array();
-//	if ( $data && is_array($data) ) {
-//		$result['defn'] = array_flip(array_keys(current($data)));
-//
-//		$result['data'] = array();
-//		foreach ( $data as $key => $value ) {
-//			$result['data'][$key] = array_values($value);
-//		}
-//	}
-//	return json_encode($result);
-//}
 
 /**
  * Sends the given data to the FirePHP Firefox Extension.
