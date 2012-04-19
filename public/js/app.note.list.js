@@ -518,7 +518,7 @@ var NoteList = new function () {
 		this.data.notes = notes;
 		this.data.total = total;
 		// clearing the container
-		elclear(self.dom.notes);
+		elclear(this.dom.notes);
 		// there are some notes
 		if ( total > 0 ) {
 			// determine the note id beeing edited at the moment
@@ -535,6 +535,8 @@ var NoteList = new function () {
 		}
 		// show/hide control panel
 		this.UpdateCtrlBlock();
+		// adsense
+		elchild(elclear(this.dom.btbar), element('img', {src:"http://www.google.com/help/hc/images/adsense/adsense_185665_adformat-text_468x60_en.png"}));
 	};
 
 	/**

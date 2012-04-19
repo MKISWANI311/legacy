@@ -112,7 +112,7 @@
 	<table class="maxh maxw"><tr><td class="body_wrapper">
 		<table class="body_content">
 			<tr class="fade" style="height:30px; border-bottom:1px solid #EEEEEE">
-				<td align="left" style="padding:0px 5px">
+				<td align="left" style="padding:0px 5px; width:150px">
 					<a href="/">
 						<span style="font-size:17px; color:#aaa; font-weight:normal; text-shadow: 0 1px 2px #666666;">
 							<span style="font-size:19px; color:#333; font-weight:bold">F</span>ort
@@ -120,7 +120,10 @@
 						</span>
 					</a>
 				</td>
-				<td align="right" style="padding:0px 10px">
+				<td align="left" style="padding:0px 10px">
+<!--					<img src="http://www.google.com/help/hc/images/adsense/adsense_185679_adformat-link_468x15_en.png"/>-->
+				</td>
+				<td align="right" style="padding:0px 10px; width:400px">
 					<div style="position:relative;">
 						<div id="block_welcome">
 							<?php if ( !empty($_SESSION['user']['time']) ) echo '<span style="color:grey">session was started</span>&nbsp;&nbsp;<span style="font-weight:bold;font-size:10px;color:#333">' . date('Y.m.d H:i', $_SESSION['user']['time']) . '</span>'?>
@@ -139,7 +142,7 @@
 				</td>
 			</tr>
 			<tr style="display:none">
-				<td id="block_menu" colspan="2" style="background-color:#eee; height:30px; vertical-align:bottom">
+				<td id="block_menu" colspan="3" style="background-color:#eee; height:30px; vertical-align:bottom">
 					<div style="float:left" id="menu_items">
 						<div id="menu_item_home"   class="menu-item"><a onclick="MenuItemClick(this); return false">Home</a></div>
 						<div id="menu_item_config" class="menu-item"><a onclick="MenuItemClick(this); return false">Settings</a></div>
@@ -148,17 +151,23 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" style="background-color:white">
+				<td colspan="3" style="background-color:white">
 					<div class="menu-item-body" id="menu_item_home_body">
 						<table class="maxw">
 							<tr>
 								<td style="padding:10px; vertical-align:top">
 									<div class="notefilter"></div>
 									<div class="notelist"></div>
+<!--									<div style="text-align:center; padding-top:10px">
+										<img src="http://www.google.com/help/hc/images/adsense/adsense_185665_adformat-text_468x60_en.png"/>
+									</div>-->
 								</td>
 								<td style="padding:10px; width:400px; vertical-align:top; min-height:800px;">
 									<div class="templatelist"></div>
 									<div class="noteeditor"></div>
+									<div style="margin: 20px 50px">
+										<img src="http://www.google.com/help/hc/images/adsense/adsense_185665_adformat-text_300x250_en.png"/>
+									</div>
 								</td>
 							</tr>
 						</table>
@@ -176,9 +185,9 @@
 				</td>
 			</tr>
 			<tr class="fade" style="height:30px; text-align:center; color:#999;">
-				<td colspan="2" style="border-top: 1px solid #eee;">Copyright © 2012 FortNotes. All rights reserved.</td>
+				<td colspan="3" style="border-top: 1px solid #eee;">Copyright © 2012 FortNotes. All rights reserved.</td>
 			</tr>
-			<tr><td class="gradient" style="height:30px" colspan="2">
+			<tr><td class="gradient" style="height:30px" colspan="3">
 				&nbsp;
 			</td></tr>
 		</table>

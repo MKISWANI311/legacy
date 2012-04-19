@@ -38,4 +38,4 @@
 					.notelist > .notes > .note .tags .tag:hover   { background-color:#bfdfff; color:#fff }
 					.notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }
 					.notelist > .notes > .note .tags .tag.include:hover { background-color:#ffcc66 }
-	.notelist > .btbar { table-layout:fixed; display:none; height:20px; width:100% }
+	.notelist > .btbar { text-align:center; padding-top:10px }

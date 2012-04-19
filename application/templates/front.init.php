@@ -32,9 +32,9 @@
 		}
 		.iblock table { height:100%; width:100%; }
 		.iblock .caption { height:32px }
-		.iblock .caption .img { width:40px }
-		.iblock .caption td { font-size:15px; font-weight:bold; color:#555 }
-		.iblock .body td { padding: 5px 0 }
+		.iblock .caption .img { width:42px }
+		.iblock .caption td { font-size:16px; font-weight:bold; color:#555 }
+		.iblock .body td { padding-top:8px }
 		.iblock .more { height:15px; text-align:right }
 	</style>
 	<?php response::template('dlg.user.login') ?>
@@ -102,14 +102,17 @@
 					<div class="iblock">
 						<table>
 							<tr class="caption">
-								<td class="img"><img src="img/message.hint.png"></td>
+								<td class="img"><img src="img/question.png"></td>
 								<td>What is this about?</td>
 							</tr>
 							<tr class="body">
-								<td colspan="2"></td>
+								<td colspan="2">
+									It's all about safety. Everybody today has a lot of private information. Emails, credit cards, phones, sites and so on. It all has to be organized, easily accessible from anywhere and secure.
+									<b>Now you can have it!</b>
+								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more</a></td>
+								<td colspan="2"><a>read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -119,14 +122,16 @@
 					<div class="iblock">
 						<table>
 							<tr class="caption">
-								<td class="img"><img src="img/message.hint.png"></td>
+								<td class="img"><img src="img/star.png"></td>
 								<td>Flexibility</td>
 							</tr>
 							<tr class="body">
-								<td colspan="2"></td>
+								<td colspan="2">
+									Not only you can safely store your private data in the system but you can also fully customize it. There are only general templates for the start, everything further you can change or reorganize according to your taste or necessity.
+								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more</a></td>
+								<td colspan="2"><a>read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -137,14 +142,16 @@
 					<div class="iblock">
 						<table>
 							<tr class="caption">
-								<td class="img"><img src="img/message.info.png"></td>
-								<td>Black box</td>
+								<td class="img"><img src="img/options.png"></td>
+								<td>How it works</td>
 							</tr>
 							<tr class="body">
-								<td colspan="2"></td>
+								<td colspan="2">
+									All the magic is in your browser. It's a <b>BlackBox</b> - everything is encrypted right in the browser and to the server is just a mess data sending. So nobody can see your data except you having the master password.
+								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more</a></td>
+								<td colspan="2"><a>read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -154,14 +161,16 @@
 					<div class="iblock">
 						<table>
 							<tr class="caption">
-								<td class="img"><img src="img/message.hint.png"></td>
+								<td class="img"><img src="img/group.png"></td>
 								<td>Active development and community</td>
 							</tr>
 							<tr class="body">
-								<td colspan="2"></td>
+								<td colspan="2">
+									It's a young active project with big plans and growing community. Anybody can join it, share ideas or skills. Modern technologies are used so participating in it can give great experience and will help making the world a safer place.
+								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more</a></td>
+								<td colspan="2"><a>read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -172,14 +181,16 @@
 					<div class="iblock">
 						<table>
 							<tr class="caption">
-								<td class="img"><img src="img/message.auth.png"></td>
+								<td class="img"><img src="img/money.png"></td>
 								<td>It's free</td>
 							</tr>
 							<tr class="body">
-								<td colspan="2"></td>
+								<td colspan="2">
+									No tariff plans, no payments. We hope it will be this way as long as ever possible. All user have all the system features at full scale. At the same time we would greatly appreciate any donations to maintain this project.
+								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more</a></td>
+								<td colspan="2"><a>read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -189,14 +200,16 @@
 					<div class="iblock">
 						<table>
 							<tr class="caption">
-								<td class="img"><img src="img/message.warning.png"></td>
+								<td class="img"><img src="img/question.png"></td>
 								<td>Still not convinced?</td>
 							</tr>
 							<tr class="body">
-								<td colspan="2"></td>
+								<td colspan="2">
+									If for some reasons you believe we won't be able to provide the desired level of security you <b>can do it yourself</b>. The project is open-source and available to everybody so you can download it and install to your own home/corporate server.
+								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more</a></td>
+								<td colspan="2"><a>read more ...</a></td>
 							</tr>
 						</table>
 					</div>
