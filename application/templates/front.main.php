@@ -103,6 +103,16 @@
 		function CacheClear ( param ) {
 			$.post('/front/clear/' + param, function(){});
 		}
+
+		// Google Analytics
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-31029268-1']);
+		_gaq.push(['_trackPageview']);
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
 	</script>
 
 	<?php response::template('dlg.pass.set') ?>
@@ -158,15 +168,12 @@
 								<td style="padding:10px; vertical-align:top">
 									<div class="notefilter"></div>
 									<div class="notelist"></div>
-<!--									<div style="text-align:center; padding-top:10px">
-										<img src="http://www.google.com/help/hc/images/adsense/adsense_185665_adformat-text_468x60_en.png"/>
-									</div>-->
 								</td>
 								<td style="padding:10px; width:400px; vertical-align:top; min-height:800px;">
 									<div class="templatelist"></div>
 									<div class="noteeditor"></div>
-									<div style="margin: 20px 50px">
-										<img src="http://www.google.com/help/hc/images/adsense/adsense_185665_adformat-text_300x250_en.png"/>
+									<div style="margin: 20px 0px; text-align:center">
+										[Google ADs here]
 									</div>
 								</td>
 							</tr>
