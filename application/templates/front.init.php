@@ -2,6 +2,8 @@
 <head>
 	<title>FortNotes</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="keywords" content="security online password manager AES encryption"/>
+	<meta name="description" content="highly secure online password manager based on the AES encryption in the browser"/>
 	<link rel="icon" type="image/gif" href="img/castle.png"/>
 	<link rel="stylesheet" type="text/css" href="css/all.css"/>
 	<script type="text/javascript" src="js/all.js"></script>
@@ -61,10 +63,14 @@
 						</td>
 						<td align="right" style="width:30px"><img src="img/lock.png"/></td>
 					</tr>
+					<tr style="height:40px">
+						<td colspan="3" style="text-align:center; font-size:15px; color:#aaa">
+							highly secure online password manager based on the AES encryption in the browser
+						</td>
+					</tr>
 					<tr>
 						<td colspan="3" style="text-align:center; position:relative">
 							<img id="img_logo" src="img/windsor_castle.jpg" style="opacity:0.4;filter:alpha(opacity=40)" onmouseover="this.style.opacity=1;if(this.filters)this.filters.alpha.opacity=100" onmouseout="this.style.opacity=0.4;if(this.filters)this.filters.alpha.opacity=40"/>
-
 						</td>
 					</tr>
 					<tr class="fade" style="height:30px; text-align:center; color:#999">
@@ -112,7 +118,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -131,7 +137,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -151,7 +157,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -170,7 +176,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -190,7 +196,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -209,7 +215,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a>read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
