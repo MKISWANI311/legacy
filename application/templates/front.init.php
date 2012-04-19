@@ -48,7 +48,7 @@
 		.iblock .caption td { font-size:16px; font-weight:bold; color:#555 }
 		.iblock .body td { padding-top:8px }
 		.iblock .more { height:15px; text-align:right }
-		.btn { padding:8px; border:1px solid #ddd; background-color:#E4FFE4; width:100px; display:inline-block }
+		.btn { padding:8px; border:0px solid #ddd; background-color:#E4FFE4; width:100px; display:inline-block; box-shadow: 0 0 2px rgba(0, 0, 0, 0.5); }
 		.btn:hover { background-color:#befcbe }
 	</style>
 	<?php response::template('dlg.user.login') ?>
@@ -223,7 +223,7 @@
 							</tr>
 							<tr class="body">
 								<td colspan="2">
-									If for some reasons you believe we won't be able to provide the desired level of security you <b>can do it yourself</b>. The project is open-source and available to everybody so you can download it and install to your own home/corporate server.
+									If for some reasons you believe we won't be able to provide the desired level of security you <b>can do it yourself</b>. The project is open-source and available to everybody so you can download it and install to your own server.
 								</td>
 							</tr>
 							<tr class="more">
