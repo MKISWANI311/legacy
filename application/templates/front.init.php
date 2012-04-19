@@ -30,10 +30,10 @@
 			width: 100%;
 			height: 740px;
 		}
-		.iblocks { width:1000px; height:700px; margin:20px auto; }
-		.iblocks td.main { padding: 20px; width:430px; }
+		.iblocks { width:1000px; height:650px; margin:20 auto; }
+		.iblocks td.main { padding: 0 20px; width:430px; vertical-align:top }
 		.iblock {
-			height:120px;
+			height:125px;
 			padding:10px;
 			background-color:#fff;
 			opacity:0.8;
@@ -48,6 +48,8 @@
 		.iblock .caption td { font-size:16px; font-weight:bold; color:#555 }
 		.iblock .body td { padding-top:8px }
 		.iblock .more { height:15px; text-align:right }
+		.btn { padding:8px; border:1px solid #ddd; background-color:#E4FFE4; width:100px; display:inline-block }
+		.btn:hover { background-color:#befcbe }
 	</style>
 	<?php response::template('dlg.user.login') ?>
 	<?php response::template('dlg.user.register') ?>
@@ -66,25 +68,22 @@
 								</span>
 							</a>
 						</td>
-						<td align="right">
-							Please
-							<a onclick="DlgUserLogin.Show()"><b>login</b></a> or
-							<a onclick="DlgUserRegister.Show()"><b>register</b></a>
-						</td>
-						<td align="right" style="width:30px"><img src="img/lock.png"/></td>
-					</tr>
-					<tr style="height:40px">
-						<td colspan="3" style="text-align:center; font-size:15px; color:#aaa">
+						<td style="font-size:14px; color:#888; padding:5px">
 							highly secure online password manager based on the AES encryption in the browser
 						</td>
 					</tr>
 					<tr>
-						<td colspan="3" style="text-align:center; position:relative">
+						<td colspan="2" style="text-align:center; position:relative">
 							<img id="img_logo" src="img/windsor_castle.jpg" style="opacity:0.4;filter:alpha(opacity=40)" onmouseover="this.style.opacity=1;if(this.filters)this.filters.alpha.opacity=100" onmouseout="this.style.opacity=0.4;if(this.filters)this.filters.alpha.opacity=40"/>
 						</td>
 					</tr>
+					<tr style="height:30px; text-align:center; color:#999">
+						<td colspan="2">
+							<b style="color:#FF6600">Fort Knox for your notes</b><br><br>
+						</td>
+					</tr>
 					<tr class="fade" style="height:30px; text-align:center; color:#999">
-						<td colspan="3">Copyright © 2012 FortNotes. All rights reserved.</td>
+						<td colspan="2">Copyright © 2012 FortNotes. All rights reserved.</td>
 					</tr>
 				</table>
 			</td>
@@ -98,20 +97,22 @@
 						<td style="padding:0 0px"><a style="opacity:0.7; color:#666699" href="http://php.net/">&nbsp;<span style="color:#4f5f83;font-size:19px">My</span><span style="color:#ad8931;font-size:19px">SQL</span>&nbsp;</a></td>
 						<td style="padding:0 8px"><a href="http://jquery.com/"><img style="opacity:0.4; height:27px;" src="img/logo.jquery.png"/></a></td>
 						<td style="padding:0 5px"><a href="http://crypto.stanford.edu/sjcl/">
-								<span style="color:#aaa;font-size:18px;font-weight:bold;line-height:10px">AES</span><br>
-								<span style="color:#aaa;font-size:10px;margin:0 6px">256b</span>
-							</a></td>
+							<span style="color:#aaa;font-size:18px;font-weight:bold;line-height:10px">AES</span><br>
+							<span style="color:#aaa;font-size:10px;margin:0 6px">256b</span>
+						</a></td>
 					</tr>
 				</table>
-
-
-<!--				<img style="opacity:0.4; height:27px; margin:0 5px" src="img/logo.php.mysql.png"/>-->
-
 			</td>
 		</tr>
 	</table>
 
 	<div class="top">
+		<div style="padding:10px; text-align:center">
+			<b style="color:#FF6600">Start using it now!</b><br><br>
+			<a onclick="DlgUserLogin.Show()"><div class="btn"><b>Login</b></div></a>
+			&nbsp; or &nbsp;
+			<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
+		</div>
 		<table class="iblocks">
 			<tr>
 				<td class="main">
@@ -124,11 +125,12 @@
 							<tr class="body">
 								<td colspan="2">
 									It's all about safety. Everybody today has a lot of private information. Emails, credit cards, phones, sites and so on. It all has to be organized, easily accessible from anywhere and secure.
-									<b>Now you can have it!</b>
+									<b>Now you can have it</b>.
+									<a onclick="DlgUserRegister.Show()"><b>Join now</b></a>.
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -147,7 +149,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -163,11 +165,11 @@
 							</tr>
 							<tr class="body">
 								<td colspan="2">
-									All the magic is in your browser. It's a <b>BlackBox</b> - everything is encrypted right in the browser and to the server is just a mess data sending. So nobody can see your data except you having the master password.
+									All the magic is in your browser. It's a <b>BlackBox</b> - everything is encrypted and decrypted right in the browser and to the server is just a mess data sending. So nobody can see your data except you having the master password.
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -186,7 +188,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -202,11 +204,11 @@
 							</tr>
 							<tr class="body">
 								<td colspan="2">
-									No tariff plans, no payments. We hope it will be this way as long as ever possible. All user have all the system features at full scale. At the same time we would greatly appreciate any donations to maintain this project.
+									No tariff plans, no payments. All user have all the system features at full scale. We hope it will be this way as long as ever possible. At the same time we would greatly appreciate any help or donations to maintain this project.
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -225,7 +227,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a href="http://fortnotes.com/forum/">read more ...</a></td>
+								<td colspan="2"><a href="http://fortnotes.com/forum/viewtopic.php?id=3">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
