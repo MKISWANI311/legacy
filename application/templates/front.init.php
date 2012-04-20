@@ -3,7 +3,7 @@
 	<title>FortNotes</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="keywords" content="security online password manager AES encryption"/>
-	<meta name="description" content="highly secure online password manager based on the AES encryption in the browser"/>
+	<meta name="description" content="FortNotes Online Password Manager is a highly secure private information storing platform based on the AES encryption in the browser. Fort Knox for your notes."/>
 	<link rel="icon" type="image/gif" href="img/castle.png"/>
 	<link rel="stylesheet" type="text/css" href="css/all.css"/>
 	<script type="text/javascript" src="js/all.js"></script>
