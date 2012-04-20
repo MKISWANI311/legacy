@@ -175,7 +175,15 @@
 									<div class="templatelist"></div>
 									<div class="noteeditor"></div>
 									<div style="margin: 20px 0px; text-align:center">
-										[Google ADs here]
+										<script type="text/javascript"><!--
+											google_ad_client = "ca-pub-9617280891760602";
+											/* fortnotes.side */
+											google_ad_slot = "3540815500";
+											google_ad_width = 300;
+											google_ad_height = 250;
+											//-->
+										</script>
+										<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 									</div>
 								</td>
 							</tr>
