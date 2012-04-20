@@ -6,71 +6,96 @@
 		http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
   <loc>http://fortnotes.com/</loc>
-  <changefreq>weekly</changefreq>
+  <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://fortnotes.com/forum/</loc>
-  <lastmod>2012-04-19T14:58:49+00:00</lastmod>
+  <loc>http://fortnotes.com/forum/viewtopic.php?id=4</loc>
+  <lastmod>2012-04-20T10:54:02+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewtopic.php?id=3</loc>
+  <lastmod>2012-04-20T10:54:02+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 <url>
   <loc>http://fortnotes.com/forum/index.php</loc>
-  <lastmod>2012-04-19T14:58:50+00:00</lastmod>
+  <lastmod>2012-04-20T10:54:03+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 <url>
   <loc>http://fortnotes.com/forum/userlist.php</loc>
-  <lastmod>2012-04-19T14:58:51+00:00</lastmod>
+  <lastmod>2012-04-20T10:54:03+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 <url>
   <loc>http://fortnotes.com/forum/viewforum.php?id=2</loc>
-  <lastmod>2012-04-19T14:59:00+00:00</lastmod>
+  <lastmod>2012-04-20T10:54:07+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 <url>
-  <loc>http://fortnotes.com/forum/viewforum.php?id=4</loc>
-  <lastmod>2012-04-19T14:59:00+00:00</lastmod>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://fortnotes.com/forum/viewforum.php?id=3</loc>
-  <lastmod>2012-04-19T14:59:01+00:00</lastmod>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://fortnotes.com/forum/viewforum.php?id=6</loc>
-  <lastmod>2012-04-19T14:59:01+00:00</lastmod>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://fortnotes.com/forum/viewforum.php?id=5</loc>
-  <lastmod>2012-04-19T14:59:02+00:00</lastmod>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://fortnotes.com/forum/viewforum.php?id=7</loc>
-  <lastmod>2012-04-19T14:59:02+00:00</lastmod>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://fortnotes.com/forum/viewforum.php?id=1</loc>
-  <lastmod>2012-04-19T14:59:03+00:00</lastmod>
-  <changefreq>daily</changefreq>
-</url>
-<url>
-  <loc>http://fortnotes.com/forum/viewtopic.php?pid=1</loc>
-  <lastmod>2012-04-19T14:59:03+00:00</lastmod>
+  <loc>http://fortnotes.com/forum/viewtopic.php?pid=4</loc>
+  <lastmod>2012-04-20T10:54:07+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 <url>
   <loc>http://fortnotes.com/forum/profile.php?id=2</loc>
-  <lastmod>2012-04-19T14:59:04+00:00</lastmod>
+  <lastmod>2012-04-20T10:54:07+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewforum.php?id=5</loc>
+  <lastmod>2012-04-20T10:54:08+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewtopic.php?pid=3</loc>
+  <lastmod>2012-04-20T10:54:09+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewforum.php?id=4</loc>
+  <lastmod>2012-04-20T10:54:09+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewtopic.php?pid=2</loc>
+  <lastmod>2012-04-20T10:54:10+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewforum.php?id=3</loc>
+  <lastmod>2012-04-20T10:54:10+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewforum.php?id=6</loc>
+  <lastmod>2012-04-20T10:54:11+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewforum.php?id=7</loc>
+  <lastmod>2012-04-20T10:54:11+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewforum.php?id=1</loc>
+  <lastmod>2012-04-20T10:54:12+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewtopic.php?pid=1</loc>
+  <lastmod>2012-04-20T10:54:13+00:00</lastmod>
+  <changefreq>daily</changefreq>
+</url>
+<url>
+  <loc>http://fortnotes.com/forum/viewtopic.php?id=2</loc>
+  <lastmod>2012-04-20T10:54:14+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 <url>
   <loc>http://fortnotes.com/forum/viewtopic.php?id=1</loc>
-  <lastmod>2012-04-19T14:59:06+00:00</lastmod>
+  <lastmod>2012-04-20T10:54:14+00:00</lastmod>
   <changefreq>daily</changefreq>
 </url>
 </urlset>
