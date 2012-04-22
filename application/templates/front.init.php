@@ -145,13 +145,11 @@
 					</td>
 					<td style="width:200px">
 						<g:plusone size="medium"></g:plusone>
-						<br>
 						<div id="vk_like" style="margin:5px 0"></div>
 						<script type="text/javascript">
 							VK.init({apiId: 2918108, onlyWidgets: true});
-							VK.Widgets.Like("vk_like", {type: "vertical", height: 20});
+							VK.Widgets.Like("vk_like", {type: "button", height: 20});
 						</script>
-						<br>
 						<div class="fb-like" data-send="false" data-layout="button_count" data-width="250" data-show-faces="false" data-font="verdana"></div>
 					</td>
 				</tr>
