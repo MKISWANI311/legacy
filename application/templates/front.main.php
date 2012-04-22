@@ -32,7 +32,6 @@
 		// the DOM is ready
 		$(function() {
 			$.modal.defaults.opacity = 20;
-			// master password hash from server
 
 			// set menu to home
 			MenuItemClick($('div#menu_item_home a')[0]);
@@ -85,22 +84,22 @@
 			$("#dlg_pass_set").modal();
 		}
 
-		function MasterPasswordSet () {
-			var field = $('#block_pass_get #auth_password');
-			var pass = $.trim(field.val());
-
-			if ( App.CheckPass(pass) && App.SetPass(pass) ) {
-				field.val('');
-				var pass_store_time = document.getElementById('link_pass_store_time').value;
-				//fb(pass_store_time);
-				if ( pass_store_time ) {
-					App.Set('pass_store_time', pass_store_time, true);
-				}
-				$.modal.close();
-			} else {
-				alert('Master password is invalid!');
-			}
-		}
+//		function MasterPasswordSet () {
+//			var field = $('#block_pass_get #auth_password');
+//			var pass = $.trim(field.val());
+//
+//			if ( App.CheckPass(pass) && App.SetPass(pass) ) {
+//				field.val('');
+//				var pass_store_time = document.getElementById('link_pass_store_time').value;
+//				//fb(pass_store_time);
+//				if ( pass_store_time ) {
+//					App.Set('pass_store_time', pass_store_time, true);
+//				}
+//				$.modal.close();
+//			} else {
+//				alert('Master password is invalid!');
+//			}
+//		}
 
 		function CacheClear ( param ) {
 			$.post('/front/clear/' + param, function(){});

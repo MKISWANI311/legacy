@@ -201,7 +201,7 @@
 							</tr>
 							<tr class="body">
 								<td colspan="2">
-									All the magic is in your browser. It's a <b>BlackBox</b> - everything is encrypted and decrypted right in the browser and to the server is just a mess data sending. So nobody can see your data except you having the master password.
+									All the magic is in your browser. It's a <b>BlackBox</b> - everything is encrypted and decrypted right in the browser and to the server is just a mess data sending. So nobody can see your data except you having the password.
 								</td>
 							</tr>
 							<tr class="more">

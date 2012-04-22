@@ -5,8 +5,8 @@
 	$(function(){
 		DlgPassGet = new DialogModal({
 			width    : 500,
-			title    : 'Master password',
-			hint     : 'Your master password session time has expired. Please enter it again and change the store time if necessary.',
+			title    : 'Password',
+			hint     : 'Your session time has expired. Please enter your password again and change the store time if necessary.',
 			content  : document.getElementById('dlg_pass_get_content'),
 			data     : {attempts:0},
 
@@ -75,9 +75,9 @@
 							modal.data.pass.focus();
 							modal.data.attempts++;
 							if ( modal.data.attempts == 1 )
-								modal.SetMessage('Master password is invalid!');
+								modal.SetMessage('Password is invalid!');
 							else
-								modal.SetMessage(['Master password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
+								modal.SetMessage(['Password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
 						}
 					}
 				}

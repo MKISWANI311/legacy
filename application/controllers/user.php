@@ -61,20 +61,20 @@ class user extends controller {
 	 * Save the master password hash
 	 * @param string $action - "save" at the moment
 	 */
-	function hash ( $action ) {
-		$result = array('ok'=>false);
-		// save master password hash
-		if ( strtolower(trim($action)) == 'save' ) {
-			if ( !empty($_REQUEST['hash']) ) {
-				db::update('users', array('hash' => $_REQUEST['hash']), 'id = @s', $_SESSION['user']['id']);
-				$_SESSION['user']['hash'] = $_REQUEST['hash'];
-				$result['ok'] = true;
-			} else {
-
-			}
-		}
-		response::json($result);
-	}
+//	function hash ( $action ) {
+//		$result = array('ok'=>false);
+//		// save master password hash
+//		if ( strtolower(trim($action)) == 'save' ) {
+//			if ( !empty($_REQUEST['hash']) ) {
+//				db::update('users', array('hash' => $_REQUEST['hash']), 'id = @s', $_SESSION['user']['id']);
+//				$_SESSION['user']['hash'] = $_REQUEST['hash'];
+//				$result['ok'] = true;
+//			} else {
+//
+//			}
+//		}
+//		response::json($result);
+//	}
 
 	/**
 	 * Captcha imgage to test if a user
