@@ -150,7 +150,7 @@
 							VK.init({apiId: 2918108, onlyWidgets: true});
 							VK.Widgets.Like("vk_like", {type: "button", height: 20});
 						</script>
-						<div class="fb-like" data-send="false" data-layout="button_count" data-width="250" data-show-faces="false" data-font="verdana"></div>
+						<div class="fb-like" data-send="false" data-layout="button_count" data-width="150" data-show-faces="false" data-font="verdana"></div>
 					</td>
 				</tr>
 			</table>
