@@ -7,6 +7,8 @@
 	<link rel="icon" type="image/gif" href="img/castle.png"/>
 	<link rel="stylesheet" type="text/css" href="css/all.css"/>
 	<script type="text/javascript" src="js/all.js"></script>
+	<script type="text/javascript" src="http://userapi.com/js/api/openapi.js?49"></script>
+	<script type="text/javascript" src="http://vkontakte.ru/js/api/openapi.js" charset="windows-1251"></script>
 	<script type="text/javascript">
 		// the DOM is ready
 		$(function() {
@@ -21,6 +23,13 @@
 			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+
+		// Google+
+		(function() {
+			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+			po.src = 'https://apis.google.com/js/plusone.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 		})();
 	</script>
 	<style type="text/css">
@@ -55,20 +64,30 @@
 	<?php response::template('dlg.user.register') ?>
 </head>
 <body>
+	<div id="fb-root"></div>
+	<script>
+		(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/ru_RU/all.js#xfbml=1";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	</script>
 	<table class="maxh maxw" style="background-color:#eee">
 		<tr style="height:800px">
 			<td class="body_wrapper" style="padding:10px 100px;">
 				<table class="body_content" style="width:800px; height:800px">
 					<tr class="fade" style="height:30px;">
-						<td align="left" style="padding:0px 5px">
+<!--						<td align="left" style="padding:0px 5px">
 							<a href="/">
 								<span style="font-size:17px; color:#aaa; font-weight:normal; text-shadow:0 1px 2px #666">
 									<span style="font-size:19px; color:#333; font-weight:bold">F</span>ort
 									<span style="font-size:19px; color:#333; font-weight:bold">N</span>otes
 								</span>
 							</a>
-						</td>
-						<td style="font-size:14px; color:#888; padding:5px">
+						</td>-->
+						<td colspan="2" style="font-size:14px; color:#888; padding:5px; text-align:center">
 							highly secure online password manager based on the AES encryption in the browser
 						</td>
 					</tr>
@@ -108,10 +127,35 @@
 
 	<div class="top">
 		<div style="padding:10px; text-align:center">
-			<b style="color:#FF6600">Start using it now!</b><br><br>
-			<a onclick="DlgUserLogin.Show()"><div class="btn"><b>Login</b></div></a>
-			&nbsp; or &nbsp;
-			<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
+			<table style="width:800px; margin: 0 auto;">
+				<tr>
+					<td style="width:200px; text-align:center">
+						<a href="/">
+							<span style="font-size:24px; color:#aaa; font-weight:normal; text-shadow:0 1px 2px #666; padding:0px">
+								<span style="font-size:30px; color:#333; font-weight:bold; font-style: italic">F</span>ort
+								<span style="font-size:30px; color:#333; font-weight:bold; font-style: italic">N</span>otes
+							</span>
+						</a>
+					</td>
+					<td style="text-align:center; width:400px">
+						<b style="color:#FF6600">Start using it now!</b><br><br>
+						<a onclick="DlgUserLogin.Show()"><div class="btn"><b>Login</b></div></a>
+						&nbsp; or &nbsp;
+						<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
+					</td>
+					<td style="width:200px">
+						<g:plusone></g:plusone>
+						<br>
+						<div id="vk_like"></div>
+						<script type="text/javascript">
+							VK.init({apiId: 2918108, onlyWidgets: true});
+							VK.Widgets.Like("vk_like", {type: "mini", height: 24});
+						</script>
+						<br>
+						<div class="fb-like" data-send="false" data-layout="button_count" data-width="250" data-show-faces="false" data-font="verdana"></div>
+					</td>
+				</tr>
+			</table>
 		</div>
 		<table class="iblocks">
 			<tr>
