@@ -175,26 +175,26 @@ class cache {
 
 		// !!! not used till the templates will be user dependent
 		// get user either from parameter or from session
-		if ( !$id_user ) $id_user = $_SESSION['user']['id'];
-		// obtaining data
-		if ( null === ($data = self::user('templates')) ) {
-			// common
-			if ( null === ($data_common = self::apc('lookup_note_templates')) ) {
-				// cache is empty, filling
-				$data_common = db::query('select id,1 as sys,name,tag,description from templates where id_user = 0 order by place');
-				//$data_common = self::apc('lookup_note_templates', matrix_order($data_common, 'id'));
-				$data_common = self::apc('lookup_note_templates', $data_common);
-			}
-			// user defined
-			$data_user = db::query('select id,0 as sys,name,tag,description from templates where id_user = @i order by place', $id_user);
-			//$data_user = matrix_order($data_user, 'id');
-			// saving merged json packed data
-			//fb($data_common + $data_user);
-			//fb(array_merge($data_common, $data_user));
-			//$data = self::user('templates', json_encode(array_pack($data_common + $data_user), JSON_NUMERIC_CHECK));
-			$data = self::user('templates', json_encode(array_pack(array_merge($data_common, $data_user)), JSON_NUMERIC_CHECK));
-		}
-		return $data ? $data : '{}';
+//		if ( !$id_user ) $id_user = $_SESSION['user']['id'];
+//		// obtaining data
+//		if ( null === ($data = self::user('templates')) ) {
+//			// common
+//			if ( null === ($data_common = self::apc('lookup_note_templates')) ) {
+//				// cache is empty, filling
+//				$data_common = db::query('select id,1 as sys,name,tag,description from templates where id_user = 0 order by place');
+//				//$data_common = self::apc('lookup_note_templates', matrix_order($data_common, 'id'));
+//				$data_common = self::apc('lookup_note_templates', $data_common);
+//			}
+//			// user defined
+//			$data_user = db::query('select id,0 as sys,name,tag,description from templates where id_user = @i order by place', $id_user);
+//			//$data_user = matrix_order($data_user, 'id');
+//			// saving merged json packed data
+//			//fb($data_common + $data_user);
+//			//fb(array_merge($data_common, $data_user));
+//			//$data = self::user('templates', json_encode(array_pack($data_common + $data_user), JSON_NUMERIC_CHECK));
+//			$data = self::user('templates', json_encode(array_pack(array_merge($data_common, $data_user)), JSON_NUMERIC_CHECK));
+//		}
+//		return $data ? $data : '{}';
 	}
 
 	/**
@@ -214,24 +214,24 @@ class cache {
 
 		// !!! not used till the templates will be user dependent
 		// get user either from parameter or from session
-		if ( !$id_user ) $id_user = $_SESSION['user']['id'];
-		// obtaining data
-		if ( null === ($data = self::user('template_entries')) ) {
-			$sql = 'select te.id_template,te.id_type,te.name from template_entries te, templates t where
-				te.id_template = t.id and t.id_user = @i order by te.id_template,te.place';
-			// common
-			if ( null === ($data_common = self::apc('lookup_template_entries')) ) {
-				// cache is empty, filling
-				$data_common = db::query($sql, 0);
-				$data_common = self::apc('lookup_template_entries', matrix_group($data_common, 'id_template'));
-			}
-			// user defined
-			$data_user = db::query($sql, $id_user);
-			$data_user = matrix_group($data_user, 'id_template');
-			// saving merged json packed data
-			$data = self::user('template_entries', json_encode(array_pack($data_common + $data_user), JSON_NUMERIC_CHECK));
-		}
-		return $data ? $data : '{}';
+//		if ( !$id_user ) $id_user = $_SESSION['user']['id'];
+//		// obtaining data
+//		if ( null === ($data = self::user('template_entries')) ) {
+//			$sql = 'select te.id_template,te.id_type,te.name from template_entries te, templates t where
+//				te.id_template = t.id and t.id_user = @i order by te.id_template,te.place';
+//			// common
+//			if ( null === ($data_common = self::apc('lookup_template_entries')) ) {
+//				// cache is empty, filling
+//				$data_common = db::query($sql, 0);
+//				$data_common = self::apc('lookup_template_entries', matrix_group($data_common, 'id_template'));
+//			}
+//			// user defined
+//			$data_user = db::query($sql, $id_user);
+//			$data_user = matrix_group($data_user, 'id_template');
+//			// saving merged json packed data
+//			$data = self::user('template_entries', json_encode(array_pack($data_common + $data_user), JSON_NUMERIC_CHECK));
+//		}
+//		return $data ? $data : '{}';
 	}
 
 	/**

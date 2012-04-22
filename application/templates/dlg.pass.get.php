@@ -84,14 +84,8 @@
 			}
 		});
 
-		// check if master password was ever set
-		if ( App.HasHash() ) {
-			// ask pass
-			DlgPassGet.Show({escClose:false});
-		} else {
-			// suggest to create
-			DlgPassSet.Show({escClose:false});
-		}
+		// ask pass
+		DlgPassGet.Show({escClose:false});
 
 		App.Subscribe(DlgPassGet);
 	});

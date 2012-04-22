@@ -39,7 +39,7 @@
 			width: 100%;
 			height: 740px;
 		}
-		.iblocks { width:1000px; height:650px; margin:20 auto; }
+		.iblocks { width:1000px; height:620px; margin:20 auto; }
 		.iblocks td.main { padding: 0 20px; width:430px; vertical-align:top }
 		.iblock {
 			height:125px;
@@ -79,14 +79,6 @@
 			<td class="body_wrapper" style="padding:10px 100px;">
 				<table class="body_content" style="width:800px; height:800px">
 					<tr class="fade" style="height:30px;">
-<!--						<td align="left" style="padding:0px 5px">
-							<a href="/">
-								<span style="font-size:17px; color:#aaa; font-weight:normal; text-shadow:0 1px 2px #666">
-									<span style="font-size:19px; color:#333; font-weight:bold">F</span>ort
-									<span style="font-size:19px; color:#333; font-weight:bold">N</span>otes
-								</span>
-							</a>
-						</td>-->
 						<td colspan="2" style="font-size:14px; color:#888; padding:5px; text-align:center">
 							highly secure online password manager based on the AES encryption in the browser
 						</td>
@@ -127,7 +119,7 @@
 
 	<div class="top">
 		<div style="padding:10px; text-align:center">
-			<table style="width:900px; margin: 0 auto;">
+			<table style="width:900px; height:80px; margin:0 auto;">
 				<tr>
 					<td style="width:250px; text-align:right">
 						<a href="/">

@@ -535,8 +535,6 @@ var NoteList = new function () {
 		}
 		// show/hide control panel
 		this.UpdateCtrlBlock();
-		// adsense
-		elchild(elclear(this.dom.btbar), element('span', {}, '[Google ADs here]'));
 	};
 
 	/**

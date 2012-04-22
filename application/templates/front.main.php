@@ -117,7 +117,7 @@
 		})();
 	</script>
 
-	<?php response::template('dlg.pass.set') ?>
+	<?php //response::template('dlg.pass.set') ?>
 	<?php response::template('dlg.pass.get') ?>
 </head>
 <body>
@@ -170,18 +170,30 @@
 								<td style="padding:10px; vertical-align:top">
 									<div class="notefilter"></div>
 									<div class="notelist"></div>
+									<div style="text-align:center">
+										<script type="text/javascript"><!--
+										google_ad_client = "ca-pub-9617280891760602";
+										/* fortnotes.bottom */
+										google_ad_slot = "1383117777";
+										google_ad_width = 468;
+										google_ad_height = 60;
+										//-->
+										</script>
+										<script type="text/javascript"
+										src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+										</script>
+									</div>
 								</td>
 								<td style="padding:10px; width:400px; vertical-align:top; min-height:800px;">
 									<div class="templatelist"></div>
 									<div class="noteeditor"></div>
 									<div style="margin: 20px 0px; text-align:center">
-										<script type="text/javascript"><!--
+										<script type="text/javascript">
 											google_ad_client = "ca-pub-9617280891760602";
 											/* fortnotes.side */
 											google_ad_slot = "3540815500";
 											google_ad_width = 300;
 											google_ad_height = 250;
-											//-->
 										</script>
 										<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 									</div>

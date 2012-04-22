@@ -14,16 +14,17 @@ class user extends controller {
 		$result = array();
 
 		if ( $username && $password ) {
-			$user = db::queryFirstRow('select id,pass,hash from users where name = @s limit 1', $username);
+			$user = db::queryFirstRow('select id,pass from users where name = @s limit 1', $username);
 			if ( $user && $authmode == 'login' ) {
 				if ( $user['pass'] == $password ) {
 					$result['id']   = $user['id'];
 					$result['time'] = INIT_TIMESTAMP;
-					$result['hash'] = $user['hash'];
+					$result['hash'] = $user['pass'];
 					db::update('users', array('ltime' => $result['time']), 'id = @i limit 1', $user['id']);
 				}
 			} else if ( !$user && $authmode == 'register' ) {
 				if ( strtolower($_REQUEST['code']) == strtolower($_SESSION['captcha']['code']) ) {
+					// clear captcha temp data
 					unset($_SESSION['captcha']);
 					$result['id'] = db::insert('users', array(
 						'name'  => $username,
@@ -31,7 +32,7 @@ class user extends controller {
 						'ctime' => INIT_TIMESTAMP,
 					));
 					$result['time'] = 0;
-					$result['hash'] = null;
+					$result['hash'] = $password;
 				} else {
 					$result['code'] = false;
 				}
@@ -45,15 +46,11 @@ class user extends controller {
 			}
 
 			if ( !empty($result['id']) ) {
-				// check if session id set
-				if ( empty($_COOKIE[session_name()]) ) {
-					// set lifetime of the session cookie to 2 weeks and start
-					session_set_cookie_params(1209600);
-					// first time session creation
-					session_start();
-					// create cache dir for user searches
-					mkdir(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']));
-				}
+				// set lifetime of the session cookie to 2 weeks and start
+				session_set_cookie_params(1209600);
+				// create cache dir for user searches if not exist
+				$path = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']);
+				if ( !is_dir($path) ) mkdir($path);
 				$_SESSION['user'] = $result;
 			}
 		}
@@ -97,7 +94,8 @@ class user extends controller {
 		// check if session id set
 		if ( !empty($_COOKIE[session_name()]) ) {
 			// clear cache
-			//cache::user_clear();
+			cache::user_clear('tags');
+			cache::user_clear('searches');
 			fb('/user/signout');
 			session_unset();
 			$params = session_get_cookie_params();

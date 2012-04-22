@@ -27,14 +27,11 @@ drop table if exists entry_values;
 create table entry_values (
 	id int unsigned not null auto_increment,
 	id_entry int unsigned not null comment 'link to the note_entries table record by id',
-	/*version int unsigned not null default '1' comment 'incrementing record version',/**/
 	id_type smallint unsigned default 1 comment 'link to the entry_types table record by id',
 	place smallint unsigned not null default 0 comment 'order of the record',
 	time int unsigned not null default 0 comment 'creation or last edit timestamp',
 	name text not null comment 'encoded entry title if necessary to overwrite the default one',
 	data mediumtext not null comment 'encoded entry data',
-	/*name_hash varchar(256) comment 'hash of the entry title to check consistency',
-	value_hash varchar(256) comment 'hash of the value to check consistency',/**/
 
 	primary key (id),
 	key idx_id_entry (id_entry)
@@ -50,8 +47,6 @@ create table note_entries (
 	time int unsigned not null default 0 comment 'creation or last edit timestamp',
 	name text not null comment 'encoded entry title if necessary to overwrite the default one',
 	data mediumtext not null comment 'encoded entry data',
-	/*name_hash varchar(256) comment 'hash of the entry title to check consistency',/**/
-	/*value_hash varchar(256) comment 'hash of the value to check consistency',/**/
 
 	primary key (id),
 	key idx_id_note (id_note)
@@ -65,7 +60,6 @@ create table notes (
 	ctime int unsigned default 0 comment 'creation timestamp',
 	mtime int unsigned default 0 comment 'last modification timestamp',
 	atime int unsigned default 0 comment 'last record reading access timestamp',
-	/*htime int unsigned default 0 comment 'last note values history reading timestamp',/**/
 
 	primary key (id),
 	key idx_id_user (id_user)
@@ -99,7 +93,6 @@ create table users (
 	id int unsigned not null auto_increment,
 	name varchar(512) not null comment 'hash of the user name',
 	pass varchar(512) not null comment 'hash of the user password',
-	hash varchar(512) comment 'master password hash for the consistency purpose',
 	ctime int unsigned default 0 comment 'creation timestamp',
 	ltime int unsigned default 0 comment 'last login timestamp',
 
