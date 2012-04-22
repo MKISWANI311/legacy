@@ -144,12 +144,12 @@
 						<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
 					</td>
 					<td style="width:200px">
-						<g:plusone></g:plusone>
-						<br>
+						<g:plusone size="tall"></g:plusone>
+						
 						<div id="vk_like"></div>
 						<script type="text/javascript">
 							VK.init({apiId: 2918108, onlyWidgets: true});
-							VK.Widgets.Like("vk_like", {type: "mini", height: 24});
+							VK.Widgets.Like("vk_like", {type: "vertical", height: 24});
 						</script>
 						<br>
 						<div class="fb-like" data-send="false" data-layout="button_count" data-width="250" data-show-faces="false" data-font="verdana"></div>
