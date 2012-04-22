@@ -135,7 +135,7 @@
 						&nbsp; or &nbsp;
 						<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
 					</td>
-					<td style="width:250px">
+					<td style="width:250px; vertical-align:top">
 						<g:plusone size="medium" width="80"></g:plusone>
 						<a href="https://twitter.com/share" class="twitter-share-button">tweet</a>
 						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
