@@ -127,9 +127,9 @@
 
 	<div class="top">
 		<div style="padding:10px; text-align:center">
-			<table style="width:800px; margin: 0 auto;">
+			<table style="width:900px; margin: 0 auto;">
 				<tr>
-					<td style="width:200px; text-align:center">
+					<td style="width:250px; text-align:right">
 						<a href="/">
 							<span style="font-size:24px; color:#aaa; font-weight:normal; text-shadow:0 1px 2px #666; padding:0px">
 								<span style="font-size:30px; color:#333; font-weight:bold; font-style: italic">F</span>ort
@@ -143,8 +143,10 @@
 						&nbsp; or &nbsp;
 						<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
 					</td>
-					<td style="width:200px">
-						<g:plusone size="medium"></g:plusone>
+					<td style="width:250px">
+						<g:plusone size="medium" width="80"></g:plusone>
+						<a href="https://twitter.com/share" class="twitter-share-button">tweet</a>
+						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 						<div id="vk_like" style="margin:5px 0"></div>
 						<script type="text/javascript">
 							VK.init({apiId: 2918108, onlyWidgets: true});
