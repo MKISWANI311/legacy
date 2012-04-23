@@ -10,7 +10,7 @@ base=$(realpath $(dirname $0))
 cd "$base" && echo -e "base\t$base"
 
 # stop the web server
-rc.d stop php-fpm && rc.d stop lighttpd && echo -ne $ok || echo -ne $fail
+rc.d stop lighttpd && rc.d stop php-fpm && echo -ne $ok || echo -ne $fail
 echo "php-fpm and http server have stopping"
 
 # prepare directory
