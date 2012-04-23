@@ -69,7 +69,7 @@ var NoteFilter = new function () {
 			this.data = {};
 			this.post = {};
 			// clear autocompleter
-			$(this.dom.input).data('autocompleter').options.data = [];
+			$(this.dom.input).data('autocompleter').options.data = [true];
 			// component state flag
 			this.open = false;
 		}
