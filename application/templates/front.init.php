@@ -112,6 +112,24 @@
 							<span style="color:#aaa;font-size:10px;margin:0 6px">256b</span>
 						</a></td>
 					</tr>
+					<tr>
+						<td colspan="5">
+							<br>
+							<div style="text-align:center">
+								<script type="text/javascript"><!--
+								google_ad_client = "ca-pub-9617280891760602";
+								/* fortnotes.bottom */
+								google_ad_slot = "1383117777";
+								google_ad_width = 468;
+								google_ad_height = 60;
+								//-->
+								</script>
+								<script type="text/javascript"
+								src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+								</script>
+							</div>
+						</td>
+					</tr>
 				</table>
 			</td>
 		</tr>
