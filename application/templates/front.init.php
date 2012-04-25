@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-	<title>FortNotes</title>
+	<title>FortNotes Online Password Manager</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="keywords" content="security online password manager AES encryption"/>
 	<meta name="description" content="FortNotes Online Password Manager is a highly secure private information storing platform based on the AES encryption in the browser. Fort Knox for your notes."/>
