@@ -149,9 +149,8 @@
 					</td>
 					<td style="text-align:center; width:400px">
 						<b style="color:#FF6600">Start using it now!</b><br><br>
-						<a onclick="DlgUserLogin.Show()"><div class="btn"><b>Login</b></div></a>
-						&nbsp; or &nbsp;
-						<a onclick="DlgUserRegister.Show()"><div class="btn"><b>Register</b></div></a>
+						<a onclick="DlgUserLogin.Show()"><img src="img/btn.login.png"/></a>
+						<a onclick="DlgUserRegister.Show()"><img src="img/btn.register.png"/></a>
 					</td>
 					<td style="width:250px; vertical-align:top">
 						<g:plusone size="medium" width="80"></g:plusone>
