@@ -32,6 +32,7 @@ define('PATH_LIBRARY',     PATH_ROOT   . 'library'     . DIRECTORY_SEPARATOR);
 define('PATH_PUBLIC',      PATH_ROOT   . 'public'      . DIRECTORY_SEPARATOR);
 define('PATH_CACHE',       PATH_ROOT   . 'cache'       . DIRECTORY_SEPARATOR);
 define('PATH_LOGS',        PATH_ROOT   . 'logs'        . DIRECTORY_SEPARATOR);
+define('PATH_LANG',        PATH_ROOT   . 'lang'        . DIRECTORY_SEPARATOR);
 define('PATH_CSS',         PATH_PUBLIC . 'css'         . DIRECTORY_SEPARATOR);
 define('PATH_JS',          PATH_PUBLIC . 'js'          . DIRECTORY_SEPARATOR);
 define('PATH_CONTROLLERS', PATH_APP    . 'controllers' . DIRECTORY_SEPARATOR);
