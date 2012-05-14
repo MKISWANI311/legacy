@@ -25,14 +25,14 @@ class front extends controller {
 	}
 
 	public function clear ( $flag = 'user' ) {
-		cache::user_clear();
-		cache::clear(array('lookup_entry_types','lookup_note_templates','lookup_template_entries'));
-		fb('user memory and file cache cleared');
-		if ( $flag == 'user' ) return;
-		// global cache
-		apc_clear_cache();
-		apc_clear_cache('user');
-		fb('global apc cache cleared');
+//		cache::user_clear();
+//		cache::clear(array('lookup_entry_types','lookup_note_templates','lookup_template_entries'));
+//		fb('user memory and file cache cleared');
+//		if ( $flag == 'user' ) return;
+//		// global cache
+//		apc_clear_cache();
+//		apc_clear_cache('user');
+//		fb('global apc cache cleared');
 	}
 
 }
