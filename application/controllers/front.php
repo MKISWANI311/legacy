@@ -7,7 +7,7 @@ class front extends controller {
 
 	public function index () {
 		// link the current lang file
-		include PATH_LANG . value($_SESSION['user']['lang'], 'en') . '.php';
+		//include PATH_LANG . value($_SESSION['user']['lang'], 'en') . '.php';
 
 		// concatenate css and js if necessary
 		response::compact(PATH_JS, 'js');
