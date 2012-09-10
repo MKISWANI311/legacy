@@ -20,7 +20,7 @@ class user extends controller {
 					$result['id']   = $user['id'];
 					$result['time'] = INIT_TIMESTAMP;
 					$result['hash'] = $user['pass'];
-					db::update('users', array('ltime' => $result['time']), 'id = @i limit 1', $user['id']);
+					db::update('users', array('ltime' => $result['time']), 'id = @i', $user['id']);
 				}
 			} else if ( !$user && $authmode == 'register' ) {
 				if ( strtolower($_REQUEST['code']) == strtolower($_SESSION['captcha']['code']) ) {
