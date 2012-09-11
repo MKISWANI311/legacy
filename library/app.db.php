@@ -72,6 +72,13 @@ class db {
 	private static $mark = '@';
 
 	/**
+	 * Allow/deny multiple data values in single query
+	 * in case true - perform many queries instead of one
+	 * @var boolean
+	 */
+	public static $no_bulk_inserts = false;
+
+	/**
 	 * PDO instance representing a connection to a database
 	 * @var PDO
 	 */
@@ -489,8 +496,20 @@ class db {
 						$sql = sprintf('insert into %s (%s) values %s', $table, implode(', ', $fnames), implode(', ', $data));
 						// no execution in testing mode
 						if ( self::$sqlonly ) return $sql;
-						// performing the built sql
-						if ( ($inserted = call_user_func('self::helper', 'exec', $sql)) ) {
+						// number of inserted rows
+						$inserted = 0;
+						// bulk operations
+						if ( self::$no_bulk_inserts ) {
+							// one by one
+							foreach ( $data as $value ) {
+								$inserted += call_user_func('self::helper', 'exec', sprintf('insert into %s (%s) values %s', $table, implode(', ', $fnames), $value));
+							}
+						} else {
+							// performing the built sql
+							$inserted = call_user_func('self::helper', 'exec', $sql);
+						}
+						// there are some good inserts
+						if ( $inserted > 0 ) {
 							// return last inserted id only if one row inseted
 							// otherwise - number of inserted rows
 							return $multi ? $inserted : self::$pdo->lastInsertId();
