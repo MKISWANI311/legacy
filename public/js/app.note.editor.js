@@ -218,7 +218,6 @@ var NoteEditor = new function () {
 		// disable controls to preven double posting
 		EnableControls(false);
 		SetTitleIcon('img/message.loading.gif');
-		//$(this.dom.controls).addClass('loading');
 		$.post('/note/save/' + (this.data.id || ''), GetData(), function(data){
 			if ( data && data.id && data.entries ) {
 				// the note is just created
@@ -908,6 +907,8 @@ var NoteEditor = new function () {
 		// clear note and entries ids
 		delete this.data.id;
 		this.data.entries.each(function(entry){delete entry.id;});
+		// reset tags
+		this.post.tags = [];
 		// set flag
 		changed = true;
 		// saving
