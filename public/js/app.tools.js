@@ -35,6 +35,7 @@ String.prototype.rtrim = function() {
    return this.replace(/\s+$/g,"");
 };
 
+
 /**
  * Associative Array size
  */
@@ -46,6 +47,7 @@ function AASize ( array ) {
 	return size;
 }
 
+
 /**
  * Firebug debug compatible with IE
  * free list of params
@@ -56,6 +58,7 @@ function fb () {
 		console.info(arguments.length == 1 ? arguments[0] : arguments);
 
 }
+
 
 /**
  * Moves focus to the given html element on enter key pressed
@@ -73,6 +76,7 @@ function onEnterFocus ( src, dest ) {
 		return true;
 	};
 }
+
 
 /**
  * Clicks the given html element on enter key pressed
@@ -92,9 +96,10 @@ function onEnterClick ( src, dest ) {
 	};
 }
 
+
 /**
  * New link type to select value from the set
- * @param obj html a element to expand
+ * @param obj html element to expand
  * @param data list of values and titles like {300:{title:'5 minutes',next:1200}, 1200:{title:'20 minutes',next:300}}
  * @param id default value to select
  */
@@ -128,6 +133,17 @@ function LinkSet ( obj, data, id ) {
 	this.ItemSelect(id);
 }
 
+
+/**
+ * Adds the given value to the obj as a child recursively
+ * @param obj DOMElement to be appended
+ * @param value data to add (simple text values, DOMElements, array of DOMElements)
+ * @return DOMElement owner of all added data
+ * @example elchild(mydiv, 'Hello world'); // simple text value
+ * @example elchild(mydiv, someotherdiv); // DOMElement
+ * @example elchild(mydiv, [div1, div2, div3]); // DOMElement list
+ * @example elchild(mydiv, [div1, 'hello', 'world']); // combined case
+ */
 function elchild ( obj, value ) {
 	// check input
 	if ( obj && value != null ) {
@@ -149,6 +165,12 @@ function elchild ( obj, value ) {
 	return obj;
 }
 
+
+/**
+ * Removes all child elements from the given object
+ * @param obj DOMElement to be updated
+ * @return DOMElement cleared
+ */
 function elclear ( obj ) {
 	if ( obj && obj.hasChildNodes() ) {
 		while ( obj.hasChildNodes() ) {
@@ -158,6 +180,14 @@ function elclear ( obj ) {
 	return obj;
 }
 
+
+/**
+ * Assigns a list of attribute values to the given object
+ * @param obj DOMElement
+ * @param attr list of attributes with values
+ * @return DOMElement the same as the given one
+ * @example elattr(myimg, {src:'face.png', className:'main'});
+ */
 function elattr ( obj, attr ) {
 	// check if DOMElement
 	if ( obj && obj.nodeType && attr && attr instanceof Object ) {
@@ -169,6 +199,16 @@ function elattr ( obj, attr ) {
 	return obj;
 }
 
+
+/**
+ * Creates a DOMElement with given options
+ * @param name html element name (a, img, div, ...)
+ * @param attr list of attributes with values
+ * @param data inner html value
+ * @param handlers list of DOMElement event handlers (onclick, onload, ...)
+ * @return DOMElement
+ * @example element('link', {rel:'stylesheet', type:'text/css', href:'http://some.url/'});
+ */
 function element ( name, attr, data, handlers ) {
 	var tag = document.createElement(name);
 	elattr(tag, attr);
@@ -182,6 +222,7 @@ function element ( name, attr, data, handlers ) {
 	return tag;
 }
 
+
 function table ( rows, cols, attr, handlers ) {
 	var el = element('table', attr, null, handlers);
 	for ( var i = 0; i < rows; i++ ) {
@@ -192,6 +233,7 @@ function table ( rows, cols, attr, handlers ) {
 	}
 	return el;
 }
+
 
 function tblrow ( obj, cells, attrs ) {
 	var row = obj.insertRow(-1);
@@ -223,6 +265,7 @@ function TimestampToDateStr ( tstamp ) {
 	return nyear + '.' + nmonth + '.' + nday + ' ' + hour + ':' + min;
 }
 
+
 function time_data ( timestamp ) {
 	var dt = new Date(timestamp * 1000);
 	var dl = {y:dt.getFullYear(), m:dt.getMonth()+1, d:dt.getDate(), h:dt.getHours(), i:dt.getMinutes()};
@@ -233,6 +276,7 @@ function time_data ( timestamp ) {
 	if ( dl.i < 10 ) dl.i = '0' + dl.i;
 	return dl;
 }
+
 
 function pwdgen ( length ) {
     var charset = "abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -251,6 +295,7 @@ function pwdgen ( length ) {
     return result;
 }
 
+
 /**
 * Ajax cross-domain request helper
 * @param url link to external resource
@@ -266,6 +311,7 @@ function jsonp ( url ) {
 		document.body.removeChild(script);
 	}, 10000);
 }
+
 
 /**
  * Set input watermark hint

@@ -104,6 +104,41 @@ class user extends controller {
 		}
 	}
 
+	/**
+	 * Collects and dumps all the user data
+	 * @param string $type data format flag: plain|zip
+	 * @example https://fortnotes.dev/user/export/plain
+	 * @example https://fortnotes.dev/user/export/zip
+	 */
+	function export ( $type = 'plain' ) {
+		$type = strtolower(trim($type));
+		$data = array();
+		// check if logged in
+		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
+			if ( $type == 'plain' ) {
+				$data['tags'] = matrix_order(db::query('select id,name from tags where id_user = @i', $id_user), 'id', 'name');
+				$data['note_tags'] = matrix_group(db::query('select id_note,id_tag from note_tags where id_note in (select id from notes where id_user = @i)', $id_user), 'id_note');
+				$data['notes'] = matrix_group(
+					db::query('select id_note,name,data from note_entries where is_active=1 and id_note in (select id from notes where is_active=1 and id_user = @i) order by id_note, place', $id_user),
+					'id_note');
+				krsort($data['notes']);
+			} else {
+				// full backup
+				$data['tags'] = matrix_order(db::query('select * from tags where id_user = @i', $id_user), 'id');
+				$data['notes'] = matrix_order(db::query('select * from notes where id_user = @i', $id_user), 'id');
+				$data['note_tags'] = db::query('select * from note_tags where id_note in (select id from notes where id_user = @i)', $id_user);
+				$data['note_entries'] = matrix_order(db::query('select * from note_entries where id_note in (select id from notes where id_user = @i)', $id_user), 'id');
+				$data['entry_values'] = matrix_order(db::query('select * from entry_values where id_entry in (select id from note_entries where id_note in (select id from notes where id_user = @i))', $id_user), 'id');
+			}
+		}
+		$data = json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE);
+		if ( $type == 'plain' ) {
+			response::json($data, false, true);
+		} else if ( $type == 'zip' ) {
+			response::zip($data);
+		}
+	}
+
 }
 
 ?>

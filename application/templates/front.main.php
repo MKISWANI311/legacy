@@ -24,6 +24,10 @@
 		// they are filling on page loading and on note creation
 		// if there are some new tags
 
+		// contains encrypted data for export
+		// if not null an export window appears
+		var export_data = null;
+
 		// list of tag names with title images
 		var icon_tags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber', 'msn', 'database'];
 
@@ -84,23 +88,6 @@
 			$("#dlg_pass_set").modal();
 		}
 
-//		function MasterPasswordSet () {
-//			var field = $('#block_pass_get #auth_password');
-//			var pass = $.trim(field.val());
-//
-//			if ( App.CheckPass(pass) && App.SetPass(pass) ) {
-//				field.val('');
-//				var pass_store_time = document.getElementById('link_pass_store_time').value;
-//				//fb(pass_store_time);
-//				if ( pass_store_time ) {
-//					App.Set('pass_store_time', pass_store_time, true);
-//				}
-//				$.modal.close();
-//			} else {
-//				alert('Master password is invalid!');
-//			}
-//		}
-
 		function CacheClear ( param ) {
 			$.post('/front/clear/' + param, function(){});
 		}
@@ -116,7 +103,8 @@
 		})();
 	</script>
 
-	<?php //response::template('dlg.pass.set') ?>
+	<?php response::template('dlg.export') ?>
+	<?php response::template('dlg.options') ?>
 	<?php response::template('dlg.pass.get') ?>
 </head>
 <body>
@@ -134,16 +122,16 @@
 				<td align="left" style="padding:0px 10px">
 <!--					<img src="http://www.google.com/help/hc/images/adsense/adsense_185679_adformat-link_468x15_en.png"/>-->
 				</td>
-				<td align="right" style="padding:0px 10px; width:400px">
+				<td align="right" style="padding:0px 10px; width:500px">
 					<div style="position:relative;">
 						<div id="block_welcome">
 							<?php if ( !empty($_SESSION['user']['time']) ) echo '<span style="color:grey">session was started</span>&nbsp;&nbsp;<span style="font-weight:bold;font-size:10px;color:#333">' . date('Y.m.d H:i', $_SESSION['user']['time']) . '</span>'?>
 <!--							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:Settings()"><b>Settings</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
-							<a href="javascript:CacheClear()"><b>Clear all</b></a>
+							<a href="javascript:CacheClear()"><b>Clear all</b></a>-->
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
-							<a href="javascript:CacheClear('user')"><b>Clear user</b></a>-->
+							<a href="javascript:DlgOptions.Show()"><b>Options</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:App.ExpirePass()"><b>Lock</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;

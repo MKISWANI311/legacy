@@ -16,7 +16,6 @@ function DialogModal ( params ) {
 	this.Show = function ( params ) {
 		params = params || {};
 		if ( this.params.onShow && this.params.onShow instanceof Function ) {
-			//params.onShow = this.params.onShow;
 			this.params.onShow.call(this);
 		}
 		$(this.dom.main).modal(params);
@@ -46,10 +45,8 @@ function DialogModal ( params ) {
 	this.SetHint = function ( hint ) {
 		if ( hint ) {
 			if ( this.dom.hint.childNodes.length == 0 ) {
-				//this.dom.hint.appendChild(table(1, 2, {})).rows[0].cells[0].appendChild(element('img', {src:'img/info.png'}));
 				this.dom.hint.appendChild(element('div', {className:'info'}, hint));
 			}
-			//this.dom.hint.childNodes[0].rows[0].cells[1].innerHTML = hint;
 			this.dom.hint.childNodes[0].innerHTML = hint;
 			this.dom.hint.style.display = '';
 		} else {
@@ -60,14 +57,7 @@ function DialogModal ( params ) {
 	this.SetMessage = function ( text, type ) {
 		if ( text ) {
 			type = type || 'warning';
-//			img  = img  || 'message.' + type + '.png';
 			elchild(elclear(this.dom.message), element('div', {className:'message ' + type}, text));
-//			if ( this.dom.message.childNodes.length == 0 ) {
-//				this.dom.message.appendChild(table(1, 2, {})).rows[0].cells[0].appendChild(element('img', {src:'img/message.info.png'}));
-//			}
-//			this.dom.message.childNodes[0].rows[0].cells[0].childNodes[0].src = 'img/' + img;
-//			this.dom.message.childNodes[0].rows[0].cells[1].className = type;
-//			this.dom.message.childNodes[0].rows[0].cells[1].innerHTML = text;
 			this.dom.message.style.display = '';
 		} else {
 			this.dom.message.style.display = 'none';
@@ -134,13 +124,14 @@ function DialogModal ( params ) {
 		if ( this.params.EventClose && this.params.EventClose instanceof Function ) {
 			this.EventClose = this.params.EventClose;
 		}
+		if ( this.params.EventOpen && this.params.EventOpen instanceof Function ) {
+			this.EventOpen = this.params.EventOpen;
+		}
 
 		if ( this.params.content ) {
 			this.params.content.style.display = '';
 			this.dom.content.appendChild(this.params.content);
 		}
-		//fb(this);
-		//$(this.dom.body).draggable();
 	};
 	this.Init();
 }

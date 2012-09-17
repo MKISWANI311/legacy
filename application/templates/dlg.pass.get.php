@@ -7,7 +7,6 @@
 			width    : 500,
 			title    : 'Password',
 			hint     : 'Your session time has expired. Please enter your password again and change the store time if necessary.',
-			content  : document.getElementById('dlg_pass_get_content'),
 			data     : {attempts:0},
 
 			onCreate : function(){
@@ -69,7 +68,6 @@
 							// reset value
 							modal.data.pass.value = '';
 							modal.Close();
-							//NoteManager.FocusFilter();
 							NoteFilter.SetFocus();
 						} else {
 							modal.data.pass.focus();

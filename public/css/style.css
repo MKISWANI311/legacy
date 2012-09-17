@@ -59,6 +59,9 @@ a.combo {
 
 .fade { background-color:#f9f9f9 }
 
+input.long {
+	width:150px !important;
+}
 input.button {
 	background-color: #eee;
 	width: 80px;
@@ -95,6 +98,10 @@ input.line, textarea.text {
 }
 textarea.text {
 	height: 65px;
+}
+textarea.export {
+	height:450px;
+	width:100%;
 }
 input.line:focus, textarea.text:focus {
 	border: 2px solid #ddd;

@@ -179,6 +179,22 @@ class response {
 
 	public static function send () {}
 
+	public static function zip ( $data ) {
+		// disable ZLIB ouput compression
+		ini_set('zlib.output_compression', 'Off');
+		// compress data
+		$data = gzencode($data, 6);
+		// send headers
+		header('Content-Type: application/x-download');
+		//header('Content-Encoding: gzip');
+		header('Content-Length: ' . strlen($data));
+		header('Content-Disposition: attachment; filename="export.zip"');
+		header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+		header('Pragma: no-cache');
+		// output data
+		echo $data;
+	}
+
 	/**
 	 * Prepares and sends given data to the client side
 	 * @param mixed $data data to be converted to json and sent to user
@@ -192,7 +208,7 @@ class response {
 		// send headers
 		header('Content-Type: application/json; charset=utf-8');
 		if ( $gzip ) header('Content-Encoding: gzip');
-		header('Content-Length: '.strlen($data));
+		header('Content-Length: ' . strlen($data));
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . 'GMT');
 		header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
 		header('Pragma: no-cache');
