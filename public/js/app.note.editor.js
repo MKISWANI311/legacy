@@ -59,7 +59,7 @@ var NoteEditor = new function () {
 			EnableControls(true);
 			// tags block
 			this.dom.tags.input.disabled = false;
-			this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags);
+			this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
 			// fill autocompleter
 			var data = [];
 			// prepare all tags
@@ -104,7 +104,7 @@ var NoteEditor = new function () {
 			EnableControls(false);
 			// tags block
 			this.dom.tags.input.disabled = true;
-			this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value);
+			this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value.toLowerCase());
 			this.dom.tags.input.value = '[encrypted tags]';
 			// clear autocompleter
 			$(this.dom.tags.input).data('autocompleter').options.data = [];
@@ -144,7 +144,7 @@ var NoteEditor = new function () {
 		var	i = 0, entry = null, deleted = [], ids = [];
 
 		// get the list of tags ids and names
-		self.data.tags = TagManager.Str2IDs(self.dom.tags.input.value);
+		self.data.tags = TagManager.Str2IDs(self.dom.tags.input.value.toLowerCase());
 		// tags changed since the last post
 		if ( self.data.tags.join() != self.post.tags.join() ) {
 			// drop flag or copy of tags
@@ -267,7 +267,7 @@ var NoteEditor = new function () {
 					self.dom.tags.icon.src = 'img/field_flag_ok.png';
 				}
 				// fill current tags data
-				self.dom.tags.input.value = TagManager.IDs2Str(self.data.tags);
+				self.dom.tags.input.value = TagManager.IDs2Str(self.data.tags).toLowerCase();
 				// confirm posted tags
 				self.post.tags = self.data.tags.slice();
 				// clear deleted entries list
@@ -815,7 +815,7 @@ var NoteEditor = new function () {
 			},
 			processData: function(data){
 				// get tags array
-				var result = [], tags = self.dom.tags.input.value.match(/(\S+)/g);
+				var result = [], tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
 				// truncate available suggestion options
 				data.each(function(item){
 					if ( !tags.has(item[0]) ) result.push(item);
@@ -1039,7 +1039,7 @@ var NoteEditor = new function () {
 		// compile all blocks together
 		Build();
 		// tags plain string
-		this.dom.tags.input.value = tag;
+		this.dom.tags.input.value = tag.toLowerCase();
 		SetTitleIcon();
 		// focus to the first input
 		this.dom.entries.childNodes[0].dom.data.focus();
@@ -1074,7 +1074,7 @@ var NoteEditor = new function () {
 		// compile all blocks together
 		Build();
 		// tags plain string
-		this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags);
+		this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
 		SetTitleIcon();
 		if ( console.timeEnd ) console.timeEnd('entry load');
 	};
@@ -1089,7 +1089,7 @@ var NoteEditor = new function () {
 	var SetTitleIcon = function ( icon ) {
 		if ( !icon ) {
 			icon = 'img/tag_note.png';
-			var tags = self.dom.tags.input.value.match(/(\S+)/g);
+			var tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
 			// check parsed string
 			if ( tags && tags instanceof Array ) {
 				// iterate words in the input string
@@ -1170,8 +1170,7 @@ var NoteEditor = new function () {
 					}
 				}
 				// still no changes so check tags
-				//fb(TagsChanged(this.dom.tags.input.value, this.post.tags), this.dom.tags.input.value, this.post.tags);
-				if ( !flag && TagsChanged(this.dom.tags.input.value, this.post.tags) ) flag = true;
+				if ( !flag && TagsChanged(this.dom.tags.input.value.toLowerCase(), this.post.tags) ) flag = true;
 			}
 		}
 		return flag;
