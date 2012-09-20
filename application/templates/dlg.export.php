@@ -43,7 +43,7 @@
 									if ( export_data.tags[id_tag] ) tags.push(App.Decode(export_data.tags[id_tag], true));
 								});
 								if ( tags.length > 0 ) {
-									DlgExport.dom.text.value += 'tags: ' + tags.join(', ') + "\n";
+									DlgExport.dom.text.value += 'tags: ' + tags.join(' ') + "\n";
 								}
 							}
 							DlgExport.dom.text.value += "\n";
