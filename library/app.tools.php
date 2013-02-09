@@ -125,9 +125,9 @@ function matrix_column ( $data, $field ) {
 /**
  * Creates compacted arrays
  * replace key names with indexes and creates additional dictionary
- * @param type $data
- * @param type $defn
- * @return type
+ * @param array $data
+ * @param array $defn
+ * @return array
  */
 function array_pack ( $data, $defn = array() ) {
 	$result = array();
@@ -159,12 +159,8 @@ function array_pack ( $data, $defn = array() ) {
  * Sends the given data to the FirePHP Firefox Extension.
  * The data can be displayed in the Firebug Console or in the "Server" request tab.
  * @see http://www.firephp.org/Wiki/Reference/Fb
- * @param mixed $Object
- * @throws Exception
  */
 function fb() {
 	$callback = PHP_SAPI === 'cli' ? 'var_dump' : array(FirePHP::getInstance(true), 'fb');
 	call_user_func_array($callback, func_get_args());
 }
-
-?>

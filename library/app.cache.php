@@ -70,6 +70,7 @@ class cache {
 	 * if value set then setting otherwise - requesting
 	 * @param string $file full file name
 	 * @param mixed $value var value to set
+	 * @return mixed cached value
 	 */
 	public static function file ( $file, $value = null ) {
 		if ( $value === null && file_exists($file) ) {
@@ -269,5 +270,3 @@ class cache {
 	}
 
 }
-
-?>

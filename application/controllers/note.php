@@ -93,7 +93,7 @@ class note extends controller {
 
 	/**
 	 * Deletes the note
-	 * @param int $id_note link to the note
+	 * @param string [$flag] delete parameter
 	 */
 	function delete ( $flag = '' ) {
 		$result = array();
@@ -239,6 +239,7 @@ class note extends controller {
 	/**
 	 * Checks entry and removes keys not existing in the note_entries column list
 	 * @param array $entry list of fields to be check (better not to pass by reference)
+	 * @return array
 	 */
 	private function entry_validate ( $entry ) {
 		// get table column list
@@ -381,7 +382,6 @@ class note extends controller {
 	 * 2. prepares the list of ids creating new if an encrypted string is given
 	 * 3. does bulk ids insert and clears user tags cache if necessary
 	 * @param int $id_user link to the owner
-	 * @param array $entries list of note entries
 	 * @param int $id_note link to note
 	 * @return array list of tag ids
 	 */
@@ -427,5 +427,3 @@ class note extends controller {
 	}
 
 }
-
-?>

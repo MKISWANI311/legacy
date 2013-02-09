@@ -140,5 +140,3 @@ class user extends controller {
 	}
 
 }
-
-?>

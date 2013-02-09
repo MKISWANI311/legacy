@@ -19,5 +19,3 @@ include PATH_LIBRARY . 'app.cache.php';
 
 // all the magic
 app::run();
-
-?>

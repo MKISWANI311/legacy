@@ -36,5 +36,3 @@ class front extends controller {
 	}
 
 }
-
-?>
