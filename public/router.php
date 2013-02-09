@@ -1,4 +1,9 @@
 <?php
+/**
+ * PHP built-in web server support
+ * use case:
+ *   php -S localhost:8000 router.php
+ */
 
 // check url
 if ( preg_match('/\/(?:css|captcha|forum|img|js)\/./', $_SERVER['REQUEST_URI']) ) {
@@ -20,5 +25,3 @@ include PATH_LIBRARY . 'app.cache.php';
 
 // all the magic
 app::run();
-
-?>
