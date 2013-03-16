@@ -204,8 +204,8 @@ function elattr ( obj, attr ) {
  * Creates a DOMElement with given options
  * @param name html element name (a, img, div, ...)
  * @param attr list of attributes with values
- * @param data inner html value
- * @param handlers list of DOMElement event handlers (onclick, onload, ...)
+ * @param [data] inner html value
+ * @param [handlers] list of DOMElement event handlers (onclick, onload, ...)
  * @return DOMElement
  * @example element('link', {rel:'stylesheet', type:'text/css', href:'http://some.url/'});
  */
@@ -278,18 +278,35 @@ function time_data ( timestamp ) {
 }
 
 
+/**
+ * Password generator with SJCL entropy mechanism
+ * @param {Number} length size of the result password
+ * @return {String}
+ */
 function pwdgen ( length ) {
-    var charset = "abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-		letters = [], letter = null, result = "";
+    var charset = "abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&{}()[]=+?*<>;,.:-_",
+		letters = [], letter, result = "";
 	while ( result.length < length ) {
+		letter = null;
 		// generate a char
-		letter = charset.charAt(Math.floor(Math.random() * charset.length));
-		// check if not a duplicate
-		if ( letters.indexOf(letter.toLowerCase()) < 0 ) {
-			// fill already used chars list
-			letters.push(letter.toLowerCase());
-			// fill the result
-			result += letter;
+		if ( sjcl.random.isReady() ) {
+			// get
+			letter = String.fromCharCode(parseInt(sjcl.codec.hex.fromBits(sjcl.random.randomWords(1)).substr(0,2), 16));
+			fb(letter);
+			// invalidate if not in dictionary
+			if ( charset.indexOf(letter) === -1 ) letter = null;
+		} else {
+			letter = charset.charAt(Math.floor(Math.random() * charset.length));
+		}
+		// something is found
+		if ( letter ) {
+			// check if not a duplicate
+			if ( letters.indexOf(letter.toLowerCase()) < 0 ) {
+				// fill already used chars list
+				letters.push(letter.toLowerCase());
+				// fill the result
+				result += letter;
+			}
 		}
 	}
     return result;

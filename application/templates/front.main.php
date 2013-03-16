@@ -56,6 +56,19 @@
 			App.Subscribe(NoteList);
 			App.Subscribe(NoteFilter);
 			App.Subscribe(NoteEditor);
+
+			// start entropy collection
+			sjcl.random.startCollectors();
+			// check each 5 sec if has enough
+			var collect_timer = setInterval(function(){
+				if ( sjcl.random.isReady() ) {
+					fb('Entropy collected');
+					// has enough
+					sjcl.random.stopCollectors();
+					// stop checking
+					clearInterval(collect_timer);
+				}
+			}, 5000);
 		});
 
 		// logoff
