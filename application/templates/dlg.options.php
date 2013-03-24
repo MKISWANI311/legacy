@@ -16,8 +16,37 @@
 						window.location = 'user/export/zip';
 					}}), ' ',
 					element('input', {type:'button', className:'button long', value:'Restore backup', onclick:function(){
-						alert('Not implemented.');
-					}}),
+						var files = $('#file-upload')[0].files;
+						if ( files.length < 1 ) {
+							alert('Please select a file before clicking "Restore backup"');
+							return;
+						}
+						var btn = this;
+						btn.value = 'Uploading ...';
+						btn.disabled = true;
+						var data = new FormData();
+						data.append('file', files[0]);
+						$.ajax({
+							url: 'user/import/zip', 
+							data: data,
+							cache: false,
+							contentType: false,
+							processData: false,
+							type: 'POST',
+							dataType: 'json',
+							success: function(data) {
+								btn.value = 'Restore backup';
+								btn.disabled = false;
+								if ( data && data.error ) {
+									alert('Restore from backup failed. Error: ' + data.error);
+								} else {
+									// We must reload the whole page to update data_tags
+									window.location.reload();
+								}
+							},
+						});
+					}}), ' ',
+					element('input', {type:'file', name:'file', id:'file-upload'}),
 					element('br'),
 					element('br'),
 					element('div', {}, "It's possible to export all the data in a human readable form in order to print it or save in file on some storage. It'll give all the data in plain unencrypted form. The password is required."),

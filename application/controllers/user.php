@@ -139,4 +139,169 @@ class user extends controller {
 		}
 	}
 
+	function import ( $type = '' ) {
+		$result = array();
+		if ( $type != 'zip' ) {
+			$result['error'] = 'Import type must be zip';
+		} else if ( !isset($_FILES['file']) ) {
+			$result['error'] = 'No file was uploaded';
+		} else if ( $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE ) {
+			$result['error'] = 'Upload failed because the file is too large (maximum ' . ini_get('upload_max_filesize') . ')';
+		} else if ( $_FILES['file']['error'] != UPLOAD_ERR_OK ) {
+			$result['error'] = 'Upload failed. Error number: ' . $_FILES['file']['error'];
+		} else if ( $_FILES['file']['size'] == 0 ) {
+			$result['error'] = 'Uploaded file size is zero';
+		} else {
+			$handle = fopen($_FILES['file']['tmp_name'], 'rb');
+			if ( $handle ) {
+				$compressed = fread($handle, $_FILES['file']['size']);
+				if ( $compressed ) {
+					$decompressed = gzdecode($compressed);
+					if ( $decompressed ) {
+						$json = json_decode($decompressed, true);
+						if ( !is_null($json) ) {
+							$result = self::import_json($json);
+						} else {
+							$result['error'] = 'Failed to decode JSON';
+						}
+					} else {
+						$result['error'] = 'Failed to decompress the file';
+					}
+				} else {
+					$result['error'] = 'Failed to read the file';
+				}
+				fclose($handle);
+			} else {
+				$result['error'] = 'Error opening temporary file';
+			}
+		}
+		response::json($result);
+	}
+
+	private function import_json ( $import ) {
+		$result = array();
+		// check if logged in
+		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
+			if ( db::begin() ) {
+				$dberror = false;
+
+				// First we obtain a list of all the IDs of the existing records, so
+				// that we can selectively delete them later.
+				$dbresult = db::query('select id from tags where id_user = @i', $id_user);
+				if ( $dbresult === false )
+					$dberror = true;
+				else
+				{
+					$existing_tags = matrix_column($dbresult, 'id');
+					$result['num_tags_old'] = count($existing_tags);
+				}
+				$dbresult = db::query('select id from notes where id_user = @i', $id_user);
+				if ( $dbresult === false )
+					$dberror = true;
+				else
+				{
+					$existing_notes = matrix_column($dbresult, 'id');
+					$result['num_notes_old'] = count($existing_notes);
+				}
+				$dbresult = db::query('select id from note_entries where id_note in (select id from notes where id_user = @i)', $id_user);
+				if ( $dbresult === false )
+					$dberror = true;
+				else
+				{
+					$existing_note_entries = matrix_column($dbresult, 'id');
+					$result['num_note_entries_old'] = count($existing_note_entries);
+				}
+				$dbresult = db::query('select id from entry_values where id_entry in (select id from note_entries where id_note in (select id from notes where id_user = @i))', $id_user);
+				if ( $dbresult === false )
+					$dberror = true;
+				else
+				{
+					$existing_entry_values = matrix_column($dbresult, 'id');
+					$result['num_entry_values_old'] = count($existing_entry_values);
+				}
+
+				// Insert the imported records
+				$new_tags = array(); // a mapping from old id to new id
+				foreach ( $import['tags'] as $id => $record ) {
+					$record['id_user'] = $id_user;
+					$dbresult = db::insert('tags', $record);
+					if ( $dbresult === false )
+						$dberror = true;
+					else
+						$new_tags[$id] = $dbresult;
+				}
+				$result['num_tags_new'] = count($new_tags);
+
+				$new_notes = array(); // a mapping from old id to new id
+				foreach ( $import['notes'] as $id => $record ) {
+					$record['id_user'] = $id_user;
+					$dbresult = db::insert('notes', $record);
+					if ( $dbresult === false )
+						$dberror = true;
+					else
+						$new_notes[$id] = $dbresult;
+				}
+				$result['num_notes_new'] = count($new_notes);
+
+				$result['num_note_tags_new'] = 0;
+				foreach ( $import['note_tags'] as $record ) {
+					$record['id_tag'] = $new_tags[$record['id_tag']];
+					$record['id_note'] = $new_notes[$record['id_note']];
+					if ( db::insert('note_tags', $record) === false )
+						$dberror = true;
+					else
+						$result['num_note_tags_new']++;
+				}
+
+				$new_note_entries = array(); // a mapping from old id to new id
+				foreach ( $import['note_entries'] as $id => $record ) {
+					$record['id_note'] = $new_notes[$record['id_note']];
+					$dbresult = db::insert('note_entries', $record);
+					if ( $dbresult === false )
+						$dberror = true;
+					else
+						$new_note_entries[$id] = $dbresult;
+				}
+				$result['num_note_entries_new'] = count($new_note_entries);
+
+				$result['num_entry_values_new'] = 0;
+				foreach ( $import['entry_values'] as $id => $record ) {
+					$record['id_entry'] = $new_note_entries[$record['id_entry']];
+					if ( db::insert('entry_values', $record) === false )
+						$dberror = true;
+					else
+						$result['num_entry_values_new']++;
+				}
+
+				// Delete the old records that existed before the import
+				if ( count($existing_entry_values) > 0 )
+					$dberror = $dberror || (db::delete('entry_values', 'id in @li', $existing_entry_values) === false);
+				if ( count($existing_note_entries) > 0 )
+					$dberror = $dberror || (db::delete('note_entries', 'id in @li', $existing_note_entries) === false);
+				if ( count($existing_notes) > 0 )
+					$dberror = $dberror || (db::delete('note_tags', 'id_note in @li', $existing_notes) === false);
+				if ( count($existing_notes) > 0 )
+					$dberror = $dberror || (db::delete('notes', 'id_user = @i and id in @li', $id_user, $existing_notes) === false);
+				if ( count($existing_tags) > 0 )
+					$dberror = $dberror || (db::delete('tags', 'id_user = @i and id in @li', $id_user, $existing_tags) === false);
+
+				if ( $dberror )
+				{
+					$result['error'] = 'Database error';
+					db::rollback();
+				}
+				else
+				{
+					db::commit();
+					cache::user_clear('tags');
+					cache::user_clear('searches');
+				}
+			} else {
+				$result['error'] = 'Begin transaction failed';
+			}
+		} else {
+			$result['error'] = 'Not logged in';
+		}
+		return $result;
+	}
 }
