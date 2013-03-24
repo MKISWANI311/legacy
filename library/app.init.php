@@ -5,11 +5,13 @@
 
 date_default_timezone_set('UTC');
 
-// database configuration
-db::$dsn  = 'mysql:unix_socket=/var/run/mysqld/mysqld.sock;dbname=fortnotes;charset=utf8';
+/* mysql example database configuration
+db::$dsn  = 'mysql:host=localhost;dbname=fortnotes;charset=utf8';
 db::$user = 'fortnotes';
-db::$pass = 'LvbMRHGD7q9uiKeyP03C';
+db::$pass = 'some-strong-password';*/
 
+// sqlite database configuration
+db::$dsn = 'sqlite:../db.sqlite';
 db::$onenginit = function () {
 	// try to import data from the external previously generated struct file
 	if ( ($data = include PATH_CACHE . 'db.struct.php') && is_array($data) ) db::$struct = $data;
@@ -77,5 +79,3 @@ register_shutdown_function(function(){
 	if ( $error )
 		MainErrorHandler($error['type'], $error['message'], $error['file'], $error['line'], null);
 });
-
-?>

@@ -152,7 +152,7 @@ class app {
 					die("Action " . self::$method . " does not exist!");
 				}
 			} else {
-				die("Class $class does not exist!");
+				die('Class ' . self::$class . ' does not exist!');
 			}
 		} else {
 			die("Controller $controller does not exist!");
@@ -188,7 +188,7 @@ class response {
 		header('Content-Type: application/x-download');
 		//header('Content-Encoding: gzip');
 		header('Content-Length: ' . strlen($data));
-		header('Content-Disposition: attachment; filename="export.zip"');
+		header('Content-Disposition: attachment; filename="fortnotes.export.'.date('Ymd').'.zip"');
 		header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
 		header('Pragma: no-cache');
 		// output data
@@ -200,6 +200,7 @@ class response {
 	 * @param mixed $data data to be converted to json and sent to user
 	 * @param boolean $israw flag shows if it is necessary to convert data to json, if false - data is already json
 	 * @param boolean $gzip flag shows if it is necessary to gzip the data and add gzip headers
+	 * @return string
 	 */
 	public static function json ( $data, $israw = true, $gzip = false ) {
 		// prepare data if necessary

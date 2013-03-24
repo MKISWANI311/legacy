@@ -37,18 +37,6 @@ String.prototype.rtrim = function() {
 
 
 /**
- * Associative Array size
- */
-function AASize ( array ) {
-	var size = 0;
-	if ( array ) {
-		for ( var el in array ) {size++;}
-	}
-	return size;
-}
-
-
-/**
  * Firebug debug compatible with IE
  * free list of params
  */
@@ -192,7 +180,6 @@ function elattr ( obj, attr ) {
 	// check if DOMElement
 	if ( obj && obj.nodeType && attr && attr instanceof Object ) {
 		for ( var akey in attr ) {
-			//obj.setAttribute(akey, attr[akey]);
 			obj[akey] = attr[akey];
 		}
 	}
@@ -206,7 +193,7 @@ function elattr ( obj, attr ) {
  * @param attr list of attributes with values
  * @param [data] inner html value
  * @param [handlers] list of DOMElement event handlers (onclick, onload, ...)
- * @return DOMElement
+ * @return {Node}
  * @example element('link', {rel:'stylesheet', type:'text/css', href:'http://some.url/'});
  */
 function element ( name, attr, data, handlers ) {
@@ -250,6 +237,7 @@ function tblrow ( obj, cells, attrs ) {
 /**
  * converts date from timestamp to simple date string
  * 1209589200 -> 2012.02.03 00:23
+ * @return {String}
  */
 function TimestampToDateStr ( tstamp ) {
 	var theDate = tstamp ? new Date(tstamp * 1000) : new Date();
@@ -292,7 +280,6 @@ function pwdgen ( length ) {
 		if ( sjcl.random.isReady() ) {
 			// get
 			letter = String.fromCharCode(parseInt(sjcl.codec.hex.fromBits(sjcl.random.randomWords(1)).substr(0,2), 16));
-			fb(letter);
 			// invalidate if not in dictionary
 			if ( charset.indexOf(letter) === -1 ) letter = null;
 		} else {

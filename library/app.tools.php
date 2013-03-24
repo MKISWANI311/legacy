@@ -104,8 +104,8 @@ function matrix_group ( $data, $grpfld, $ordfld = null, $valfld = null ) {
 /**
  * Slice the column of values from the data array
  * insert null if no cell with such key
- * @param type $data at least two-dimensional array
- * @param type $field name of the field to be extracted
+ * @param array $data at least two-dimensional array
+ * @param string $field name of the field to be extracted
  * @return array
  * @example $field: 'type' and $data:
  *   [{id:1,type:5,data:11},{id:2,type:5,data:22},{id:3,type:6,data:33},{id:4,data:44}]

@@ -8,8 +8,8 @@
 	<link rel="icon" type="image/gif" href="img/castle.png"/>
 	<link rel="stylesheet" type="text/css" href="css/all.css"/>
 	<script type="text/javascript" src="js/all.js"></script>
-	<script type="text/javascript" src="http://userapi.com/js/api/openapi.js?49"></script>
-	<script type="text/javascript" src="http://vkontakte.ru/js/api/openapi.js" charset="windows-1251"></script>
+<!--	<script type="text/javascript" src="http://userapi.com/js/api/openapi.js?49"></script>
+	<script type="text/javascript" src="http://vkontakte.ru/js/api/openapi.js" charset="windows-1251"></script>-->
 	<script type="text/javascript">
 		// the DOM is ready
 		$(function() {
@@ -17,21 +17,21 @@
 		});
 
 		// Google Analytics
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-31029268-1']);
-		_gaq.push(['_trackPageview']);
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
+//		var _gaq = _gaq || [];
+//		_gaq.push(['_setAccount', 'UA-31029268-1']);
+//		_gaq.push(['_trackPageview']);
+//		(function() {
+//			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+//			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+//			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+//		})();
 
 		// Google+
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'https://apis.google.com/js/plusone.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
+//		(function() {
+//			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+//			po.src = 'https://apis.google.com/js/plusone.js';
+//			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+//		})();
 	</script>
 	<style type="text/css">
 		.top {
@@ -67,13 +67,13 @@
 <body>
 	<div id="fb-root"></div>
 	<script>
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/ru_RU/all.js#xfbml=1";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
+//		(function(d, s, id) {
+//			var js, fjs = d.getElementsByTagName(s)[0];
+//			if (d.getElementById(id)) return;
+//			js = d.createElement(s); js.id = id;
+//			js.src = "//connect.facebook.net/ru_RU/all.js#xfbml=1";
+//			fjs.parentNode.insertBefore(js, fjs);
+//		}(document, 'script', 'facebook-jssdk'));
 	</script>
 	<table class="maxh maxw" style="background-color:#eee">
 		<tr style="height:800px">
@@ -159,7 +159,7 @@
 						<a onclick="DlgUserRegister.Show()"><img src="img/btn.register.png"/></a>
 					</td>
 					<td style="width:300px; vertical-align:top">
-						<g:plusone size="medium" width="80"></g:plusone>
+<!--						<g:plusone size="medium" width="80"></g:plusone>
 						<a href="https://twitter.com/share" class="twitter-share-button">tweet</a>
 						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 						<div id="vk_like" style="margin:5px 0"></div>
@@ -167,7 +167,7 @@
 							VK.init({apiId: 2918108, onlyWidgets: true});
 							VK.Widgets.Like("vk_like", {type: "button", height: 20});
 						</script>
-						<div class="fb-like" data-send="false" data-layout="button_count" data-width="150" data-show-faces="false" data-font="verdana"></div>
+						<div class="fb-like" data-send="false" data-layout="button_count" data-width="150" data-show-faces="false" data-font="verdana"></div>-->
 					</td>
 				</tr>
 			</table>

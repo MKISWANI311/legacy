@@ -63,3 +63,7 @@
 .dialogmodal .footer .button {
 	margin-left: 8px;
 }
+
+.dialogmodal .desc { margin-bottom:5px; margin-top:15px }
+.dialogmodal .desc:first-of-type { margin-top:0 }
+.dialogmodal .fhint { display:inline-block; padding-left:10px; vertical-align:top; padding-top:3px; width:300px; text-overflow:ellipsis; overflow: hidden; white-space:nowrap; color:#816C5B }

@@ -51,6 +51,13 @@
 			},
 
 			controls : {
+				'Log off' : {
+					main    : false,
+					onClick : function(){
+						this.modal.Close();
+						SignOut();
+					}
+				},
 				'Continue' : {
 					main    : true,
 					onClick : function(){

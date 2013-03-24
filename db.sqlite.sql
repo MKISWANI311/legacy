@@ -1,3 +1,9 @@
+/**
+ * Sqlite db initialization, default tables and data creation
+ */
+
+/* clear previous data */
+
 drop table if exists entry_types;
 drop table if exists entry_values;
 drop table if exists note_entries;
@@ -8,6 +14,7 @@ drop table if exists users;
 drop table if exists template_entries;
 drop table if exists templates;
 
+/* tables creation */
 
 CREATE TABLE "entry_types" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,
@@ -86,6 +93,8 @@ CREATE TABLE "users" (
 	"ltime" INTEGER DEFAULT 0
 );
 
+/* indexes creation */
+
 CREATE INDEX "entry_values_idx_id_entry" ON "entry_values" ("id_entry");
 CREATE INDEX "users_idx_name" ON "users" ("name");
 CREATE INDEX "notes_idx_id_user" ON "notes" ("id_user");
@@ -96,6 +105,7 @@ CREATE INDEX "tags_idx_id_user" ON "tags" ("id_user");
 CREATE INDEX "template_entries_idx_id_template" ON "template_entries" ("id_template");
 CREATE INDEX "templates_idx_id_user" ON "templates" ("id_user");
 
+/* default data insertion */
 
 insert into entry_types (id, max, name, description) values
 	(1, 1024,  'line',	'title or short one line text description'),

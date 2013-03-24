@@ -389,6 +389,8 @@ class note extends controller {
 		$result = array();
 		// check input
 		if ( $id_user && $id_note && isset($_REQUEST['tags']) ) {
+			// is necessary to clear user tags cache
+			$flag_clear_cache = false;
 			// start update clearing all previous tags
 			// some tags were removed so tags cache should be cleared
 			if ( db::delete('note_tags', 'id_note = @i', $id_note) ) $flag_clear_cache = true;
@@ -396,8 +398,6 @@ class note extends controller {
 			if ( ($tags = $_REQUEST['tags']) && is_array($tags) ) {
 				// list of params for bulk insert to note_tags table
 				$data = array();
-				// is necessary to clear user tags cache
-				$flag_clear_cache = false;
 				// iterate all
 				foreach ( $tags as $tag ) {
 					// check tag
