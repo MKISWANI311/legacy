@@ -6,3 +6,4 @@
 ^logs$
 ^cache$
 ^public/forum$
+^db.sqlite$

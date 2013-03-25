@@ -278,7 +278,7 @@ var NoteList = new function () {
 						self.SetNotesState(visible, 'marked');
 						self.UpdateCtrlBlock(true);
 					}})
-				]),
+				])
 			]);
 		}
 		// get the list of checked notes

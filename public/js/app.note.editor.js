@@ -810,6 +810,9 @@ var NoteEditor = new function () {
 			delay: 200,
 			data: data,
 			showResult: function(tag){
+				// degradation fix
+				return tag;
+
 				// wrap to div with icon
 				return '<div class="tag">' + tag + '</div>';
 			},

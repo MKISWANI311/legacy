@@ -381,6 +381,9 @@ var NoteFilter = new function () {
 			delay: 200,
 			data: [true],
 			showResult: function(tag){
+				// degradation fix
+				return tag;
+
 				var hint = '', fcmd = tag.charAt(0) == ':';
 				if ( fcmd ) {
 					hint = '<div class="hint">' + hint_cmd[tag] + '</div>';
