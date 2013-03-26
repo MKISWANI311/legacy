@@ -10,12 +10,8 @@
 
 			onCreate : function(){
 				var file = element('input', {type:'file', name:'file', id:'file-upload', onchange:function(){
-					if ( this.files[0].type === 'application/zip' ) {
-						hint.innerHTML = this.value;
-						fbtn.value = 'File selected';
-					} else {
-						alert('The selected file has an invalid type. Please select a zip archive package.');
-					}
+					hint.innerHTML = this.value;
+					fbtn.value = 'File selected';
 				}});
 				var fbtn = element('input', {type:'button', className:'button long', value:'Choose file ...', onclick:function(){
 					$(file).trigger('click');
@@ -30,11 +26,6 @@
 					element('div', {className:'desc'}, "Please specify your previuosly downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
 					element('div', {}, [
 						element('input', {type:'button', className:'button long', value:'Restore backup', onclick:function(){
-							// file selected
-							if ( file.files.length === 0 || file.files[0].type !== 'application/zip' ) {
-								alert('Please select a zip file with backup data first.');
-								return;
-							}
 							var btn = this;
 							btn.value = 'Uploading ...';
 							btn.disabled = true;
