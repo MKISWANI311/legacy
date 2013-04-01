@@ -112,9 +112,15 @@ class user extends controller {
 	 */
 	function export ( $type = 'plain' ) {
 		$type = strtolower(trim($type));
-		$data = array();
+		$data = [];
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
+			// metadata
+			$data['info'] = [
+				'hash'    => $_SESSION['user']['hash'],
+				'time'    => time(),
+				'version' => 1  // format version
+			];
 			if ( $type == 'plain' ) {
 				$data['tags'] = matrix_order(db::query('select id,name from tags where id_user = @i', $id_user), 'id', 'name');
 				$data['note_tags'] = matrix_group(db::query('select id_note,id_tag from note_tags where id_note in (select id from notes where id_user = @i)', $id_user), 'id_note');
