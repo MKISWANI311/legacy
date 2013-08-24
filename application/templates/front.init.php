@@ -4,34 +4,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="keywords" content="security online password manager AES encryption"/>
 	<meta name="description" content="FortNotes Online Password Manager is a highly secure open-source private information storing platform based on the AES encryption in the browser. Fort Knox for your notes."/>
-	<meta name="netinsert" content="0.0.1.3.3.2.1">
 	<link rel="icon" type="image/gif" href="img/castle.png"/>
 	<link rel="stylesheet" type="text/css" href="css/all.css"/>
 	<script type="text/javascript" src="js/all.js"></script>
-<!--	<script type="text/javascript" src="http://userapi.com/js/api/openapi.js?49"></script>
-	<script type="text/javascript" src="http://vkontakte.ru/js/api/openapi.js" charset="windows-1251"></script>-->
 	<script type="text/javascript">
 		// the DOM is ready
 		$(function() {
 			$.modal.defaults.opacity = 50;
 		});
-
-		// Google Analytics
-//		var _gaq = _gaq || [];
-//		_gaq.push(['_setAccount', 'UA-31029268-1']);
-//		_gaq.push(['_trackPageview']);
-//		(function() {
-//			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-//			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-//			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-//		})();
-
-		// Google+
-//		(function() {
-//			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-//			po.src = 'https://apis.google.com/js/plusone.js';
-//			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-//		})();
 	</script>
 	<style type="text/css">
 		.top {
@@ -65,23 +45,9 @@
 	<?php response::template('dlg.user.register') ?>
 </head>
 <body>
-	<div id="fb-root"></div>
-	<script>
-//		(function(d, s, id) {
-//			var js, fjs = d.getElementsByTagName(s)[0];
-//			if (d.getElementById(id)) return;
-//			js = d.createElement(s); js.id = id;
-//			js.src = "//connect.facebook.net/ru_RU/all.js#xfbml=1";
-//			fjs.parentNode.insertBefore(js, fjs);
-//		}(document, 'script', 'facebook-jssdk'));
-	</script>
 	<table class="maxh maxw" style="background-color:#eee">
 		<tr style="height:800px">
 			<td class="body_wrapper" style="padding:10px 100px 10px 100px">
-<!--				<div style="margin:3px auto 0 auto; width:800px; height:30px; text-align:right; padding:2px">
-					<a><img src="img/lang/en.png"/></a>
-					<a><img src="img/lang/ru.png"/></a>
-				</div>-->
 				<table class="body_content" style="width:800px; height:800px">
 					<tr class="fade" style="height:30px;">
 						<td colspan="2" style="font-size:14px; color:#888; padding:5px; text-align:center">
@@ -99,7 +65,7 @@
 						</td>
 					</tr>
 					<tr class="fade" style="height:30px; text-align:center; color:#999">
-						<td colspan="2">Copyright © 2012 FortNotes. All rights reserved.</td>
+						<td colspan="2">Copyright © 2013 FortNotes. All rights reserved.</td>
 					</tr>
 				</table>
 			</td>
@@ -117,24 +83,6 @@
 							<span style="color:#aaa;font-size:10px;margin:0 6px">256b</span>
 						</a></td>
 					</tr>
-					<tr>
-						<td colspan="5">
-<!--							<br>
-							<div style="text-align:center">
-								<script type="text/javascript">
-								google_ad_client = "ca-pub-9617280891760602";
-								/* fortnotes.bottom */
-								google_ad_slot = "1383117777";
-								google_ad_width = 468;
-								google_ad_height = 60;
-								//
-								</script>
-								<script type="text/javascript"
-								src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-								</script>
-							</div>-->
-						</td>
-					</tr>
 				</table>
 			</td>
 		</tr>
@@ -146,10 +94,6 @@
 				<tr>
 					<td style="width:300px; text-align:right">
 						<a href="/">
-<!--							<span style="font-size:24px; color:#aaa; font-weight:normal; text-shadow:0 1px 2px #666; padding:0px">
-								<span style="font-size:30px; color:#333; font-weight:bold; font-style: italic">F</span>ort
-								<span style="font-size:30px; color:#333; font-weight:bold; font-style: italic">N</span>otes
-							</span>-->
 							<img src="img/logo.png"/>
 						</a>
 					</td>
@@ -157,17 +101,6 @@
 						<b style="color:#FF6600">Start using it now!</b><br><br>
 						<a onclick="DlgUserLogin.Show()"><img src="img/btn.login.png"/></a>
 						<a onclick="DlgUserRegister.Show()"><img src="img/btn.register.png"/></a>
-					</td>
-					<td style="width:300px; vertical-align:top">
-<!--						<g:plusone size="medium" width="80"></g:plusone>
-						<a href="https://twitter.com/share" class="twitter-share-button">tweet</a>
-						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-						<div id="vk_like" style="margin:5px 0"></div>
-						<script type="text/javascript">
-							VK.init({apiId: 2918108, onlyWidgets: true});
-							VK.Widgets.Like("vk_like", {type: "button", height: 20});
-						</script>
-						<div class="fb-like" data-send="false" data-layout="button_count" data-width="150" data-show-faces="false" data-font="verdana"></div>-->
 					</td>
 				</tr>
 			</table>

@@ -77,7 +77,7 @@ class user extends controller {
 //	}
 
 	/**
-	 * Captcha imgage to test if a user
+	 * Captcha image to test if a user
 	 */
 	function captcha () {
 		$result = array();
@@ -102,6 +102,7 @@ class user extends controller {
 			setcookie(session_name(), '', INIT_TIMESTAMP - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
 			return session_destroy();
 		}
+		return false;
 	}
 
 	/**
@@ -112,15 +113,15 @@ class user extends controller {
 	 */
 	function export ( $type = 'plain' ) {
 		$type = strtolower(trim($type));
-		$data = [];
+		$data = array();
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
 			// metadata
-			$data['info'] = [
+			$data['info'] = array(
 				'hash'    => $_SESSION['user']['hash'],
 				'time'    => time(),
 				'version' => 1  // format version
-			];
+			);
 			if ( $type == 'plain' ) {
 				$data['tags'] = matrix_order(db::query('select id,name from tags where id_user = @i', $id_user), 'id', 'name');
 				$data['note_tags'] = matrix_group(db::query('select id_note,id_tag from note_tags where id_note in (select id from notes where id_user = @i)', $id_user), 'id_note');
@@ -200,7 +201,7 @@ class user extends controller {
 	/**
 	 * Clears old data and insert the data from uploaded backup
 	 * @param array $import backup data to restore
-	 * @return array operation status and records statistics
+	 * @return array operation status and records statistics or false on failure
 	 */
 	private function import_json ( $import ) {
 		$result = array();
@@ -223,7 +224,7 @@ class user extends controller {
 			// Insert the imported records
 			// with mapping from old id to new id
 
-			$new_tags = [];
+			$new_tags = array();
 			// validate import block
 			if ( isset($import['tags']) && is_array($import['tags']) ) {
 				foreach ( $import['tags'] as $id => $record ) {
@@ -235,7 +236,7 @@ class user extends controller {
 				}
 			}
 
-			$new_notes = [];
+			$new_notes = array();
 			// validate import block
 			if ( isset($import['notes']) && is_array($import['notes']) ) {
 				foreach ( $import['notes'] as $id => $record ) {
@@ -261,7 +262,7 @@ class user extends controller {
 				}
 			}
 
-			$new_note_entries = [];
+			$new_note_entries = array();
 			// validate import block
 			if ( isset($import['note_entries']) && is_array($import['note_entries']) ) {
 				foreach ( $import['note_entries'] as $id => $record ) {
@@ -318,5 +319,6 @@ class user extends controller {
 
 			return $result;
 		}
+		return false;
 	}
 }

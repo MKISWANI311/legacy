@@ -153,5 +153,3 @@ if( isset($_GET['_CAPTCHA']) ) {
 	imagepng($captcha);
 	
 }
-
-?>

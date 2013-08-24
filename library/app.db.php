@@ -201,6 +201,9 @@ class db {
 	 * @return int
 	 */
 	private static function sql_var_i ( $value ) {
+		// try to init if the first time
+		if ( !self::$pdo && !self::init() ) return false;
+		// convert
 		return intval($value);
 	}
 
@@ -221,6 +224,7 @@ class db {
 			}
 			return '(' . implode(',', $value) . ')';
 		}
+		return false;
 	}
 
 	/**
@@ -229,12 +233,15 @@ class db {
 	 * @return string
 	 */
 	private static function sql_var_li ( $value ) {
+		// try to init if the first time
+		if ( !self::$pdo && !self::init() ) return false;
 		// check input
 		if ( $value && is_array($value) ) {
 			// makes sure all array elements are integers
 			$value = array_map('intval', $value);
 			return '(' . implode(',', $value) . ')';
 		}
+		return false;
 	}
 
 	/**
@@ -650,6 +657,7 @@ class db {
 			}
 			return self::$struct;
 		}
+		return false;
 	}
 
 }

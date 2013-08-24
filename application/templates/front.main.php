@@ -104,16 +104,6 @@
 		function CacheClear ( param ) {
 			$.post('/front/clear/' + param, function(){});
 		}
-
-		// Google Analytics
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-31029268-1']);
-		_gaq.push(['_trackPageview']);
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
 	</script>
 
 	<?php response::template('dlg.export') ?>
@@ -132,17 +122,11 @@
 						</span>
 					</a>
 				</td>
-				<td align="left" style="padding:0px 10px">
-<!--					<img src="http://www.google.com/help/hc/images/adsense/adsense_185679_adformat-link_468x15_en.png"/>-->
-				</td>
+				<td align="left" style="padding:0px 10px"></td>
 				<td align="right" style="padding:0px 10px; width:500px">
 					<div style="position:relative;">
 						<div id="block_welcome">
 							<?php if ( !empty($_SESSION['user']['time']) ) echo '<span style="color:grey">session was started</span>&nbsp;&nbsp;<span style="font-weight:bold;font-size:10px;color:#333">' . date('Y.m.d H:i', $_SESSION['user']['time']) . '</span>'?>
-<!--							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
-							<a href="javascript:Settings()"><b>Settings</b></a>
-							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
-							<a href="javascript:CacheClear()"><b>Clear all</b></a>-->
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
 							<a href="javascript:DlgOptions.Show()"><b>Options</b></a>
 							&nbsp;<span style="color:#ccc;">|</span>&nbsp;
@@ -170,33 +154,10 @@
 								<td style="padding:10px; vertical-align:top">
 									<div class="notefilter"></div>
 									<div class="notelist"></div>
-<!--									<div style="text-align:center">
-										<script type="text/javascript">
-										google_ad_client = "ca-pub-9617280891760602";
-										/* fortnotes.bottom */
-										google_ad_slot = "1383117777";
-										google_ad_width = 468;
-										google_ad_height = 60;
-										//
-										</script>
-										<script type="text/javascript"
-										src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-										</script>
-									</div>-->
 								</td>
 								<td style="padding:10px; width:400px; vertical-align:top; min-height:800px;">
 									<div class="templatelist"></div>
 									<div class="noteeditor"></div>
-<!--									<div style="margin: 20px 0px; text-align:center">
-										<script type="text/javascript">
-											google_ad_client = "ca-pub-9617280891760602";
-											/* fortnotes.side */
-											google_ad_slot = "3540815500";
-											google_ad_width = 300;
-											google_ad_height = 250;
-										</script>
-										<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-									</div>-->
 								</td>
 							</tr>
 						</table>
@@ -214,11 +175,8 @@
 				</td>
 			</tr>
 			<tr class="fade" style="height:30px; text-align:center; color:#999;">
-				<td colspan="3" style="border-top: 1px solid #eee;">Copyright © 2012 FortNotes. All rights reserved.</td>
+				<td colspan="3" style="border-top: 1px solid #eee;">Copyright © 2013 FortNotes. All rights reserved.</td>
 			</tr>
-			<tr><td class="gradient" style="height:30px" colspan="3">
-				&nbsp;
-			</td></tr>
 		</table>
 	</td></tr>
 	</table>

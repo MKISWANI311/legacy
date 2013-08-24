@@ -34,7 +34,7 @@ class note extends controller {
 			// check note id in request
 			if ( $id_note && ($id_note = intval($id_note)) ) {
 				if ( ($result = db::queryFirstRow('select id,is_active,ctime,mtime,atime from notes where id = @i and id_user = @i limit 1', $id_note, $id_user)) ) {
-					// list of existig active note entries and values
+					// list of existing active note entries and values
 					$result['entries'] = db::query('select id,id_type,time,name,data from note_entries where is_active = 1 and id_note = @i order by place', $id_note);
 					$result['tags'] = db::queryFirstCol('select id_tag from note_tags where id_note = @i', $id_note);
 				} else {
@@ -201,7 +201,7 @@ class note extends controller {
 			$result['error'] = 'not authorized';
 		}
 		fb($result, 'search');
-		response::json($result);
+		return response::json($result);
 	}
 
 	/**
