@@ -447,18 +447,18 @@ class db {
 		{
 			// data is given and valid
 			if ( $data && is_array($data) ) {
-				// there are no subarrays by default
+				// there are no sub-arrays by default
 				$multi = false;
-				// even one subarray switch to multi
+				// even one sub-array switch to multi
 				foreach ( $data as $item ) if ( is_array($item) ) { $multi = true; break; }
 				// check if not array of arrays then make it so
 				if ( !$multi ) $data = array($data);
-				// remove empty and invalid subarrays
+				// remove empty and invalid sub-arrays
 				$data = array_filter($data, function($item){return $item && is_array($item);});
 				// remove fields with invalid names
 				foreach ( $data as & $item ) {
 					foreach ( $item as $index => $field ) {
-						// remove nonstrings
+						// remove non-strings
 						if ( !is_string($index) ) unset($item[$index]);
 						else {
 							// field name is string but there may be edge spaces
@@ -472,7 +472,7 @@ class db {
 					}
 					unset($item);
 				}
-				// the db struct is given so exclude invalid field names
+				// the db structure is given so exclude invalid field names
 				if ( self::$struct && isset(self::$struct[$table]) ) {
 					foreach ( $data as & $item ) {
 						$item = array_intersect_key($item, self::$struct[$table]);

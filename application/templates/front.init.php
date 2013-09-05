@@ -74,9 +74,9 @@
 			<td style="text-align:center; padding-bottom:10px; vertical-align:top">
 				<table style="margin:0 auto">
 					<tr>
-						<td style="padding:0 8px"><a href="http://www.lighttpd.net/"><img style="opacity:0.7;" src="img/logo.lighttpd.png"/></a></td>
+						<!--<td style="padding:0 8px"><a href="http://www.lighttpd.net/"><img style="opacity:0.7;" src="img/logo.lighttpd.png"/></a></td>-->
 						<td style="padding:0 0px"><a style="opacity:0.7; color:#666699; font-size:19px; font-style:italic; font-weight:bold;" href="http://php.net/">&nbsp;php&nbsp;</a></td>
-						<td style="padding:0 0px"><a style="opacity:0.7; color:#666699" href="http://php.net/">&nbsp;<span style="color:#4f5f83;font-size:19px">My</span><span style="color:#ad8931;font-size:19px">SQL</span>&nbsp;</a></td>
+						<td style="padding:0 0px"><a style="opacity:0.7; color:#666699" href="http://www.mysql.com/">&nbsp;<span style="color:#4f5f83;font-size:19px">My</span><span style="color:#ad8931;font-size:19px">SQL</span>&nbsp;</a></td>
 						<td style="padding:0 8px"><a href="http://jquery.com/"><img style="opacity:0.4; height:27px;" src="img/logo.jquery.png"/></a></td>
 						<td style="padding:0 5px"><a href="http://crypto.stanford.edu/sjcl/">
 							<span style="color:#aaa;font-size:18px;font-weight:bold;line-height:10px">AES</span><br>
@@ -141,7 +141,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a target="_blank" href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
+								<td colspan="2"><a target="_blank" href="http://forum.fortnotes.com/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -161,7 +161,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a target="_blank" href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
+								<td colspan="2"><a target="_blank" href="http://forum.fortnotes.com/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -180,7 +180,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a target="_blank" href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
+								<td colspan="2"><a target="_blank" href="http://forum.fortnotes.com/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -200,7 +200,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a target="_blank" href="http://fortnotes.com/forum/viewtopic.php?id=4">read more ...</a></td>
+								<td colspan="2"><a target="_blank" href="http://forum.fortnotes.com/viewtopic.php?id=4">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
@@ -219,7 +219,7 @@
 								</td>
 							</tr>
 							<tr class="more">
-								<td colspan="2"><a target="_blank" href="http://fortnotes.com/forum/viewtopic.php?id=3">read more ...</a></td>
+								<td colspan="2"><a target="_blank" href="http://forum.fortnotes.com/viewtopic.php?id=3">read more ...</a></td>
 							</tr>
 						</table>
 					</div>
