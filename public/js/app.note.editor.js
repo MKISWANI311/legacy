@@ -646,9 +646,25 @@ var NoteEditor = new function () {
 		var buttons = [];
 		// this is a password entry
 		if ( entry.data.id_type == 4 ) {
+			//alert(entry.dom.data.type);
 			entry.dom.btn_pwdgen = element('img', {src:'img/field_btn_pwdgen.png', className:'button', title:'generate a new password'}, null, {
 				onclick:function(){entry.dom.data.value = pwdgen(20);entry.dom.data.onchange();}
 			});
+			entry.dom.btn_maskpwd = element('img', {src:'img/field_eye_closed.png', className:'button', title: 'Show password'}, null, {
+				onclick:function() {
+					if (entry.dom.data.type == 'text') {
+						this.title = 'Show password';
+						this.src = 'img/field_eye_closed.png';
+						entry.dom.data.type = 'password';
+					} else {
+						this.src = 'img/field_eye_openned.png';
+						this.title = 'Hide password';
+						entry.dom.data.type = 'text';
+					}
+				}
+			});
+			entry.dom.data.type = 'password';
+			buttons.push(entry.dom.btn_maskpwd);
 			buttons.push(entry.dom.btn_pwdgen);
 		}
 		// all other buttons
