@@ -1,9 +1,0 @@
-^lighttpd\.fortnotes\.dev\.pem$
-^public/css/all\.css$
-^public/js/all\.js$
-^notes\.txt$
-^nbproject$
-^logs$
-^cache$
-^public/forum$
-^db.sqlite$
