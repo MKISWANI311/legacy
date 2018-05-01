@@ -30,8 +30,8 @@ class front extends controller {
 //		fb('user memory and file cache cleared');
 //		if ( $flag == 'user' ) return;
 //		// global cache
-//		apc_clear_cache();
-//		apc_clear_cache('user');
+//		apcu_clear_cache();
+//		apcu_clear_cache('user');
 //		fb('global apc cache cleared');
 	}
 

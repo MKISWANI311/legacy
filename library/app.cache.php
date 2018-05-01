@@ -54,12 +54,12 @@ class cache {
 		if ( $value === null ) {
 			// obtaining data
 			$success = true;
-			$value   = apc_fetch($name, $success);
+			$value   = apcu_fetch($name, $success);
 			// fail to get
 			if ( !$success ) $value = null;
 		} else {
 			// setting
-			apc_store($name, $value, $ttl);
+			apcu_store($name, $value, $ttl);
 			fb($name, 'apc init store');
 		}
 		return $value;
@@ -140,7 +140,7 @@ class cache {
 
 	public static function clear ( $list ) {
 		foreach ( $list as $name ) {
-			apc_delete($name);
+			apcu_delete($name);
 			unset($_SESSION['cache'][$name]);
 			//self::clear_file($name);
 		}
