@@ -1,0 +1,221 @@
+/*** fldlist.css ***/
+.fldlist {width:100%}
+.fldlist .colname {text-align:right;padding-right:10px;width:20px}
+.fldlist .colimg {padding-left:5px}
+.fldlist .colvalue {padding:5px 5px}
+.fldlist .coltype {padding-left:10px;width:20px}
+.fldlist .colcount {padding:5px 1px;width:5px;vertical-align:top;color:gray;font-size:10px}
+.fldlist .divider {border-bottom:1px dotted #eee;margin:5px 0}
+.fldlist .fldname {margin-left:5px;font-weight:bold;font-size:12px;color:#333}
+.fldlist .fldhint {color:#aaa;font-size:11px;white-space:nowrap}
+.fldlist .fldwhint {color:#aaa;font-size:11px}
+.fldlist .tbltitle {margin-bottom:3px;height:18px}
+.fldlist .fldtype {color:gray;font-weight:bold;cursor:pointer}
+.fldlist .fldtag {font-weight:bold;font-size:13px}
+.fldlist .row:hover {background-color:#e3f1ff}
+.fldlist .hinttbl {width:100%}
+.fldlist .fldbtn {padding:1px;margin-left:2px;background-color:#EEEEEE;border:1px solid rgba(0, 0, 0, 0.1);border-radius:2px 2px 2px 2px}
+
+/*** jquery.autocomplete.css ***/
+.acInput {width:200px}
+.acResults {padding:0px;background-color:#fff;box-shadow:0 0 3px rgba(0, 0, 0, 0.5);overflow:hidden}
+.acResults ul {margin:0px;padding:0px;list-style-position:outside;list-style:none}
+.acResults ul li {margin:0px;padding:2px 5px;cursor:pointer;display:block;font-size:11px;overflow:hidden}
+.acResults ul li .cmd, .acResults ul li .tag {background-repeat:no-repeat;background-position:left center;padding-left:20px;font-size:11px}
+.acResults ul li .cmd {background-image:url('../img/cmd.12.png')}
+.acResults ul li .tag {background-image:url('../img/tag.12.png')}
+.acResults ul li .cmd .hint {float:right;font-size:11px;font-weight:normal;width:350px;color:#aaa}
+.acLoading {background :url('indicator.gif') right center no-repeat}
+.acSelect {background-color:#bfdfff;color:#fff;font-weight:bold}
+
+/*** modal.css ***/
+.dialogmodal {display:none;-moz-box-shadow:0 0 10px rgba(0,0,0,0.5);-webkit-box-shadow:0 0 10px rgba(0,0,0,0.5);box-shadow:0 0 10px rgba(0,0,0,0.5)}
+.dialogmodal .body {width:500px;border:10px solid #eee;background-color:white}
+.dialogmodal .block {padding:10px;border-bottom:1px solid #eee}
+.dialogmodal .title {font-size:18px;font-weight:bold;color:#FF6600;background-color:#fafafa}
+.dialogmodal .hint {}
+.dialogmodal .hint table {width:100%}
+.dialogmodal .hint img {margin-right:10px}
+.dialogmodal .info {}
+.dialogmodal .footer {background-color:#fafafa;text-align:right}
+.dialogmodal .footer .button {margin-left:8px}
+.dialogmodal .desc {margin-bottom:5px;margin-top:15px }
+.dialogmodal .desc:first-of-type {margin-top:0 }
+.dialogmodal .fhint {display:inline-block;padding-left:10px;vertical-align:top;padding-top:3px;width:300px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;color:#816C5B }
+
+/*** note.editor.css ***/
+.noteeditor {background-color:white;display:none }
+.noteeditor .caption {}
+.noteeditor .caption td.icon {width:45px;height:32px }
+.noteeditor .caption td.info {width:60px;text-align:right;white-space:nowrap }
+.noteeditor .caption td.info div {font-size:11px }
+.noteeditor .caption td.name {}
+.noteeditor .caption td.name .main {font-weight:bold;font-size:14px;color:#0066cc }
+.noteeditor .caption td.name .hint {font-size:12px;color:gray }
+.noteeditor .divider {border-bottom:1px dashed #eee;margin:10px 0 }
+.noteeditor .changed {color:#0066cc }
+.noteeditor .entries {}
+.noteeditor .entries .ui-sortable-helper {padding:5px 0;margin-bottom:10px;border-top:1px dotted #ccc;border-bottom:1px dotted #ccc }
+.noteeditor .entries .entry, .noteeditor .tags {margin-bottom:10px;background-color:white }
+.noteeditor .entries .entry .active {border-right:2px solid #BFDFFF;border-left:2px solid #BFDFFF;padding:0 5px }
+.noteeditor .entries .entry .undo {text-align:right;line-height:20px;height:20px }
+.noteeditor .entries .entry .title, .noteeditor .tags .title {height:20px;width:100%;margin-bottom:3px }
+.noteeditor .entries .entry .title .icon, .noteeditor .tags .title .icon {width:25px }
+.noteeditor .entries .entry .title .icon {}
+.noteeditor .entries .entry .title .icon img, .noteeditor .tags .title .icon img {width:16px;height:16px }
+.noteeditor .entries .entry .title .name input {background-color:#fff;border:none;font-size:12px;font-weight:bold;height:18px;width:100% }
+.noteeditor .entries .entry .title .name input:hover {color:#0066cc }
+.noteeditor .entries .entry .title .name input:focus {color:#0066cc }
+.noteeditor .entries .entry .title .controls {text-align:right;width:100px;white-space:nowrap }
+.noteeditor .entries .entry .title .controls .button,.noteeditor .entries .entry .title .controls .disabled {width:16px;height:16px;opacity:0.15;border:1px solid white }
+.noteeditor .entries .entry .title .controls .button:hover {cursor:pointer;opacity:1 }
+.noteeditor .entries .entry .type {display:none;border:0px solid #eee }
+.noteeditor .entries .entry .type .list {background-color:#eee;width:100% }
+.noteeditor .entries .entry .type .list td {color:#888;text-align:center;border-right:1px solid #fff;width:14%;padding:1px 8px }
+.noteeditor .entries .entry .type .list .item:last-child {border-right:none }
+.noteeditor .entries .entry .type .list .item:hover {background-color:#bfdfff;color:white;cursor:pointer }
+.noteeditor .entries .entry .type .list .current {background-color:#bfdfff;cursor:default }
+.noteeditor .entries .entry .type .menu {width:100% }
+.noteeditor .entries .entry .type .menu td {padding:2px 3px }
+.noteeditor .entries .entry .type .menu td.name {font-weight:bold }
+.noteeditor .entries .entry .type .menu td.description {text-align:right;font-size:9px;color:#aaa }
+.noteeditor .entries .entry .type .menu tr:hover {background-color:#bfdfff;color:white;cursor:pointer }
+.noteeditor .entries .entry .history {display:none;background-color:#eee;padding:0 1px 1px 1px }
+.noteeditor .entries .entry .history .info {color:#aaa;text-align:center }
+.noteeditor .entries .entry .history table {background-color:#fff }
+.noteeditor .entries .entry .history tr {color:#aaa;border-bottom:1px solid #eee }
+.noteeditor .entries .entry .history tr:hover {background-color:#FFFFDF;color:#000 }
+.noteeditor .entries .entry .history td {padding:2px 4px }
+.noteeditor .entries .entry .history td.ctrl {text-align:right }
+.noteeditor .entries .entry .hint, .noteeditor .tags .hint {width:100%;color:#aaa;margin-top:0px;font-size:11px }
+.noteeditor .entries .entry .hint .counter {text-align:right }
+.noteeditor .entries .entry .hint span {font-size:11px }
+.noteeditor .entries .entry .hint .counter span {font-weight:bold }
+.noteeditor .entries .entry .hint .counter span.limit {color:red }
+.noteeditor .tags .name {font-weight:bold }
+.noteeditor .tags .line {text-transform:lowercase}
+.noteeditor .tbuttons {padding-top:8px;padding-bottom:10px;margin-bottom:10px;text-align:right;border-bottom:1px dashed #eee }
+.noteeditor .tbuttons .left {margin-right:5px;float:left }
+.noteeditor .bbuttons {text-align:right }
+
+/*** note.filter.css ***/
+.notefilter {margin-bottom:10px }
+.notefilter > .search {height:30px;position:relative;padding-left:35px }
+.notefilter > .search > .home {background-color:#eee;position:absolute;left:0px;top:0px;height:30px;line-height:30px;width:30px }
+.notefilter > .search > .home > div {opacity:0.5;height:30px;line-height:30px;width:30px;background-image:url("../img/2x2_grid.png");background-repeat:no-repeat;background-position:center center }
+.notefilter > .search > .home > div:hover {opacity:1 }
+.notefilter > .search > .line {padding-left:30px;font-family:"Courier New","Andale Mono",monospace }
+.notefilter > .search > .icon {background-color:#eee;position:absolute;left:37px;top:2px;height:26px;line-height:26px;width:28px;background-image:url("../img/field_tag.png");background-repeat:no-repeat;background-position:center center }
+.notefilter > .search > .icon.loading {background-image:url("../img/loading.16.gif") }
+.notefilter > .messages {margin-top:10px }
+.notefilter > .messages.loading {opacity:0.4 }
+.notefilter > .messages > .info,.notefilter > .messages > .warn,.notefilter > .messages > .fail {margin-top:5px;border:1px solid #eee;padding:5px 5px 5px 30px;background:#F9F9F9 no-repeat scroll 5px center }
+.notefilter > .messages > .info {background-image:url("../img/message.info.16.png") }
+.notefilter > .messages > .warn {background-image:url("../img/message.warn.16.png") }
+.notefilter > .messages > .fail {background-image:url("../img/message.fail.16.png") }
+.notefilter > .messages a {margin-left:5px }
+
+/*** note.list.css ***/
+.notelist {}
+.notelist > .tpbar {height:22px;line-height:22px }
+.notelist > .tpbar > .ctrl {float:right }
+.notelist > .tpbar > .info {}
+.notelist > .tpbar > .ctrl > .button {margin-left:5px }
+.notelist > .tpbar > .info > span {display:inline-block;margin-right:5px;border:1px solid #eee;padding:0 5px;line-height:22px;background-color:#F9F9F9 }
+.notelist > .tpbar > .info a {}
+.notelist > .tpbar > .info b {cursor:default }
+.notelist > .tpbar > .info p {color:#aaa;display:inline;margin-right:5px }
+.notelist > .tpbar > .info p.div {color:#ddd;margin:0 5px }
+.notelist > .notes {margin-top:10px }
+.notelist > .notes > .note {table-layout:fixed;display:table;width:100%;border-bottom:1px dashed #eee;border-top:1px dashed #eee;padding:5px }
+.notelist > .notes > .note:hover{background-color:#ffffdf }
+.notelist > .notes > .note:hover .time {color:#000 !important }
+.notelist > .notes > .note.hidden {display:none }
+.notelist > .notes > .note.marked {background-color:#ffffdf }
+.notelist > .notes > .note.marked img.icon {display:none!important }
+.notelist > .notes > .note.marked div.tick {display:block !important;background-image:url("../img/tick.true.png") !important}
+.notelist > .notes > .note.active {background-color:#e4ffe4 }
+.notelist > .notes > .note > .icon {display:table-cell;vertical-align:middle;width:45px;padding-left:5px;padding-right:8px }
+.notelist > .notes > .note > .icon img.icon {margin:0 auto;display:block;width:32px }
+.notelist > .notes > .note > .icon div.tick {margin:0 auto;display:none;width:25px;height:25px;opacity:0.5;background-image:url("../img/tick.false.png");background-repeat:no-repeat;background-position:center center }
+.notelist > .notes > .note > .icon:hover img.icon {display:none }
+.notelist > .notes > .note > .icon:hover div.tick {display:block }
+.notelist > .notes > .note > .icon:hover div.tick:hover {opacity:1 }
+.notelist > .notes > .note > .body {display:table-cell }
+.notelist > .notes > .note > .body > .info {padding:5px 0 }
+.notelist > .notes > .note > .body > .info > .warn {color:#f00 }
+.notelist > .notes > .note > .body > .info > .name {margin-right:5px;color:#aaa }
+.notelist > .notes > .note > .body > .info > .data {margin-right:10px }
+.notelist > .notes > .note > .body > .time {padding:0 5px;line-height:21px;float:right;font-size:11px;color:#aaa }
+.notelist > .notes > .note > .body > .tags {padding-bottom:5px;line-height:21px;color:#aaa }
+.notelist > .notes > .note .tags .tag {color:#000;border-left:2px solid #ccc;background-color:#ddd;line-height:20px;padding:1px 7px 0;cursor:pointer;margin-right:5px;display:inline-block }
+.notelist > .notes > .note .tags .tag:hover {background-color:#bfdfff;color:#fff }
+.notelist > .notes > .note .tags .tag.include {color:#fff;background-color:#bfdfff;font-weight:bold }
+.notelist > .notes > .note .tags .tag.include:hover {background-color:#ffcc66 }
+.notelist > .btbar {text-align:center;padding-top:10px }
+
+/*** style.css ***/
+* {margin:0;padding:0;border:0;outline:0;font-family:Verdana, Geneva, sans-serif;font-size:13px}
+.bold{font-weight:bold }
+.maxw{width:100% }
+.maxh{height:100% }
+.hidden{display:none }
+.right{text-align:right }
+table{border:0px;border-collapse:collapse}
+table td {padding:0px}
+a {text-decoration:none;color:#0066cc;cursor:pointer}
+a.combo {border-bottom:1px dotted #0066cc;font-weight:bold}
+.body_wrapper {padding:10px;background-color:#eee;vertical-align:top}
+.body_content {width:100%;height:100%;border-left:2px solid #ddd;border-right:2px solid #ddd;background-color:#fff;margin-left:auto;margin-right:auto}
+.gradient {background:-webkit-linear-gradient(0deg, #eee 25%,transparent 25%);background:-moz-linear-gradient(0deg, #eee 25%,transparent 25%);background:-o-linear-gradient(0deg, #eee 25%,transparent 25%);background:-ms-linear-gradient(0deg, #eee 25%,transparent 25%);background:linear-gradient(0deg, #eee 25%,transparent 25%);background-size:5px 100%}
+.message {padding-left:40px;padding-right:10px;height:34px;display:table-cell;vertical-align:middle }
+.message.auth{color:#06c;background:url("../img/message.auth.png") no-repeat left top }
+.message.info{color:#888;background:url("../img/message.info.png") no-repeat left top }
+.message.hint{color:#aaa;background:url("../img/message.hint.png") no-repeat left top }
+.message.loading {color:#aaa;background:url("../img/message.loading.gif") no-repeat left top }
+.message.warning {color:#888;background:url("../img/message.warning.png") no-repeat left top }
+.message.error {color:#f00;background:url("../img/message.error.png") no-repeat left top }
+.fade {background-color:#f9f9f9 }
+input.long {width:150px !important}
+input.button {background-color:#eee;width:80px;height:22px;font-size:12px;border:1px solid rgba(0, 0, 0, 0.1);border-radius:2px 2px 2px 2px;cursor:pointer;color:#816C5B}
+input.button:hover {border:1px solid #bbb;color:#5d4617;box-shadow:0 0 3px rgba(0,0,0,0.1)}
+input.button:focus {border:1px solid #ccc;color:#5d4617}
+input.button:active {background-color:#ccc;border:1px solid #aaa;color:#fff}
+input.line, textarea.text {border:2px solid #eee;background-color:#fafafa;width:100%;height:30px;font-size:14px;padding:4px}
+textarea.text {height:65px}
+textarea.export {height:450px;width:100%}
+input.line:focus, textarea.text:focus {border:2px solid #ddd;background-color:#FFFFDF}
+input.line:hover, textarea.text:hover {border:2px solid #ddd}
+input.fldedit {border:1px solid #eee;background-color:#fafafa;width:250px;height:20px;font-size:14px;padding:2px;font-weight:bold}
+.authfield {border:2px solid #eee;background-color:#fafafa;width:100%;height:30px;font-size:16px;padding:4px}
+.authbutton {border:1px solid #ddd;background-color:#eee;width:80px;height:22px;font-size:12px}
+.menu-item {float:left;background-color:white;padding:3px 10px;margin-left:5px;width:70px;text-align:center}
+.menu-item-body {display:none;background-color:white;padding:0px;text-align:left;width:100%;height:100%}
+textarea#styled {width:100%;height:60px;border:1px solid #ddd;background-color:white;padding:5px}
+#simplemodal-overlay {background-color:#000}
+
+/*** template.list.css ***/
+.templatelist {}
+.templatelist > .title {background:url("../img/folder.png") no-repeat 7px center;background-color:#eee;position:relative;height:30px }
+.templatelist > .title > .text {color:#aaa;font-size:13px;font-weight:bold;padding-left:30px;height:30px;line-height:30px }
+.templatelist > .title > input {position:absolute;top:6px;right:6px;border:none;color:#ddd;width:190px;height:17px;padding:0 2px }
+.templatelist > .title > input:focus {background-color:#FFFFDF }
+.templatelist > .list {color:#816c5b;border-left:1px solid #eee;border-right:1px solid #eee }
+.templatelist > .list > .item {cursor:pointer;margin:0;padding:4px 4px 4px 30px;position:relative }
+.templatelist > .list > .item:hover {background-color:#bfdfff;color:white }
+.templatelist > .list > .item .line {background:url("../img/template.png") no-repeat left center;padding-left:25px }
+.templatelist > .list > .item .name {font-weight:bold }
+.templatelist > .list > .item .hint {font-size:11px;color:#aaa }
+.templatelist > .hint {padding:5px;border:1px solid #eee;font-size:11px;color:#aaa;background-color:#F9F9F9 }
+.templatelist > .hint * {font-size:inherit }
+
+/*** tplist.css ***/
+.tplist {background-color:#fff;border:1px solid #eee;color:#816c5b;text-align:left;overflow-y:auto}
+.tplist div.group div.title {background-color:#eee;padding:5px;cursor:default}
+.tplist div.group div.title div.name {background:url("../img/folder.png") no-repeat left center;color:#aaa;font-size:13px;font-weight:bold;padding-left:25px;vertical-align:middle}
+.tplist div.item {cursor:pointer;margin:0;padding:4px 4px 4px 30px;position:relative}
+.tplist div.item:hover {background-color:#bfdfff;color:white}
+.tplist div.item div.line {background:url("../img/template.png") no-repeat left center;padding-left:25px}
+.tplist div.item div.name {font-weight:bold}
+.tplist div.item div.hint {font-size:9px;color:#aaa}
+.tplist div.item div.ctrl {position:absolute;right:0px;top:0px}
