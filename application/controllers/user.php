@@ -57,6 +57,19 @@ class user extends controller {
 		response::json($result);
 	}
 
+    function info () {
+	    response::json($_SESSION['user']);
+    }
+
+    function data () {
+        response::json(array(
+            'entry_types' => json_decode(cache::db_entry_types()),
+            'templates' => json_decode(cache::db_templates()),
+            'template_entries' => json_decode(cache::db_template_entries()),
+            'tags' => json_decode(cache::db_tags())
+        ));
+    }
+
 	/**
 	 * Save the master password hash
 	 * @param string $action - "save" at the moment

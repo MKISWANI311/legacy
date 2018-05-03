@@ -5,31 +5,33 @@
 
 .noteeditor { background-color:white; display:none }
 	.noteeditor .caption {}
+		.noteeditor .caption table { height:34px }
 		.noteeditor .caption td.icon { width:45px;height:32px }
+		    .noteeditor .caption td.icon img { display: block }
 		.noteeditor .caption td.info { width:60px; text-align:right; white-space:nowrap }
-			.noteeditor .caption td.info div { font-size:11px }
+			.noteeditor .caption td.info div { font-size:90%; color:gray; height:17px }
 		.noteeditor .caption td.name { }
-			.noteeditor .caption td.name .main { font-weight:bold; font-size:14px; color:#0066cc }
-			.noteeditor .caption td.name .hint { font-size:12px; color:gray }
+			.noteeditor .caption td.name .main { font-weight:bold; /*font-size:14px;*/ color:#7c94c1 }
+			.noteeditor .caption td.name .hint { /*font-size:12px;*/ color:gray }
 	.noteeditor .divider { border-bottom:1px dashed #eee; margin:10px 0 }
-	.noteeditor .changed { color:#0066cc }
+	.noteeditor .changed { color:#7c94c1 }
 	.noteeditor .entries {}
 		.noteeditor .entries .ui-sortable-helper { padding:5px 0; margin-bottom:10px; border-top:1px dotted #ccc; border-bottom:1px dotted #ccc }
 		.noteeditor .entries .entry, .noteeditor .tags { margin-bottom:10px; background-color:white }
 		.noteeditor .entries .entry .active { border-right:2px solid #BFDFFF; border-left:2px solid #BFDFFF; padding:0 5px }
 		.noteeditor .entries .entry .undo { text-align:right; line-height:20px; height:20px }
-		.noteeditor .entries .entry .title, .noteeditor .tags .title { height:20px; width:100%; margin-bottom:3px }
+		.noteeditor .entries .entry .title, .noteeditor .tags .title { height:22px; width:100%; margin-bottom:3px }
 			.noteeditor .entries .entry .title .icon, .noteeditor .tags .title .icon { width:25px }
 			.noteeditor .entries .entry .title .icon { /*cursor:move/**/ }
 			.noteeditor .entries .entry .title .icon img, .noteeditor .tags .title .icon img { width:16px; height:16px }
-			.noteeditor .entries .entry .title .name input { background-color:#fff; border:none; font-size:12px; font-weight:bold; height:18px; width:100% }
-			.noteeditor .entries .entry .title .name input:hover { color:#0066cc }
-			.noteeditor .entries .entry .title .name input:focus { color:#0066cc }
+			.noteeditor .entries .entry .title .name input { color:inherit; background-color:#fff; border:none; font-size:inherit; font-weight:bold; height:18px; width:100% }
+			.noteeditor .entries .entry .title .name input:hover { color:#7c94c1 }
+			.noteeditor .entries .entry .title .name input:focus { color:#7c94c1 }
 			.noteeditor .entries .entry .title .controls { text-align:right; width:100px; white-space:nowrap }
 			.noteeditor .entries .entry .title .controls .button,
 			.noteeditor .entries .entry .title .controls .disabled { width:16px; height:16px; opacity:0.15; border:1px solid white }
 			.noteeditor .entries .entry .title .controls .button:hover { cursor:pointer; opacity:1 }
-		.noteeditor .entries .entry .type { display:none; border:0px solid #eee }
+		.noteeditor .entries .entry .type { display:none; border:0 solid #eee }
 			.noteeditor .entries .entry .type .list { background-color:#eee; width:100% }
 				.noteeditor .entries .entry .type .list td { color:#888; text-align:center; border-right:1px solid #fff; width:14%; padding:1px 8px }
 				.noteeditor .entries .entry .type .list .item:last-child { border-right:none }
@@ -48,15 +50,15 @@
 			.noteeditor .entries .entry .history td { padding:2px 4px }
 			.noteeditor .entries .entry .history td.ctrl { text-align:right }
 
-		.noteeditor .entries .entry .hint, .noteeditor .tags .hint { width:100%; color:#aaa; margin-top:0px; font-size:11px }
+		.noteeditor .entries .entry .hint, .noteeditor .tags .hint { width:100%; color:#aaa; margin-top:0; font-size:90% }
 		.noteeditor .entries .entry .hint .counter { text-align:right }
-			.noteeditor .entries .entry .hint span { font-size:11px }
-			.noteeditor .entries .entry .hint .counter span { font-weight:bold }
+			.noteeditor .entries .entry .hint span { /*font-size:90%*/ }
+			.noteeditor .entries .entry .hint .counter span { /*font-weight:bold*/ }
 			.noteeditor .entries .entry .hint .counter span.limit { color:red }
 
 	.noteeditor .tags .name { font-weight:bold }
 	.noteeditor .tags .line { text-transform:lowercase; }
 
-	.noteeditor .tbuttons { padding-top:8px; padding-bottom:10px; margin-bottom:10px; text-align:right; border-bottom:1px dashed #eee }
+	.noteeditor .tbuttons { padding-top:10px; padding-bottom:10px; margin-bottom:10px; text-align:right; border-bottom:1px dashed #eee }
 		.noteeditor .tbuttons .left { margin-right:5px; float:left }
 	.noteeditor .bbuttons { text-align:right }

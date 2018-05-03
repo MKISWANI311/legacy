@@ -601,7 +601,7 @@ var NoteEditor = new function () {
 	*/
 	this.ProceedUrlIcon = function ( data ) {
 		if ( data && data.query && data.query.results ) {
-			fb(data);
+            console.log(data);
 		}
 	};
 
@@ -664,6 +664,7 @@ var NoteEditor = new function () {
 				}
 			});
 			entry.dom.data.type = 'password';
+			entry.dom.data.autocomplete = 'off';
 			buttons.push(entry.dom.btn_maskpwd);
 			buttons.push(entry.dom.btn_pwdgen);
 		}
@@ -720,13 +721,15 @@ var NoteEditor = new function () {
 				if ( !entry.nextSibling )     entry.dom.btn_down.className = 'disabled'; else entry.dom.btn_down.className = 'button';
 				//TODO: add real entries check (there are hidden entries so failue here)
 				if ( self.dom.entries.childNodes.length == 1 ) entry.dom.btn_delete.className = 'disabled'; else entry.dom.btn_delete.className = 'button';
-				$(entry.dom.controls).fadeIn();
+				//$(entry.dom.controls).fadeIn();
+                entry.dom.controls.classList.remove('hidden');
 			}
 		});
 		$(entry).mouseleave(function(){
 			// only if not closed
 			if ( self.open ) {
-				$(entry.dom.controls).fadeOut();
+				//$(entry.dom.controls).fadeOut();
+                entry.dom.controls.classList.add('hidden');
 			}
 		});
 		$(entry).click(function(){
@@ -746,12 +749,10 @@ var NoteEditor = new function () {
 	 */
 	var BlockTitle = function () {
 		self.dom.title = element('div', {className:'caption'});
-		self.dom.title.icon = element('img', {width:32, height:32, className:'hidden'}, null, {onload:function(){
-			$(this).fadeIn();
-		}});
+		self.dom.title.icon = element('img', {width:32, height:32});
 		elchild(self.dom.title, tblrow(element('table', {className:'maxw'}),[
 				self.dom.title.icon,
-				[element('div',{className:'main'},'Note'), element('div',{className:'hint'},'creation, edit or view')],
+				[element('div',{className:'main'},'Note')/*, element('div',{className:'hint'},'creation, edit or view')*/],
 				[self.data.ctime ? element('div',{},'created: ' + TimestampToDateStr(self.data.ctime)) : '',
 				 self.data.mtime ? element('div',{},'edited: ' + TimestampToDateStr(self.data.mtime)) : '']
 			], [{className:'icon'}, {className:'name'}, {className:'info'}])

@@ -14,20 +14,20 @@ Array.prototype.each = function ( func ) {
 	for ( i = 0; i < l; i++ ) { func(this[i], i); }
 };
 // IE compatibility
-if ( !Array.indexOf ) {
-	Array.prototype.indexOf = function ( obj, start ) {
-		var i;
-		for ( i = (start || 0); i < this.length; i++ ) {
-			if ( this[i] === obj ) { return i; }
-		}
-		return -1;
-	};
-}
+// if ( !Array.indexOf ) {
+// 	Array.prototype.indexOf = function ( obj, start ) {
+// 		var i;
+// 		for ( i = (start || 0); i < this.length; i++ ) {
+// 			if ( this[i] === obj ) { return i; }
+// 		}
+// 		return -1;
+// 	};
+// }
 
 // string prototypes
-String.prototype.trim = function() {
-   return this.replace(/^\s+|\s+$/g,"");
-};
+// String.prototype.trim = function() {
+//    return this.replace(/^\s+|\s+$/g,"");
+// };
 String.prototype.ltrim = function() {
    return this.replace(/^\s+/g,"");
 };
@@ -40,12 +40,12 @@ String.prototype.rtrim = function() {
  * Firebug debug compatible with IE
  * free list of params
  */
-function fb () {
-	if ( window.console && window.console.info )
-		// send all arguments to firebug
-		console.info(arguments.length == 1 ? arguments[0] : arguments);
-
-}
+// function fb () {
+// 	if ( window.console && window.console.info )
+// 		// send all arguments to firebug
+// 		console.info(arguments.length == 1 ? arguments[0] : arguments);
+//
+// }
 
 
 /**
@@ -304,17 +304,17 @@ function pwdgen ( length ) {
 * Ajax cross-domain request helper
 * @param url link to external resource
 */
-function jsonp ( url ) {
-	// create element and get data to callback
-	var script = element('script', {type:'text/javascript', src:url});
-	// insert to DOM
-	document.body.appendChild(script);
-	// clear after data processed in 5 secs
-	setTimeout(function(){
-		fb('jsonp script tag clearing');
-		document.body.removeChild(script);
-	}, 10000);
-}
+// function jsonp ( url ) {
+// 	// create element and get data to callback
+// 	var script = element('script', {type:'text/javascript', src:url});
+// 	// insert to DOM
+// 	document.body.appendChild(script);
+// 	// clear after data processed in 5 secs
+// 	setTimeout(function(){
+//         console.log('jsonp script tag clearing');
+// 		document.body.removeChild(script);
+// 	}, 10000);
+// }
 
 
 /**

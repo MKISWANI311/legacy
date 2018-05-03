@@ -1,9 +1,0 @@
-#Options +FollowSymLinks 
-RewriteEngine On
-RewriteBase /
-RewriteCond %{REQUEST_FILENAME} !-f 
-RewriteCond %{REQUEST_FILENAME} !-d 
-RewriteRule .* index.php [L,QSA]
-
-#RewriteCond %{SERVER_PORT} 80
-#RewriteRule ^(.*)$ https://fortnotes.com/ [R,L]

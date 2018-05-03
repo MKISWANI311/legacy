@@ -16,7 +16,7 @@ var App = new function () {
 	var hash = null;
 
 	/* @var time in seconds for pass caching (default 5 mins) */
-	var time = 300;
+	//var time = 300;
 
 	/* @var encode/decode default configuration */
 	var params = {ks:256,ts:128,mode:'ccm',cipher:'aes'};
@@ -87,7 +87,9 @@ var App = new function () {
 	 */
 	this.CheckPass = function ( value ) {
 		// check input
-		if ( !this.HasHash() || !value ) return false;
+		if ( !this.HasHash() || !value ) {
+		    return false;
+        }
 		// comparing
 		return ( hash == this.CalcHash(value) );
 	};
@@ -97,6 +99,7 @@ var App = new function () {
 	 * @param value the master password hash value
 	 */
 	this.SetPassHash = function ( value ) {
+	    //console.log('SetPassHash', value);
 		// check input
 		if ( !value ) return false;
 		// set and return
@@ -107,28 +110,33 @@ var App = new function () {
 	 * Set the time to remember the password
 	 * @param newtime the time in seconds for pass caching
 	 */
-	this.SetPassTime = function ( newtime ) {
-		// check input
-		newtime = parseInt(newtime, 10);
-		if ( !newtime || newtime == NaN || newtime <= 0 ) return false;
-		time = newtime;
-		return true;
-	};
+	// this.SetPassTime = function ( newtime ) {
+	// 	// check input
+	// 	newtime = parseInt(newtime, 10);
+	// 	if ( !newtime || newtime == NaN || newtime <= 0 ) return false;
+	// 	time = newtime;
+	// 	return true;
+	// };
 
 	/**
 	 * Set the private pass var and start timer for clearing it in some time
 	 * @param value the master password to check
 	 */
 	this.SetPass = function ( value ) {
+        //console.log('SetPass', value);
 		// check input
-		if ( !value ) return false;
+		if ( !value ) {
+		    return false;
+        }
 		// set the private password
 		pass = value;
 		// calculate and set hash if necessary
-		if ( !this.HasHash() ) this.SetPassHash(this.CalcHash(value));
-		fb('pass will expire in ' + time);
+		if ( !this.HasHash() ) {
+		    this.SetPassHash(this.CalcHash(value));
+        }
+        //console.log('pass will expire in', time);
 		// set clearing timer
-		setTimeout(function(){self.ExpirePass()}, time * 1000);
+		//setTimeout(function(){self.ExpirePass()}, time * 1000);
 		// notify all the subsribers that we have the pass
 		for ( var i in this.subscribers ) {
 			if ( self.subscribers[i].EventOpen && self.subscribers[i].EventOpen instanceof Function ) {
@@ -144,7 +152,7 @@ var App = new function () {
 	 *
 	 */
 	this.ExpirePass = function () {
-		fb('master password expire time');
+        console.log('master password expire time');
 		// notify all the subsribers about clearing
 		for ( var i in self.subscribers ) {
 			if ( self.subscribers[i].EventClose && self.subscribers[i].EventClose instanceof Function ) {
@@ -185,7 +193,7 @@ var App = new function () {
 				return enc;
 			} catch(e) {
 				console.trace();
-				fb('encrypt failure', e, data);
+                console.log('encrypt failure', e, data);
 			}
 		}
 		return false;
@@ -231,7 +239,7 @@ var App = new function () {
 				return dec;
 			} catch(e) {
 				console.trace();
-				fb('decrypt failure', e, data);
+                console.log('decrypt failure', e, data);
 			}
 		}
 		return false;

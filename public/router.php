@@ -6,7 +6,7 @@
  */
 
 // check url
-if ( preg_match('/\/(?:css|captcha|forum|img|js)\/./', $_SERVER['REQUEST_URI']) ) {
+if ( preg_match('/\/(?:css|captcha|forum|img|js|index\.html)/', $_SERVER['REQUEST_URI']) ) {
 	// serve the requested resource as-is.
     return false;
 }

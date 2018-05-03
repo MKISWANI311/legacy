@@ -10,7 +10,7 @@
 	padding-left: 5px;
 }
 .fldlist .colvalue {
-	padding: 5px 5px;
+	padding: 10px 0;
 }
 .fldlist .coltype {
 	padding-left: 10px;
@@ -31,22 +31,22 @@
 .fldlist .fldname {
 	margin-left: 5px;
 	font-weight:bold;
-	font-size:12px;
+	font-size:95%;
 /*	cursor: pointer;*/
-	color: #333;
+	/*color: #333;*/
 }
 
 /*.fldlist .fldname:hover {
-	color: #0066cc;
+	color: #7c94c1;
 }*/
 .fldlist .fldhint {
 	color:#aaa;
-	font-size:11px;
+	font-size:95%;
 	white-space: nowrap;
 }
 .fldlist .fldwhint {
 	color:#aaa;
-	font-size:11px;
+	font-size:95%;
 }
 .fldlist .tbltitle {
 	margin-bottom: 3px;

@@ -143,7 +143,7 @@ function TagList ( params ) {
 				if ( $(this).hasClass('inactive') ) return;
 				$(this).toggleClass('select');
 				if ( $(this).hasClass('select') ) {
-					var text = $.trim(self.dom.input.value);
+					var text = self.dom.input.value.trim();
 					self.dom.input.value = text + ( text ? ' ' : '' ) + this.tagnm;
 					for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
 						if ( !data_tags.data[id][data_tags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {

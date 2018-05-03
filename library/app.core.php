@@ -114,6 +114,12 @@ class app {
 			session_start();
 		//}
 
+        if ( DEBUG ) {
+            // concatenate css and js if necessary
+            response::compact(PATH_JS, 'js');
+            response::compact(PATH_CSS, 'css');
+        }
+
 		// prepare uri parts from incoming request
 		self::$uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
@@ -219,7 +225,7 @@ class response {
 	}
 
 	/**
-	 * Concatente all files in the given dir with given extention to one file
+	 * Concatenate all files in the given dir with given extension to one file
 	 * i.e. all css files in the directory into all.css file
 	 * updates only if there are changes in any of the files
 	 */
