@@ -4290,7 +4290,7 @@ var NoteList = new function () {
 			// parts are valid
 			if ( url[2] && url[2] != 'localhost' ) {
 				// try to get image, won't repclace the current one if no icon found
-				element('img', {className:'icon', src:'http://www.google.com/s2/favicons?domain=' + url[2]}, null, {onload:function(){
+				element('img', {className:'icon', src:'https://www.google.com/s2/favicons?domain=' + url[2]}, null, {onload:function(){
 					// icon loaded so get current icon parent
 					var parent = icon.parentNode;
 					// and replace the current one
