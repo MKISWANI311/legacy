@@ -28,11 +28,11 @@ if ( DEBUG ) {
 
 // db error handler
 db::$onfailure = function ( $data ) {
-	if ( PHP_SAPI === 'cli' ) {
-		print_r($data);
-	} else {
-		fb($data);
-	}
+//	if ( PHP_SAPI === 'cli' ) {
+//		print_r($data);
+//	} else {
+//		fb($data);
+//	}
 	error_log(print_r($data, true));
 };
 
@@ -62,8 +62,8 @@ function MainErrorHandler ( $errno, $errmsg, $filename, $linenum ) {
 	if ( PHP_SAPI === 'cli' ) {
 		echo "$message\n";
 	} else {
-		$fb = FirePHP::getInstance(true);
-		$fb->error($errmsg, $errortype[$errno] . " [$filename:$linenum]");
+		//$fb = FirePHP::getInstance(true);
+		//$fb->error($errmsg, $errortype[$errno] . " [$filename:$linenum]");
 	}
 	// separate log file for each day
 	error_log(date('H:i') . "\t$message\n", 3, PATH_LOGS . date('Y-m-d'));

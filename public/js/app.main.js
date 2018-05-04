@@ -24,46 +24,91 @@ var icon_tags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber'
 var pageInit = document.getElementById('pageInit');
 var pageMain = document.getElementById('pageMain');
 
-//App.SetPassHash(<?php //echo !empty($_SESSION['user']['hash']) ? "'{$_SESSION['user']['hash']}'" : 'null' ?>);
+
+function status ( response ) {
+    if ( response.status >= 200 && response.status < 300 ) {
+        return Promise.resolve(response);
+    } else {
+        return Promise.reject(new Error(response.statusText));
+    }
+}
+
+function json ( response ) {
+    return response.json();
+}
+
+var api = {
+    defaults: {
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    },
+
+    get: function ( uri, callback ) {
+        fetch(uri, api.defaults)
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    },
+
+    post: function ( uri, data, callback ) {
+        fetch(uri, Object.assign({}, api.defaults, {method: 'post', body: JSON.stringify(data)}))
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    },
+
+    postForm: function ( uri, data, callback ) {
+        var config = Object.assign({}, api.defaults, {method: 'post', body: data, headers: {
+                'Accept': 'application/json'
+            }});
+
+        fetch(uri, config)
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    }
+};
+
 
 // logoff
 function SignOut () {
-    $.modal('<div><h1>Logged off</h1></div>');
-    $.post('/user/signout', function(){
+    api.post('user/signout', null, function ( error, data ) {
+        if ( error ) {
+            console.error(error);
+            return;
+        }
+
+        // true or false
+        console.log('signout', data);
+
         location.reload();
     });
 }
 
-// menu item handler
-function MenuItemClick ( item ) {
-    $('div#menu_items .menu-item').each(function(index, it) {
-        if ( !item || it.id != item.id ) {
-            $('a', it).css('font-weight', 'normal');
-            $(it).css('background-color', '#F9F9F9');
-            $(it).css('border-bottom', '1px solid #eee');
-            $('div#' + it.id + '_body').hide();
-        }
-    });
-    if ( item ) {
-        $(item).css('font-weight', 'bold');
-        $(item.parentNode).css('background-color', 'white');
-        $(item.parentNode).css('border-bottom', '1px solid white');
-        $('div#' + item.parentNode.id + '_body').show();
-    }
-}
-
-// function AddNoteDialogShow () {
-//     $("#dlg_pass_set").modal();
-// }
-
-// function CacheClear ( param ) {
-//     $.post('/front/clear/' + param, function(){});
-// }
 
 function initData ( data, callback ) {
     window.data_user = data;
 
-    $.get('user/data', function(data) {
+    api.get('user/data', function ( error, data ) {
+        if ( error ) {
+            console.error(error);
+            callback();
+            return;
+        }
+
         window.data_entry_types = data.entry_types;
         window.data_templates = data.templates;
         window.data_template_entries = data.template_entries;
@@ -81,18 +126,7 @@ function initData ( data, callback ) {
         // they are filling on page loading and on note creation
         // if there are some new tags
 
-        //window.data_user = data.user || {};
-        //if ( data_user.id ) {
-
-
-            // if ( !App.HasPass() ) {
-            //     // ask pass
-            //     DlgPassGet.Show({escClose:false});
-            // }
-
-            //App.SetPassHash(data_user.hash);
-
-            // main components initialization
+        // main components initialization
         NoteFilter.Init({handle:document.querySelector('div.notefilter')});
         NoteList.Init({handle:document.querySelector('div.notelist')});
         TemplateList.Init({handle:document.querySelector('div.templatelist')});
@@ -104,22 +138,6 @@ function initData ( data, callback ) {
         App.Subscribe(NoteList);
         App.Subscribe(NoteFilter);
         App.Subscribe(NoteEditor);
-
-        // TagManager.EventOpen();
-        // TemplateList.EventOpen();
-        // NoteList.EventOpen();
-        // NoteFilter.EventOpen();
-        // NoteEditor.EventOpen();
-        // } else {
-        //     // ???
-        //     //App.SetPassHash(null);
-        //
-        // }
-
-        //$.modal.defaults.opacity = 20;
-
-        // set menu to home
-        MenuItemClick($('div#menu_item_home a')[0]);
 
         // show
         pageMain.style.display = 'block';
@@ -143,7 +161,12 @@ var collect_timer = setInterval(function(){
 }, 5000);
 
 
-$.get('user/info', function ( data ) {
+api.get('user/info', function ( error, data ) {
+    if ( error ) {
+        console.error(error);
+        return;
+    }
+
     console.log('user info', data);
 
     if ( data ) {

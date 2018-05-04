@@ -46,7 +46,8 @@ class note extends controller {
 		} else {
 			$result['error'] = 'not authorized';
 		}
-		fb($result, 'load');
+
+		//fb($result, 'load');
 		response::json($result);
 	}
 
@@ -59,7 +60,10 @@ class note extends controller {
 	 * @param int $id_note link to the note if updating
 	 */
 	function save ( $id_note = null ) {
+        $_REQUEST = json_decode(file_get_contents('php://input'), true);
+
 		$result = array();
+
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
 			// check entries in request
@@ -87,7 +91,8 @@ class note extends controller {
 		} else {
 			$result['error'] = 'not authorized';
 		}
-		fb($result, 'save');
+
+		//fb($result, 'save');
 		response::json($result);
 	}
 
@@ -96,7 +101,10 @@ class note extends controller {
 	 * @param string [$flag] delete parameter
 	 */
 	function delete ( $flag = '' ) {
+        $_REQUEST = json_decode(file_get_contents('php://input'), true);
+
 		$result = array();
+
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
 			// check notes in request
@@ -121,7 +129,8 @@ class note extends controller {
 		} else {
 			$result['error'] = 'not authorized';
 		}
-		fb($result, 'delete');
+
+		//fb($result, 'delete');
 		response::json($result);
 	}
 
@@ -129,8 +138,10 @@ class note extends controller {
 	 * Searches notes by tags
 	 */
 	function search () {
-		//sleep(20);
-		$result = array();
+        $_REQUEST = json_decode(file_get_contents('php://input'), true);
+
+        $result = array();
+
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && ($id_user = $_SESSION['user']['id']) ) {
 			// check tags and commands in request, remove duplicates
@@ -148,12 +159,12 @@ class note extends controller {
 				// try to get cached data
 				if ( ($data = cache::file($file)) !== null ) {
 					// found so it can be returned immediately
-					fb($file, 'search cached data used');
+					//fb($file, 'search cached data used');
 					header('Content-Encoding: gzip');
 					return response::json($data, false);
 				} else {
 					// no data so get some
-					fb('no search cached data');
+					//fb('no search cached data');
 					// flags
 					$is_active = in_array('deleted', $wcmd) ? 0 : 1;
 					$is_notags = in_array('notags',  $wcmd);
@@ -200,7 +211,8 @@ class note extends controller {
 		} else {
 			$result['error'] = 'not authorized';
 		}
-		fb($result, 'search');
+
+		//fb($result, 'search');
 		return response::json($result);
 	}
 
@@ -232,7 +244,8 @@ class note extends controller {
 		} else {
 			$result['error'] = 'not authorized';
 		}
-		fb($result, 'history');
+
+		//fb($result, 'history');
 		response::json($result);
 	}
 

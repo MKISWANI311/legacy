@@ -140,21 +140,28 @@ function TagList ( params ) {
 		//fb('id', id);
 		var i, tag = element('span', {className:'tag', tagid:id, tagnm:name, title:id + ':' + data_tags.data[id][data_tags.defn.uses]},
 			(( name.length > maxlength_tag ) ? name.slice(0, maxlength_tag) + '...' : name), {onclick:function(){
-				if ( $(this).hasClass('inactive') ) return;
-				$(this).toggleClass('select');
-				if ( $(this).hasClass('select') ) {
+				//if ( $(this).hasClass('inactive') ) return;
+				if ( this.classList.contains('inactive') ) {
+				    return;
+                }
+				//$(this).toggleClass('select');
+				this.classList.toggle('select');
+				//if ( $(this).hasClass('select') ) {
+				if ( this.classList.contains('select') ) {
 					var text = self.dom.input.value.trim();
 					self.dom.input.value = text + ( text ? ' ' : '' ) + this.tagnm;
 					for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
 						if ( !data_tags.data[id][data_tags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
-							$(self.dom.tags.childNodes[i]).addClass('inactive');
+							//$(self.dom.tags.childNodes[i]).addClass('inactive');
+							self.dom.tags.childNodes[i].classList.add('inactive');
 						}
 					}
 				} else {
 					self.dom.input.value = self.dom.input.value.replace(this.tagnm, '').replace('  ', ' ').trim();
 					for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
 						//if ( !data_tags.data[id][data_tags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
-							$(self.dom.tags.childNodes[i]).removeClass('inactive');
+							//$(self.dom.tags.childNodes[i]).removeClass('inactive');
+							self.dom.tags.childNodes[i].classList.remove('inactive');
 						//}
 					}
 				}

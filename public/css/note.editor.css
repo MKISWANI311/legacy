@@ -26,7 +26,7 @@
 			.noteeditor .entries .entry .title .icon img, .noteeditor .tags .title .icon img { width:16px; height:16px }
 			.noteeditor .entries .entry .title .name input { color:inherit; background-color:#fff; border:none; font-size:inherit; font-weight:bold; height:18px; width:100% }
 			.noteeditor .entries .entry .title .name input:hover { color:#7c94c1 }
-			.noteeditor .entries .entry .title .name input:focus { color:#7c94c1 }
+			.noteeditor .entries .entry .title .name input:focus { color:#7c94c1; outline: none }
 			.noteeditor .entries .entry .title .controls { text-align:right; width:100px; white-space:nowrap }
 			.noteeditor .entries .entry .title .controls .button,
 			.noteeditor .entries .entry .title .controls .disabled { width:16px; height:16px; opacity:0.15; border:1px solid white }

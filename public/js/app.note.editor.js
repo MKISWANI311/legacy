@@ -203,6 +203,9 @@ var NoteEditor = new function () {
 
 			self.post.entries.push(post);
 		}
+
+		console.log('note data to post', self.post);
+
 		return self.post;
 	};
 
@@ -214,11 +217,21 @@ var NoteEditor = new function () {
 	 */
 	this.Save = function () {
 		// do nothing if there are no modifications
-		if ( !this.HasChanges() ) return;
-		// disable controls to preven double posting
+		if ( !this.HasChanges() ) {
+		    return;
+        }
+
+		// disable controls to prevent double posting
 		EnableControls(false);
-		SetTitleIcon('img/message.loading.gif');
-		$.post('/note/save/' + (this.data.id || ''), GetData(), function(data){
+		//SetTitleIcon('img/message.loading.gif');
+
+		api.post('note/save/' + (this.data.id || ''), GetData(), function ( error, data ) {
+            if ( error ) {
+                console.error(error);
+            }
+
+            console.log('note save', data);
+
 			if ( data && data.id && data.entries ) {
 				// the note is just created
 				var is_new = !self.data.id ? true : false;
@@ -237,9 +250,12 @@ var NoteEditor = new function () {
 					entry.post.data_dec = entry.data.data_dec;
 					entry.post.id_type  = entry.data.id_type;
 					// clear color from inputs
-					$(entry.dom.name).removeClass('changed');
-					$(entry.dom.data).removeClass('changed');
-					$(self.dom.tags.input).removeClass('changed');
+					//$(entry.dom.name).removeClass('changed');
+					entry.dom.name.classList.remove('changed');
+					//$(entry.dom.data).removeClass('changed');
+					entry.dom.data.classList.remove('changed');
+					//$(self.dom.tags.input).removeClass('changed');
+					self.dom.tags.input.classList.remove('changed');
 
 					// change icons according to status
 					if ( data.entries[i].changed ) entry.dom.icon.src = 'img/field_flag_ok.png';
@@ -374,7 +390,15 @@ var NoteEditor = new function () {
 			// note and entry are from server
 			if ( self.data.id && entry.data.id ) {
 				elchild(elclear(entry.dom.history), element('div', {className:'info'}, 'loading ...'));
-				$.post('/note/history/' + self.data.id + '/' + entry.data.id, function(history) {
+
+                api.get('note/history/' + self.data.id + '/' + entry.data.id, function ( error, history ) {
+                    if ( error ) {
+                        console.error(error);
+                        return;
+                    }
+
+                    console.log('note history', history);
+
 					elclear(entry.dom.history);
 					entry.data.history = history;
 					var tbl = element('table', {className:'maxw'});
@@ -432,8 +456,10 @@ var NoteEditor = new function () {
 			data_dec: data
 		});
 		self.dom.entries.insertBefore(entry_new, entry);
-		$(entry_new.dom.name).addClass('changed');
-		$(entry_new.dom.data).addClass('changed');
+		//$(entry_new.dom.name).addClass('changed');
+		entry_new.dom.name.classList.add('changed');
+		//$(entry_new.dom.data).addClass('changed');
+		entry_new.dom.data.classList.add('changed');
 		changed = true;
 	};
 
@@ -468,8 +494,10 @@ var NoteEditor = new function () {
 	var EntryBtnDelete = function ( entry ) {
 		if ( self.dom.entries.childNodes.length > 1 ) {
 			// hide entry
-			$(entry.dom.undo).toggleClass('hidden');
-			$(entry.dom.body).toggleClass('hidden');
+			//$(entry.dom.undo).toggleClass('hidden');
+			entry.dom.undo.classList.toggle('hidden');
+			//$(entry.dom.body).toggleClass('hidden');
+			entry.dom.body.classList.toggle('hidden');
 			// set flag
 			entry.deleted = true;
 			changed = true;
@@ -488,13 +516,16 @@ var NoteEditor = new function () {
 				// only for edit mode
 				if ( self.data.id ) {
 					if ( entry.post.name_dec != null && entry.post.name_dec != this.value )
-						$(this).addClass('changed');
+						//$(this).addClass('changed');
+						this.classList.add('changed');
 					else
-						$(this).removeClass('changed');
+						//$(this).removeClass('changed');
+						this.classList.remove('changed');
 				}
 			}
 		});
-		$(entry.dom.name).keydown(function(event) {
+		//$(entry.dom.name).keydown(function(event) {
+		entry.dom.name.addEventListener('keydown', function(event) {
 			// up
 			if ( event.which == 38 ) if ( entry.previousSibling ) entry.previousSibling.dom.name.focus();
 			// down
@@ -519,7 +550,8 @@ var NoteEditor = new function () {
 		if ( entry.data.id_type == 6 || entry.data.id_type == 7 ) {
 			entry.dom.data = element('textarea', {className:'text', maxLength:limit, disabled:!this.open}, entry.data.data_dec);
 			// keyboard navigation
-			$(entry.dom.data).keydown(function(event) {
+			//$(entry.dom.data).keydown(function(event) {
+			entry.dom.data.addEventListener('keydown', function ( event ) {
 				//TODO: selectionStart is not cross-browser
 				// up
 				if ( event.which == 38 && entry.previousSibling && this.selectionStart == 0 ) entry.previousSibling.dom.data.focus();
@@ -529,7 +561,8 @@ var NoteEditor = new function () {
 		} else {
 			entry.dom.data = element('input', {type:'text', maxLength:limit, className:'line', disabled:!self.open, value: entry.data.data_dec});
 			// keyboard navigation
-			$(entry.dom.data).keydown(function(event) {
+            //$(entry.dom.data).keydown(function(event) {
+            entry.dom.data.addEventListener('keydown', function ( event ) {
 				// up
 				if ( event.which == 38 ) if ( entry.previousSibling ) entry.previousSibling.dom.data.focus();
 				// down
@@ -542,14 +575,16 @@ var NoteEditor = new function () {
 			// only for edit mode
 			if ( self.data.id ) {
 				if ( entry.post.data_dec != null && entry.post.data_dec != this.value )
-					$(this).addClass('changed');
+					//$(this).addClass('changed');
+					this.classList.add('changed');
 				else
-					$(this).removeClass('changed');
+					//$(this).removeClass('changed');
+					this.classList.remove('changed');
 			}
 			// in case this is url entry type
-			if ( entry.data.id_type == 2 ) {
-				RequestUrlTitle(this.value);
-			}
+			// if ( entry.data.id_type == 2 ) {
+			// 	RequestUrlTitle(this.value);
+			// }
 		};
 
 		// values history
@@ -568,33 +603,33 @@ var NoteEditor = new function () {
 		entry.dom.data.onkeydown = entry.dom.data.onkeyup;
 	};
 
-	var RequestUrlTitle = function ( url ) {
-		//delete this.data.comment;
-		var comment = null;
-		// get an empty comment block
-		for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
-			var entry = self.dom.entries.childNodes[i];
-			// plain text type
-			if ( entry.data.id_type == 6 && entry.dom.data.value.trim() == '' ) {
-				comment = entry.dom.data;
-				break;
-			}
-		}
-		// send request only if there is an empty comment entry
-		if ( comment ) {
-			url = 'http://query.yahooapis.com/v1/public/yql?q=' +
-				'select * from html where url="' + encodeURIComponent(url) + '" and xpath="/html/head/title"&format=json';
-			$.ajax(url, {crossDomain:true, dataType:'json',
-				success: function(data){
-					if ( data && data.query && data.query.results && data.query.results.title ) {
-						comment.value = data.query.results.title;
-						comment.onkeyup();
-						comment.onchange();
-					}
-				}
-			});
-		}
-	};
+	// var RequestUrlTitle = function ( url ) {
+	// 	//delete this.data.comment;
+	// 	var comment = null;
+	// 	// get an empty comment block
+	// 	for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
+	// 		var entry = self.dom.entries.childNodes[i];
+	// 		// plain text type
+	// 		if ( entry.data.id_type == 6 && entry.dom.data.value.trim() == '' ) {
+	// 			comment = entry.dom.data;
+	// 			break;
+	// 		}
+	// 	}
+	// 	// send request only if there is an empty comment entry
+	// 	if ( comment ) {
+	// 		url = 'http://query.yahooapis.com/v1/public/yql?q=' +
+	// 			'select * from html where url="' + encodeURIComponent(url) + '" and xpath="/html/head/title"&format=json';
+	// 		$.ajax(url, {crossDomain:true, dataType:'json',
+	// 			success: function(data){
+	// 				if ( data && data.query && data.query.results && data.query.results.title ) {
+	// 					comment.value = data.query.results.title;
+	// 					comment.onkeyup();
+	// 					comment.onchange();
+	// 				}
+	// 			}
+	// 		});
+	// 	}
+	// };
 
 	/**
 	* Parse data and fill the select list
@@ -708,39 +743,42 @@ var NoteEditor = new function () {
 		elchild(entry, [entry.dom.undo, entry.dom.body]);
 		// undo delete
 		elchild(entry.dom.undo, element('a', {}, 'restore deleted entry', {onclick:function(){
-			$(entry.dom.undo).toggleClass('hidden');
-			$(entry.dom.body).toggleClass('hidden');
+			//$(entry.dom.undo).toggleClass('hidden');
+			entry.dom.undo.classList.toggle('hidden');
+			//$(entry.dom.body).toggleClass('hidden');
+			entry.dom.body.classList.toggle('hidden');
 			entry.deleted = false;
 		}}));
 
 		// events
-		$(entry).mouseenter(function(){
+		//$(entry).mouseenter(function(){
+		entry.addEventListener('mouseenter', function () {
 			// only if not closed
 			if ( self.open ) {
 				if ( !entry.previousSibling ) entry.dom.btn_up.className   = 'disabled'; else entry.dom.btn_up.className   = 'button';
 				if ( !entry.nextSibling )     entry.dom.btn_down.className = 'disabled'; else entry.dom.btn_down.className = 'button';
-				//TODO: add real entries check (there are hidden entries so failue here)
+				//TODO: add real entries check (there are hidden entries so failure here)
 				if ( self.dom.entries.childNodes.length == 1 ) entry.dom.btn_delete.className = 'disabled'; else entry.dom.btn_delete.className = 'button';
 				//$(entry.dom.controls).fadeIn();
                 entry.dom.controls.classList.remove('hidden');
 			}
 		});
-		$(entry).mouseleave(function(){
+		//$(entry).mouseleave(function(){
+		entry.addEventListener('mouseleave', function () {
 			// only if not closed
 			if ( self.open ) {
 				//$(entry.dom.controls).fadeOut();
                 entry.dom.controls.classList.add('hidden');
 			}
 		});
-		$(entry).click(function(){
+		//$(entry).click(function(){
 			// iterate all entries
 //			for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
 //				entry = self.dom.entries.childNodes[i];
 //				$(entry.dom.body).removeClass('active');
 //			}
 //			$(this.dom.body).addClass('active');
-
-		});
+		//});
 		return entry;
 	};
 
@@ -803,9 +841,11 @@ var NoteEditor = new function () {
 			if ( self.data.id ) {
 				// tags changed since the last post
 				if ( TagsChanged(this.value, self.post.tags) ) {
-					$(this).addClass('changed');
+					//$(this).addClass('changed');
+					this.classList.add('changed');
 				} else {
-					$(this).removeClass('changed');
+					//$(this).removeClass('changed');
+					this.classList.remove('changed');
 				}
 			}
 			// change icon if necessary
@@ -879,7 +919,8 @@ var NoteEditor = new function () {
 	 */
 	var SetEvents = function () {
 		// save
-		$(self.dom.handle).bind('keypress', function(event) {
+		//$(self.dom.handle).bind('keypress', function(event) {
+		self.dom.handle.addEventListener('keypress', function(event) {
 			if ( event.which == 13 ) {
 				// save on Ctrl+Enter
 				if ( event.ctrlKey ) {
@@ -892,7 +933,8 @@ var NoteEditor = new function () {
 			}
 		});
 		// cancel
-		$(self.dom.handle).bind('keydown', function(event) {
+		//$(self.dom.handle).bind('keydown', function(event) {
+		self.dom.handle.addEventListener('keydown', function(event) {
 			if ( event.which == 27 ) {
 				// exit from here
 				self.Escape();

@@ -89,18 +89,18 @@ class app {
 			$time = round(1000*(microtime(true)-INIT_MICROTIME), 3);
 			$mem  = round((memory_get_usage() - MEM_USE)/1024, 2);
 			$len  = strlen(self::$output);
-			$fb   = FirePHP::getInstance(true);
+			//$fb   = FirePHP::getInstance(true);
 			// common info
-			$fb->group('core::run ' . self::$class . '/' . self::$method . " (time:{$time}ms mem:{$mem}kb data:{$len}b)", array('Collapsed' => true));
-				fb($_REQUEST, 'REQUEST');
-				fb($_COOKIE, 'COOKIE');
+			//$fb->group('core::run ' . self::$class . '/' . self::$method . " (time:{$time}ms mem:{$mem}kb data:{$len}b)", array('Collapsed' => true));
+				//fb($_REQUEST, 'REQUEST');
+				//fb($_COOKIE, 'COOKIE');
 				//fb($_SERVER, 'SERVER');
-				if ( !empty($_SESSION) ) fb($_SESSION, 'SESSION');
-			$fb->groupEnd();
+				//if ( !empty($_SESSION) ) fb($_SESSION, 'SESSION');
+			//$fb->groupEnd();
 			// db info
-			if ( app::$queries['data'] ) {
-				fb(array_merge(array(array('ms', 'ar', 'query')), app::$queries['data']), 'db::queries (' . count(app::$queries['data']) . ':' . round(app::$queries['time']*1000, 3) . 'ms)', FirePHP::TABLE);
-			}
+//			if ( app::$queries['data'] ) {
+//				fb(array_merge(array(array('ms', 'ar', 'query')), app::$queries['data']), 'db::queries (' . count(app::$queries['data']) . ':' . round(app::$queries['time']*1000, 3) . 'ms)', FirePHP::TABLE);
+//			}
 		}
 	}
 
@@ -109,10 +109,7 @@ class app {
 	 */
 	public static function run ()
 	{
-		// check if session id set
-		//if ( !empty($_COOKIE[session_name()]) ) {
-			session_start();
-		//}
+        session_start();
 
         if ( DEBUG ) {
             // concatenate css and js if necessary
@@ -184,6 +181,17 @@ class controller {
 class response {
 
 	public static function send () {}
+
+    public static function txt ( $data ) {
+        // send headers
+        header('Content-Type: application/x-download');
+        header('Content-Length: ' . strlen($data));
+        header('Content-Disposition: attachment; filename="fortnotes.export.'.date('Ymd').'.txt"');
+        header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        header('Pragma: no-cache');
+        // output data
+        echo $data;
+    }
 
 	public static function zip ( $data ) {
 		// disable ZLIB ouput compression

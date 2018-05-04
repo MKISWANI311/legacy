@@ -43,7 +43,7 @@ var TemplateList = new function () {
 		// iterate all templates
 		data_templates.data.each(function(data){
 			// template body
-			var item = element('div', {className:'item', style:'display:none', data:data},
+			var item = element('div', {className:'item', /*style:'display:none',*/ data:data},
 				element('div', {className:'line'}, [
 					element('div', {className:'name'}, data[data_templates.defn.name]),
 					element('div', {className:'hint'}, data[data_templates.defn.description])
@@ -51,11 +51,13 @@ var TemplateList = new function () {
 			// append
 			elchild(self.dom.list, item);
 			// template item handlers
-			$(item).click(function(){
+			//$(item).click(function(){
+			item.addEventListener('click', function () {
 				self.Show(false);
 				NoteEditor.Create(this.data);
 			});
-			$(item).mouseenter(function(){
+			//$(item).mouseenter(function(){
+			item.addEventListener('mouseenter', function () {
 				var list = [];
 				data_template_entries.data[this.data[data_templates.defn.id]].each(function(entry){
 					list.push('<b>' + entry[data_template_entries.defn.name] + '</b>');
@@ -71,7 +73,7 @@ var TemplateList = new function () {
 	 * @param text string to search in each template name or description
 	 */
 	this.Filter = function ( text ) {
-		text = text || (this.dom.filter.value == hint_filter ? '' : this.dom.filter.value);
+		text = text || this.dom.filter.value;
 		text = text.toLowerCase();
 		for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
 			// prepare
@@ -79,7 +81,8 @@ var TemplateList = new function () {
 			var name = item.data[data_templates.defn.name].toLowerCase();
 			var desc = item.data[data_templates.defn.description].toLowerCase();
 			// search substring and show/hide
-			$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+			//$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+			item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
 		}
 	};
 
@@ -107,12 +110,19 @@ var TemplateList = new function () {
 			this.dom.hint  = element('div', {className:'hint'}, hint_main)
 		]);
 		// reset hint
-		$(this.dom.handle).mouseleave(function(){self.dom.hint.innerHTML = hint_main;});
+		//$(this.dom.handle).mouseleave(function(){
+		this.dom.handle.addEventListener('mouseleave', function () {
+		    self.dom.hint.innerHTML = hint_main;
+		});
 
-		this.dom.filter = element('input', {type:'text', value:hint_filter});
+		//this.dom.filter = element('input', {type:'text', value:hint_filter});
+		this.dom.filter = element('input', {type:'text', placeholder: hint_filter});
 		// watermark and filtering
-		watermark(this.dom.filter, hint_filter, '#000');
-		$(this.dom.filter).keyup(function(){self.Filter(this.value);});
+		//watermark(this.dom.filter, hint_filter, '#000');
+		//$(this.dom.filter).keyup(function(){
+		this.dom.filter.addEventListener('keyup', function() {
+		    self.Filter(this.value);
+		});
 
 		// title
 		elchild(this.dom.title, [element('div', {className:'text'}, 'Templates'), this.dom.filter]);

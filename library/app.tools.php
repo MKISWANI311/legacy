@@ -160,7 +160,7 @@ function array_pack ( $data, $defn = array() ) {
  * The data can be displayed in the Firebug Console or in the "Server" request tab.
  * @see http://www.firephp.org/Wiki/Reference/Fb
  */
-function fb() {
-	$callback = PHP_SAPI === 'cli' ? 'var_dump' : array(FirePHP::getInstance(true), 'fb');
-	call_user_func_array($callback, func_get_args());
-}
+//function fb() {
+//	$callback = PHP_SAPI === 'cli' ? 'var_dump' : array(FirePHP::getInstance(true), 'fb');
+//	call_user_func_array($callback, func_get_args());
+//}

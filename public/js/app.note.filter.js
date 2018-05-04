@@ -147,8 +147,14 @@ var NoteFilter = new function () {
 		LoadingStart();
 		// clone current data to post data
 		for ( var item in this.data ) this.post[item] = this.data[item].slice();
-		// ajax post request
-		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd, all:isall}, function(data){
+
+		api.post('note/search', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd, all:isall}, function ( error, data ) {
+            if ( error ) {
+                console.error(error);
+            }
+
+            console.log('note search', data);
+
 			if ( !data.error ) {
 				// make note list using the received data
 				NoteList.BuildTable(data.notes, data.total);
@@ -160,10 +166,11 @@ var NoteFilter = new function () {
 				// server error
 				self.MsgAdd(msg_fail_server_error + data.error, 'fail');
 			}
+
 			// hide loading progress
 			LoadingStop();
 		});
-	}
+	};
 
 	/**
 	 * Updates inner data from user input if changed since last time
@@ -426,7 +433,8 @@ var NoteFilter = new function () {
 		this.ac = $(this.dom.input).data('autocompleter');
 
 		// search input handler
-		$(this.dom.input).bind('keydown', function(event) {
+		//$(this.dom.input).bind('keydown', function(event) {
+        this.dom.input.addEventListener('keydown', function(event) {
 			// enter
 			if ( event.which == 13 ) self.DoSearch(event.ctrlKey);
 			// up

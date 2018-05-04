@@ -152,10 +152,10 @@ var App = new function () {
 	 *
 	 */
 	this.ExpirePass = function () {
-        console.log('master password expire time');
+        console.log('master password expire');
 		// notify all the subsribers about clearing
 		for ( var i in self.subscribers ) {
-			if ( self.subscribers[i].EventClose && self.subscribers[i].EventClose instanceof Function ) {
+			if ( typeof self.subscribers[i].EventClose === 'function' ) {
 				// close the subscriber - clear all the decrypted data
 				self.subscribers[i].EventClose();
 			}

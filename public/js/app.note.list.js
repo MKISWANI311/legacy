@@ -75,7 +75,13 @@ var NoteList = new function () {
 		// check input
 		if ( list.length > 0 ) {
 			// send request
-			$.post('/note/delete' + (undo ? '/undo' : ''), {ids:list}, function(data){
+			api.post('note/delete' + (undo ? '/undo' : ''), {ids:list}, function ( error, data ) {
+                if ( error ) {
+                    console.error(error);
+                }
+
+                console.log('note delete', data);
+
 				// remove old messages
 				NoteFilter.MsgClear();
 				// on success
@@ -197,7 +203,8 @@ var NoteList = new function () {
 				// create html wrapper for tag
 				item = element('span', {className:'tag include', tagnm:item, title:hint_tag_exclude}, item);
 				// mouse click handler
-				$(item).bind('click', TagClickHandler);
+				//$(item).bind('click', TagClickHandler);
+				item.addEventListener('click', TagClickHandler);
 				list.push(item);
 			});
 			// forms the list of tags available for selection
@@ -205,7 +212,8 @@ var NoteList = new function () {
 				// create html wrapper for tag
 				item = element('span', {className:'tag', finc:true, tagnm:item, title:hint_tag_include}, item);
 				// mouse click handler
-				$(item).bind('click', TagClickHandler);
+				//$(item).bind('click', TagClickHandler);
+				item.addEventListener('click', TagClickHandler);
 				list.push(item);
 			});
 		}
@@ -321,10 +329,11 @@ var NoteList = new function () {
 				// determine the state to switch to
 				note.state[type] = state !== undefined ? state : (note.state[type] ? false : true);
 				// invert class
-				$(note).toggleClass(type, note.state[type]);
+				//$(note).toggleClass(type, note.state[type]);
+				note.classList.toggle(type, note.state[type]);
 			});
 		}
-	}
+	};
 
 	/**
 	 * Returns the list of notes with the given state
@@ -373,7 +382,7 @@ var NoteList = new function () {
 	 * highlights the active note or note range
 	 * holding Ctrl checks/unchecks the selected notes
 	 * holding Shift selects all the notes between old and new selected notes
-	 * @param event jquery event object
+	 * @param event event object
 	 */
 	var NoteClickHandler = function ( event ) {
 		// holding Ctrl key
@@ -458,12 +467,14 @@ var NoteList = new function () {
 			])
 		]);
 		// whole note ckick
-		$(note).bind('click', NoteClickHandler);
+		//$(note).bind('click', NoteClickHandler);
+		note.addEventListener('click', NoteClickHandler);
 		// checkbox click
-		$(note.dom.tick).bind('click', NoteTickClickHandler);
+		//$(note.dom.tick).bind('click', NoteTickClickHandler);
+		note.dom.tick.addEventListener('click', NoteTickClickHandler);
 		// note html body
 		return note;
-	}
+	};
 
 	/**
 	 * Shows/hides notes according to the filter

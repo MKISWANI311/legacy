@@ -6,7 +6,8 @@ var DlgUserRegister = null;
 
 
 // the DOM is ready
-$(function(){
+//$(function(){
+document.addEventListener('DOMContentLoaded', function () {
     DlgExport = new DialogModal({
         width    : 750,
         title    : 'Data export',
@@ -88,43 +89,66 @@ $(function(){
                     fbtn.value = 'File selected';
                 }});
             var fbtn = element('input', {type:'button', className:'button long', value:'Choose file ...', onclick:function(){
-                    $(file).trigger('click');
+                    //$(file).trigger('click');
+                    file.click();
                 }});
             var hint = element('div', {className:'fhint'});
 
             this.SetContent([
                 element('div', {className:'desc'}, "Backup is an archived package of all your encrypted data. It can't be read by human but can be used to restore your account info or setup a copy on some other FortNotes instance."),
                 element('input', {type:'button', className:'button long', value:'Create backup', onclick:function(){
-                        window.location = 'user/export/zip';
+                        window.location = 'user/export/txt';
                     }}),
-                element('div', {className:'desc'}, "Please specify your previuosly downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
+                element('div', {className:'desc'}, "Please specify your previously downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
                 element('div', {}, [
                     element('input', {type:'button', className:'button long', value:'Restore backup', onclick:function(){
                             var btn = this;
                             btn.value = 'Uploading ...';
                             btn.disabled = true;
+
                             var data = new FormData();
                             data.append('file', file.files[0]);
-                            $.ajax({
-                                url: 'user/import/zip',
-                                data: data,
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                type: 'POST',
-                                dataType: 'json',
-                                success: function(data) {
-                                    btn.value = 'Restore backup';
-                                    btn.disabled = false;
-                                    if ( data && data.error ) {
-                                        alert('Restore from backup failed. Error: ' + data.error);
-                                    } else {
-                                        alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
-                                        // We must reload the whole page to update data_tags
-                                        window.location.reload();
-                                    }
+                            console.log(data);
+
+                            api.postForm('user/import/txt', data, function ( error, data ) {
+                                if ( error ) {
+                                    console.error(error);
+                                    return;
+                                }
+
+                                console.log('user import', data);
+
+                                btn.value = 'Restore backup';
+                                btn.disabled = false;
+                                if ( data && data.error ) {
+                                    alert('Restore from backup failed. Error: ' + data.error);
+                                } else {
+                                    alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
+                                    // We must reload the whole page to update data_tags
+                                    window.location.reload();
                                 }
                             });
+
+                            // $.ajax({
+                            //     url: 'user/import/txt',
+                            //     data: data,
+                            //     cache: false,
+                            //     contentType: false,
+                            //     processData: false,
+                            //     type: 'POST',
+                            //     dataType: 'json',
+                            //     success: function(data) {
+                            //         btn.value = 'Restore backup';
+                            //         btn.disabled = false;
+                            //         if ( data && data.error ) {
+                            //             alert('Restore from backup failed. Error: ' + data.error);
+                            //         } else {
+                            //             alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
+                            //             // We must reload the whole page to update data_tags
+                            //             window.location.reload();
+                            //         }
+                            //     }
+                            // });
                         }}), ' ',
                     fbtn,
                     hint
@@ -132,9 +156,18 @@ $(function(){
                 element('div', {className:'desc'}, "It's possible to export all the data in a human readable form in order to print it or save in file on some storage. It'll give all the data in plain unencrypted form. The password is required."),
                 element('input', {type:'button', className:'button long', value:'Export data', onclick:function(){
                         var btn = this;
+
                         btn.value = 'Loading ...';
                         btn.disabled = true;
-                        $.get('user/export/plain', function(data) {
+
+                        api.get('user/export/plain', function ( error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                return;
+                            }
+
+                            console.log('user export', data);
+
                             btn.value = 'Export data';
                             btn.disabled = false;
                             export_data = data;
@@ -318,7 +351,16 @@ $(function(){
                         if ( modal.data.attempts > 1 ) {
                             modal.SetLoading("Sending server request ...");
                         }
-                        $.post('/user/auth', {name:username, pass:password, mode:'login'}, function(data){
+
+                        api.post('user/auth', {name: username, pass: password, mode: 'login'}, function ( error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                modal.SetMessage('Request error.', 'error');
+                                return;
+                            }
+
+                            console.log('user auth', data);
+
                             if ( data ) {
                                 // check returned data
                                 if ( data && data.id ) {
@@ -377,7 +419,15 @@ $(function(){
 
         onShow : function(){
             var self = this;
-            $.post('/user/captcha', function(data){
+
+            api.get('user/captcha', function ( error, data ) {
+                if ( error ) {
+                    console.error(error);
+                    return;
+                }
+
+                console.log('user captcha', data);
+
                 self.data.cimg.src = data.src;
             });
         },
@@ -389,7 +439,7 @@ $(function(){
                     {className:'colvalue'}],
                 attr: {}
             });
-            this.data.name  = element('input', {type:'text', autocomplete:'username', name:'username', className:'line'});
+            this.data.name  = element('input', {type:'text', autocomplete:'username', className:'line'});
             this.data.pass1 = element('input', {type:'password', autocomplete:'new-password', className:'line'});
             this.data.pass2 = element('input', {type:'password', autocomplete:'new-password', className:'line'});
             this.data.cimg  = element('img',   {width:161, height:75});
@@ -424,15 +474,21 @@ $(function(){
                     element('span', {className:'fldwhint'}, 'enter the code on the image to make sure this is not an automated registration')],
                 [this.data.cimg, element('br'), this.data.code]
             ], {});
-            $(this.dom.footer).hide();
+            //console.log(this.dom.footer);
+            //$(this.dom.footer).hide();
+            this.dom.footer.classList.add('hidden');
             var self = this;
-            this.SetContent(element('a', {}, "I understand that my password can't be restored and will keep it safe", {onclick:function(){
-                    self.SetHint('Keep your password safe - you are the only one who knows it so there is no way to restore it!');
-                    $('#simplemodal-container').css('top', ($('#simplemodal-container').css('top').replace('px','') - 80) + 'px');
-                    self.SetContent(element('form', {}, self.data.fldlist.dom.table));
-                    $(self.dom.footer).show();
-                    self.data.name.focus();
-                }}));
+            this.SetContent(element('a', {}, "I understand that my password can't be restored and will keep it safe", {onclick: function () {
+                var container = document.getElementById('simplemodal-container');
+
+                self.SetHint('Keep your password safe - you are the only one who knows it so there is no way to restore it!');
+                 //$('#simplemodal-container').css('top', ($('#simplemodal-container').css('top').replace('px','') - 80) + 'px');
+                container.style.top = parseInt(container.style.top, 10) - 100 + 'px';
+                self.SetContent(element('form', {}, self.data.fldlist.dom.table));
+                //$(self.dom.footer).show();
+                self.dom.footer.classList.remove('hidden');
+                self.data.name.focus();
+            }}));
         },
 
         controls : {
@@ -462,30 +518,42 @@ $(function(){
                         if ( modal.data.attempts > 1 ) {
                             modal.SetLoading("Sending server request ...");
                         }
-                        $.post('/user/auth', {name:username, pass:password, code:modal.data.code.value, mode:'register'}, function(data){
+
+                        api.post('user/auth', {name: username, pass: password, code: modal.data.code.value, mode: 'register'}, function (error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                modal.SetMessage('Request error.', 'error');
+                                return;
+                            }
+
+                            console.log('user auth', data);
+
                             if ( data ) {
                                 if ( data.code !== false ) {
                                     // check returned data
                                     if ( data && data.id ) {
-                                        // save user name for future logins
-                                        App.Set('username_last_used', modal.data.name.value, true);
-                                        App.SetPass(password);
-                                        // reset values
-                                        modal.data.name.value = '';
-                                        modal.data.pass1.value = '';
-                                        modal.data.pass2.value = '';
-                                        modal.SetHint();
-                                        modal.SetContent();
-                                        $(modal.dom.footer).hide();
-                                        modal.SetMessage(['Registration was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
-                                        // redirect to home with delay
-                                        setTimeout(function(){
+                                        initData(data, function () {
+                                            // save user name for future logins
+                                            App.Set('username_last_used', modal.data.name.value, true);
+                                            App.SetPass(password);
+                                            // reset values
+                                            modal.data.name.value = '';
+                                            modal.data.pass1.value = '';
+                                            modal.data.pass2.value = '';
+                                            //modal.SetHint();
+                                            //modal.SetContent();
+                                            //$(modal.dom.footer).hide();
+                                            //modal.dom.footer.classList.add('hidden');
+                                            //modal.SetMessage(['Registration was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
+                                            // redirect to home with delay
+                                            //setTimeout(function(){
                                             //window.location.href = window.location.href;
                                             modal.Close();
-                                            initData(data);
+
                                             pageInit.style.display = 'none';
                                             pageMain.style.display = 'block';
-                                        }, 500);
+                                            //}, 500);
+                                        });
                                         return;
                                     } else {
                                         modal.data.attempts++;
@@ -519,3 +587,4 @@ $(function(){
     App.Subscribe(DlgOptions);
     App.Subscribe(DlgPassGet);
 });
+//});

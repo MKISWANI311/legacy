@@ -7,6 +7,8 @@
 class user extends controller {
 
 	function auth () {
+        $_REQUEST = json_decode(file_get_contents('php://input'), true);
+
 		$username = isset($_REQUEST['name']) ? trim($_REQUEST['name']) : null;
 		$password = isset($_REQUEST['pass']) ? trim($_REQUEST['pass']) : null;
 		$authmode = isset($_REQUEST['mode']) ? trim($_REQUEST['mode']) : null;
@@ -46,8 +48,8 @@ class user extends controller {
 			}
 
 			if ( !empty($result['id']) ) {
-				// set lifetime of the session cookie to 2 weeks and start
-				session_set_cookie_params(1209600);
+				// set lifetime of the session cookie to 30 days and start
+				session_set_cookie_params(2592000);
 				// create cache dir for user searches if not exist
 				$path = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']);
 				if ( !is_dir($path) ) mkdir($path);
@@ -94,34 +96,46 @@ class user extends controller {
 	 */
 	function captcha () {
 		$result = array();
-		include(PATH_PUBLIC . 'captcha/captcha.php');
-		$_SESSION['captcha'] = captcha(array(
-			'min_length' => 6,
-			'max_length' => 6
-		));
-		$result['src'] = $_SESSION['captcha']['image_src'];
+
+		include(PATH_PUBLIC . 'captcha/simple-php-captcha.php');
+        try {
+            $_SESSION['captcha'] = simple_php_captcha(array(
+                'min_length' => 6,
+                'max_length' => 6,
+                'min_font_size' => 24,
+                'max_font_size' => 30,
+            ));
+            $result['src'] = $_SESSION['captcha']['image_src'];
+        } catch ( Exception $e ) {
+            // todo: add
+        }
+
 		response::json($result);
 	}
 
-	function signout () {
-		// check if session id set
-		if ( !empty($_COOKIE[session_name()]) ) {
-			// clear cache
-			cache::user_clear('tags');
-			cache::user_clear('searches');
-			fb('/user/signout');
-			session_unset();
-			$params = session_get_cookie_params();
-			setcookie(session_name(), '', INIT_TIMESTAMP - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
-			return session_destroy();
-		}
-		return false;
-	}
+    function signout () {
+        $result = false;
+
+        // check if session id set
+        if ( !empty($_COOKIE[session_name()]) ) {
+            // clear cache
+            cache::user_clear('tags');
+            cache::user_clear('searches');
+            //fb('/user/signout');
+            session_unset();
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', INIT_TIMESTAMP - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+            $result = session_destroy();
+        }
+
+        response::json($result);
+    }
 
 	/**
 	 * Collects and dumps all the user data
 	 * @param string $type data format flag: plain|zip
 	 * @example https://fortnotes.dev/user/export/plain
+	 * @example https://fortnotes.dev/user/export/txt
 	 * @example https://fortnotes.dev/user/export/zip
 	 */
 	function export ( $type = 'plain' ) {
@@ -154,6 +168,8 @@ class user extends controller {
 		$data = json_encode($data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE);
 		if ( $type == 'plain' ) {
 			response::json($data, false, true);
+		} else if ( $type == 'txt' ) {
+			response::txt($data);
 		} else if ( $type == 'zip' ) {
 			response::zip($data);
 		}
@@ -167,11 +183,12 @@ class user extends controller {
 	function import ( $type = '' ) {
 		// check if logged in
 		if ( !empty($_SESSION['user']['id']) && $_SESSION['user']['id'] ) {
-			fb($_FILES);
+			//fb($_FILES);
 			$result = array();
-			if ( $type != 'zip' ) {
+			/*if ( $type != 'zip' ) {
 				$result['error'] = 'Import type must be zip';
-			} else if ( !isset($_FILES['file']) ) {
+			} else */
+			if ( !isset($_FILES['file']) ) {
 				$result['error'] = 'No file was uploaded';
 			} else if ( $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE ) {
 				$result['error'] = 'Upload failed because the file is too large (maximum ' . ini_get('upload_max_filesize') . ')';
@@ -182,19 +199,19 @@ class user extends controller {
 			} else {
 				// validation
 				if ( is_uploaded_file($_FILES['file']['tmp_name']) ) {
-					$compressed = file_get_contents($_FILES['file']['tmp_name']);
-					if ( $compressed ) {
-						$decompressed = gzdecode($compressed);
-						if ( $decompressed ) {
-							$json = json_decode($decompressed, true);
-							if ( !is_null($json) ) {
-								$result = self::import_json($json);
+					$data = file_get_contents($_FILES['file']['tmp_name']);
+					if ( $data ) {
+						//$data = gzdecode($data);
+						//if ( $data ) {
+							$data = json_decode($data, true);
+							if ( !is_null($data) ) {
+								$result = self::import_json($data);
 							} else {
 								$result['error'] = 'Failed to decode JSON';
 							}
-						} else {
-							$result['error'] = 'Failed to decompress the file';
-						}
+						//} else {
+						//	$result['error'] = 'Failed to decompress the file';
+						//}
 					} else {
 						$result['error'] = 'Failed to read the file';
 					}
@@ -207,7 +224,8 @@ class user extends controller {
 		} else {
 			$result['error'] = 'not authorized';
 		}
-		fb($result, 'import');
+
+		//fb($result, 'import');
 		response::json($result);
 	}
 

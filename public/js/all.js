@@ -1187,7 +1187,8 @@ var DlgUserRegister = null;
 
 
 // the DOM is ready
-$(function(){
+//$(function(){
+document.addEventListener('DOMContentLoaded', function () {
     DlgExport = new DialogModal({
         width    : 750,
         title    : 'Data export',
@@ -1269,43 +1270,66 @@ $(function(){
                     fbtn.value = 'File selected';
                 }});
             var fbtn = element('input', {type:'button', className:'button long', value:'Choose file ...', onclick:function(){
-                    $(file).trigger('click');
+                    //$(file).trigger('click');
+                    file.click();
                 }});
             var hint = element('div', {className:'fhint'});
 
             this.SetContent([
                 element('div', {className:'desc'}, "Backup is an archived package of all your encrypted data. It can't be read by human but can be used to restore your account info or setup a copy on some other FortNotes instance."),
                 element('input', {type:'button', className:'button long', value:'Create backup', onclick:function(){
-                        window.location = 'user/export/zip';
+                        window.location = 'user/export/txt';
                     }}),
-                element('div', {className:'desc'}, "Please specify your previuosly downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
+                element('div', {className:'desc'}, "Please specify your previously downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
                 element('div', {}, [
                     element('input', {type:'button', className:'button long', value:'Restore backup', onclick:function(){
                             var btn = this;
                             btn.value = 'Uploading ...';
                             btn.disabled = true;
+
                             var data = new FormData();
                             data.append('file', file.files[0]);
-                            $.ajax({
-                                url: 'user/import/zip',
-                                data: data,
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                type: 'POST',
-                                dataType: 'json',
-                                success: function(data) {
-                                    btn.value = 'Restore backup';
-                                    btn.disabled = false;
-                                    if ( data && data.error ) {
-                                        alert('Restore from backup failed. Error: ' + data.error);
-                                    } else {
-                                        alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
-                                        // We must reload the whole page to update data_tags
-                                        window.location.reload();
-                                    }
+                            console.log(data);
+
+                            api.postForm('user/import/txt', data, function ( error, data ) {
+                                if ( error ) {
+                                    console.error(error);
+                                    return;
+                                }
+
+                                console.log('user import', data);
+
+                                btn.value = 'Restore backup';
+                                btn.disabled = false;
+                                if ( data && data.error ) {
+                                    alert('Restore from backup failed. Error: ' + data.error);
+                                } else {
+                                    alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
+                                    // We must reload the whole page to update data_tags
+                                    window.location.reload();
                                 }
                             });
+
+                            // $.ajax({
+                            //     url: 'user/import/txt',
+                            //     data: data,
+                            //     cache: false,
+                            //     contentType: false,
+                            //     processData: false,
+                            //     type: 'POST',
+                            //     dataType: 'json',
+                            //     success: function(data) {
+                            //         btn.value = 'Restore backup';
+                            //         btn.disabled = false;
+                            //         if ( data && data.error ) {
+                            //             alert('Restore from backup failed. Error: ' + data.error);
+                            //         } else {
+                            //             alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
+                            //             // We must reload the whole page to update data_tags
+                            //             window.location.reload();
+                            //         }
+                            //     }
+                            // });
                         }}), ' ',
                     fbtn,
                     hint
@@ -1313,9 +1337,18 @@ $(function(){
                 element('div', {className:'desc'}, "It's possible to export all the data in a human readable form in order to print it or save in file on some storage. It'll give all the data in plain unencrypted form. The password is required."),
                 element('input', {type:'button', className:'button long', value:'Export data', onclick:function(){
                         var btn = this;
+
                         btn.value = 'Loading ...';
                         btn.disabled = true;
-                        $.get('user/export/plain', function(data) {
+
+                        api.get('user/export/plain', function ( error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                return;
+                            }
+
+                            console.log('user export', data);
+
                             btn.value = 'Export data';
                             btn.disabled = false;
                             export_data = data;
@@ -1499,7 +1532,16 @@ $(function(){
                         if ( modal.data.attempts > 1 ) {
                             modal.SetLoading("Sending server request ...");
                         }
-                        $.post('/user/auth', {name:username, pass:password, mode:'login'}, function(data){
+
+                        api.post('user/auth', {name: username, pass: password, mode: 'login'}, function ( error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                modal.SetMessage('Request error.', 'error');
+                                return;
+                            }
+
+                            console.log('user auth', data);
+
                             if ( data ) {
                                 // check returned data
                                 if ( data && data.id ) {
@@ -1558,7 +1600,15 @@ $(function(){
 
         onShow : function(){
             var self = this;
-            $.post('/user/captcha', function(data){
+
+            api.get('user/captcha', function ( error, data ) {
+                if ( error ) {
+                    console.error(error);
+                    return;
+                }
+
+                console.log('user captcha', data);
+
                 self.data.cimg.src = data.src;
             });
         },
@@ -1570,7 +1620,7 @@ $(function(){
                     {className:'colvalue'}],
                 attr: {}
             });
-            this.data.name  = element('input', {type:'text', autocomplete:'username', name:'username', className:'line'});
+            this.data.name  = element('input', {type:'text', autocomplete:'username', className:'line'});
             this.data.pass1 = element('input', {type:'password', autocomplete:'new-password', className:'line'});
             this.data.pass2 = element('input', {type:'password', autocomplete:'new-password', className:'line'});
             this.data.cimg  = element('img',   {width:161, height:75});
@@ -1605,15 +1655,21 @@ $(function(){
                     element('span', {className:'fldwhint'}, 'enter the code on the image to make sure this is not an automated registration')],
                 [this.data.cimg, element('br'), this.data.code]
             ], {});
-            $(this.dom.footer).hide();
+            //console.log(this.dom.footer);
+            //$(this.dom.footer).hide();
+            this.dom.footer.classList.add('hidden');
             var self = this;
-            this.SetContent(element('a', {}, "I understand that my password can't be restored and will keep it safe", {onclick:function(){
-                    self.SetHint('Keep your password safe - you are the only one who knows it so there is no way to restore it!');
-                    $('#simplemodal-container').css('top', ($('#simplemodal-container').css('top').replace('px','') - 80) + 'px');
-                    self.SetContent(element('form', {}, self.data.fldlist.dom.table));
-                    $(self.dom.footer).show();
-                    self.data.name.focus();
-                }}));
+            this.SetContent(element('a', {}, "I understand that my password can't be restored and will keep it safe", {onclick: function () {
+                var container = document.getElementById('simplemodal-container');
+
+                self.SetHint('Keep your password safe - you are the only one who knows it so there is no way to restore it!');
+                 //$('#simplemodal-container').css('top', ($('#simplemodal-container').css('top').replace('px','') - 80) + 'px');
+                container.style.top = parseInt(container.style.top, 10) - 100 + 'px';
+                self.SetContent(element('form', {}, self.data.fldlist.dom.table));
+                //$(self.dom.footer).show();
+                self.dom.footer.classList.remove('hidden');
+                self.data.name.focus();
+            }}));
         },
 
         controls : {
@@ -1643,30 +1699,42 @@ $(function(){
                         if ( modal.data.attempts > 1 ) {
                             modal.SetLoading("Sending server request ...");
                         }
-                        $.post('/user/auth', {name:username, pass:password, code:modal.data.code.value, mode:'register'}, function(data){
+
+                        api.post('user/auth', {name: username, pass: password, code: modal.data.code.value, mode: 'register'}, function (error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                modal.SetMessage('Request error.', 'error');
+                                return;
+                            }
+
+                            console.log('user auth', data);
+
                             if ( data ) {
                                 if ( data.code !== false ) {
                                     // check returned data
                                     if ( data && data.id ) {
-                                        // save user name for future logins
-                                        App.Set('username_last_used', modal.data.name.value, true);
-                                        App.SetPass(password);
-                                        // reset values
-                                        modal.data.name.value = '';
-                                        modal.data.pass1.value = '';
-                                        modal.data.pass2.value = '';
-                                        modal.SetHint();
-                                        modal.SetContent();
-                                        $(modal.dom.footer).hide();
-                                        modal.SetMessage(['Registration was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
-                                        // redirect to home with delay
-                                        setTimeout(function(){
+                                        initData(data, function () {
+                                            // save user name for future logins
+                                            App.Set('username_last_used', modal.data.name.value, true);
+                                            App.SetPass(password);
+                                            // reset values
+                                            modal.data.name.value = '';
+                                            modal.data.pass1.value = '';
+                                            modal.data.pass2.value = '';
+                                            //modal.SetHint();
+                                            //modal.SetContent();
+                                            //$(modal.dom.footer).hide();
+                                            //modal.dom.footer.classList.add('hidden');
+                                            //modal.SetMessage(['Registration was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
+                                            // redirect to home with delay
+                                            //setTimeout(function(){
                                             //window.location.href = window.location.href;
                                             modal.Close();
-                                            initData(data);
+
                                             pageInit.style.display = 'none';
                                             pageMain.style.display = 'block';
-                                        }, 500);
+                                            //}, 500);
+                                        });
                                         return;
                                     } else {
                                         modal.data.attempts++;
@@ -1700,6 +1768,7 @@ $(function(){
     App.Subscribe(DlgOptions);
     App.Subscribe(DlgPassGet);
 });
+//});
 
 /*** app.fldlist.js ***/
 /**
@@ -1903,10 +1972,10 @@ var App = new function () {
 	 *
 	 */
 	this.ExpirePass = function () {
-        console.log('master password expire time');
+        console.log('master password expire');
 		// notify all the subsribers about clearing
 		for ( var i in self.subscribers ) {
-			if ( self.subscribers[i].EventClose && self.subscribers[i].EventClose instanceof Function ) {
+			if ( typeof self.subscribers[i].EventClose === 'function' ) {
 				// close the subscriber - clear all the decrypted data
 				self.subscribers[i].EventClose();
 			}
@@ -2047,46 +2116,91 @@ var icon_tags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber'
 var pageInit = document.getElementById('pageInit');
 var pageMain = document.getElementById('pageMain');
 
-//App.SetPassHash(<?php //echo !empty($_SESSION['user']['hash']) ? "'{$_SESSION['user']['hash']}'" : 'null' ?>);
+
+function status ( response ) {
+    if ( response.status >= 200 && response.status < 300 ) {
+        return Promise.resolve(response);
+    } else {
+        return Promise.reject(new Error(response.statusText));
+    }
+}
+
+function json ( response ) {
+    return response.json();
+}
+
+var api = {
+    defaults: {
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+        }
+    },
+
+    get: function ( uri, callback ) {
+        fetch(uri, api.defaults)
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    },
+
+    post: function ( uri, data, callback ) {
+        fetch(uri, Object.assign({}, api.defaults, {method: 'post', body: JSON.stringify(data)}))
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    },
+
+    postForm: function ( uri, data, callback ) {
+        var config = Object.assign({}, api.defaults, {method: 'post', body: data, headers: {
+                'Accept': 'application/json'
+            }});
+
+        fetch(uri, config)
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    }
+};
+
 
 // logoff
 function SignOut () {
-    $.modal('<div><h1>Logged off</h1></div>');
-    $.post('/user/signout', function(){
+    api.post('user/signout', null, function ( error, data ) {
+        if ( error ) {
+            console.error(error);
+            return;
+        }
+
+        // true or false
+        console.log('signout', data);
+
         location.reload();
     });
 }
 
-// menu item handler
-function MenuItemClick ( item ) {
-    $('div#menu_items .menu-item').each(function(index, it) {
-        if ( !item || it.id != item.id ) {
-            $('a', it).css('font-weight', 'normal');
-            $(it).css('background-color', '#F9F9F9');
-            $(it).css('border-bottom', '1px solid #eee');
-            $('div#' + it.id + '_body').hide();
-        }
-    });
-    if ( item ) {
-        $(item).css('font-weight', 'bold');
-        $(item.parentNode).css('background-color', 'white');
-        $(item.parentNode).css('border-bottom', '1px solid white');
-        $('div#' + item.parentNode.id + '_body').show();
-    }
-}
-
-// function AddNoteDialogShow () {
-//     $("#dlg_pass_set").modal();
-// }
-
-// function CacheClear ( param ) {
-//     $.post('/front/clear/' + param, function(){});
-// }
 
 function initData ( data, callback ) {
     window.data_user = data;
 
-    $.get('user/data', function(data) {
+    api.get('user/data', function ( error, data ) {
+        if ( error ) {
+            console.error(error);
+            callback();
+            return;
+        }
+
         window.data_entry_types = data.entry_types;
         window.data_templates = data.templates;
         window.data_template_entries = data.template_entries;
@@ -2104,18 +2218,7 @@ function initData ( data, callback ) {
         // they are filling on page loading and on note creation
         // if there are some new tags
 
-        //window.data_user = data.user || {};
-        //if ( data_user.id ) {
-
-
-            // if ( !App.HasPass() ) {
-            //     // ask pass
-            //     DlgPassGet.Show({escClose:false});
-            // }
-
-            //App.SetPassHash(data_user.hash);
-
-            // main components initialization
+        // main components initialization
         NoteFilter.Init({handle:document.querySelector('div.notefilter')});
         NoteList.Init({handle:document.querySelector('div.notelist')});
         TemplateList.Init({handle:document.querySelector('div.templatelist')});
@@ -2127,22 +2230,6 @@ function initData ( data, callback ) {
         App.Subscribe(NoteList);
         App.Subscribe(NoteFilter);
         App.Subscribe(NoteEditor);
-
-        // TagManager.EventOpen();
-        // TemplateList.EventOpen();
-        // NoteList.EventOpen();
-        // NoteFilter.EventOpen();
-        // NoteEditor.EventOpen();
-        // } else {
-        //     // ???
-        //     //App.SetPassHash(null);
-        //
-        // }
-
-        //$.modal.defaults.opacity = 20;
-
-        // set menu to home
-        MenuItemClick($('div#menu_item_home a')[0]);
 
         // show
         pageMain.style.display = 'block';
@@ -2166,7 +2253,12 @@ var collect_timer = setInterval(function(){
 }, 5000);
 
 
-$.get('user/info', function ( data ) {
+api.get('user/info', function ( error, data ) {
+    if ( error ) {
+        console.error(error);
+        return;
+    }
+
     console.log('user info', data);
 
     if ( data ) {
@@ -2526,6 +2618,9 @@ var NoteEditor = new function () {
 
 			self.post.entries.push(post);
 		}
+
+		console.log('note data to post', self.post);
+
 		return self.post;
 	};
 
@@ -2537,11 +2632,21 @@ var NoteEditor = new function () {
 	 */
 	this.Save = function () {
 		// do nothing if there are no modifications
-		if ( !this.HasChanges() ) return;
-		// disable controls to preven double posting
+		if ( !this.HasChanges() ) {
+		    return;
+        }
+
+		// disable controls to prevent double posting
 		EnableControls(false);
-		SetTitleIcon('img/message.loading.gif');
-		$.post('/note/save/' + (this.data.id || ''), GetData(), function(data){
+		//SetTitleIcon('img/message.loading.gif');
+
+		api.post('note/save/' + (this.data.id || ''), GetData(), function ( error, data ) {
+            if ( error ) {
+                console.error(error);
+            }
+
+            console.log('note save', data);
+
 			if ( data && data.id && data.entries ) {
 				// the note is just created
 				var is_new = !self.data.id ? true : false;
@@ -2560,9 +2665,12 @@ var NoteEditor = new function () {
 					entry.post.data_dec = entry.data.data_dec;
 					entry.post.id_type  = entry.data.id_type;
 					// clear color from inputs
-					$(entry.dom.name).removeClass('changed');
-					$(entry.dom.data).removeClass('changed');
-					$(self.dom.tags.input).removeClass('changed');
+					//$(entry.dom.name).removeClass('changed');
+					entry.dom.name.classList.remove('changed');
+					//$(entry.dom.data).removeClass('changed');
+					entry.dom.data.classList.remove('changed');
+					//$(self.dom.tags.input).removeClass('changed');
+					self.dom.tags.input.classList.remove('changed');
 
 					// change icons according to status
 					if ( data.entries[i].changed ) entry.dom.icon.src = 'img/field_flag_ok.png';
@@ -2697,7 +2805,15 @@ var NoteEditor = new function () {
 			// note and entry are from server
 			if ( self.data.id && entry.data.id ) {
 				elchild(elclear(entry.dom.history), element('div', {className:'info'}, 'loading ...'));
-				$.post('/note/history/' + self.data.id + '/' + entry.data.id, function(history) {
+
+                api.get('note/history/' + self.data.id + '/' + entry.data.id, function ( error, history ) {
+                    if ( error ) {
+                        console.error(error);
+                        return;
+                    }
+
+                    console.log('note history', history);
+
 					elclear(entry.dom.history);
 					entry.data.history = history;
 					var tbl = element('table', {className:'maxw'});
@@ -2755,8 +2871,10 @@ var NoteEditor = new function () {
 			data_dec: data
 		});
 		self.dom.entries.insertBefore(entry_new, entry);
-		$(entry_new.dom.name).addClass('changed');
-		$(entry_new.dom.data).addClass('changed');
+		//$(entry_new.dom.name).addClass('changed');
+		entry_new.dom.name.classList.add('changed');
+		//$(entry_new.dom.data).addClass('changed');
+		entry_new.dom.data.classList.add('changed');
 		changed = true;
 	};
 
@@ -2791,8 +2909,10 @@ var NoteEditor = new function () {
 	var EntryBtnDelete = function ( entry ) {
 		if ( self.dom.entries.childNodes.length > 1 ) {
 			// hide entry
-			$(entry.dom.undo).toggleClass('hidden');
-			$(entry.dom.body).toggleClass('hidden');
+			//$(entry.dom.undo).toggleClass('hidden');
+			entry.dom.undo.classList.toggle('hidden');
+			//$(entry.dom.body).toggleClass('hidden');
+			entry.dom.body.classList.toggle('hidden');
 			// set flag
 			entry.deleted = true;
 			changed = true;
@@ -2811,13 +2931,16 @@ var NoteEditor = new function () {
 				// only for edit mode
 				if ( self.data.id ) {
 					if ( entry.post.name_dec != null && entry.post.name_dec != this.value )
-						$(this).addClass('changed');
+						//$(this).addClass('changed');
+						this.classList.add('changed');
 					else
-						$(this).removeClass('changed');
+						//$(this).removeClass('changed');
+						this.classList.remove('changed');
 				}
 			}
 		});
-		$(entry.dom.name).keydown(function(event) {
+		//$(entry.dom.name).keydown(function(event) {
+		entry.dom.name.addEventListener('keydown', function(event) {
 			// up
 			if ( event.which == 38 ) if ( entry.previousSibling ) entry.previousSibling.dom.name.focus();
 			// down
@@ -2842,7 +2965,8 @@ var NoteEditor = new function () {
 		if ( entry.data.id_type == 6 || entry.data.id_type == 7 ) {
 			entry.dom.data = element('textarea', {className:'text', maxLength:limit, disabled:!this.open}, entry.data.data_dec);
 			// keyboard navigation
-			$(entry.dom.data).keydown(function(event) {
+			//$(entry.dom.data).keydown(function(event) {
+			entry.dom.data.addEventListener('keydown', function ( event ) {
 				//TODO: selectionStart is not cross-browser
 				// up
 				if ( event.which == 38 && entry.previousSibling && this.selectionStart == 0 ) entry.previousSibling.dom.data.focus();
@@ -2852,7 +2976,8 @@ var NoteEditor = new function () {
 		} else {
 			entry.dom.data = element('input', {type:'text', maxLength:limit, className:'line', disabled:!self.open, value: entry.data.data_dec});
 			// keyboard navigation
-			$(entry.dom.data).keydown(function(event) {
+            //$(entry.dom.data).keydown(function(event) {
+            entry.dom.data.addEventListener('keydown', function ( event ) {
 				// up
 				if ( event.which == 38 ) if ( entry.previousSibling ) entry.previousSibling.dom.data.focus();
 				// down
@@ -2865,14 +2990,16 @@ var NoteEditor = new function () {
 			// only for edit mode
 			if ( self.data.id ) {
 				if ( entry.post.data_dec != null && entry.post.data_dec != this.value )
-					$(this).addClass('changed');
+					//$(this).addClass('changed');
+					this.classList.add('changed');
 				else
-					$(this).removeClass('changed');
+					//$(this).removeClass('changed');
+					this.classList.remove('changed');
 			}
 			// in case this is url entry type
-			if ( entry.data.id_type == 2 ) {
-				RequestUrlTitle(this.value);
-			}
+			// if ( entry.data.id_type == 2 ) {
+			// 	RequestUrlTitle(this.value);
+			// }
 		};
 
 		// values history
@@ -2891,33 +3018,33 @@ var NoteEditor = new function () {
 		entry.dom.data.onkeydown = entry.dom.data.onkeyup;
 	};
 
-	var RequestUrlTitle = function ( url ) {
-		//delete this.data.comment;
-		var comment = null;
-		// get an empty comment block
-		for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
-			var entry = self.dom.entries.childNodes[i];
-			// plain text type
-			if ( entry.data.id_type == 6 && entry.dom.data.value.trim() == '' ) {
-				comment = entry.dom.data;
-				break;
-			}
-		}
-		// send request only if there is an empty comment entry
-		if ( comment ) {
-			url = 'http://query.yahooapis.com/v1/public/yql?q=' +
-				'select * from html where url="' + encodeURIComponent(url) + '" and xpath="/html/head/title"&format=json';
-			$.ajax(url, {crossDomain:true, dataType:'json',
-				success: function(data){
-					if ( data && data.query && data.query.results && data.query.results.title ) {
-						comment.value = data.query.results.title;
-						comment.onkeyup();
-						comment.onchange();
-					}
-				}
-			});
-		}
-	};
+	// var RequestUrlTitle = function ( url ) {
+	// 	//delete this.data.comment;
+	// 	var comment = null;
+	// 	// get an empty comment block
+	// 	for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
+	// 		var entry = self.dom.entries.childNodes[i];
+	// 		// plain text type
+	// 		if ( entry.data.id_type == 6 && entry.dom.data.value.trim() == '' ) {
+	// 			comment = entry.dom.data;
+	// 			break;
+	// 		}
+	// 	}
+	// 	// send request only if there is an empty comment entry
+	// 	if ( comment ) {
+	// 		url = 'http://query.yahooapis.com/v1/public/yql?q=' +
+	// 			'select * from html where url="' + encodeURIComponent(url) + '" and xpath="/html/head/title"&format=json';
+	// 		$.ajax(url, {crossDomain:true, dataType:'json',
+	// 			success: function(data){
+	// 				if ( data && data.query && data.query.results && data.query.results.title ) {
+	// 					comment.value = data.query.results.title;
+	// 					comment.onkeyup();
+	// 					comment.onchange();
+	// 				}
+	// 			}
+	// 		});
+	// 	}
+	// };
 
 	/**
 	* Parse data and fill the select list
@@ -3031,39 +3158,42 @@ var NoteEditor = new function () {
 		elchild(entry, [entry.dom.undo, entry.dom.body]);
 		// undo delete
 		elchild(entry.dom.undo, element('a', {}, 'restore deleted entry', {onclick:function(){
-			$(entry.dom.undo).toggleClass('hidden');
-			$(entry.dom.body).toggleClass('hidden');
+			//$(entry.dom.undo).toggleClass('hidden');
+			entry.dom.undo.classList.toggle('hidden');
+			//$(entry.dom.body).toggleClass('hidden');
+			entry.dom.body.classList.toggle('hidden');
 			entry.deleted = false;
 		}}));
 
 		// events
-		$(entry).mouseenter(function(){
+		//$(entry).mouseenter(function(){
+		entry.addEventListener('mouseenter', function () {
 			// only if not closed
 			if ( self.open ) {
 				if ( !entry.previousSibling ) entry.dom.btn_up.className   = 'disabled'; else entry.dom.btn_up.className   = 'button';
 				if ( !entry.nextSibling )     entry.dom.btn_down.className = 'disabled'; else entry.dom.btn_down.className = 'button';
-				//TODO: add real entries check (there are hidden entries so failue here)
+				//TODO: add real entries check (there are hidden entries so failure here)
 				if ( self.dom.entries.childNodes.length == 1 ) entry.dom.btn_delete.className = 'disabled'; else entry.dom.btn_delete.className = 'button';
 				//$(entry.dom.controls).fadeIn();
                 entry.dom.controls.classList.remove('hidden');
 			}
 		});
-		$(entry).mouseleave(function(){
+		//$(entry).mouseleave(function(){
+		entry.addEventListener('mouseleave', function () {
 			// only if not closed
 			if ( self.open ) {
 				//$(entry.dom.controls).fadeOut();
                 entry.dom.controls.classList.add('hidden');
 			}
 		});
-		$(entry).click(function(){
+		//$(entry).click(function(){
 			// iterate all entries
 //			for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
 //				entry = self.dom.entries.childNodes[i];
 //				$(entry.dom.body).removeClass('active');
 //			}
 //			$(this.dom.body).addClass('active');
-
-		});
+		//});
 		return entry;
 	};
 
@@ -3126,9 +3256,11 @@ var NoteEditor = new function () {
 			if ( self.data.id ) {
 				// tags changed since the last post
 				if ( TagsChanged(this.value, self.post.tags) ) {
-					$(this).addClass('changed');
+					//$(this).addClass('changed');
+					this.classList.add('changed');
 				} else {
-					$(this).removeClass('changed');
+					//$(this).removeClass('changed');
+					this.classList.remove('changed');
 				}
 			}
 			// change icon if necessary
@@ -3202,7 +3334,8 @@ var NoteEditor = new function () {
 	 */
 	var SetEvents = function () {
 		// save
-		$(self.dom.handle).bind('keypress', function(event) {
+		//$(self.dom.handle).bind('keypress', function(event) {
+		self.dom.handle.addEventListener('keypress', function(event) {
 			if ( event.which == 13 ) {
 				// save on Ctrl+Enter
 				if ( event.ctrlKey ) {
@@ -3215,7 +3348,8 @@ var NoteEditor = new function () {
 			}
 		});
 		// cancel
-		$(self.dom.handle).bind('keydown', function(event) {
+		//$(self.dom.handle).bind('keydown', function(event) {
+		self.dom.handle.addEventListener('keydown', function(event) {
 			if ( event.which == 27 ) {
 				// exit from here
 				self.Escape();
@@ -3687,8 +3821,14 @@ var NoteFilter = new function () {
 		LoadingStart();
 		// clone current data to post data
 		for ( var item in this.data ) this.post[item] = this.data[item].slice();
-		// ajax post request
-		$.post('/note/search/', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd, all:isall}, function(data){
+
+		api.post('note/search', {tinc:this.post.tinc, texc:this.post.texc, wcmd:this.post.wcmd, all:isall}, function ( error, data ) {
+            if ( error ) {
+                console.error(error);
+            }
+
+            console.log('note search', data);
+
 			if ( !data.error ) {
 				// make note list using the received data
 				NoteList.BuildTable(data.notes, data.total);
@@ -3700,10 +3840,11 @@ var NoteFilter = new function () {
 				// server error
 				self.MsgAdd(msg_fail_server_error + data.error, 'fail');
 			}
+
 			// hide loading progress
 			LoadingStop();
 		});
-	}
+	};
 
 	/**
 	 * Updates inner data from user input if changed since last time
@@ -3966,7 +4107,8 @@ var NoteFilter = new function () {
 		this.ac = $(this.dom.input).data('autocompleter');
 
 		// search input handler
-		$(this.dom.input).bind('keydown', function(event) {
+		//$(this.dom.input).bind('keydown', function(event) {
+        this.dom.input.addEventListener('keydown', function(event) {
 			// enter
 			if ( event.which == 13 ) self.DoSearch(event.ctrlKey);
 			// up
@@ -4076,7 +4218,13 @@ var NoteList = new function () {
 		// check input
 		if ( list.length > 0 ) {
 			// send request
-			$.post('/note/delete' + (undo ? '/undo' : ''), {ids:list}, function(data){
+			api.post('note/delete' + (undo ? '/undo' : ''), {ids:list}, function ( error, data ) {
+                if ( error ) {
+                    console.error(error);
+                }
+
+                console.log('note delete', data);
+
 				// remove old messages
 				NoteFilter.MsgClear();
 				// on success
@@ -4198,7 +4346,8 @@ var NoteList = new function () {
 				// create html wrapper for tag
 				item = element('span', {className:'tag include', tagnm:item, title:hint_tag_exclude}, item);
 				// mouse click handler
-				$(item).bind('click', TagClickHandler);
+				//$(item).bind('click', TagClickHandler);
+				item.addEventListener('click', TagClickHandler);
 				list.push(item);
 			});
 			// forms the list of tags available for selection
@@ -4206,7 +4355,8 @@ var NoteList = new function () {
 				// create html wrapper for tag
 				item = element('span', {className:'tag', finc:true, tagnm:item, title:hint_tag_include}, item);
 				// mouse click handler
-				$(item).bind('click', TagClickHandler);
+				//$(item).bind('click', TagClickHandler);
+				item.addEventListener('click', TagClickHandler);
 				list.push(item);
 			});
 		}
@@ -4322,10 +4472,11 @@ var NoteList = new function () {
 				// determine the state to switch to
 				note.state[type] = state !== undefined ? state : (note.state[type] ? false : true);
 				// invert class
-				$(note).toggleClass(type, note.state[type]);
+				//$(note).toggleClass(type, note.state[type]);
+				note.classList.toggle(type, note.state[type]);
 			});
 		}
-	}
+	};
 
 	/**
 	 * Returns the list of notes with the given state
@@ -4374,7 +4525,7 @@ var NoteList = new function () {
 	 * highlights the active note or note range
 	 * holding Ctrl checks/unchecks the selected notes
 	 * holding Shift selects all the notes between old and new selected notes
-	 * @param event jquery event object
+	 * @param event event object
 	 */
 	var NoteClickHandler = function ( event ) {
 		// holding Ctrl key
@@ -4459,12 +4610,14 @@ var NoteList = new function () {
 			])
 		]);
 		// whole note ckick
-		$(note).bind('click', NoteClickHandler);
+		//$(note).bind('click', NoteClickHandler);
+		note.addEventListener('click', NoteClickHandler);
 		// checkbox click
-		$(note.dom.tick).bind('click', NoteTickClickHandler);
+		//$(note.dom.tick).bind('click', NoteTickClickHandler);
+		note.dom.tick.addEventListener('click', NoteTickClickHandler);
 		// note html body
 		return note;
-	}
+	};
 
 	/**
 	 * Shows/hides notes according to the filter
@@ -5089,21 +5242,28 @@ function TagList ( params ) {
 		//fb('id', id);
 		var i, tag = element('span', {className:'tag', tagid:id, tagnm:name, title:id + ':' + data_tags.data[id][data_tags.defn.uses]},
 			(( name.length > maxlength_tag ) ? name.slice(0, maxlength_tag) + '...' : name), {onclick:function(){
-				if ( $(this).hasClass('inactive') ) return;
-				$(this).toggleClass('select');
-				if ( $(this).hasClass('select') ) {
+				//if ( $(this).hasClass('inactive') ) return;
+				if ( this.classList.contains('inactive') ) {
+				    return;
+                }
+				//$(this).toggleClass('select');
+				this.classList.toggle('select');
+				//if ( $(this).hasClass('select') ) {
+				if ( this.classList.contains('select') ) {
 					var text = self.dom.input.value.trim();
 					self.dom.input.value = text + ( text ? ' ' : '' ) + this.tagnm;
 					for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
 						if ( !data_tags.data[id][data_tags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
-							$(self.dom.tags.childNodes[i]).addClass('inactive');
+							//$(self.dom.tags.childNodes[i]).addClass('inactive');
+							self.dom.tags.childNodes[i].classList.add('inactive');
 						}
 					}
 				} else {
 					self.dom.input.value = self.dom.input.value.replace(this.tagnm, '').replace('  ', ' ').trim();
 					for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
 						//if ( !data_tags.data[id][data_tags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
-							$(self.dom.tags.childNodes[i]).removeClass('inactive');
+							//$(self.dom.tags.childNodes[i]).removeClass('inactive');
+							self.dom.tags.childNodes[i].classList.remove('inactive');
 						//}
 					}
 				}
@@ -5177,7 +5337,7 @@ var TemplateList = new function () {
 		// iterate all templates
 		data_templates.data.each(function(data){
 			// template body
-			var item = element('div', {className:'item', style:'display:none', data:data},
+			var item = element('div', {className:'item', /*style:'display:none',*/ data:data},
 				element('div', {className:'line'}, [
 					element('div', {className:'name'}, data[data_templates.defn.name]),
 					element('div', {className:'hint'}, data[data_templates.defn.description])
@@ -5185,11 +5345,13 @@ var TemplateList = new function () {
 			// append
 			elchild(self.dom.list, item);
 			// template item handlers
-			$(item).click(function(){
+			//$(item).click(function(){
+			item.addEventListener('click', function () {
 				self.Show(false);
 				NoteEditor.Create(this.data);
 			});
-			$(item).mouseenter(function(){
+			//$(item).mouseenter(function(){
+			item.addEventListener('mouseenter', function () {
 				var list = [];
 				data_template_entries.data[this.data[data_templates.defn.id]].each(function(entry){
 					list.push('<b>' + entry[data_template_entries.defn.name] + '</b>');
@@ -5205,7 +5367,7 @@ var TemplateList = new function () {
 	 * @param text string to search in each template name or description
 	 */
 	this.Filter = function ( text ) {
-		text = text || (this.dom.filter.value == hint_filter ? '' : this.dom.filter.value);
+		text = text || this.dom.filter.value;
 		text = text.toLowerCase();
 		for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
 			// prepare
@@ -5213,7 +5375,8 @@ var TemplateList = new function () {
 			var name = item.data[data_templates.defn.name].toLowerCase();
 			var desc = item.data[data_templates.defn.description].toLowerCase();
 			// search substring and show/hide
-			$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+			//$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+			item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
 		}
 	};
 
@@ -5241,12 +5404,19 @@ var TemplateList = new function () {
 			this.dom.hint  = element('div', {className:'hint'}, hint_main)
 		]);
 		// reset hint
-		$(this.dom.handle).mouseleave(function(){self.dom.hint.innerHTML = hint_main;});
+		//$(this.dom.handle).mouseleave(function(){
+		this.dom.handle.addEventListener('mouseleave', function () {
+		    self.dom.hint.innerHTML = hint_main;
+		});
 
-		this.dom.filter = element('input', {type:'text', value:hint_filter});
+		//this.dom.filter = element('input', {type:'text', value:hint_filter});
+		this.dom.filter = element('input', {type:'text', placeholder: hint_filter});
 		// watermark and filtering
-		watermark(this.dom.filter, hint_filter, '#000');
-		$(this.dom.filter).keyup(function(){self.Filter(this.value);});
+		//watermark(this.dom.filter, hint_filter, '#000');
+		//$(this.dom.filter).keyup(function(){
+		this.dom.filter.addEventListener('keyup', function() {
+		    self.Filter(this.value);
+		});
 
 		// title
 		elchild(this.dom.title, [element('div', {className:'text'}, 'Templates'), this.dom.filter]);
@@ -5579,15 +5749,15 @@ function pwdgen ( length ) {
  * @param text string hint
  * @param cin string color
  */
-function watermark ( obj, text, cin ) {
-	$(obj)
-		.focus(function(){
-			if ( this.value == text ) $(this).val('').css({color:cin});
-		})
-		.focusout(function(){
-			if ( !this.value ) $(this).val(text).css({color:''});
-		});
-}
+// function watermark ( obj, text, cin ) {
+// 	$(obj)
+// 		.focus(function(){
+// 			if ( this.value == text ) $(this).val('').css({color:cin});
+// 		})
+// 		.focusout(function(){
+// 			if ( !this.value ) $(this).val(text).css({color:''});
+// 		});
+// }
 
 /*** app.tplist.js ***/
 /**

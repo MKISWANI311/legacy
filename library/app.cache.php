@@ -21,7 +21,7 @@ class cache {
 		} else {
 			// setting
 			$_SESSION['cache'][$name] = $value;
-			fb($name, 'sess init store');
+			//fb($name, 'sess init store');
 		}
 		return $value;
 	}
@@ -60,7 +60,7 @@ class cache {
 		} else {
 			// setting
 			apcu_store($name, $value, $ttl);
-			fb($name, 'apc init store');
+			//fb($name, 'apc init store');
 		}
 		return $value;
 	}
@@ -79,7 +79,7 @@ class cache {
 		} else if ( $value !== null ) {
 			// setting
 			file_put_contents($file, $value);
-			fb($file, 'file init store');
+			//fb($file, 'file init store');
 		}
 		return $value;
 	}
@@ -90,13 +90,13 @@ class cache {
 	 */
 	public static function file_clear ( $file ) {
 		if ( is_dir($file) ) {
-			fb($file, 'clear path');
+			//fb($file, 'clear path');
 			// delete all files in the directory
 			array_map('unlink', glob($file . DIRECTORY_SEPARATOR . '*'));
 			// delete the directory itself
 			rmdir($file);
 		} else if ( file_exists($file) ) {
-			fb($file, 'clear file');
+			//fb($file, 'clear file');
 			unlink($file);
 		}
 	}

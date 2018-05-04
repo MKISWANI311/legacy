@@ -44,22 +44,22 @@ a.combo {
 	vertical-align: top;
 }
 .body_content {
-	width: 100%;
-	height: 100%;
+	/*width: 100%;*/
+	/*height: 100%;*/
 	/*border-left: 2px solid #ddd;
 	border-right: 2px solid #ddd;/**/
 	background-color: #fff;
-	margin-left: auto;
-	margin-right: auto;
+	/*margin-left: auto;*/
+	/*margin-right: auto;*/
 }
-.gradient {
-	background: -webkit-linear-gradient(0deg, #eee 25%,transparent 25%); /* for webkit browsers */
-	background: -moz-linear-gradient(0deg, #eee 25%,transparent 25%); /* for firefox 3.6+ */
-	background: -o-linear-gradient(0deg, #eee 25%,transparent 25%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(0deg, #eee 25%,transparent 25%); /* IE10+ */
+/*.gradient {
+	background: -webkit-linear-gradient(0deg, #eee 25%,transparent 25%); !* for webkit browsers *!
+	background: -moz-linear-gradient(0deg, #eee 25%,transparent 25%); !* for firefox 3.6+ *!
+	background: -o-linear-gradient(0deg, #eee 25%,transparent 25%); !* Opera 11.10+ *!
+	background: -ms-linear-gradient(0deg, #eee 25%,transparent 25%); !* IE10+ *!
 	background: linear-gradient(0deg, #eee 25%,transparent 25%);
 	background-size: 5px 100%;
-}
+}*/
 
 .message { padding-left: 40px; padding-right:10px; height: 34px; display: table-cell; vertical-align: middle }
 .message.auth    { color:#06c; background: url("../img/message.auth.png") no-repeat left top }
@@ -110,7 +110,7 @@ input.button:active {
 	/*color: #fff;*/
 }
 
-input.line, textarea.text {
+input.line, textarea.text, textarea.export {
 	border: 2px solid #eee;
 	background-color: #fafafa;
 	width: 100%;
@@ -163,29 +163,29 @@ input.fldedit {
 	height: 22px;
 	font-size: 12px;
 }
-.menu-item {
-	float:left;
-	background-color:white;
-	padding:3px 10px;
-	margin-left:5px;
-	width: 70px;
-	text-align: center;
-}
-.menu-item-body {
-	display:none;
-	background-color:white;
-	padding:0;
-	text-align: left;
-	width: 100%;
-	height: 100%;
-}
-textarea#styled {
+/*.menu-item {*/
+	/*float:left;*/
+	/*background-color:white;*/
+	/*padding:3px 10px;*/
+	/*margin-left:5px;*/
+	/*width: 70px;*/
+	/*text-align: center;*/
+/*}*/
+/*.menu-item-body {*/
+	/*display:none;*/
+	/*background-color:white;*/
+	/*padding:0;*/
+	/*text-align: left;*/
+	/*width: 100%;*/
+	/*height: 100%;*/
+/*}*/
+/*textarea#styled {
 	width: 100%;
 	height: 60px;
 	border: 1px solid #ddd;
 	background-color: white;
 	padding: 5px;
-}
+}*/
 #simplemodal-overlay {background-color:#000;}
 
 
