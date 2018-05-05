@@ -991,7 +991,7 @@ window.NoteEditor = new function () {
                 console.log('tags', tags);
 
                 // truncate available suggestion options
-                data.each(function ( item ) {
+                data.forEach(function ( item ) {
                     if ( !tags.has(item[0]) ) {
                         result.push({item: item});
                     }
@@ -1040,7 +1040,7 @@ window.NoteEditor = new function () {
                 //console.log('tags', tags);
 
                 // truncate available suggestion options
-                data.each(function ( item ) {
+                data.forEach(function ( item ) {
                     if ( !tags.has(item[0]) ) {
                         result.push(item);
                     }
@@ -1181,7 +1181,7 @@ window.NoteEditor = new function () {
     this.Clone = function () {
         // clear note and entries ids
         delete this.data.id;
-        this.data.entries.each(function ( entry ) {
+        this.data.entries.forEach(function ( entry ) {
             delete entry.id;
         });
         // reset tags
@@ -1200,7 +1200,7 @@ window.NoteEditor = new function () {
     this.New = function () {
         var name, data, entries = [];
         // iterate the current entry list
-        this.data.entries.each(function ( entry ) {
+        this.data.entries.forEach(function ( entry ) {
             // prepare name and data
             name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
             // generate some password if pass type

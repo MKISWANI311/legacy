@@ -204,7 +204,7 @@ var TagManager = new function () {
             // not empty list of words
             if ( data && data instanceof Array ) {
                 // iterate words in the input string
-                data.each(function ( word ) {
+                data.forEach(function ( word ) {
                     // prevent duplication
                     if ( !result.has(word) ) result.push(word);
                 });
@@ -227,7 +227,7 @@ var TagManager = new function () {
             wexc = [],  // array of excluded words (not tags)
             wcmd = [];  // array of command words
         // prepare sorted list of words and iterate
-        this.Str2Names(data).sort().each(function ( word ) {
+        this.Str2Names(data).sort().forEach(function ( word ) {
             // find out if there are special chars at the beginning of the word
             var fchar = word.charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
             // get the word without special chars if present
@@ -278,19 +278,19 @@ var TagManager = new function () {
     this.StrBuild = function ( data ) {
         var list = [];
         // check input and fill the list with the corresponding data
-        if ( data.wcmd && data.wcmd instanceof Array ) data.wcmd.sort().each(function ( item ) {
+        if ( data.wcmd && data.wcmd instanceof Array ) data.wcmd.sort().forEach(function ( item ) {
             list.push(':' + item);
         });
-        if ( data.ninc && data.ninc instanceof Array ) data.ninc.sort().each(function ( item ) {
+        if ( data.ninc && data.ninc instanceof Array ) data.ninc.sort().forEach(function ( item ) {
             list.push(item);
         });
-        if ( data.nexc && data.nexc instanceof Array ) data.nexc.sort().each(function ( item ) {
+        if ( data.nexc && data.nexc instanceof Array ) data.nexc.sort().forEach(function ( item ) {
             list.push('-' + item);
         });
-        if ( data.winc && data.winc instanceof Array ) data.winc.sort().each(function ( item ) {
+        if ( data.winc && data.winc instanceof Array ) data.winc.sort().forEach(function ( item ) {
             list.push(item);
         });
-        if ( data.wexc && data.wexc instanceof Array ) data.wexc.sort().each(function ( item ) {
+        if ( data.wexc && data.wexc instanceof Array ) data.wexc.sort().forEach(function ( item ) {
             list.push('-' + item);
         });
         // implode data into one line separated by spaces
@@ -308,7 +308,7 @@ var TagManager = new function () {
 //            wexc = [];  // array of excluded words (not tags)
 //        // prepare list of words
 //        list = this.Str2Names(data);
-//        list.each(function(word){
+//        list.forEach(function(word){
 //            // find out if there is minus at the beginning of the word
 //            if ( word.charAt(0) === '-' ) {
 //                // get the word without minus
@@ -326,7 +326,7 @@ var TagManager = new function () {
 
 //    this.StrCombine = function ( data ) {
 //        var texc = [];
-//        data.texc.each(function(id){
+//        data.texc.forEach(function(id){
 //            texc.push('-' + window.dataTagsIdlist[id]);
 //        });
 //        texc.sort();
@@ -340,9 +340,9 @@ var TagManager = new function () {
             if ( data.length === 1 ) {
                 result = window.dataTags.data[data[0]][window.dataTags.defn.links];
             } else {
-                data.each(function ( id ) {
+                data.forEach(function ( id ) {
                     var links = window.dataTags.data[id][window.dataTags.defn.links];
-                    links.each(function ( link ) {
+                    links.forEach(function ( link ) {
                         list[link] = (list[link] ? list[link] : 0) + 1;
                     });
                 });

@@ -12,13 +12,13 @@ Array.prototype.has = function ( value ) {
 Array.prototype.empty = function () {
     return !(this.length > 0);
 };
-Array.prototype.each = function ( func ) {
-    var i, l = this.length;
-
-    for ( i = 0; i < l; i++ ) {
-        func(this[i], i);
-    }
-};
+// Array.prototype.each = function ( func ) {
+//     var i, l = this.length;
+//
+//     for ( i = 0; i < l; i++ ) {
+//         func(this[i], i);
+//     }
+// };
 // IE compatibility
 // if ( !Array.indexOf ) {
 //     Array.prototype.indexOf = function ( obj, start ) {

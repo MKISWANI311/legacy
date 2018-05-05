@@ -256,10 +256,10 @@ var NoteFilter = new function () {
         // check input for wrong tags
         if ( self.data.winc.length > 0 || self.data.wexc.length > 0 ) {
             var list = []; // shows them comma-separated
-            self.data.winc.sort().each(function ( item ) {
+            self.data.winc.sort().forEach(function ( item ) {
                 list.push(element('a', {title: hint_wexclude, word: item, fexc: false}, item, {onclick: WordExclude}));
             });
-            self.data.wexc.sort().each(function ( item ) {
+            self.data.wexc.sort().forEach(function ( item ) {
                 list.push(element('a', {
                     title: hint_wexclude,
                     word: item,

@@ -42,7 +42,7 @@ DlgExport = new DialogModal({
                 for ( var idNote in window.exportData.notes ) {
                     // check type
                     if ( window.exportData.notes[idNote] instanceof Array ) {
-                        window.exportData.notes[idNote].each(function ( entry ) {
+                        window.exportData.notes[idNote].forEach(function ( entry ) {
                             var name = app.decode(entry.name, true);
                             var data = app.decode(entry.data, true);
                             if ( name && data ) {
@@ -53,7 +53,7 @@ DlgExport = new DialogModal({
                     // check type
                     if ( window.exportData.note_tags[idNote] instanceof Array ) {
                         var tags = [];
-                        window.exportData.note_tags[idNote].each(function ( idTag ) {
+                        window.exportData.note_tags[idNote].forEach(function ( idTag ) {
                             if ( window.exportData.tags[idTag] ) tags.push(app.decode(window.exportData.tags[idTag], true));
                         });
                         if ( tags.length > 0 ) {

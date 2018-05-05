@@ -49,7 +49,7 @@ var TemplateList = new function () {
         // prepare
         elclear(self.dom.list);
         // iterate all templates
-        window.dataTemplates.data.each(function ( data ) {
+        window.dataTemplates.data.forEach(function ( data ) {
             // template body
             var item = element('div', {className: 'item', /*style:'display:none',*/ data: data},
                 element('div', {className: 'line'}, [
@@ -67,7 +67,7 @@ var TemplateList = new function () {
             //$(item).mouseenter(function(){
             item.addEventListener('mouseenter', function () {
                 var list = [];
-                window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].each(function ( entry ) {
+                window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
                     list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
                 });
                 self.dom.hint.innerHTML = hint_item + list.join(', ');

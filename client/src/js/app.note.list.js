@@ -60,9 +60,9 @@ var NoteList = new function () {
         // close only if opened at the moment
         if ( this.open ) {
             // clear decoded entries data in the requested notes
-            this.data.notes.each(function ( note ) {
+            this.data.notes.forEach(function ( note ) {
                 // all note entries
-                note.entries.each(function ( entry ) {
+                note.entries.forEach(function ( entry ) {
                     // remove if exist
                     delete entry.name_dec;
                     delete entry.data_dec;
@@ -129,7 +129,7 @@ var NoteList = new function () {
     var BuildNoteInfo = function ( note, icon ) {
         var list = [], fulltext = [], url = null;
         // iterate all note entries
-        note.entries.each(function ( entry ) {
+        note.entries.forEach(function ( entry ) {
             // decrypt data
             var name = app.decode(entry.name);
             var data = app.decode(entry.data);
@@ -215,7 +215,7 @@ var NoteList = new function () {
         // there is some data
         if ( note.tags.length > 0 ) {
             // separate tags
-            note.tags.each(function ( item ) {
+            note.tags.forEach(function ( item ) {
                 if ( NoteFilter.data.tinc.has(item) ) {
                     inc.push(window.dataTagsIdlist[item]);
                 } else {
@@ -223,7 +223,7 @@ var NoteList = new function () {
                 }
             });
             // forms the list of tags already selected
-            inc.sort().each(function ( item ) {
+            inc.sort().forEach(function ( item ) {
                 // create html wrapper for tag
                 item = element('span', {className: 'tag include', tagnm: item, title: hint_tag_exclude}, item);
                 // mouse click handler
@@ -232,7 +232,7 @@ var NoteList = new function () {
                 list.push(item);
             });
             // forms the list of tags available for selection
-            exc.sort().each(function ( item ) {
+            exc.sort().forEach(function ( item ) {
                 // create html wrapper for tag
                 item = element('span', {className: 'tag', finc: true, tagnm: item, title: hint_tag_include}, item);
                 // mouse click handler
@@ -255,7 +255,7 @@ var NoteList = new function () {
         var icon = 'img/tag_note.png',
             tags = TagManager.IDs2Names(note.tags);
         // iterate words in the tag list
-        tags.each(function ( item ) {
+        tags.forEach(function ( item ) {
             // it's a tag from the global set
             if ( window.iconTags.has(item) ) {
                 // get the first match
@@ -358,7 +358,7 @@ var NoteList = new function () {
     this.SetNotesState = function ( notes, type, state ) {
         // check input
         if ( notes.length > 0 ) {
-            notes.each(function ( note ) {
+            notes.forEach(function ( note ) {
                 // determine the state to switch to
                 note.state[type] = state !== undefined ? state : (note.state[type] ? false : true);
                 // invert class
@@ -527,7 +527,7 @@ var NoteList = new function () {
             // check by filter string if still visible
             if ( visible ) {
                 // check included words
-                NoteFilter.data.winc.each(function ( word ) {
+                NoteFilter.data.winc.forEach(function ( word ) {
                     // not found in fulltext so exit
                     if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {
                         visible = false;
@@ -537,7 +537,7 @@ var NoteList = new function () {
                 // still visible
                 if ( visible ) {
                     // check excluded words
-                    NoteFilter.data.wexc.each(function ( word ) {
+                    NoteFilter.data.wexc.forEach(function ( word ) {
                         // found in fulltext so exit
                         if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {
                             visible = false;
@@ -574,7 +574,7 @@ var NoteList = new function () {
             // determine the note id beeing edited at the moment
             var note, neid = NoteEditor.GetNoteID();
             // iterate all notes
-            notes.each(function ( item ) {
+            notes.forEach(function ( item ) {
                 // append the created note to the list
                 note = self.BuildNote(item);
                 self.SetNotesVisibility([note]);
@@ -595,7 +595,7 @@ var NoteList = new function () {
         if ( confirm(this.undo ? msg_checked_notes_restore : msg_checked_notes_remove) ) {
             var list = [];
             // iterate all checked notes
-            self.GetNotesByState('marked').each(function ( note ) {
+            self.GetNotesByState('marked').forEach(function ( note ) {
                 // fill id list
                 if ( note.data.id ) list.push(note.data.id);
             });
