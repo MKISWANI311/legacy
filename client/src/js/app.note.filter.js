@@ -5,7 +5,7 @@
 
 'use strict';
 
-var App = require('./app'),
+var app = require('./app'),
     api = require('./api'),
     NoteList = require('./app.note.list'),
     TagManager = require('./app.tag.manager');
@@ -48,7 +48,7 @@ var NoteFilter = new function () {
      */
     this.EventOpen = function () {
         // decrypt input data if not the first time
-        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(App.Decode(this.dom.input.data));
+        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
         // restore backuped value
         this.dom.input.value = this.dom.input.data.encval;
         // inner parsed data
@@ -75,7 +75,7 @@ var NoteFilter = new function () {
             // backup and clear search string
             this.dom.input.data.encval = this.dom.input.value;
             // encrypt input data
-            this.dom.input.data = App.Encode(JSON.stringify(this.dom.input.data));
+            this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
             // hide current value
             this.dom.input.value = '[encrypted data]';
             // inner parsed data

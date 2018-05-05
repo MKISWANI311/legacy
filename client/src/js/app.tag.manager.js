@@ -5,7 +5,7 @@
 
 'use strict';
 
-var App = require('./app');
+var app = require('./app');
 
 
 var TagManager = new function () {
@@ -29,7 +29,7 @@ var TagManager = new function () {
         console.time('TagManager: decrypt tags');
         // decrypt tags
         for ( var id in window.dataTags.data ) {
-            var name = App.Decode(window.dataTags.data[id][window.dataTags.defn.name]);
+            var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
             // fill service lookup tables of tags by id and by name
             window.dataTagsNmlist[name] = id = parseInt(id, 10);
             window.dataTagsIdlist[id] = name;
@@ -56,7 +56,7 @@ var TagManager = new function () {
      */
     this.Add = function ( id, enc, dec ) {
         // decrypt name if necessary
-        dec = dec || App.Decode(enc, true);
+        dec = dec || app.decode(enc, true);
         window.dataTags.data[id] = [enc, [], 1];
         window.dataTagsNmlist[dec] = id;
         window.dataTagsIdlist[id] = dec;
@@ -99,7 +99,7 @@ var TagManager = new function () {
                 // check type
                 if ( isNaN(data[i]) ) {
                     // seems this is a real-time encrypted string
-                    if ( (name = App.Decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
+                    if ( (name = app.decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
                 } else {
                     // seems normal tag id
                     if ( window.dataTagsIdlist[data[i]] )
@@ -144,7 +144,7 @@ var TagManager = new function () {
                         result.push(window.dataTagsNmlist[name]);
                     } else {
                         // not found so encrypt and cache if not skipped
-                        if ( !skip_new && (enc = App.Encode(name, true)) !== false ) {
+                        if ( !skip_new && (enc = app.encode(name, true)) !== false ) {
                             result.push(enc);
                         }
                     }

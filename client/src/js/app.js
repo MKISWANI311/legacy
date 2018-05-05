@@ -9,7 +9,7 @@
 var sjcl = require('./sjcl.min');
 
 
-var App = new function () {
+var app = new function () {
     /* @var for limited scopes */
     var self = this;
 
@@ -33,15 +33,16 @@ var App = new function () {
 
     /** ??????????
      * Callback function for primary password request
-     * shuld be set on application level
+     * should be set on application level
      */
     this.RequestPass = null;
 
     // lists for cached enc/dec values
-    // to prevent unnecessary ecnryption/decryption
+    // to prevent unnecessary encryption/decryption
     // filling optionally and clearing on master password expiration
-    var cache_enc = {};  // "plain_text":'***encoded string***' list
-    var cache_dec = {};  // '***encoded string***':"plain_text" list
+    var cacheEnc = {};  // "plain_text":'***encoded string***' list
+    var cacheDec = {};  // '***encoded string***':"plain_text" list
+
 
     /**
      * Set global variable
@@ -49,7 +50,7 @@ var App = new function () {
      * @param value the variable value
      * @param persistent flag to store in the local storage permanently
      */
-    this.Set = function ( name, value, persistent ) {
+    this.set = function ( name, value, persistent ) {
         if ( persistent ) {
             localStorage.setItem(name, value);
         } else {
@@ -57,61 +58,70 @@ var App = new function () {
         }
     };
 
+
     /**
      * Get global variable
      * @param name the name of value to retrive
      * @param ifnull default value if variable is not set
      */
-    this.Get = function ( name, ifnull ) {
+    this.get = function ( name, ifnull ) {
         return this.data[name] || localStorage.getItem(name) || ifnull;
     };
+
 
     /**
      * Calculate the hash from given value
      * algorithm: sha256
      */
-    this.CalcHash = function ( value ) {
+    this.calcHash = function ( value ) {
         return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(value));
     };
+
 
     /**
      * Check if hash set
      */
-    this.HasHash = function () {
+    this.hasHash = function () {
         return (hash != null && hash != '');
     };
+
 
     /**
      * Check if pass set
      */
-    this.HasPass = function () {
-        return (pass != null && pass != '');
+    this.hasPass = function () {
+        return (pass !== null && pass !== '');
     };
+
 
     /**
      * Check if pass set and matches the hash
      * @param value the master password to check
      */
-    this.CheckPass = function ( value ) {
+    this.checkPass = function ( value ) {
         // check input
-        if ( !this.HasHash() || !value ) {
+        if ( !this.hasHash() || !value ) {
             return false;
         }
         // comparing
-        return (hash == this.CalcHash(value));
+        return (hash === this.calcHash(value));
     };
+
 
     /**
      * Set the hash of private pass var
      * @param value the master password hash value
      */
-    this.SetPassHash = function ( value ) {
-        //console.log('SetPassHash', value);
+    this.setPassHash = function ( value ) {
         // check input
-        if ( !value ) return false;
+        if ( !value ) {
+            return false;
+        }
+
         // set and return
-        return hash = value;
+        return (hash = value);
     };
+
 
     /**
      * Set the time to remember the password
@@ -125,11 +135,12 @@ var App = new function () {
     //     return true;
     // };
 
+
     /**
      * Set the private pass var and start timer for clearing it in some time
      * @param value the master password to check
      */
-    this.SetPass = function ( value ) {
+    this.setPass = function ( value ) {
         //console.log('SetPass', value);
         // check input
         if ( !value ) {
@@ -138,29 +149,31 @@ var App = new function () {
         // set the private password
         pass = value;
         // calculate and set hash if necessary
-        if ( !this.HasHash() ) {
-            this.SetPassHash(this.CalcHash(value));
+        if ( !this.hasHash() ) {
+            this.setPassHash(this.calcHash(value));
         }
         //console.log('pass will expire in', time);
         // set clearing timer
-        //setTimeout(function(){self.ExpirePass()}, time * 1000);
-        // notify all the subsribers that we have the pass
+        //setTimeout(function(){self.expirePass()}, time * 1000);
+        // notify all the subscribers that we have the pass
         for ( var i in this.subscribers ) {
             if ( self.subscribers[i].EventOpen && self.subscribers[i].EventOpen instanceof Function ) {
                 // open the subscriber - decrypt all the data and show it
                 self.subscribers[i].EventOpen();
             }
         }
+
         // return password hash value
         return hash;
     };
 
+
     /**
      *
      */
-    this.ExpirePass = function () {
+    this.expirePass = function () {
         console.log('master password expire');
-        // notify all the subsribers about clearing
+        // notify all the subscribers about clearing
         for ( var i in self.subscribers ) {
             if ( typeof self.subscribers[i].EventClose === 'function' ) {
                 // close the subscriber - clear all the decrypted data
@@ -170,13 +183,14 @@ var App = new function () {
         // clear the master pass
         pass = null;
         // clear cache
-        cache_enc = {};
-        cache_dec = {};
+        cacheEnc = {};
+        cacheDec = {};
         // ask for pass
         if ( self.RequestPass && self.RequestPass instanceof Function ) {
             self.RequestPass.call();
         }
     };
+
 
     /**
      * Encrypt the given text and pass the result to callback function
@@ -184,98 +198,111 @@ var App = new function () {
      * @param cache optional bool flag
      *
      */
-    this.Encode = function ( data, cache ) {
+    this.encode = function ( data, cache ) {
         // password is present and not empty input
         if ( pass && data !== false && data !== null ) {
             // try to get from cache
-            if ( cache && cache_enc[data] ) return cache_enc[data];
+            if ( cache && cacheEnc[data] ) {
+                return cacheEnc[data];
+            }
+
             // protected block
             try {
                 var enc = sjcl.encrypt(pass, data, params);
                 // fill cache if necessary
                 if ( cache ) {
-                    cache_enc[data] = enc;
-                    cache_dec[enc] = data;
+                    cacheEnc[data] = enc;
+                    cacheDec[enc] = data;
                 }
+
                 return enc;
             } catch ( e ) {
                 console.trace();
                 console.log('encrypt failure', e, data);
             }
         }
+
         return false;
     };
-//    this.Encode = function ( text, callback ) {
-//        // temporary pass storing not to loose in on timer clearing
-//        var ptmp = pass;
-//        // password is cached so do encryption immediately
-//        if ( ptmp ) {
-//            callback.call(this, sjcl.encrypt(ptmp, text, params));
-//            return true;
-//        } else {
-//            // ask for password and then do encryption
-//            if ( this.RequestPass && this.RequestPass instanceof Function ) {
-//                this.RequestPass.call(this, function(){
-//                    // pass encryption to the callback
-//                    callback.call(this, sjcl.encrypt(pass, text, params));
-//                    return true;
-//                });
-//            }
-//            return false;
-//        }
-//    }
+
+    // this.encode = function ( text, callback ) {
+    //    // temporary pass storing not to loose in on timer clearing
+    //    var ptmp = pass;
+    //    // password is cached so do encryption immediately
+    //    if ( ptmp ) {
+    //        callback.call(this, sjcl.encrypt(ptmp, text, params));
+    //        return true;
+    //    } else {
+    //        // ask for password and then do encryption
+    //        if ( this.RequestPass && this.RequestPass instanceof Function ) {
+    //            this.RequestPass.call(this, function(){
+    //                // pass encryption to the callback
+    //                callback.call(this, sjcl.encrypt(pass, text, params));
+    //                return true;
+    //            });
+    //        }
+    //        return false;
+    //    }
+    // }
 
     /**
      * Decrypt the given text and pass the result to callback function
      * @param data data to be decrypted
      * @param cache optional bool flag
      */
-    this.Decode = function ( data, cache ) {
+    this.decode = function ( data, cache ) {
         // password is present and not empty input
         if ( pass && data ) {
             // try to get from cache
-            if ( cache && cache_dec[data] ) return cache_dec[data];
+            if ( cache && cacheDec[data] ) {
+                return cacheDec[data];
+            }
+
             // protected block
             try {
                 var dec = sjcl.decrypt(pass, data);
                 // fill cache if necessary
                 if ( cache ) {
-                    cache_dec[data] = dec;
-                    cache_enc[dec] = data;
+                    cacheDec[data] = dec;
+                    cacheEnc[dec] = data;
                 }
+
                 return dec;
             } catch ( e ) {
                 console.trace();
                 console.log('decrypt failure', e, data);
             }
         }
+
         return false;
     };
-//    this.Decode = function ( text, callback ) {
-//        // temporary pass storing not to loose in on timer clearing
-//        var ptmp = pass;
-//        // password is cached so do encryption immediately
-//        if ( ptmp ) {
-//            callback.call(this, sjcl.decrypt(ptmp, text));
-//            return true;
-//        } else {
-//            // ask for password and then do encryption
-//            if ( this.RequestPass && this.RequestPass instanceof Function ) {
-//                this.RequestPass.call(this, function(){
-//                    // pass decryption to the callback
-//                    callback.call(this, sjcl.decrypt(pass, text));
-//                    return true;
-//                });
-//            }
-//            return false;
-//        }
-//    }
 
-    this.Subscribe = function ( component ) {
+
+    // this.decode = function ( text, callback ) {
+    //    // temporary pass storing not to loose in on timer clearing
+    //    var ptmp = pass;
+    //    // password is cached so do encryption immediately
+    //    if ( ptmp ) {
+    //        callback.call(this, sjcl.decrypt(ptmp, text));
+    //        return true;
+    //    } else {
+    //        // ask for password and then do encryption
+    //        if ( this.RequestPass && this.RequestPass instanceof Function ) {
+    //            this.RequestPass.call(this, function(){
+    //                // pass decryption to the callback
+    //                callback.call(this, sjcl.decrypt(pass, text));
+    //                return true;
+    //            });
+    //        }
+    //        return false;
+    //    }
+    // }
+
+    this.subscribe = function ( component ) {
         this.subscribers.push(component);
-    }
+    };
 };
 
 
 // public
-module.exports = App;
+module.exports = app;

@@ -5,7 +5,7 @@
 
 'use strict';
 
-var App     = require('./app'),
+var app     = require('./app'),
     sjcl    = require('./sjcl.min'),
     api     = require('./api'),
     //dialogs = require('./app.dialogs'),
@@ -77,11 +77,11 @@ window.initData = function initData ( data, callback ) {
         NoteEditor.Init({handle: document.querySelector('div.noteeditor')});
 
         // to receive password change events
-        App.Subscribe(TagManager);
-        App.Subscribe(TemplateList);
-        App.Subscribe(NoteList);
-        App.Subscribe(NoteFilter);
-        App.Subscribe(NoteEditor);
+        app.subscribe(TagManager);
+        app.subscribe(TemplateList);
+        app.subscribe(NoteList);
+        app.subscribe(NoteFilter);
+        app.subscribe(NoteEditor);
 
         // show
         window.pageMain.style.display = 'block';
@@ -129,7 +129,7 @@ api.get('user/info', function ( error, data ) {
         window.dataUser = data;
 
         // apply current pass hash
-        App.SetPassHash(data.hash);
+        app.setPassHash(data.hash);
         // ask for a pass
         DlgPassGet.Show({escClose: false});
     } else {

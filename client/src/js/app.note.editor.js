@@ -6,7 +6,7 @@
 
 'use strict';
 
-var App = require('./app'),
+var app = require('./app'),
     api = require('./api'),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = require('./app.note.list'),
@@ -19,8 +19,8 @@ window.NoteEditor = new function () {
     var self = this;
 
     // input data length limit
-    var maxlength_tags = 1024,  // total length of all tags in the input field
-        maxlength_title = 256;   // entry name max length
+    var maxlengthTags = 1024,  // total length of all tags in the input field
+        maxlengthTitle = 256;   // entry name max length
 
     // flag to indicate if there are some changes
     // note entries was moved or type is changed
@@ -28,7 +28,7 @@ window.NoteEditor = new function () {
     var changed = false;
 
     // messages
-    var msg_has_changes = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
+    var msgHasChanges = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
 
     // hover hints
     var hint_back = 'Will discard all your current changes and show the template list.';
@@ -55,11 +55,11 @@ window.NoteEditor = new function () {
                 //with ( this.dom.entries.childNodes[i] ) {
 
                 // set post data
-                entry.post.name_dec = App.Decode(entry.post.name);
-                entry.post.data_dec = App.Decode(entry.post.data);
+                entry.post.name_dec = app.decode(entry.post.name);
+                entry.post.data_dec = app.decode(entry.post.data);
                 // set current data (taking either from post or decrypt)
-                entry.data.name_dec = (entry.post.name == entry.data.name) ? entry.post.name_dec : App.Decode(entry.data.name);
-                entry.data.data_dec = (entry.post.data == entry.data.data) ? entry.post.data_dec : App.Decode(entry.data.data);
+                entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
+                entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
                 // enable all inputs
                 entry.dom.name.disabled = entry.dom.data.disabled = false;
                 // change input to decrypted values
@@ -96,8 +96,8 @@ window.NoteEditor = new function () {
                 var entry = this.dom.entries.childNodes[i];
                 //with ( this.dom.entries.childNodes[i] ) {
                 // if data changed than reassing (taking either from post or encrypt)
-                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : App.Encode(entry.dom.name.value);
-                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : App.Encode(entry.dom.data.value);
+                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
+                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
                 // clear post and current data
                 entry.post.name_dec = entry.data.name_dec = null;
                 entry.post.data_dec = entry.data.data_dec = null;
@@ -194,16 +194,16 @@ window.NoteEditor = new function () {
             // edit mode
             if ( entry.data.id ) post.id = entry.data.id;
             // if type changed since the last save or new mode
-            if ( entry.post.id_type != entry.data.id_type || entry.data.id == undefined )
+            if ( entry.post.id_type !== entry.data.id_type || entry.data.id === undefined )
                 post.id_type = entry.data.id_type;
             // entry name changed or new mode
-            if ( entry.post.name_dec != entry.dom.name.value || entry.data.id == undefined ) {
-                entry.data.name = post.name = (entry.data.name_dec == entry.dom.name.value) ? entry.data.name : App.Encode(entry.dom.name.value);
+            if ( entry.post.name_dec !== entry.dom.name.value || entry.data.id === undefined ) {
+                entry.data.name = post.name = (entry.data.name_dec === entry.dom.name.value) ? entry.data.name : app.encode(entry.dom.name.value);
                 entry.data.name_dec = entry.dom.name.value;
             }
             // entry value changed or new mode
-            if ( entry.post.data_dec != entry.dom.data.value || entry.data.id == undefined ) {
-                entry.data.data = post.data = (entry.data.data_dec == entry.dom.data.value) ? entry.data.data : App.Encode(entry.dom.data.value);
+            if ( entry.post.data_dec !== entry.dom.data.value || entry.data.id === undefined ) {
+                entry.data.data = post.data = (entry.data.data_dec === entry.dom.data.value) ? entry.data.data : app.encode(entry.dom.data.value);
                 entry.data.data_dec = entry.dom.data.value;
             }
             // type change block
@@ -358,7 +358,7 @@ window.NoteEditor = new function () {
             var cell = null;
             // build type list
             for ( var id in window.dataEntryTypes.data ) {
-                cell = element('td', {className: entry.data.id_type == id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
                     // set desc on mouse over action
                     onmouseover: function () {
                         entry.dom.desc.innerHTML = this.desc;
@@ -371,9 +371,9 @@ window.NoteEditor = new function () {
                             }
                             // prepare type, name and value
                             entry.data.id_type = this.type;
-                            entry.data.name = App.Encode(entry.dom.name.value);
+                            entry.data.name = app.encode(entry.dom.name.value);
                             entry.data.name_dec = entry.dom.name.value;
-                            entry.data.data = App.Encode(entry.dom.data.value);
+                            entry.data.data = app.encode(entry.dom.data.value);
                             entry.data.data_dec = entry.dom.data.value;
                             // clone entry and do some sync
                             var entry_new = EntryCreate(entry.data);
@@ -396,7 +396,7 @@ window.NoteEditor = new function () {
             elchild(entry.dom.type, list);
         }
         // show/hide block
-        entry.dom.type.style.display = (entry.dom.type.style.display != 'block' ? 'block' : 'none');
+        entry.dom.type.style.display = (entry.dom.type.style.display !== 'block' ? 'block' : 'none');
     };
 
     /**
@@ -423,8 +423,8 @@ window.NoteEditor = new function () {
                     var tbl = element('table', {className: 'maxw'});
                     if ( history.data.length ) {
                         for ( var i = 0; i < history.data.length; i++ ) {
-                            var name = history.data[i][history.defn.name] ? App.Decode(history.data[i][history.defn.name]) : '';
-                            var data = history.data[i][history.defn.data] ? App.Decode(history.data[i][history.defn.data]) : '';
+                            var name = history.data[i][history.defn.name] ? app.decode(history.data[i][history.defn.name]) : '';
+                            var data = history.data[i][history.defn.data] ? app.decode(history.data[i][history.defn.data]) : '';
                             tblrow(tbl, [
                                 // name and data
                                 element('span', {title: name}, (name.length > 20) ? name.slice(0, 15) + '...' : name),
@@ -456,7 +456,7 @@ window.NoteEditor = new function () {
             }
         }
         // show/hide block
-        entry.dom.history.style.display = (entry.dom.history.style.display != 'block' ? 'block' : 'none');
+        entry.dom.history.style.display = (entry.dom.history.style.display !== 'block' ? 'block' : 'none');
     };
 
     /**
@@ -471,9 +471,9 @@ window.NoteEditor = new function () {
         // clone
         var entry_new = EntryCreate({
             id_type: entry.data.id_type,
-            name: App.Encode(name),
+            name: app.encode(name),
             name_dec: name,
-            data: App.Encode(data),
+            data: app.encode(data),
             data_dec: data
         });
         self.dom.entries.insertBefore(entry_new, entry);
@@ -533,7 +533,7 @@ window.NoteEditor = new function () {
         // editable name
         entry.dom.name = element('input', {
             type: 'text',
-            maxLength: maxlength_title,
+            maxLength: maxlengthTitle,
             disabled: !self.open,
             value: entry.data.name_dec
         }, '', {
@@ -939,7 +939,7 @@ window.NoteEditor = new function () {
         // tags input
         var input = element('input', {
             type: 'text',
-            maxLength: maxlength_tags,
+            maxLength: maxlengthTags,
             disabled: !self.open,
             className: 'line',
             value: ''
@@ -1124,7 +1124,7 @@ window.NoteEditor = new function () {
      * Asks user about modifications
      */
     this.ConfirmExit = function () {
-        return confirm(msg_has_changes);
+        return confirm(msgHasChanges);
     }
 
     /**
@@ -1160,9 +1160,9 @@ window.NoteEditor = new function () {
             // append the entry list
             entries.push({
                 id_type: entry.id_type,
-                name: App.Encode(name),
+                name: app.encode(name),
                 name_dec: name,
-                data: App.Encode(data),
+                data: app.encode(data),
                 data_dec: data
             });
         });
@@ -1243,9 +1243,9 @@ window.NoteEditor = new function () {
                 // adding
                 this.data.entries.push({
                     id_type: id_type,
-                    name: App.Encode(name),
+                    name: app.encode(name),
                     name_dec: name,
-                    data: App.Encode(data),
+                    data: app.encode(data),
                     data_dec: data
                 });
             }
@@ -1259,9 +1259,9 @@ window.NoteEditor = new function () {
             // adding
             this.data.entries = [{
                 id_type: 1,
-                name: App.Encode(name),
+                name: app.encode(name),
                 name_dec: name,
-                data: App.Encode(data),
+                data: app.encode(data),
                 data_dec: data
             }];
         }
@@ -1293,8 +1293,8 @@ window.NoteEditor = new function () {
             for ( var i = 0; i < data.entries.length; i++ ) {
                 var entry = data.entries[i];
                 // wrap encoded and decoded values
-                entry.name_dec = App.Decode(entry.name);
-                entry.data_dec = App.Decode(entry.data);
+                entry.name_dec = app.decode(entry.name);
+                entry.data_dec = app.decode(entry.data);
             }
         } else {
             // invalid input so switch to new mode
@@ -1411,13 +1411,17 @@ window.NoteEditor = new function () {
      */
     this.Init = function ( params ) {
         // check input
-        if ( !params.handle ) return;
+        if ( !params.handle ) {
+            return;
+        }
+
         // html parent object
         this.dom = {handle: params.handle};
         // handler on note save
         this.onsave = params.onsave || null;
         // handler on cancel note adding or edit
         this.oncancel = params.oncancel || null;
+
         // event handlers
         SetEvents();
     };

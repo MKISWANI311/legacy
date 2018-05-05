@@ -5,7 +5,7 @@
 
 'use strict';
 
-var App = require('./app'),
+var app = require('./app'),
     sjcl = require('./sjcl.min'),
     api = require('./api'),
     DialogModal = require('./app.modal'),
@@ -43,8 +43,8 @@ DlgExport = new DialogModal({
                     // check type
                     if ( window.exportData.notes[idNote] instanceof Array ) {
                         window.exportData.notes[idNote].each(function ( entry ) {
-                            var name = App.Decode(entry.name, true);
-                            var data = App.Decode(entry.data, true);
+                            var name = app.decode(entry.name, true);
+                            var data = app.decode(entry.data, true);
                             if ( name && data ) {
                                 DlgExport.dom.text.value += name + ': ' + data + '\n';
                             }
@@ -54,7 +54,7 @@ DlgExport = new DialogModal({
                     if ( window.exportData.note_tags[idNote] instanceof Array ) {
                         var tags = [];
                         window.exportData.note_tags[idNote].each(function ( idTag ) {
-                            if ( window.exportData.tags[idTag] ) tags.push(App.Decode(window.exportData.tags[idTag], true));
+                            if ( window.exportData.tags[idTag] ) tags.push(app.decode(window.exportData.tags[idTag], true));
                         });
                         if ( tags.length > 0 ) {
                             DlgExport.dom.text.value += 'tags: ' + tags.join(' ') + '\n';
@@ -192,7 +192,7 @@ DlgOptions = new DialogModal({
                         btn.value = 'Export data';
                         btn.disabled = false;
                         window.exportData = data;
-                        App.ExpirePass();
+                        app.expirePass();
                     });
                 }
             })
@@ -247,7 +247,7 @@ DlgPassGet = new DialogModal({
                     type: 'text',
                     autocomplete: 'username',
                     className: 'hidden',
-                    value: App.Get('username_last_used', '')
+                    value: app.get('username_last_used', '')
                 }),
                 this.data.pass
             ]
@@ -264,7 +264,7 @@ DlgPassGet = new DialogModal({
         //     3600:  {next:18000, title: '1 hour'},
         //     18000: {next:86400, title: '5 hours'},
         //     86400: {next:300,   title: '1 day'}
-        // }, App.Get('pass_store_time', 300));
+        // }, app.get('pass_store_time', 300));
     },
 
     /**
@@ -290,10 +290,10 @@ DlgPassGet = new DialogModal({
                 var modal = this.modal;
                 var pass = modal.data.pass.value;
                 // check pass
-                if ( App.CheckPass(pass) ) {
+                if ( app.checkPass(pass) ) {
                     initData(window.dataUser, function () {
-                        //App.Set('pass_store_time', modal.data.linkset.value, true);
-                        App.SetPass(pass);
+                        //app.set('pass_store_time', modal.data.linkset.value, true);
+                        app.setPass(pass);
                         modal.data.attempts = 0;
                         // reset value
                         modal.data.pass.value = '';
@@ -302,8 +302,8 @@ DlgPassGet = new DialogModal({
                     });
                     // if ( modal.data.linkset.value ) {
                     //     //fb(modal.data.linkset.value);
-                    //     App.Set('pass_store_time', modal.data.linkset.value, true);
-                    //     App.SetPassTime(modal.data.linkset.value);
+                    //     app.set('pass_store_time', modal.data.linkset.value, true);
+                    //     app.setPassTime(modal.data.linkset.value);
                     // }
                 } else {
                     modal.data.pass.focus();
@@ -336,7 +336,7 @@ DlgUserLogin = new DialogModal({
             className: 'line',
             autocomplete: 'username',
             type: 'text',
-            value: App.Get('username_last_used', '')
+            value: app.get('username_last_used', '')
         });
         this.data.pass = element('input', {className: 'line', autocomplete: 'current-password', type: 'password'});
 
@@ -398,8 +398,8 @@ DlgUserLogin = new DialogModal({
                             if ( data && data.id ) {
                                 initData(data, function () {
                                     // save user name of last login
-                                    App.Set('username_last_used', modal.data.name.value, true);
-                                    App.SetPass(modal.data.pass.value);
+                                    app.set('username_last_used', modal.data.name.value, true);
+                                    app.setPass(modal.data.pass.value);
                                     // reset values
                                     modal.data.name.value = '';
                                     modal.data.pass.value = '';
@@ -578,8 +578,8 @@ DlgUserRegister = new DialogModal({
                                 if ( data && data.id ) {
                                     initData(data, function () {
                                         // save user name for future logins
-                                        App.Set('username_last_used', modal.data.name.value, true);
-                                        App.SetPass(password);
+                                        app.set('username_last_used', modal.data.name.value, true);
+                                        app.setPass(password);
                                         // reset values
                                         modal.data.name.value = '';
                                         modal.data.pass1.value = '';
@@ -627,9 +627,9 @@ DlgUserRegister = new DialogModal({
 });
 
 
-App.Subscribe(DlgExport);
-App.Subscribe(DlgOptions);
-App.Subscribe(DlgPassGet);
+app.subscribe(DlgExport);
+app.subscribe(DlgOptions);
+app.subscribe(DlgPassGet);
 
 window.DlgExport = DlgExport;
 window.DlgOptions = DlgOptions;

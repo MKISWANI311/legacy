@@ -79,7 +79,7 @@
 var sjcl = __webpack_require__(1);
 
 
-var App = new function () {
+var app = new function () {
     /* @var for limited scopes */
     var self = this;
 
@@ -103,15 +103,16 @@ var App = new function () {
 
     /** ??????????
      * Callback function for primary password request
-     * shuld be set on application level
+     * should be set on application level
      */
     this.RequestPass = null;
 
     // lists for cached enc/dec values
-    // to prevent unnecessary ecnryption/decryption
+    // to prevent unnecessary encryption/decryption
     // filling optionally and clearing on master password expiration
-    var cache_enc = {};  // "plain_text":'***encoded string***' list
-    var cache_dec = {};  // '***encoded string***':"plain_text" list
+    var cacheEnc = {};  // "plain_text":'***encoded string***' list
+    var cacheDec = {};  // '***encoded string***':"plain_text" list
+
 
     /**
      * Set global variable
@@ -119,7 +120,7 @@ var App = new function () {
      * @param value the variable value
      * @param persistent flag to store in the local storage permanently
      */
-    this.Set = function ( name, value, persistent ) {
+    this.set = function ( name, value, persistent ) {
         if ( persistent ) {
             localStorage.setItem(name, value);
         } else {
@@ -127,61 +128,70 @@ var App = new function () {
         }
     };
 
+
     /**
      * Get global variable
      * @param name the name of value to retrive
      * @param ifnull default value if variable is not set
      */
-    this.Get = function ( name, ifnull ) {
+    this.get = function ( name, ifnull ) {
         return this.data[name] || localStorage.getItem(name) || ifnull;
     };
+
 
     /**
      * Calculate the hash from given value
      * algorithm: sha256
      */
-    this.CalcHash = function ( value ) {
+    this.calcHash = function ( value ) {
         return sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(value));
     };
+
 
     /**
      * Check if hash set
      */
-    this.HasHash = function () {
+    this.hasHash = function () {
         return (hash != null && hash != '');
     };
+
 
     /**
      * Check if pass set
      */
-    this.HasPass = function () {
-        return (pass != null && pass != '');
+    this.hasPass = function () {
+        return (pass !== null && pass !== '');
     };
+
 
     /**
      * Check if pass set and matches the hash
      * @param value the master password to check
      */
-    this.CheckPass = function ( value ) {
+    this.checkPass = function ( value ) {
         // check input
-        if ( !this.HasHash() || !value ) {
+        if ( !this.hasHash() || !value ) {
             return false;
         }
         // comparing
-        return (hash == this.CalcHash(value));
+        return (hash === this.calcHash(value));
     };
+
 
     /**
      * Set the hash of private pass var
      * @param value the master password hash value
      */
-    this.SetPassHash = function ( value ) {
-        //console.log('SetPassHash', value);
+    this.setPassHash = function ( value ) {
         // check input
-        if ( !value ) return false;
+        if ( !value ) {
+            return false;
+        }
+
         // set and return
-        return hash = value;
+        return (hash = value);
     };
+
 
     /**
      * Set the time to remember the password
@@ -195,11 +205,12 @@ var App = new function () {
     //     return true;
     // };
 
+
     /**
      * Set the private pass var and start timer for clearing it in some time
      * @param value the master password to check
      */
-    this.SetPass = function ( value ) {
+    this.setPass = function ( value ) {
         //console.log('SetPass', value);
         // check input
         if ( !value ) {
@@ -208,29 +219,31 @@ var App = new function () {
         // set the private password
         pass = value;
         // calculate and set hash if necessary
-        if ( !this.HasHash() ) {
-            this.SetPassHash(this.CalcHash(value));
+        if ( !this.hasHash() ) {
+            this.setPassHash(this.calcHash(value));
         }
         //console.log('pass will expire in', time);
         // set clearing timer
-        //setTimeout(function(){self.ExpirePass()}, time * 1000);
-        // notify all the subsribers that we have the pass
+        //setTimeout(function(){self.expirePass()}, time * 1000);
+        // notify all the subscribers that we have the pass
         for ( var i in this.subscribers ) {
             if ( self.subscribers[i].EventOpen && self.subscribers[i].EventOpen instanceof Function ) {
                 // open the subscriber - decrypt all the data and show it
                 self.subscribers[i].EventOpen();
             }
         }
+
         // return password hash value
         return hash;
     };
 
+
     /**
      *
      */
-    this.ExpirePass = function () {
+    this.expirePass = function () {
         console.log('master password expire');
-        // notify all the subsribers about clearing
+        // notify all the subscribers about clearing
         for ( var i in self.subscribers ) {
             if ( typeof self.subscribers[i].EventClose === 'function' ) {
                 // close the subscriber - clear all the decrypted data
@@ -240,13 +253,14 @@ var App = new function () {
         // clear the master pass
         pass = null;
         // clear cache
-        cache_enc = {};
-        cache_dec = {};
+        cacheEnc = {};
+        cacheDec = {};
         // ask for pass
         if ( self.RequestPass && self.RequestPass instanceof Function ) {
             self.RequestPass.call();
         }
     };
+
 
     /**
      * Encrypt the given text and pass the result to callback function
@@ -254,101 +268,114 @@ var App = new function () {
      * @param cache optional bool flag
      *
      */
-    this.Encode = function ( data, cache ) {
+    this.encode = function ( data, cache ) {
         // password is present and not empty input
         if ( pass && data !== false && data !== null ) {
             // try to get from cache
-            if ( cache && cache_enc[data] ) return cache_enc[data];
+            if ( cache && cacheEnc[data] ) {
+                return cacheEnc[data];
+            }
+
             // protected block
             try {
                 var enc = sjcl.encrypt(pass, data, params);
                 // fill cache if necessary
                 if ( cache ) {
-                    cache_enc[data] = enc;
-                    cache_dec[enc] = data;
+                    cacheEnc[data] = enc;
+                    cacheDec[enc] = data;
                 }
+
                 return enc;
             } catch ( e ) {
                 console.trace();
                 console.log('encrypt failure', e, data);
             }
         }
+
         return false;
     };
-//    this.Encode = function ( text, callback ) {
-//        // temporary pass storing not to loose in on timer clearing
-//        var ptmp = pass;
-//        // password is cached so do encryption immediately
-//        if ( ptmp ) {
-//            callback.call(this, sjcl.encrypt(ptmp, text, params));
-//            return true;
-//        } else {
-//            // ask for password and then do encryption
-//            if ( this.RequestPass && this.RequestPass instanceof Function ) {
-//                this.RequestPass.call(this, function(){
-//                    // pass encryption to the callback
-//                    callback.call(this, sjcl.encrypt(pass, text, params));
-//                    return true;
-//                });
-//            }
-//            return false;
-//        }
-//    }
+
+    // this.encode = function ( text, callback ) {
+    //    // temporary pass storing not to loose in on timer clearing
+    //    var ptmp = pass;
+    //    // password is cached so do encryption immediately
+    //    if ( ptmp ) {
+    //        callback.call(this, sjcl.encrypt(ptmp, text, params));
+    //        return true;
+    //    } else {
+    //        // ask for password and then do encryption
+    //        if ( this.RequestPass && this.RequestPass instanceof Function ) {
+    //            this.RequestPass.call(this, function(){
+    //                // pass encryption to the callback
+    //                callback.call(this, sjcl.encrypt(pass, text, params));
+    //                return true;
+    //            });
+    //        }
+    //        return false;
+    //    }
+    // }
 
     /**
      * Decrypt the given text and pass the result to callback function
      * @param data data to be decrypted
      * @param cache optional bool flag
      */
-    this.Decode = function ( data, cache ) {
+    this.decode = function ( data, cache ) {
         // password is present and not empty input
         if ( pass && data ) {
             // try to get from cache
-            if ( cache && cache_dec[data] ) return cache_dec[data];
+            if ( cache && cacheDec[data] ) {
+                return cacheDec[data];
+            }
+
             // protected block
             try {
                 var dec = sjcl.decrypt(pass, data);
                 // fill cache if necessary
                 if ( cache ) {
-                    cache_dec[data] = dec;
-                    cache_enc[dec] = data;
+                    cacheDec[data] = dec;
+                    cacheEnc[dec] = data;
                 }
+
                 return dec;
             } catch ( e ) {
                 console.trace();
                 console.log('decrypt failure', e, data);
             }
         }
+
         return false;
     };
-//    this.Decode = function ( text, callback ) {
-//        // temporary pass storing not to loose in on timer clearing
-//        var ptmp = pass;
-//        // password is cached so do encryption immediately
-//        if ( ptmp ) {
-//            callback.call(this, sjcl.decrypt(ptmp, text));
-//            return true;
-//        } else {
-//            // ask for password and then do encryption
-//            if ( this.RequestPass && this.RequestPass instanceof Function ) {
-//                this.RequestPass.call(this, function(){
-//                    // pass decryption to the callback
-//                    callback.call(this, sjcl.decrypt(pass, text));
-//                    return true;
-//                });
-//            }
-//            return false;
-//        }
-//    }
 
-    this.Subscribe = function ( component ) {
+
+    // this.decode = function ( text, callback ) {
+    //    // temporary pass storing not to loose in on timer clearing
+    //    var ptmp = pass;
+    //    // password is cached so do encryption immediately
+    //    if ( ptmp ) {
+    //        callback.call(this, sjcl.decrypt(ptmp, text));
+    //        return true;
+    //    } else {
+    //        // ask for password and then do encryption
+    //        if ( this.RequestPass && this.RequestPass instanceof Function ) {
+    //            this.RequestPass.call(this, function(){
+    //                // pass decryption to the callback
+    //                callback.call(this, sjcl.decrypt(pass, text));
+    //                return true;
+    //            });
+    //        }
+    //        return false;
+    //    }
+    // }
+
+    this.subscribe = function ( component ) {
         this.subscribers.push(component);
-    }
+    };
 };
 
 
 // public
-module.exports = App;
+module.exports = app;
 
 
 /***/ }),
@@ -490,7 +517,7 @@ module.exports = {
 
 
 
-var App = __webpack_require__(0);
+var app = __webpack_require__(0);
 
 
 var TagManager = new function () {
@@ -514,7 +541,7 @@ var TagManager = new function () {
         console.time('TagManager: decrypt tags');
         // decrypt tags
         for ( var id in window.dataTags.data ) {
-            var name = App.Decode(window.dataTags.data[id][window.dataTags.defn.name]);
+            var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
             // fill service lookup tables of tags by id and by name
             window.dataTagsNmlist[name] = id = parseInt(id, 10);
             window.dataTagsIdlist[id] = name;
@@ -541,7 +568,7 @@ var TagManager = new function () {
      */
     this.Add = function ( id, enc, dec ) {
         // decrypt name if necessary
-        dec = dec || App.Decode(enc, true);
+        dec = dec || app.decode(enc, true);
         window.dataTags.data[id] = [enc, [], 1];
         window.dataTagsNmlist[dec] = id;
         window.dataTagsIdlist[id] = dec;
@@ -584,7 +611,7 @@ var TagManager = new function () {
                 // check type
                 if ( isNaN(data[i]) ) {
                     // seems this is a real-time encrypted string
-                    if ( (name = App.Decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
+                    if ( (name = app.decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
                 } else {
                     // seems normal tag id
                     if ( window.dataTagsIdlist[data[i]] )
@@ -629,7 +656,7 @@ var TagManager = new function () {
                         result.push(window.dataTagsNmlist[name]);
                     } else {
                         // not found so encrypt and cache if not skipped
-                        if ( !skip_new && (enc = App.Encode(name, true)) !== false ) {
+                        if ( !skip_new && (enc = app.encode(name, true)) !== false ) {
                             result.push(enc);
                         }
                     }
@@ -871,7 +898,7 @@ module.exports = TagManager;
 
 
 
-var App = __webpack_require__(0),
+var app = __webpack_require__(0),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
     TagManager = __webpack_require__(3);
@@ -997,8 +1024,8 @@ var NoteList = new function () {
         // iterate all note entries
         note.entries.each(function ( entry ) {
             // decrypt data
-            var name = App.Decode(entry.name);
-            var data = App.Decode(entry.data);
+            var name = app.decode(entry.name);
+            var data = app.decode(entry.data);
             // prepare fulltext data
             fulltext.push(name.toLowerCase());
             fulltext.push(data.toLowerCase());
@@ -1196,7 +1223,7 @@ var NoteList = new function () {
         // show only the corresponding one
         if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
         // show/hide block depending on notes amount
-        this.dom.tpbar.style.display = this.data.total == 0 ? 'none' : 'block';
+        this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
     }
 
     /**
@@ -1689,7 +1716,7 @@ module.exports = TemplateList;
 
 
 
-var App     = __webpack_require__(0),
+var app     = __webpack_require__(0),
     sjcl    = __webpack_require__(1),
     api     = __webpack_require__(2),
     //dialogs = require('./app.dialogs'),
@@ -1761,11 +1788,11 @@ window.initData = function initData ( data, callback ) {
         NoteEditor.Init({handle: document.querySelector('div.noteeditor')});
 
         // to receive password change events
-        App.Subscribe(TagManager);
-        App.Subscribe(TemplateList);
-        App.Subscribe(NoteList);
-        App.Subscribe(NoteFilter);
-        App.Subscribe(NoteEditor);
+        app.subscribe(TagManager);
+        app.subscribe(TemplateList);
+        app.subscribe(NoteList);
+        app.subscribe(NoteFilter);
+        app.subscribe(NoteEditor);
 
         // show
         window.pageMain.style.display = 'block';
@@ -1813,7 +1840,7 @@ api.get('user/info', function ( error, data ) {
         window.dataUser = data;
 
         // apply current pass hash
-        App.SetPassHash(data.hash);
+        app.setPassHash(data.hash);
         // ask for a pass
         DlgPassGet.Show({escClose: false});
     } else {
@@ -1834,7 +1861,7 @@ api.get('user/info', function ( error, data ) {
 
 
 
-var App = __webpack_require__(0),
+var app = __webpack_require__(0),
     api = __webpack_require__(2),
     NoteList = __webpack_require__(4),
     TagManager = __webpack_require__(3);
@@ -1877,7 +1904,7 @@ var NoteFilter = new function () {
      */
     this.EventOpen = function () {
         // decrypt input data if not the first time
-        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(App.Decode(this.dom.input.data));
+        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
         // restore backuped value
         this.dom.input.value = this.dom.input.data.encval;
         // inner parsed data
@@ -1904,7 +1931,7 @@ var NoteFilter = new function () {
             // backup and clear search string
             this.dom.input.data.encval = this.dom.input.value;
             // encrypt input data
-            this.dom.input.data = App.Encode(JSON.stringify(this.dom.input.data));
+            this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
             // hide current value
             this.dom.input.value = '[encrypted data]';
             // inner parsed data
@@ -2356,7 +2383,7 @@ module.exports = NoteFilter;
 
 
 
-var App = __webpack_require__(0),
+var app = __webpack_require__(0),
     api = __webpack_require__(2),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = __webpack_require__(4),
@@ -2369,8 +2396,8 @@ window.NoteEditor = new function () {
     var self = this;
 
     // input data length limit
-    var maxlength_tags = 1024,  // total length of all tags in the input field
-        maxlength_title = 256;   // entry name max length
+    var maxlengthTags = 1024,  // total length of all tags in the input field
+        maxlengthTitle = 256;   // entry name max length
 
     // flag to indicate if there are some changes
     // note entries was moved or type is changed
@@ -2378,7 +2405,7 @@ window.NoteEditor = new function () {
     var changed = false;
 
     // messages
-    var msg_has_changes = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
+    var msgHasChanges = 'The current note has unsaved changes. Do you really want to continue and lost these changes?';
 
     // hover hints
     var hint_back = 'Will discard all your current changes and show the template list.';
@@ -2405,11 +2432,11 @@ window.NoteEditor = new function () {
                 //with ( this.dom.entries.childNodes[i] ) {
 
                 // set post data
-                entry.post.name_dec = App.Decode(entry.post.name);
-                entry.post.data_dec = App.Decode(entry.post.data);
+                entry.post.name_dec = app.decode(entry.post.name);
+                entry.post.data_dec = app.decode(entry.post.data);
                 // set current data (taking either from post or decrypt)
-                entry.data.name_dec = (entry.post.name == entry.data.name) ? entry.post.name_dec : App.Decode(entry.data.name);
-                entry.data.data_dec = (entry.post.data == entry.data.data) ? entry.post.data_dec : App.Decode(entry.data.data);
+                entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
+                entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
                 // enable all inputs
                 entry.dom.name.disabled = entry.dom.data.disabled = false;
                 // change input to decrypted values
@@ -2446,8 +2473,8 @@ window.NoteEditor = new function () {
                 var entry = this.dom.entries.childNodes[i];
                 //with ( this.dom.entries.childNodes[i] ) {
                 // if data changed than reassing (taking either from post or encrypt)
-                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : App.Encode(entry.dom.name.value);
-                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : App.Encode(entry.dom.data.value);
+                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
+                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
                 // clear post and current data
                 entry.post.name_dec = entry.data.name_dec = null;
                 entry.post.data_dec = entry.data.data_dec = null;
@@ -2544,16 +2571,16 @@ window.NoteEditor = new function () {
             // edit mode
             if ( entry.data.id ) post.id = entry.data.id;
             // if type changed since the last save or new mode
-            if ( entry.post.id_type != entry.data.id_type || entry.data.id == undefined )
+            if ( entry.post.id_type !== entry.data.id_type || entry.data.id === undefined )
                 post.id_type = entry.data.id_type;
             // entry name changed or new mode
-            if ( entry.post.name_dec != entry.dom.name.value || entry.data.id == undefined ) {
-                entry.data.name = post.name = (entry.data.name_dec == entry.dom.name.value) ? entry.data.name : App.Encode(entry.dom.name.value);
+            if ( entry.post.name_dec !== entry.dom.name.value || entry.data.id === undefined ) {
+                entry.data.name = post.name = (entry.data.name_dec === entry.dom.name.value) ? entry.data.name : app.encode(entry.dom.name.value);
                 entry.data.name_dec = entry.dom.name.value;
             }
             // entry value changed or new mode
-            if ( entry.post.data_dec != entry.dom.data.value || entry.data.id == undefined ) {
-                entry.data.data = post.data = (entry.data.data_dec == entry.dom.data.value) ? entry.data.data : App.Encode(entry.dom.data.value);
+            if ( entry.post.data_dec !== entry.dom.data.value || entry.data.id === undefined ) {
+                entry.data.data = post.data = (entry.data.data_dec === entry.dom.data.value) ? entry.data.data : app.encode(entry.dom.data.value);
                 entry.data.data_dec = entry.dom.data.value;
             }
             // type change block
@@ -2708,7 +2735,7 @@ window.NoteEditor = new function () {
             var cell = null;
             // build type list
             for ( var id in window.dataEntryTypes.data ) {
-                cell = element('td', {className: entry.data.id_type == id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
                     // set desc on mouse over action
                     onmouseover: function () {
                         entry.dom.desc.innerHTML = this.desc;
@@ -2721,9 +2748,9 @@ window.NoteEditor = new function () {
                             }
                             // prepare type, name and value
                             entry.data.id_type = this.type;
-                            entry.data.name = App.Encode(entry.dom.name.value);
+                            entry.data.name = app.encode(entry.dom.name.value);
                             entry.data.name_dec = entry.dom.name.value;
-                            entry.data.data = App.Encode(entry.dom.data.value);
+                            entry.data.data = app.encode(entry.dom.data.value);
                             entry.data.data_dec = entry.dom.data.value;
                             // clone entry and do some sync
                             var entry_new = EntryCreate(entry.data);
@@ -2746,7 +2773,7 @@ window.NoteEditor = new function () {
             elchild(entry.dom.type, list);
         }
         // show/hide block
-        entry.dom.type.style.display = (entry.dom.type.style.display != 'block' ? 'block' : 'none');
+        entry.dom.type.style.display = (entry.dom.type.style.display !== 'block' ? 'block' : 'none');
     };
 
     /**
@@ -2773,8 +2800,8 @@ window.NoteEditor = new function () {
                     var tbl = element('table', {className: 'maxw'});
                     if ( history.data.length ) {
                         for ( var i = 0; i < history.data.length; i++ ) {
-                            var name = history.data[i][history.defn.name] ? App.Decode(history.data[i][history.defn.name]) : '';
-                            var data = history.data[i][history.defn.data] ? App.Decode(history.data[i][history.defn.data]) : '';
+                            var name = history.data[i][history.defn.name] ? app.decode(history.data[i][history.defn.name]) : '';
+                            var data = history.data[i][history.defn.data] ? app.decode(history.data[i][history.defn.data]) : '';
                             tblrow(tbl, [
                                 // name and data
                                 element('span', {title: name}, (name.length > 20) ? name.slice(0, 15) + '...' : name),
@@ -2806,7 +2833,7 @@ window.NoteEditor = new function () {
             }
         }
         // show/hide block
-        entry.dom.history.style.display = (entry.dom.history.style.display != 'block' ? 'block' : 'none');
+        entry.dom.history.style.display = (entry.dom.history.style.display !== 'block' ? 'block' : 'none');
     };
 
     /**
@@ -2821,9 +2848,9 @@ window.NoteEditor = new function () {
         // clone
         var entry_new = EntryCreate({
             id_type: entry.data.id_type,
-            name: App.Encode(name),
+            name: app.encode(name),
             name_dec: name,
-            data: App.Encode(data),
+            data: app.encode(data),
             data_dec: data
         });
         self.dom.entries.insertBefore(entry_new, entry);
@@ -2883,7 +2910,7 @@ window.NoteEditor = new function () {
         // editable name
         entry.dom.name = element('input', {
             type: 'text',
-            maxLength: maxlength_title,
+            maxLength: maxlengthTitle,
             disabled: !self.open,
             value: entry.data.name_dec
         }, '', {
@@ -3289,7 +3316,7 @@ window.NoteEditor = new function () {
         // tags input
         var input = element('input', {
             type: 'text',
-            maxLength: maxlength_tags,
+            maxLength: maxlengthTags,
             disabled: !self.open,
             className: 'line',
             value: ''
@@ -3474,7 +3501,7 @@ window.NoteEditor = new function () {
      * Asks user about modifications
      */
     this.ConfirmExit = function () {
-        return confirm(msg_has_changes);
+        return confirm(msgHasChanges);
     }
 
     /**
@@ -3510,9 +3537,9 @@ window.NoteEditor = new function () {
             // append the entry list
             entries.push({
                 id_type: entry.id_type,
-                name: App.Encode(name),
+                name: app.encode(name),
                 name_dec: name,
-                data: App.Encode(data),
+                data: app.encode(data),
                 data_dec: data
             });
         });
@@ -3593,9 +3620,9 @@ window.NoteEditor = new function () {
                 // adding
                 this.data.entries.push({
                     id_type: id_type,
-                    name: App.Encode(name),
+                    name: app.encode(name),
                     name_dec: name,
-                    data: App.Encode(data),
+                    data: app.encode(data),
                     data_dec: data
                 });
             }
@@ -3609,9 +3636,9 @@ window.NoteEditor = new function () {
             // adding
             this.data.entries = [{
                 id_type: 1,
-                name: App.Encode(name),
+                name: app.encode(name),
                 name_dec: name,
-                data: App.Encode(data),
+                data: app.encode(data),
                 data_dec: data
             }];
         }
@@ -3643,8 +3670,8 @@ window.NoteEditor = new function () {
             for ( var i = 0; i < data.entries.length; i++ ) {
                 var entry = data.entries[i];
                 // wrap encoded and decoded values
-                entry.name_dec = App.Decode(entry.name);
-                entry.data_dec = App.Decode(entry.data);
+                entry.name_dec = app.decode(entry.name);
+                entry.data_dec = app.decode(entry.data);
             }
         } else {
             // invalid input so switch to new mode
@@ -3761,13 +3788,17 @@ window.NoteEditor = new function () {
      */
     this.Init = function ( params ) {
         // check input
-        if ( !params.handle ) return;
+        if ( !params.handle ) {
+            return;
+        }
+
         // html parent object
         this.dom = {handle: params.handle};
         // handler on note save
         this.onsave = params.onsave || null;
         // handler on cancel note adding or edit
         this.oncancel = params.oncancel || null;
+
         // event handlers
         SetEvents();
     };
@@ -4150,7 +4181,7 @@ window.pwdgen = function pwdgen ( length ) {
 
 
 
-var App = __webpack_require__(0),
+var app = __webpack_require__(0),
     sjcl = __webpack_require__(1),
     api = __webpack_require__(2),
     DialogModal = __webpack_require__(11),
@@ -4188,8 +4219,8 @@ DlgExport = new DialogModal({
                     // check type
                     if ( window.exportData.notes[idNote] instanceof Array ) {
                         window.exportData.notes[idNote].each(function ( entry ) {
-                            var name = App.Decode(entry.name, true);
-                            var data = App.Decode(entry.data, true);
+                            var name = app.decode(entry.name, true);
+                            var data = app.decode(entry.data, true);
                             if ( name && data ) {
                                 DlgExport.dom.text.value += name + ': ' + data + '\n';
                             }
@@ -4199,7 +4230,7 @@ DlgExport = new DialogModal({
                     if ( window.exportData.note_tags[idNote] instanceof Array ) {
                         var tags = [];
                         window.exportData.note_tags[idNote].each(function ( idTag ) {
-                            if ( window.exportData.tags[idTag] ) tags.push(App.Decode(window.exportData.tags[idTag], true));
+                            if ( window.exportData.tags[idTag] ) tags.push(app.decode(window.exportData.tags[idTag], true));
                         });
                         if ( tags.length > 0 ) {
                             DlgExport.dom.text.value += 'tags: ' + tags.join(' ') + '\n';
@@ -4337,7 +4368,7 @@ DlgOptions = new DialogModal({
                         btn.value = 'Export data';
                         btn.disabled = false;
                         window.exportData = data;
-                        App.ExpirePass();
+                        app.expirePass();
                     });
                 }
             })
@@ -4392,7 +4423,7 @@ DlgPassGet = new DialogModal({
                     type: 'text',
                     autocomplete: 'username',
                     className: 'hidden',
-                    value: App.Get('username_last_used', '')
+                    value: app.get('username_last_used', '')
                 }),
                 this.data.pass
             ]
@@ -4409,7 +4440,7 @@ DlgPassGet = new DialogModal({
         //     3600:  {next:18000, title: '1 hour'},
         //     18000: {next:86400, title: '5 hours'},
         //     86400: {next:300,   title: '1 day'}
-        // }, App.Get('pass_store_time', 300));
+        // }, app.get('pass_store_time', 300));
     },
 
     /**
@@ -4435,10 +4466,10 @@ DlgPassGet = new DialogModal({
                 var modal = this.modal;
                 var pass = modal.data.pass.value;
                 // check pass
-                if ( App.CheckPass(pass) ) {
+                if ( app.checkPass(pass) ) {
                     initData(window.dataUser, function () {
-                        //App.Set('pass_store_time', modal.data.linkset.value, true);
-                        App.SetPass(pass);
+                        //app.set('pass_store_time', modal.data.linkset.value, true);
+                        app.setPass(pass);
                         modal.data.attempts = 0;
                         // reset value
                         modal.data.pass.value = '';
@@ -4447,8 +4478,8 @@ DlgPassGet = new DialogModal({
                     });
                     // if ( modal.data.linkset.value ) {
                     //     //fb(modal.data.linkset.value);
-                    //     App.Set('pass_store_time', modal.data.linkset.value, true);
-                    //     App.SetPassTime(modal.data.linkset.value);
+                    //     app.set('pass_store_time', modal.data.linkset.value, true);
+                    //     app.setPassTime(modal.data.linkset.value);
                     // }
                 } else {
                     modal.data.pass.focus();
@@ -4481,7 +4512,7 @@ DlgUserLogin = new DialogModal({
             className: 'line',
             autocomplete: 'username',
             type: 'text',
-            value: App.Get('username_last_used', '')
+            value: app.get('username_last_used', '')
         });
         this.data.pass = element('input', {className: 'line', autocomplete: 'current-password', type: 'password'});
 
@@ -4543,8 +4574,8 @@ DlgUserLogin = new DialogModal({
                             if ( data && data.id ) {
                                 initData(data, function () {
                                     // save user name of last login
-                                    App.Set('username_last_used', modal.data.name.value, true);
-                                    App.SetPass(modal.data.pass.value);
+                                    app.set('username_last_used', modal.data.name.value, true);
+                                    app.setPass(modal.data.pass.value);
                                     // reset values
                                     modal.data.name.value = '';
                                     modal.data.pass.value = '';
@@ -4723,8 +4754,8 @@ DlgUserRegister = new DialogModal({
                                 if ( data && data.id ) {
                                     initData(data, function () {
                                         // save user name for future logins
-                                        App.Set('username_last_used', modal.data.name.value, true);
-                                        App.SetPass(password);
+                                        app.set('username_last_used', modal.data.name.value, true);
+                                        app.setPass(password);
                                         // reset values
                                         modal.data.name.value = '';
                                         modal.data.pass1.value = '';
@@ -4772,9 +4803,9 @@ DlgUserRegister = new DialogModal({
 });
 
 
-App.Subscribe(DlgExport);
-App.Subscribe(DlgOptions);
-App.Subscribe(DlgPassGet);
+app.subscribe(DlgExport);
+app.subscribe(DlgOptions);
+app.subscribe(DlgPassGet);
 
 window.DlgExport = DlgExport;
 window.DlgOptions = DlgOptions;

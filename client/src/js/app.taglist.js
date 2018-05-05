@@ -5,7 +5,7 @@
 
 'use strict';
 
-var App = require('./app');
+var app = require('./app');
 
 
 function TagList ( params ) {
@@ -36,7 +36,7 @@ function TagList ( params ) {
         console.time('decode tags');
         // decode tags
         for ( var id in window.dataTags.data ) {
-            var name = App.Decode(window.dataTags.data[id][window.dataTags.defn.name]);
+            var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
             window.dataTagsNmlist[name] = id = parseInt(id, 10);
             window.dataTagsIdlist[id] = name;
         }
@@ -131,7 +131,7 @@ function TagList ( params ) {
                             result.push(window.dataTagsNmlist[data[i]]);
 //                        } else {
 //                            // not found so encrypt
-//                            result.push(App.Encode(data[i]));
+//                            result.push(app.encode(data[i]));
                         }
                         // add word
                         words.push(data[i]);

@@ -5,7 +5,7 @@
 
 'use strict';
 
-var App = require('./app'),
+var app = require('./app'),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
     TagManager = require('./app.tag.manager');
@@ -131,8 +131,8 @@ var NoteList = new function () {
         // iterate all note entries
         note.entries.each(function ( entry ) {
             // decrypt data
-            var name = App.Decode(entry.name);
-            var data = App.Decode(entry.data);
+            var name = app.decode(entry.name);
+            var data = app.decode(entry.data);
             // prepare fulltext data
             fulltext.push(name.toLowerCase());
             fulltext.push(data.toLowerCase());
@@ -330,7 +330,7 @@ var NoteList = new function () {
         // show only the corresponding one
         if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
         // show/hide block depending on notes amount
-        this.dom.tpbar.style.display = this.data.total == 0 ? 'none' : 'block';
+        this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
     }
 
     /**
