@@ -80,18 +80,12 @@ Array.prototype.has = function ( value ) {
  * @param dest given html element to click to
  */
 window.onEnterClick = function onEnterClick ( src, dest ) {
-    src.onkeypress = function ( event ) {
-        if ( event.which || event.keyCode ) {
-            if ( (event.which === 13) || (event.keyCode === 13) ) {
-                dest.focus();
-                dest.click();
-
-                return false;
-            }
+    src.addEventListener('keydown', function ( event ) {
+        if ( event.keyCode === 13 ) {
+            dest.focus();
+            dest.click();
         }
-
-        return true;
-    };
+    });
 };
 
 
