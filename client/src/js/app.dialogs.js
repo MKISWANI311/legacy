@@ -341,7 +341,7 @@ DlgUserLogin = new DialogModal({
         });
         this.data.pass = element('input', {className: 'line', autocomplete: 'current-password', type: 'password'});
 
-        onEnterFocus(this.data.name, this.data.pass);
+        //onEnterFocus(this.data.name, this.data.pass);
         onEnterClick(this.data.pass, this.params.controls['Login'].dom);
 
         this.data.fldlist.AddRow([
@@ -483,9 +483,9 @@ DlgUserRegister = new DialogModal({
             title: 'case insensitive code above'
         });
 
-        onEnterFocus(this.data.name, this.data.pass1);
-        onEnterFocus(this.data.pass1, this.data.pass2);
-        onEnterFocus(this.data.pass2, this.data.code);
+        // onEnterFocus(this.data.name, this.data.pass1);
+        // onEnterFocus(this.data.pass1, this.data.pass2);
+        // onEnterFocus(this.data.pass2, this.data.code);
         onEnterClick(this.data.code, this.params.controls['Register'].dom);
 
         this.data.fldlist.AddRow([
