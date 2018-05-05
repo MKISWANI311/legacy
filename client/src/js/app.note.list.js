@@ -648,12 +648,12 @@ var NoteList = new function () {
         ]);
 
         // disable selection
-        this.dom.notes.onselectstart = function () {
-            return false;
-        } // ie
-        this.dom.notes.onmousedown = function () {
-            return false;
-        } // mozilla
+        // this.dom.notes.onselectstart = function () {
+        //     return false;
+        // } // ie
+        // this.dom.notes.onmousedown = function () {
+        //     return false;
+        // } // mozilla
     };
 };
 
