@@ -9,9 +9,9 @@ var sjcl = require('./sjcl.min');
 Array.prototype.has = function ( value ) {
     return this.indexOf(value) >= 0;
 };
-Array.prototype.empty = function () {
-    return !(this.length > 0);
-};
+// Array.prototype.empty = function () {
+//     return !(this.length > 0);
+// };
 // Array.prototype.each = function ( func ) {
 //     var i, l = this.length;
 //
