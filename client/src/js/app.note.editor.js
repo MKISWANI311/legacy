@@ -555,14 +555,18 @@ window.NoteEditor = new function () {
         //$(entry.dom.name).keydown(function(event) {
         entry.dom.name.addEventListener('keydown', function ( event ) {
             // up
-            if ( event.which === 38 ) if ( entry.previousSibling ) entry.previousSibling.dom.name.focus();
+            if ( event.which === 38 && entry.previousSibling ) {
+                entry.previousSibling.dom.name.focus();
+            }
             // down
-            if ( event.which === 40 ) if ( entry.nextSibling ) entry.nextSibling.dom.name.focus();
+            if ( event.which === 40 && entry.nextSibling ) {
+                entry.nextSibling.dom.name.focus();
+            }
         });
         // icon image
         entry.dom.icon = element('img', {
-            src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png',
-            title: 'drag and drop to change the entries order'
+            src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
+            //title: 'drag and drop to change the entries order'
         });
         // top title line with name and controls
         entry.dom.title = tblrow(element('table', {className: 'title'}), [entry.dom.icon, entry.dom.name, entry.dom.controls], [{className: 'icon'}, {className: 'name'}, {className: 'controls'}]);

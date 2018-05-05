@@ -132,16 +132,11 @@ head
 #pageMain.hidden(style='height: 100%;')
     table.body_content.maxh.maxw
         tr.fade(style='height:40px; border-bottom:1px solid #EEEEEE')
-            td(colspan='2' align='left' style='padding:0 10px; font-size: 150%')
-                | FortNotes
-            td(align='right' style='padding:0 10px')
-                div(style='position:relative;')
-                    #block_welcome
-                        a(href='javascript:DlgOptions.Show()')
-                            b Options
-                        span(style='color:#ccc;') |
-                        a(href='javascript:SignOut()')
-                            b Exit
+            td.logo(colspan='2') FortNotes
+            td.menu
+                a(href='javascript:DlgOptions.Show()') Options
+                span |
+                a(href='javascript:SignOut()') Exit
         tr
             td(colspan='3' style='vertical-align: top;')
                 table.maxw

@@ -61,6 +61,26 @@ a {
     background-color: #fff;
     /*margin-left: auto;*/
     /*margin-right: auto;*/
+
+    td.logo {
+        padding: 0 10px 0 42px;
+        font-size: 140%;
+        background: url("img/safebox.24.png") no-repeat 10px center;
+    }
+    td.menu {
+        text-align: right;
+        padding: 0 10px;
+        a {
+            padding: 0 10px;
+            //font-weight: bold;
+            &:last-of-type {
+                padding-right: 0;
+            }
+        }
+        span {
+            color: #ccc;
+        }
+    }
 }
 
 /*.gradient {
