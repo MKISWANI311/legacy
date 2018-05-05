@@ -539,7 +539,7 @@ window.NoteEditor = new function () {
             value: entry.data.name_dec
         }, '', {
             onchange: function () {
-                this.value = this.value.rtrim();
+                this.value = this.value.trim();
                 // only for edit mode
                 if ( self.data.id ) {
                     if ( entry.post.name_dec !== null && entry.post.name_dec !== this.value ) {
@@ -625,7 +625,7 @@ window.NoteEditor = new function () {
 
         // change color if changed in edit mode
         entry.dom.data.onchange = function () {
-            this.value = this.value.rtrim();
+            this.value = this.value.trim();
             // only for edit mode
             if ( self.data.id ) {
                 if ( entry.post.data_dec != null && entry.post.data_dec != this.value )

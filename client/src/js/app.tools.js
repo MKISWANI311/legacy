@@ -37,9 +37,9 @@ Array.prototype.has = function ( value ) {
 // String.prototype.ltrim = function() {
 //    return this.replace(/^\s+/g,"");
 // };
-String.prototype.rtrim = function () {
-    return this.replace(/\s+$/g, '');
-};
+// String.prototype.rtrim = function () {
+//     return this.replace(/\s+$/g, '');
+// };
 
 
 /**
