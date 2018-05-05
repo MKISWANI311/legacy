@@ -1,4 +1,5 @@
 /**
+ * NOT USED
  * List of groups with its items
  * @license The MIT License (MIT)
  * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>

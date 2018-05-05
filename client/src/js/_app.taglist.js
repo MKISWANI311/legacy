@@ -1,4 +1,5 @@
 /**
+ * NOT USED
  * List of tags with managing
  * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
  */
@@ -200,6 +201,3 @@ function TagList ( params ) {
     // call on creation
     Init();
 }
-
-
-
