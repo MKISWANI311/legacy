@@ -5,7 +5,8 @@
 
 'use strict';
 
-var app = require('./app'),
+var //autocomplete = require('autocompleter'),
+    app = require('./app'),
     api = require('./api'),
     NoteList = require('./app.note.list'),
     TagManager = require('./app.tag.manager');
@@ -30,11 +31,11 @@ var NoteFilter = new function () {
 
     // autocompleter commands hints
     var hint_cmd = {
-        ':day': 'allows to get notes modified during the last 24 hours',
-        ':week': 'allows to get notes modified during the last week',
-        ':month': 'allows to get notes modified during the last month',
-        ':notags': 'shows the notes without tags',
-        ':deleted': 'shows the previously deleted notes'
+        ':day': 'notes modified during the last 24 hours',
+        ':week': 'notes modified during the last week',
+        ':month': 'notes modified during the last month',
+        ':notags': 'notes without tags',
+        ':deleted': 'deleted notes'
     };
 
     // message texts
@@ -199,13 +200,13 @@ var NoteFilter = new function () {
      */
     this.UpdateParsedInput = function () {
         // check if old and current values match
-        if ( this.dom.input.value.trim() != this.dom.input.data.oldval.trim() ) {
+        if ( this.dom.input.value.trim() !== this.dom.input.data.oldval.trim() ) {
             // updating parsed data
             this.data = TagManager.StrParse(this.dom.input.value);
             // save current values
             this.dom.input.data.oldval = this.dom.input.value;
         }
-    }
+    };
 
     /**
      * Search handler
@@ -401,7 +402,7 @@ var NoteFilter = new function () {
                 // home button and tags search input
                 this.dom.home = element('div', {className: 'home'}, element('div', {title: hint_home}, null, {
                     onclick: function () {
-                        self.RequestLatest()
+                        self.RequestLatest();
                     }
                 })),
                 this.dom.input = element('input', {
@@ -414,6 +415,84 @@ var NoteFilter = new function () {
             // hidden messages
             this.dom.messages = element('div', {className: 'messages'})
         ]);
+
+        /*autocomplete({
+            minLength: 1,
+            input: this.dom.input,
+            fetch: function ( text, update ) {
+                var tags = text.toLowerCase().match(/(\S+)/g);
+
+                console.log('input', text, tags);
+
+                // only if there should be some results
+                //if ( data.length > 0 ) {
+                // prepare inner parsed data
+                self.UpdateParsedInput();
+                // preparing
+                var data = [];
+                // commands
+                if ( !self.data.wcmd.has('deleted') ) {
+                    data.push({item: [':deleted', 0]});
+                }
+                if ( !self.data.wcmd.has('notags') ) {
+                    data.push({item: [':notags', 0]});
+                }
+                if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+                    data.push({item: [':day', 0]}, {item: [':week', 0]}, {item: [':month', 0]});
+                // if notags mode than no tags suggesting
+                if ( !self.data.wcmd.has('notags') ) {
+                    var lnids = [];
+                    // get linked tags to already selected
+                    if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+                    // iterate all tags
+                    for ( var tnm in window.dataTagsNmlist ) {
+                        // get tag id
+                        var tid = window.dataTagsNmlist[tnm];
+                        // there are no including tags selected or it's one of the linked tag
+                        if ( self.data.tinc.length === 0 || lnids.has(tid) ) {
+                            // was not added so add it
+                            if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) {
+                                data.push({item: [tnm, tid]}, {item: ['-' + tnm, tid]});
+                            }
+                        }
+                    }
+                }
+                console.log('data', data);
+                //}
+
+                update(data);
+                //update(data.filter(function ( item ) {
+                //    return item.item[0].startsWith(text.toLowerCase());
+                //}));
+            },
+            render: function ( item ) {
+                var type  = 'tag',
+                    $body = document.createElement('div'),
+                    $hint;
+
+                $body.textContent = item.item[0];
+
+                if ( item.item[0][0] === ':' ) {
+                    // command
+                    type  = 'cmd';
+                    $hint = document.createElement('div');
+                    $hint.textContent = hint_cmd[item.item[0]];
+                    $body.appendChild($hint);
+                } else {
+                    // tag
+
+                }
+
+                $body.className = type;
+
+                return $body;
+            },
+            onSelect: function ( item ) {
+                console.log(item);
+                self.dom.input.value = item[0];
+            }
+        });/**/
+
 
         // autocompleter init
         $(this.dom.input).autocomplete({
@@ -468,8 +547,10 @@ var NoteFilter = new function () {
                 return data;
             }
         });
+
         // autocompleter for global access
         this.ac = $(this.dom.input).data('autocompleter');
+        /**/
 
         // search input handler
         //$(this.dom.input).bind('keydown', function(event) {

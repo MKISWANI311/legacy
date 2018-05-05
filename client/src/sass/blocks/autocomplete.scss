@@ -1,0 +1,38 @@
+.autocomplete {
+    background: white;
+    z-index: 1000;
+    overflow: auto;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+
+    .group {
+        background: #eee;
+    }
+
+    > div {
+        padding: 5px;
+
+        &.cmd, &.cmd:hover {
+            padding-left: 35px;
+            background: url('img/cmd.12.png') no-repeat 10px center;
+
+            > div {
+                float: right;
+                font-size: 90%;
+                /*font-weight: normal;*/
+                //width: 350px;
+                color: #aaa;
+            }
+        }
+
+        &.tag, &.tag:hover {
+            padding-left: 35px;
+            background: url('img/tag.12.png') no-repeat 10px center;
+        }
+    }
+
+    > div:hover:not(.group), > div.selected {
+        background-color: #dae5f9;
+        cursor: pointer;
+    }
+}

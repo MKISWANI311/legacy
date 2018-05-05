@@ -209,7 +209,7 @@ DlgOptions = new DialogModal({
     },
 
     controls: {
-        'Close': {
+        Close: {
             main: true,
             onClick: function () {
                 this.modal.Close();
@@ -229,7 +229,8 @@ DlgPassGet = new DialogModal({
         this.data.fldlist = new FieldList({
             cols: [
                 {className: 'colname'},
-                {className: 'colvalue'}],
+                {className: 'colvalue'}
+            ],
             attr: {}
         });
         this.data.pass = element('input', {type: 'password', autocomplete: 'current-password', className: 'line'});
@@ -531,12 +532,12 @@ DlgUserRegister = new DialogModal({
     },
 
     controls: {
-        'Cancel': {
+        Cancel: {
             onClick: function () {
                 this.modal.Close();
             }
         },
-        'Register': {
+        Register: {
             main: true,
             onClick: function () {
                 var modal = this.modal;

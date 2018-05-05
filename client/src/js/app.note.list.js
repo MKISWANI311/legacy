@@ -642,9 +642,9 @@ var NoteList = new function () {
                 this.dom.tpinfo = element('div', {className: 'info'})
             ]),
             // note list
-            this.dom.notes = element('div', {className: 'notes'}),
+            this.dom.notes = element('div', {className: 'notes'})
             // bottom panel
-            this.dom.btbar = element('div', {className: 'btbar'})
+            //this.dom.btbar = element('div', {className: 'btbar'})
         ]);
 
         // disable selection

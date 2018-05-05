@@ -6,7 +6,8 @@
 
 'use strict';
 
-var app = require('./app'),
+var //autocomplete = require('autocompleter'),
+    app = require('./app'),
     api = require('./api'),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = require('./app.note.list'),
@@ -974,7 +975,44 @@ window.NoteEditor = new function () {
 
         var data = [];
         // prepare all tags
-        for ( var tid in window.dataTagsIdlist ) data.push([window.dataTagsIdlist[tid], tid]);
+        for ( var tid in window.dataTagsIdlist ) {
+            data.push([window.dataTagsIdlist[tid], tid]);
+        }
+
+        /*autocomplete({
+            minLength: 1,
+            input: self.dom.tags.input,
+            fetch: function ( text, update ) {
+                console.log('data', data);
+                // get tags array
+                var result = [],
+                    tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+
+                console.log('tags', tags);
+
+                // truncate available suggestion options
+                data.each(function ( item ) {
+                    if ( !tags.has(item[0]) ) {
+                        result.push({item: item});
+                    }
+                });
+
+                console.log('result', result);
+                update(result);
+            },
+            render: function ( item ) {
+                var $body = document.createElement('div');
+
+                $body.textContent = item.item[0];
+
+                return $body;
+            },
+            onSelect: function ( item ) {
+                console.log(item);
+                //self.dom.input.value = item[0];
+            }
+        });/**/
+
         // add autocompletion
         $(self.dom.tags.input).autocomplete({
             matchInside: false,
@@ -991,27 +1029,37 @@ window.NoteEditor = new function () {
                 return tag;
 
                 // wrap to div with icon
-                return '<div class="tag">' + tag + '</div>';
+                //return '<div class="tag">' + tag + '</div>';
             },
             processData: function ( data ) {
+                //console.log('data', data);
                 // get tags array
-                var result = [], tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+                var result = [],
+                    tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+
+                //console.log('tags', tags);
+
                 // truncate available suggestion options
                 data.each(function ( item ) {
-                    if ( !tags.has(item[0]) ) result.push(item);
+                    if ( !tags.has(item[0]) ) {
+                        result.push(item);
+                    }
                 });
+
+                //console.log('result', result);
                 return result;
             }
-        });
+        });/**/
 
-//        var timer = null;
-//        input.onkeydown = function() {
-//            // only for edit mode
-//            if ( self.data.id ) {
-//                if ( timer ) clearTimeout(timer);
-//                timer = setTimeout(function(){self.dom.tags.input.onchange();}, 300);
-//            }
-//        }
+        // var timer = null;
+        // input.onkeydown = function() {
+        //    // only for edit mode
+        //    if ( self.data.id ) {
+        //        if ( timer ) clearTimeout(timer);
+        //        timer = setTimeout(function(){self.dom.tags.input.onchange();}, 300);
+        //    }
+        // }
+
         // return container
         return self.dom.tags;
     };

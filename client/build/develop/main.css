@@ -99,17 +99,16 @@
   overflow: hidden; }
 
 .acResults ul li .cmd, .acResults ul li .tag {
-  background-repeat: no-repeat;
-  background-position: left center;
+  background: no-repeat left center;
   padding-left: 20px;
   /*font-size: 11px;*/ }
 
-.acResults ul li .cmd {
-  background-image: url("img/cmd.12.png"); }
-
-.acResults ul li .tag {
-  background-image: url("img/tag.12.png"); }
-
+/*.acResults ul li .cmd {*/
+/*background-image: url('img/cmd.12.png');*/
+/*}*/
+/*.acResults ul li .tag {*/
+/*background-image: url('img/tag.12.png');*/
+/*}*/
 .acResults ul li .cmd .hint {
   float: right;
   /*font-size: 11px;*/
@@ -121,7 +120,7 @@
   background: url("indicator.gif") right center no-repeat; }
 
 .acSelect {
-  background-color: #bfdfff;
+  background-color: #dae5f9;
   /*color: #fff;*/
   /*font-weight: bold;*/ }
 

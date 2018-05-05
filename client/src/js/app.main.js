@@ -119,8 +119,7 @@ collectTimer = setInterval(function () {
 api.get('user/info', function ( error, data ) {
     if ( error ) {
         console.error(error);
-
-        return;
+        //return;
     }
 
     console.log('user info', data);

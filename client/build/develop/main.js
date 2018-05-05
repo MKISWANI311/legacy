@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1535,9 +1535,9 @@ var NoteList = new function () {
                 this.dom.tpinfo = element('div', {className: 'info'})
             ]),
             // note list
-            this.dom.notes = element('div', {className: 'notes'}),
+            this.dom.notes = element('div', {className: 'notes'})
             // bottom panel
-            this.dom.btbar = element('div', {className: 'btbar'})
+            //this.dom.btbar = element('div', {className: 'btbar'})
         ]);
 
         // disable selection
@@ -1705,7 +1705,8 @@ module.exports = TemplateList;
 
 
 /***/ }),
-/* 6 */
+/* 6 */,
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1728,10 +1729,10 @@ var app     = __webpack_require__(0),
     collectTimer;
 
 
-__webpack_require__(7);
 __webpack_require__(8);
 __webpack_require__(9);
 __webpack_require__(10);
+__webpack_require__(11);
 
 //require('./jquery');
 //window.$ = require('jquery');
@@ -1830,8 +1831,7 @@ collectTimer = setInterval(function () {
 api.get('user/info', function ( error, data ) {
     if ( error ) {
         console.error(error);
-
-        return;
+        //return;
     }
 
     console.log('user info', data);
@@ -1850,7 +1850,7 @@ api.get('user/info', function ( error, data ) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1861,7 +1861,8 @@ api.get('user/info', function ( error, data ) {
 
 
 
-var app = __webpack_require__(0),
+var //autocomplete = require('autocompleter'),
+    app = __webpack_require__(0),
     api = __webpack_require__(2),
     NoteList = __webpack_require__(4),
     TagManager = __webpack_require__(3);
@@ -1886,11 +1887,11 @@ var NoteFilter = new function () {
 
     // autocompleter commands hints
     var hint_cmd = {
-        ':day': 'allows to get notes modified during the last 24 hours',
-        ':week': 'allows to get notes modified during the last week',
-        ':month': 'allows to get notes modified during the last month',
-        ':notags': 'shows the notes without tags',
-        ':deleted': 'shows the previously deleted notes'
+        ':day': 'notes modified during the last 24 hours',
+        ':week': 'notes modified during the last week',
+        ':month': 'notes modified during the last month',
+        ':notags': 'notes without tags',
+        ':deleted': 'deleted notes'
     };
 
     // message texts
@@ -2055,13 +2056,13 @@ var NoteFilter = new function () {
      */
     this.UpdateParsedInput = function () {
         // check if old and current values match
-        if ( this.dom.input.value.trim() != this.dom.input.data.oldval.trim() ) {
+        if ( this.dom.input.value.trim() !== this.dom.input.data.oldval.trim() ) {
             // updating parsed data
             this.data = TagManager.StrParse(this.dom.input.value);
             // save current values
             this.dom.input.data.oldval = this.dom.input.value;
         }
-    }
+    };
 
     /**
      * Search handler
@@ -2257,7 +2258,7 @@ var NoteFilter = new function () {
                 // home button and tags search input
                 this.dom.home = element('div', {className: 'home'}, element('div', {title: hint_home}, null, {
                     onclick: function () {
-                        self.RequestLatest()
+                        self.RequestLatest();
                     }
                 })),
                 this.dom.input = element('input', {
@@ -2270,6 +2271,84 @@ var NoteFilter = new function () {
             // hidden messages
             this.dom.messages = element('div', {className: 'messages'})
         ]);
+
+        /*autocomplete({
+            minLength: 1,
+            input: this.dom.input,
+            fetch: function ( text, update ) {
+                var tags = text.toLowerCase().match(/(\S+)/g);
+
+                console.log('input', text, tags);
+
+                // only if there should be some results
+                //if ( data.length > 0 ) {
+                // prepare inner parsed data
+                self.UpdateParsedInput();
+                // preparing
+                var data = [];
+                // commands
+                if ( !self.data.wcmd.has('deleted') ) {
+                    data.push({item: [':deleted', 0]});
+                }
+                if ( !self.data.wcmd.has('notags') ) {
+                    data.push({item: [':notags', 0]});
+                }
+                if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+                    data.push({item: [':day', 0]}, {item: [':week', 0]}, {item: [':month', 0]});
+                // if notags mode than no tags suggesting
+                if ( !self.data.wcmd.has('notags') ) {
+                    var lnids = [];
+                    // get linked tags to already selected
+                    if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+                    // iterate all tags
+                    for ( var tnm in window.dataTagsNmlist ) {
+                        // get tag id
+                        var tid = window.dataTagsNmlist[tnm];
+                        // there are no including tags selected or it's one of the linked tag
+                        if ( self.data.tinc.length === 0 || lnids.has(tid) ) {
+                            // was not added so add it
+                            if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) {
+                                data.push({item: [tnm, tid]}, {item: ['-' + tnm, tid]});
+                            }
+                        }
+                    }
+                }
+                console.log('data', data);
+                //}
+
+                update(data);
+                //update(data.filter(function ( item ) {
+                //    return item.item[0].startsWith(text.toLowerCase());
+                //}));
+            },
+            render: function ( item ) {
+                var type  = 'tag',
+                    $body = document.createElement('div'),
+                    $hint;
+
+                $body.textContent = item.item[0];
+
+                if ( item.item[0][0] === ':' ) {
+                    // command
+                    type  = 'cmd';
+                    $hint = document.createElement('div');
+                    $hint.textContent = hint_cmd[item.item[0]];
+                    $body.appendChild($hint);
+                } else {
+                    // tag
+
+                }
+
+                $body.className = type;
+
+                return $body;
+            },
+            onSelect: function ( item ) {
+                console.log(item);
+                self.dom.input.value = item[0];
+            }
+        });/**/
+
 
         // autocompleter init
         $(this.dom.input).autocomplete({
@@ -2324,8 +2403,10 @@ var NoteFilter = new function () {
                 return data;
             }
         });
+
         // autocompleter for global access
         this.ac = $(this.dom.input).data('autocompleter');
+        /**/
 
         // search input handler
         //$(this.dom.input).bind('keydown', function(event) {
@@ -2371,7 +2452,7 @@ module.exports = NoteFilter;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2383,7 +2464,8 @@ module.exports = NoteFilter;
 
 
 
-var app = __webpack_require__(0),
+var //autocomplete = require('autocompleter'),
+    app = __webpack_require__(0),
     api = __webpack_require__(2),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = __webpack_require__(4),
@@ -3351,7 +3433,44 @@ window.NoteEditor = new function () {
 
         var data = [];
         // prepare all tags
-        for ( var tid in window.dataTagsIdlist ) data.push([window.dataTagsIdlist[tid], tid]);
+        for ( var tid in window.dataTagsIdlist ) {
+            data.push([window.dataTagsIdlist[tid], tid]);
+        }
+
+        /*autocomplete({
+            minLength: 1,
+            input: self.dom.tags.input,
+            fetch: function ( text, update ) {
+                console.log('data', data);
+                // get tags array
+                var result = [],
+                    tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+
+                console.log('tags', tags);
+
+                // truncate available suggestion options
+                data.each(function ( item ) {
+                    if ( !tags.has(item[0]) ) {
+                        result.push({item: item});
+                    }
+                });
+
+                console.log('result', result);
+                update(result);
+            },
+            render: function ( item ) {
+                var $body = document.createElement('div');
+
+                $body.textContent = item.item[0];
+
+                return $body;
+            },
+            onSelect: function ( item ) {
+                console.log(item);
+                //self.dom.input.value = item[0];
+            }
+        });/**/
+
         // add autocompletion
         $(self.dom.tags.input).autocomplete({
             matchInside: false,
@@ -3368,27 +3487,37 @@ window.NoteEditor = new function () {
                 return tag;
 
                 // wrap to div with icon
-                return '<div class="tag">' + tag + '</div>';
+                //return '<div class="tag">' + tag + '</div>';
             },
             processData: function ( data ) {
+                //console.log('data', data);
                 // get tags array
-                var result = [], tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+                var result = [],
+                    tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+
+                //console.log('tags', tags);
+
                 // truncate available suggestion options
                 data.each(function ( item ) {
-                    if ( !tags.has(item[0]) ) result.push(item);
+                    if ( !tags.has(item[0]) ) {
+                        result.push(item);
+                    }
                 });
+
+                //console.log('result', result);
                 return result;
             }
-        });
+        });/**/
 
-//        var timer = null;
-//        input.onkeydown = function() {
-//            // only for edit mode
-//            if ( self.data.id ) {
-//                if ( timer ) clearTimeout(timer);
-//                timer = setTimeout(function(){self.dom.tags.input.onchange();}, 300);
-//            }
-//        }
+        // var timer = null;
+        // input.onkeydown = function() {
+        //    // only for edit mode
+        //    if ( self.data.id ) {
+        //        if ( timer ) clearTimeout(timer);
+        //        timer = setTimeout(function(){self.dom.tags.input.onchange();}, 300);
+        //    }
+        // }
+
         // return container
         return self.dom.tags;
     };
@@ -3810,7 +3939,7 @@ window.NoteEditor = new function () {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -4170,7 +4299,7 @@ window.pwdgen = function pwdgen ( length ) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4184,8 +4313,8 @@ window.pwdgen = function pwdgen ( length ) {
 var app = __webpack_require__(0),
     sjcl = __webpack_require__(1),
     api = __webpack_require__(2),
-    DialogModal = __webpack_require__(11),
-    FieldList = __webpack_require__(12);
+    DialogModal = __webpack_require__(12),
+    FieldList = __webpack_require__(13);
 
 
 var DlgExport = null;
@@ -4385,7 +4514,7 @@ DlgOptions = new DialogModal({
     },
 
     controls: {
-        'Close': {
+        Close: {
             main: true,
             onClick: function () {
                 this.modal.Close();
@@ -4405,7 +4534,8 @@ DlgPassGet = new DialogModal({
         this.data.fldlist = new FieldList({
             cols: [
                 {className: 'colname'},
-                {className: 'colvalue'}],
+                {className: 'colvalue'}
+            ],
             attr: {}
         });
         this.data.pass = element('input', {type: 'password', autocomplete: 'current-password', className: 'line'});
@@ -4707,12 +4837,12 @@ DlgUserRegister = new DialogModal({
     },
 
     controls: {
-        'Cancel': {
+        Cancel: {
             onClick: function () {
                 this.modal.Close();
             }
         },
-        'Register': {
+        Register: {
             main: true,
             onClick: function () {
                 var modal = this.modal;
@@ -4826,7 +4956,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4978,7 +5108,7 @@ module.exports = DialogModal;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

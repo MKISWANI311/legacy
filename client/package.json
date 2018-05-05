@@ -19,6 +19,7 @@
         "test": "npm run lint"
     },
     "dependencies": {
+        "autocompleter": "^1.0.31",
         "cjs-emitter": "^1.5.1",
         "cjs-query": "^1.4.0",
         "jquery": "^3.3.1",
