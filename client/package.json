@@ -1,0 +1,55 @@
+{
+    "name": "fortnotes-client",
+    "version": "1.0.0",
+    "description": "FortNotes web application",
+    "author": {
+        "name": "Stanislav Kalashnik",
+        "email": "darkpark.main@gmail.com"
+    },
+    "homepage": "https://fortnotes.com/",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fortnotes/client.git"
+    },
+    "scripts": {
+        "jsdoc": "jsdoc --destination docs src/js/lib/*.js readme.md",
+        "develop": "runner -c tasks/develop.js",
+        "release": "runner -c tasks/release.js",
+        "lint": "eslint src/js",
+        "test": "npm run lint"
+    },
+    "dependencies": {
+        "cjs-emitter": "^1.5.1",
+        "cjs-query": "^1.4.0",
+        "jquery": "^3.3.1",
+        "spa-app": "^1.5.0",
+        "spa-component": "^1.4.0",
+        "spa-component-button": "^1.0.0",
+        "spa-component-list": "^1.0.1",
+        "spa-component-modal": "^1.0.0",
+        "spa-component-page": "^1.4.0",
+        "spa-component-tab": "^1.0.0",
+        "spa-dom": "^1.4.0",
+        "spa-gettext": "^1.4.0",
+        "spa-wamp": "^1.0.0",
+        "webpack": "^3.11.0"
+    },
+    "devDependencies": {
+        "eslint": "^4.19.1",
+        "jsdoc": "^3.5.5",
+        "node-runner": "^1.0.2",
+        "sjcl": "^1.0.7",
+        "spa-eslint-config": "^1.0.1",
+        "spa-tasks": "^1.1.0",
+        "xml-js": "^1.6.2"
+    },
+    "keywords": [
+        "aes",
+        "encryption",
+        "private",
+        "notes",
+        "client",
+        "spa"
+    ],
+    "license": "GPL-3.0"
+}

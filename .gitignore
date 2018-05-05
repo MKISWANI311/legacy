@@ -1,5 +1,5 @@
 .idea
-logs/*
-cache/searches
-cache/tags
-db.sqlite
+client/node_modules
+server/logs
+server/cache/searches
+server/cache/tags

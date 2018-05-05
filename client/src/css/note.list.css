@@ -1,0 +1,41 @@
+/**
+ * list of note entries with info and control block
+ */
+
+ .notelist {}
+    .notelist > .tpbar { height:28px; line-height:28px }
+        .notelist > .tpbar > .ctrl { float:right }
+        .notelist > .tpbar > .info {  }
+            .notelist > .tpbar > .ctrl > .button { margin-left:5px }
+            .notelist > .tpbar > .info > span.amount { display:inline-block; margin-right:15px; border:1px solid #eee; padding:0 5px; line-height:26px; background-color:#F9F9F9 }
+            .notelist > .tpbar > .info a { }
+            .notelist > .tpbar > .info b { cursor:default }
+            .notelist > .tpbar > .info p { color:#aaa; display:inline; margin-right:5px }
+            .notelist > .tpbar > .info p.div { color:#ddd; margin:0 7px }
+    .notelist > .notes { margin-top:10px }
+        .notelist > .notes > .note { table-layout:fixed; display:table; width:100%; border-bottom: 1px dashed #eee; border-top: 1px dashed #eee; padding:5px }
+        .notelist > .notes > .note:hover  { background-color:#ffffdf }
+            .notelist > .notes > .note:hover .time { color:#000 !important }
+        .notelist > .notes > .note.hidden { display:none }
+        .notelist > .notes > .note.marked { background-color:#ffffdf }
+            .notelist > .notes > .note.marked img.icon { display:none  !important }
+            .notelist > .notes > .note.marked div.tick { display:block !important; background-image:url("img/tick.true.png") !important; }
+        .notelist > .notes > .note.active { background-color:#e4ffe4 }
+            .notelist > .notes > .note > .icon { display:table-cell; vertical-align:middle; width:45px; padding-left:5px; padding-right:8px }
+                .notelist > .notes > .note > .icon img.icon { margin: 0 auto; display:block; width:32px }
+                .notelist > .notes > .note > .icon div.tick { margin: 0 auto; display:none; width:25px; height:25px; opacity:0.5; background-image:url("img/tick.false.png"); background-repeat:no-repeat; background-position: center center }
+                .notelist > .notes > .note > .icon:hover img.icon { display:none }
+                .notelist > .notes > .note > .icon:hover div.tick { display:block }
+                .notelist > .notes > .note > .icon:hover div.tick:hover { opacity:1 }
+            .notelist > .notes > .note > .body { display:table-cell }
+                .notelist > .notes > .note > .body > .info { padding:5px 0 }
+                    .notelist > .notes > .note > .body > .info > .warn { color:#f00 }
+                    .notelist > .notes > .note > .body > .info > .name { margin-right:5px; color:#aaa }
+                    .notelist > .notes > .note > .body > .info > .data { margin-right:10px }
+                .notelist > .notes > .note > .body > .time { padding:0 5px; line-height: 21px; float:right; font-size:90%; color:#aaa }
+                .notelist > .notes > .note > .body > .tags { padding-bottom:5px; line-height: 21px; color:#aaa }
+                    .notelist > .notes > .note .tags .tag { color:#000; border-left:2px solid #ccc; background-color:#ddd; line-height:25px; padding: 1px 7px 0; cursor:pointer; margin-right:5px; display:inline-block }
+                    .notelist > .notes > .note .tags .tag:hover   { background-color:#bfdfff; color:#fff }
+                    .notelist > .notes > .note .tags .tag.include { color:#fff; background-color:#bfdfff; font-weight:bold }
+                    .notelist > .notes > .note .tags .tag.include:hover { background-color:#ffcc66 }
+    .notelist > .btbar { text-align:center; padding-top:10px }
