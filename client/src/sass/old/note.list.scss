@@ -84,9 +84,7 @@
                         width: 25px;
                         height: 25px;
                         opacity: 0.5;
-                        background-image: url("img/tick.false.png");
-                        background-repeat: no-repeat;
-                        background-position: center center;
+                        background: url("img/tick.false.png") no-repeat center center;
                     }
                     &:hover {
                         img.icon {

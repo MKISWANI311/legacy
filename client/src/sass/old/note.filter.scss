@@ -19,9 +19,7 @@
                         height: 34px;
                         line-height: 34px;
                         width: 34px;
-                        background-image: url("img/2x2_grid.png");
-                        background-repeat: no-repeat;
-                        background-position: center center;
+                        background: url("img/2x2_grid.png") no-repeat center center;
                         &:hover {
                             opacity: 1;
                         }
@@ -32,16 +30,13 @@
                     /*font-family:"Courier New","Andale Mono",monospace*/
                 }
                 .icon {
-                    background-color: #eee;
                     position: absolute;
                     left: 42px;
                     top: 2px;
                     height: 30px;
                     line-height: 26px;
                     width: 30px;
-                    background-image: url("img/field_tag.png");
-                    background-repeat: no-repeat;
-                    background-position: center center;
+                    background: #eee url("img/field_tag.png") no-repeat center center;
                     &.loading {
                         background-image: url("img/loading.16.gif");
                     }
