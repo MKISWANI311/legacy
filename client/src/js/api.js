@@ -6,7 +6,7 @@
 'use strict';
 
 var defaults = {
-    server: 'http://10.0.0.100:8000/',
+    server: localStorage.getItem('server') || 'https://fortnotes.com/',
     mode: 'cors',
     credentials: 'include',
     headers: {
