@@ -552,17 +552,19 @@ window.NoteEditor = new function () {
                 }
             }
         });
+
         //$(entry.dom.name).keydown(function(event) {
         entry.dom.name.addEventListener('keydown', function ( event ) {
             // up
-            if ( event.which === 38 && entry.previousSibling ) {
+            if ( event.keyCode === 38 && entry.previousSibling ) {
                 entry.previousSibling.dom.name.focus();
             }
             // down
-            if ( event.which === 40 && entry.nextSibling ) {
+            if ( event.keyCode === 40 && entry.nextSibling ) {
                 entry.nextSibling.dom.name.focus();
             }
         });
+        
         // icon image
         entry.dom.icon = element('img', {
             src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
@@ -588,16 +590,17 @@ window.NoteEditor = new function () {
                 maxLength: limit,
                 disabled: !self.open
             }, entry.data.data_dec);
+
             // keyboard navigation
             //$(entry.dom.data).keydown(function(event) {
             entry.dom.data.addEventListener('keydown', function ( event ) {
                 //TODO: selectionStart is not cross-browser
                 // up
-                if ( event.which === 38 && entry.previousSibling && this.selectionStart === 0 ) {
+                if ( event.keyCode === 38 && entry.previousSibling && this.selectionStart === 0 ) {
                     entry.previousSibling.dom.data.focus();
                 }
                 // down
-                if ( event.which === 40 && entry.nextSibling && this.selectionStart === this.value.length ) {
+                if ( event.keyCode === 40 && entry.nextSibling && this.selectionStart === this.value.length ) {
                     entry.nextSibling.dom.data.focus();
                 }
             });
@@ -619,9 +622,13 @@ window.NoteEditor = new function () {
             //$(entry.dom.data).keydown(function(event) {
             entry.dom.data.addEventListener('keydown', function ( event ) {
                 // up
-                if ( event.which === 38 ) if ( entry.previousSibling ) entry.previousSibling.dom.data.focus();
+                if ( event.keyCode === 38 ) if ( entry.previousSibling ) {
+                    entry.previousSibling.dom.data.focus();
+                }
                 // down
-                if ( event.which === 40 ) if ( entry.nextSibling ) entry.nextSibling.dom.data.focus();
+                if ( event.keyCode === 40 ) if ( entry.nextSibling ) {
+                    entry.nextSibling.dom.data.focus();
+                }
             });
         }
 
@@ -1138,7 +1145,7 @@ window.NoteEditor = new function () {
         // save
         //$(self.dom.handle).bind('keypress', function(event) {
         self.dom.handle.addEventListener('keypress', function ( event ) {
-            if ( event.which === 13 ) {
+            if ( event.keyCode === 13 ) {
                 // save on Ctrl+Enter
                 if ( event.ctrlKey ) {
                     //event.preventDefault();
@@ -1152,7 +1159,7 @@ window.NoteEditor = new function () {
         // cancel
         //$(self.dom.handle).bind('keydown', function(event) {
         self.dom.handle.addEventListener('keydown', function ( event ) {
-            if ( event.which === 27 ) {
+            if ( event.keyCode === 27 ) {
                 // exit from here
                 self.Escape();
             }

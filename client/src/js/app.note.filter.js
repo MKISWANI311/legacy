@@ -556,9 +556,12 @@ var NoteFilter = new function () {
         //$(this.dom.input).bind('keydown', function(event) {
         this.dom.input.addEventListener('keydown', function ( event ) {
             // enter
-            if ( event.which === 13 ) self.DoSearch(event.ctrlKey);
+            if ( event.keyCode === 13 ) {
+                self.DoSearch(event.ctrlKey);
+            }
+
             // up
-            if ( event.which === 38 ) {
+            if ( event.keyCode === 38 ) {
                 // no autocompleter and valid history cursor
                 if ( !self.ac.active_ && this.data.histpos > 0 ) {
                     // move up cursor position to the first non-duplicate item in the history
@@ -568,8 +571,9 @@ var NoteFilter = new function () {
                     if ( this.data.histpos >= 0 ) this.value = this.data.history[this.data.histpos];
                 }
             }
+
             // down
-            if ( event.which === 40 ) {
+            if ( event.keyCode === 40 ) {
                 // no autocompleter and valid history cursor
                 if ( !self.ac.active_ && this.data.histpos < this.data.history.length - 1 ) {
                     // move down cursor position to the first non-duplicate item in the history
@@ -579,8 +583,9 @@ var NoteFilter = new function () {
                     if ( this.data.histpos < this.data.history.length ) this.value = this.data.history[this.data.histpos];
                 }
             }
+
             // ctrl + space
-            if ( event.ctrlKey && event.which === 32 ) {
+            if ( event.ctrlKey && event.keyCode === 32 ) {
                 // show autocompleter if possible
                 self.ac.activate();
             }

@@ -61,8 +61,8 @@ Array.prototype.has = function ( value ) {
  */
 // window.onEnterFocus = function onEnterFocus ( src, dest ) {
 //     src.onkeypress = function ( event ) {
-//         if ( event.which || event.keyCode ) {
-//             if ( (event.which === 13) || (event.keyCode === 13) ) {
+//         if ( event.keyCode || event.keyCode ) {
+//             if ( (event.keyCode === 13) || (event.keyCode === 13) ) {
 //                 dest.focus();
 //
 //                 return false;
