@@ -21,7 +21,7 @@
                 width: 232px;
                 height: 22px;
                 padding: 0 4px;
-                font: inherit;
+                //font: inherit;
                 &:focus {
                     background-color: #FFFFDF;
                     outline: none;
@@ -64,9 +64,9 @@
         font-size: 90%;
         color: #aaa;
         background-color: #F9F9F9;
-        * {
-            font-size: inherit;
-        }
+        // * {
+        //     font-size: inherit;
+        // }
     }
 }
 

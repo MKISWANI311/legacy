@@ -8,6 +8,11 @@ html, body {
     padding: 0;
 }
 
+input, textarea, select, button {
+    color: inherit;
+    font: inherit;
+}
+
 .bold {
     font-weight: bold;
 }
@@ -143,7 +148,7 @@ input {
         /**/
         cursor: pointer;
         color: #7c94c1;
-        font: inherit;
+        //font: inherit;
         outline: none;
         &.bold {
             font-weight: bold;
@@ -174,7 +179,7 @@ input {
         padding: 4px;
         box-sizing: border-box;
         outline: none;
-        font: inherit;
+        //font: inherit;
     }
 }
 
@@ -193,7 +198,7 @@ textarea {
         padding: 4px;
         box-sizing: border-box;
         outline: none;
-        font: inherit;
+        //font: inherit;
     }
 }
 
