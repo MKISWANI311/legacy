@@ -5,7 +5,7 @@
 
 .tplist {
     background-color: #fff;
-    border: 1px solid #eee;
+    border: 1px solid $colorBorder;
     /*color: #816c5b;*/
     text-align: left;
     overflow-y: auto;

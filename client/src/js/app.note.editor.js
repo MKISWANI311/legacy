@@ -359,6 +359,7 @@ window.NoteEditor = new function () {
             var cell = null;
             // build type list
             for ( var id in window.dataEntryTypes.data ) {
+                id = parseInt(id, 10);
                 cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
                     // set desc on mouse over action
                     onmouseover: function () {
@@ -367,9 +368,9 @@ window.NoteEditor = new function () {
                     onclick: function () {
                         if ( this.className == 'item' ) {
                             // change name if default
-                            if ( entry.dom.name.value == window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] ) {
+                            //if ( entry.dom.name.value == window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] ) {
                                 entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
-                            }
+                            //}
                             // prepare type, name and value
                             entry.data.id_type = this.type;
                             entry.data.name = app.encode(entry.dom.name.value);
@@ -725,7 +726,7 @@ window.NoteEditor = new function () {
      */
     var EntryBlockControls = function ( entry ) {
         entry.dom.btn_config = element('img', {
-            src: 'img/field_btn_config.png',
+            src: 'img/settings.svg',
             className: 'button',
             title: 'change entry type'
         }, null, {
@@ -734,7 +735,7 @@ window.NoteEditor = new function () {
             }
         });
         entry.dom.btn_history = element('img', {
-            src: 'img/field_btn_history.png',
+            src: 'img/history.svg',
             className: 'button',
             title: 'show/hide entry hisory values'
         }, null, {
@@ -743,7 +744,7 @@ window.NoteEditor = new function () {
             }
         });
         entry.dom.btn_add = element('img', {
-            src: 'img/field_btn_add.png',
+            src: 'img/add.svg',
             className: 'button',
             title: 'add new entry after this one'
         }, null, {
@@ -752,7 +753,7 @@ window.NoteEditor = new function () {
             }
         });
         entry.dom.btn_up = element('img', {
-            src: 'img/field_btn_up.png',
+            src: 'img/arrow_up.svg',
             className: 'button',
             title: 'move this entry one row up'
         }, null, {
@@ -761,7 +762,7 @@ window.NoteEditor = new function () {
             }
         });
         entry.dom.btn_down = element('img', {
-            src: 'img/field_btn_down.png',
+            src: 'img/arrow_down.svg',
             className: 'button',
             title: 'move this entry one row down'
         }, null, {
@@ -770,7 +771,7 @@ window.NoteEditor = new function () {
             }
         });
         entry.dom.btn_delete = element('img', {
-            src: 'img/field_btn_delete.png',
+            src: 'img/clear.svg',
             className: 'button',
             title: 'delete this entry'
         }, null, {
@@ -784,7 +785,7 @@ window.NoteEditor = new function () {
         if ( entry.data.id_type === 4 ) {
             //alert(entry.dom.data.type);
             entry.dom.btn_pwdgen = element('img', {
-                src: 'img/field_btn_pwdgen.png',
+                src: 'img/refresh.svg',
                 className: 'button',
                 title: 'generate a new password'
             }, null, {
@@ -794,17 +795,17 @@ window.NoteEditor = new function () {
                 }
             });
             entry.dom.btn_maskpwd = element('img', {
-                src: 'img/field_eye_closed.png',
+                src: 'img/visibility_off.svg',
                 className: 'button',
                 title: 'Show password'
             }, null, {
                 onclick: function () {
                     if ( entry.dom.data.type === 'text' ) {
                         this.title = 'Show password';
-                        this.src = 'img/field_eye_closed.png';
+                        this.src = 'img/visibility_off.svg';
                         entry.dom.data.type = 'password';
                     } else {
-                        this.src = 'img/field_eye_openned.png';
+                        this.src = 'img/visibility.svg';
                         this.title = 'Hide password';
                         entry.dom.data.type = 'text';
                     }

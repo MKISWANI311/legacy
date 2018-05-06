@@ -1,12 +1,12 @@
 .autocomplete {
-    background: white;
+    background: $colorBackground;
     z-index: 1000;
     overflow: auto;
     box-sizing: border-box;
-    border: 1px solid #ddd;
+    border: 1px solid $colorBorder;
 
     .group {
-        background: #eee;
+        background: $colorBackgroundShade;
     }
 
     > div {
@@ -21,7 +21,7 @@
                 font-size: 90%;
                 /*font-weight: normal;*/
                 //width: 350px;
-                color: #aaa;
+                color: $colorTextHint;
             }
         }
 
@@ -32,7 +32,7 @@
     }
 
     > div:hover:not(.group), > div.selected {
-        background-color: #dae5f9;
+        background-color: $colorLink;
         cursor: pointer;
     }
 }

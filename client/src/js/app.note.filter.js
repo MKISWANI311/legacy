@@ -407,6 +407,7 @@ var NoteFilter = new function () {
                 })),
                 this.dom.input = element('input', {
                     className: 'line',
+                    placeholder: 'search by tags or content ...',
                     type: 'text',
                     data: {encval: '', oldval: '', history: [], histpos: 0}
                 }),

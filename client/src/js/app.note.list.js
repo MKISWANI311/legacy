@@ -282,11 +282,11 @@ var NoteList = new function () {
                     // title
                     element('p', {}, 'notes '),
                     // amount of visible notes
-                    element('b', {title: hint_notes_visible}, visible.length), ' of ', element('b', {title: hint_notes_total}, this.data.total),
+                    element('b', {title: hint_notes_visible}, visible.length), ' of ', element('span', {title: hint_notes_total}, this.data.total),
                     // total amount of notes
                     (visible.length < this.data.notes.length ? [element('p', {className: 'div'}, '|'), element('b', {title: hint_notes_filtered}, this.data.notes.length - visible.length), ' filtered'] : null),
                     // link to load all available notes
-                    (this.data.notes.length < this.data.total ? [element('p', {className: 'div'}, '|'), element('a', {className: 'bold'}, 'load all', {
+                    (this.data.notes.length < this.data.total ? [element('p', {className: 'div'}, '|'), element('a', {}, 'load all', {
                         onclick: function () {
                             NoteFilter.NotesRequest(true);
                         }
