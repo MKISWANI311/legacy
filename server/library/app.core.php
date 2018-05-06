@@ -146,9 +146,11 @@ class app {
                     // handle buffer
                     self::$output = ob_get_contents();
                     ob_end_clean();
-                    header('Access-Control-Allow-Origin: http://10.0.0.100:8080');
+                    header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
                     header('Access-Control-Allow-Credentials: true');
                     header('Access-Control-Allow-Headers: Content-Type');
+                    header('Access-Control-Allow-Methods: *');
+                    header('Access-Control-Max-Age: 3600');
                     // dump info
                     //self::sysinfo();
                     // dump page data
