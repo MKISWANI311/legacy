@@ -23,8 +23,8 @@ Install dependencies:
 Start static server:
 
 ```
-cd D:\Projects\fortnotes\public
-php -S 127.0.0.1:80 router.php
+cd public
+php -S 0.0.0.0:8000
 ```
 
 There is also an old manual for installation on Windows - https://bitbucket.org/DarkPark/fortnotes/wiki/Home.
@@ -78,7 +78,6 @@ In `DEBUG` mode (set at the top of `library/app.core.php`), this controller also
 ### Libraries Used ###
 
 The following libraries are used by FortNotes and are included in the source:
-* [FirePHP](http://www.firephp.org/)
 * [jQuery](http://jquery.com/)
 * [jQuery UI Autocomplete](http://jqueryui.com/autocomplete/)
 * [SimpleModal jQuery Plugin](http://www.ericmmartin.com/projects/simplemodal/)

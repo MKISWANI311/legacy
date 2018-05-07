@@ -6,16 +6,16 @@
  */
 
 // main application include
-include '../library/app.core.php';
+include '../library/core.php';
 
 // additional modules
-include PATH_LIBRARY . 'firephp.php';
+//include PATH_LIBRARY . 'firephp.php';
 
 // core modules
-include PATH_LIBRARY . 'app.db.php';
-include PATH_LIBRARY . 'app.init.php';
-include PATH_LIBRARY . 'app.tools.php';
-include PATH_LIBRARY . 'app.cache.php';
+include PATH_LIBRARY . 'db.php';
+include PATH_LIBRARY . 'init.php';
+include PATH_LIBRARY . 'tools.php';
+include PATH_LIBRARY . 'cache.php';
 
 // all the magic
 app::run();

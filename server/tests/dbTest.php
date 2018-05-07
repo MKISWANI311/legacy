@@ -1,7 +1,7 @@
 <?php
 
 // application include
-include '../library/app.db.php';
+include '../library/db.php';
 
 /**
  * Test class for db.

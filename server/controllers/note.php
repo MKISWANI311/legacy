@@ -77,7 +77,7 @@ class note extends controller {
                         $result = $this->note_insert($id_user, $entries);
                     }
                     // clear searches cache
-                    array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
+                    //array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
                     // clear cache
                     //cache::user_clear('notes_latest');
                     // tags return only if there are changes
@@ -112,7 +112,7 @@ class note extends controller {
                 // there are some affected notes
                 if ( db::update('notes', array('is_active'=>($flag == 'undo' ? 1 : 0), 'mtime'=>INIT_TIMESTAMP), 'id_user = @i and id in @li', $id_user, $ids) ) {
                     // clear searches cache
-                    array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
+                    //array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
                     // should clear cache
                     //cache::user_clear('notes_latest');
                     $result['count'] = db::affected();
@@ -153,58 +153,60 @@ class note extends controller {
             // cache file name generated from query request, used for saving data if the first time or receiving otherwise
             $hash = hash('md5', sprintf('tinc:%s texc:%s wcmd:%s all:%s', implode(',',$tinc), implode(',',$texc), implode(',',$wcmd), $isall));
             // full cache file name
-            $file = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . $hash;
+            //$file = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . $hash;
             // no intersection
             if ( !array_intersect($tinc, $texc) ) {
                 // try to get cached data
-                if ( ($data = cache::file($file)) !== null ) {
-                    // found so it can be returned immediately
-                    //fb($file, 'search cached data used');
-                    header('Content-Encoding: gzip');
-                    return response::json($data, false);
+//                if ( ($data = cache::file($file)) !== null ) {
+//                    // found so it can be returned immediately
+//                    //fb($file, 'search cached data used');
+//                    header('Content-Encoding: gzip');
+//                    return response::json($data, false);
+//                } else {
+
+                // no data so get some
+                //fb('no search cached data');
+                // flags
+                $is_active = in_array('deleted', $wcmd) ? 0 : 1;
+                $is_notags = in_array('notags',  $wcmd);
+                // modification time
+                $mtime = 'mtime > 0';
+                if ( in_array('day',   $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 86400);
+                if ( in_array('week',  $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 604800);
+                if ( in_array('month', $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 2592000);
+                // condition building
+                $where = array('id_user = '.$id_user, 'is_active = '.$is_active, $mtime);
+                // tagless
+                if ( $is_notags ) {
+                    $where[] = 'id not in (select id_note from note_tags)';
                 } else {
-                    // no data so get some
-                    //fb('no search cached data');
-                    // flags
-                    $is_active = in_array('deleted', $wcmd) ? 0 : 1;
-                    $is_notags = in_array('notags',  $wcmd);
-                    // modification time
-                    $mtime = 'mtime > 0';
-                    if ( in_array('day',   $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 86400);
-                    if ( in_array('week',  $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 604800);
-                    if ( in_array('month', $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 2592000);
-                    // condition building
-                    $where = array('id_user = '.$id_user, 'is_active = '.$is_active, $mtime);
-                    // tagless
-                    if ( $is_notags ) {
-                        $where[] = 'id not in (select id_note from note_tags)';
-                    } else {
-                        // there are really some tags
-                        if ( $tinc ) $where[] = db::sql('id in (select id_note from note_tags where id_tag in @li group by id_note having count(id_tag) = @i)', $tinc, count($tinc))->scalar;
-                        if ( $texc ) $where[] = db::sql('id not in (select distinct id_note from note_tags where id_tag in @li)', $texc)->scalar;
-                    }
-                    // get total records amount
-                    $result['total'] = current(current(db::query($sql = 'select count(*) as total from notes where ' . implode(' and ', $where))));
-                    if ( $result['total'] > 0 ) {
-                        // building all together
-                        $sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc' . ($isall ? '' : ' limit 20');
-                        if ( ($result['notes'] = db::query($sql)) ) {
-                            // extract note ids
-                            $note_idlist = matrix_column($result['notes'], 'id');
-                            // find tags for found notes if there are some
-                            $tags = !$is_notags ? matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note') : array();
-                            // find entries for found notes
-                            $entries = matrix_group(db::query('select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place', $note_idlist), 'id_note');
-                            // extent found notes with tags and entries
-                            foreach ( $result['notes'] as & $note ) {
-                                $note['tags'] = value($tags[$note['id']], array());
-                                $note['entries'] = array_values(value($entries[$note['id']], array()));
-                            }
+                    // there are really some tags
+                    if ( $tinc ) $where[] = db::sql('id in (select id_note from note_tags where id_tag in @li group by id_note having count(id_tag) = @i)', $tinc, count($tinc))->scalar;
+                    if ( $texc ) $where[] = db::sql('id not in (select distinct id_note from note_tags where id_tag in @li)', $texc)->scalar;
+                }
+                // get total records amount
+                $result['total'] = current(current(db::query($sql = 'select count(*) as total from notes where ' . implode(' and ', $where))));
+                if ( $result['total'] > 0 ) {
+                    // building all together
+                    $sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc' . ($isall ? '' : ' limit 20');
+                    if ( ($result['notes'] = db::query($sql)) ) {
+                        // extract note ids
+                        $note_idlist = matrix_column($result['notes'], 'id');
+                        // find tags for found notes if there are some
+                        $tags = !$is_notags ? matrix_group(db::query('select id_tag,id_note from note_tags where id_note in @li', $note_idlist) ,'id_note') : array();
+                        // find entries for found notes
+                        $entries = matrix_group(db::query('select id,id_note,id_type,time,name,data from note_entries where is_active = 1 and id_note in @li order by place', $note_idlist), 'id_note');
+                        // extent found notes with tags and entries
+                        foreach ( $result['notes'] as & $note ) {
+                            $note['tags'] = value($tags[$note['id']], array());
+                            $note['entries'] = array_values(value($entries[$note['id']], array()));
                         }
                     }
-                    // send result to the user and cache prepared json to file
-                    return cache::file($file, response::json($result, true, true));
                 }
+                // send result to the user and cache prepared json to file
+                //return cache::file($file, response::json($result, true, true));
+                return response::json($result, true, true);
+                //}
             } else {
                 $result['error'] = 'intersection of include and exclude tags';
             }
@@ -403,10 +405,11 @@ class note extends controller {
         // check input
         if ( $id_user && $id_note && isset($_REQUEST['tags']) ) {
             // is necessary to clear user tags cache
-            $flag_clear_cache = false;
+            //$flag_clear_cache = false;
             // start update clearing all previous tags
             // some tags were removed so tags cache should be cleared
-            if ( db::delete('note_tags', 'id_note = @i', $id_note) ) $flag_clear_cache = true;
+            //if ( db::delete('note_tags', 'id_note = @i', $id_note) ) $flag_clear_cache = true;
+            db::delete('note_tags', 'id_note = @i', $id_note);
             // there are some tags
             if ( ($tags = $_REQUEST['tags']) && is_array($tags) ) {
                 // list of params for bulk insert to note_tags table
@@ -421,20 +424,21 @@ class note extends controller {
                         // ecrypted tag name so need to add to the tags table
                         if ( ($id = db::insert('tags', array('id_user'=>$id_user, 'name'=>$tag, 'ctime'=>INIT_TIMESTAMP))) )
                             $data[] = array('id_note'=>$id_note, 'id_tag'=>$id, 'time'=>INIT_TIMESTAMP);
-                        $flag_clear_cache = true;
+                        //$flag_clear_cache = true;
                     }
                     // report id back to the client
                     $result[] = $id;
                 }
                 // bulk insert
                 // some tags were changed so tags cache should be cleared
-                if ( db::insert('note_tags', $data) ) $flag_clear_cache = true;
+                //if ( db::insert('note_tags', $data) ) $flag_clear_cache = true;
+                db::insert('note_tags', $data);
             } else {
                 // flag for the client that tags were deleted
                 $result = true;
             }
             // clear user tags cache
-            if ( $flag_clear_cache ) cache::user_clear('tags');
+            //if ( $flag_clear_cache ) cache::user_clear('tags');
         }
         return $result;
     }

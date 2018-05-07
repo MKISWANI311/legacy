@@ -51,8 +51,8 @@ class user extends controller {
                 // set lifetime of the session cookie to 30 days and start
                 session_set_cookie_params(2592000);
                 // create cache dir for user searches if not exist
-                $path = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']);
-                if ( !is_dir($path) ) mkdir($path);
+                //$path = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']);
+                //if ( !is_dir($path) ) mkdir($path);
                 $_SESSION['user'] = $result;
             }
         }
@@ -60,7 +60,7 @@ class user extends controller {
     }
 
     function info () {
-        response::json($_SESSION['user']);
+        response::json(array_key_exists('user', $_SESSION) ? $_SESSION['user'] : null);
     }
 
     function data () {
@@ -119,8 +119,8 @@ class user extends controller {
         // check if session id set
         if ( !empty($_COOKIE[session_name()]) ) {
             // clear cache
-            cache::user_clear('tags');
-            cache::user_clear('searches');
+            //cache::user_clear('tags');
+            //cache::user_clear('searches');
             //fb('/user/signout');
             session_unset();
             $params = session_get_cookie_params();
@@ -339,10 +339,10 @@ class user extends controller {
                 // finalization
                 db::commit();
                 // reset cache
-                cache::user_clear('tags');
-                cache::user_clear('searches');
+                //cache::user_clear('tags');
+                //cache::user_clear('searches');
                 // restore user search cache dir manually as next time it will be only on login
-                mkdir(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
+                //mkdir(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
             } else {
                 $result['error'] = 'Database error';
                 db::rollback();

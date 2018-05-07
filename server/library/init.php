@@ -14,17 +14,16 @@ db::$pass = 'some-strong-password';*/
 db::$dsn = 'sqlite:../db.sqlite';
 db::$onenginit = function () {
     // try to import data from the external previously generated struct file
-    if ( ($data = include PATH_CACHE . 'db.struct.php') && is_array($data) ) db::$struct = $data;
+    if ( ($data = include PATH_LIBRARY . 'db.struct.php') && is_array($data) ) db::$struct = $data;
 };
 
-if ( DEBUG ) {
-    db::$onsuccess = function ( $data ) {
-        // collect queries data
-        app::$queries['time'] += $data['time'];
-        app::$queries['data'][] = array(
-            number_format(round(1000*$data['time'], 3), 3), ($data['affected'] > 0 ? $data['affected'] : ''), $data['sql']);
-    };
-}
+// if ( DEBUG ) {
+//     db::$onsuccess = function ( $data ) {
+//         // collect queries data
+//         //app::$queries['time'] += $data['time'];
+//         //app::$queries['data'][] = array(number_format(round(1000*$data['time'], 3), 3), ($data['affected'] > 0 ? $data['affected'] : ''), $data['sql']);
+//     };
+// }
 
 // db error handler
 db::$onfailure = function ( $data ) {

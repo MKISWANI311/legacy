@@ -72,34 +72,34 @@ class cache {
      * @param mixed $value var value to set
      * @return mixed cached value
      */
-    public static function file ( $file, $value = null ) {
-        if ( $value === null && file_exists($file) ) {
-            // obtaining data
-            $value = file_get_contents($file);
-        } else if ( $value !== null ) {
-            // setting
-            file_put_contents($file, $value);
-            //fb($file, 'file init store');
-        }
-        return $value;
-    }
+//    public static function file ( $file, $value = null ) {
+//        if ( $value === null && file_exists($file) ) {
+//            // obtaining data
+//            $value = file_get_contents($file);
+//        } else if ( $value !== null ) {
+//            // setting
+//            file_put_contents($file, $value);
+//            //fb($file, 'file init store');
+//        }
+//        return $value;
+//    }
 
     /**
      * Removes the given file or given dir and its content
      * @param string $file full file name
      */
-    public static function file_clear ( $file ) {
-        if ( is_dir($file) ) {
-            //fb($file, 'clear path');
-            // delete all files in the directory
-            array_map('unlink', glob($file . DIRECTORY_SEPARATOR . '*'));
-            // delete the directory itself
-            rmdir($file);
-        } else if ( file_exists($file) ) {
-            //fb($file, 'clear file');
-            unlink($file);
-        }
-    }
+//    public static function file_clear ( $file ) {
+//        if ( is_dir($file) ) {
+//            //fb($file, 'clear path');
+//            // delete all files in the directory
+//            array_map('unlink', glob($file . DIRECTORY_SEPARATOR . '*'));
+//            // delete the directory itself
+//            rmdir($file);
+//        } else if ( file_exists($file) ) {
+//            //fb($file, 'clear file');
+//            unlink($file);
+//        }
+//    }
 
     /**
      * Get/set the given user data using files in the cache directory
@@ -110,12 +110,12 @@ class cache {
      * @param int $id_user user id if it's different from the session
      * @return mixed
      */
-    public static function user ( $path = null, $value = null, $id_user = null ) {
-        // get user either from parameter or from session
-        if ( !$id_user ) $id_user = $_SESSION['user']['id'];
-        $file = PATH_CACHE . ($path ? $path . DIRECTORY_SEPARATOR : '') . sprintf('%010s', $id_user);
-        return self::file($file, $value);
-    }
+//    public static function user ( $path = null, $value = null, $id_user = null ) {
+//        // get user either from parameter or from session
+//        if ( !$id_user ) $id_user = $_SESSION['user']['id'];
+//        $file = PATH_CACHE . ($path ? $path . DIRECTORY_SEPARATOR : '') . sprintf('%010s', $id_user);
+//        return self::file($file, $value);
+//    }
 
     /**
      * Removes the given user data file or dir with its content
@@ -123,19 +123,19 @@ class cache {
      * @param int $id_user user id if it's different from the session
      * @return mixed
      */
-    public static function user_clear ( $path = null, $id_user = null ) {
-        // get user either from parameter or from session
-        if ( !$id_user ) $id_user = $_SESSION['user']['id'];
-        if ( $path ) {
-            // single file should be cleared
-            self::file_clear(PATH_CACHE . $path . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
-        } else {
-            // all user files should be cleared
-            foreach (glob(PATH_CACHE . '*', GLOB_ONLYDIR) as $file) {
-                self::file_clear($file . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
-            }
-        }
-    }
+//    public static function user_clear ( $path = null, $id_user = null ) {
+//        // get user either from parameter or from session
+//        if ( !$id_user ) $id_user = $_SESSION['user']['id'];
+//        if ( $path ) {
+//            // single file should be cleared
+//            self::file_clear(PATH_CACHE . $path . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
+//        } else {
+//            // all user files should be cleared
+//            foreach (glob(PATH_CACHE . '*', GLOB_ONLYDIR) as $file) {
+//                self::file_clear($file . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
+//            }
+//        }
+//    }
 
 
     public static function clear ( $list ) {
@@ -206,8 +206,7 @@ class cache {
     public static function db_template_entries ( $id_user = null ) {
         if ( null === ($data_common = self::apc('lookup_template_entries')) ) {
             // cache is empty, filling
-            $sql = 'select te.id_template,te.id_type,te.name from template_entries te, templates t where
-                te.id_template = t.id and t.id_user = @i order by te.id_template,te.place';
+            $sql = 'select te.id_template,te.id_type,te.name from template_entries te, templates t where te.id_template = t.id and t.id_user = @i order by te.id_template,te.place';
             $data_common = db::query($sql, 0);
             $data_common = self::apc('lookup_template_entries', json_encode(array_pack(matrix_group($data_common, 'id_template')), JSON_NUMERIC_CHECK));
         }
@@ -241,31 +240,32 @@ class cache {
      * @return string json
      */
     public static function db_tags ( $id_user = null ) {
+        //return var_export($_SESSION, true);
         // get user either from parameter or from session
         if ( !$id_user ) $id_user = $_SESSION['user']['id'];
         // obtaining data
-        if ( null === ($data = self::user('tags')) ) {
-            // cache is empty, filling
-            if ( ($data = matrix_order(db::query('select id,name from tags where id_user = @i', $id_user), 'id')) ) {
-                // expand each tag
-                foreach ( $data as & $tag ) {
-                    $tag['links'] = array();
-                    $tag['uses']  = 0;
-                }
-                // get note tags connections
-                $note_tags = matrix_group(db::query('select nt.id_note,nt.id_tag from note_tags nt, notes n where
-                    nt.id_note = n.id and n.id_user = @i and n.is_active = 1', $id_user), 'id_note');
-                // determine links
-                foreach ( $note_tags as $links )
-                    foreach ( $links as $lkey ) {
-                        $data[$lkey]['uses']++;
-                        foreach ( $links as $lval )
-                            if ( $lkey != $lval && !in_array($lval, $data[$lkey]['links']) ) $data[$lkey]['links'][] = $lval;
-                    }
+        //if ( null === ($data = self::user('tags')) ) {
+        // cache is empty, filling
+        if ( ($data = matrix_order(db::query('select id,name from tags where id_user = @i', $id_user), 'id')) ) {
+            // expand each tag
+            foreach ( $data as & $tag ) {
+                $tag['links'] = array();
+                $tag['uses']  = 0;
             }
-            // saving the json packed data
-            $data = self::user('tags', json_encode(array_pack($data), JSON_NUMERIC_CHECK));
+            // get note tags connections
+            $note_tags = matrix_group(db::query('select nt.id_note,nt.id_tag from note_tags nt, notes n where nt.id_note = n.id and n.id_user = @i and n.is_active = 1', $id_user), 'id_note');
+            // determine links
+            foreach ( $note_tags as $links )
+                foreach ( $links as $lkey ) {
+                    $data[$lkey]['uses']++;
+                    foreach ( $links as $lval )
+                        if ( $lkey != $lval && !in_array($lval, $data[$lkey]['links']) ) $data[$lkey]['links'][] = $lval;
+                }
         }
+        // saving the json packed data
+        //$data = self::user('tags', json_encode(array_pack($data), JSON_NUMERIC_CHECK));
+        $data = json_encode(array_pack($data), JSON_NUMERIC_CHECK);
+        //}
         return $data ? $data : '{}';
     }
 
