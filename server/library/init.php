@@ -11,7 +11,7 @@ db::$user = 'fortnotes';
 db::$pass = 'some-strong-password';*/
 
 // sqlite database configuration
-db::$dsn = 'sqlite:../db.sqlite';
+db::$dsn = 'sqlite:./db.sqlite';
 db::$onenginit = function () {
     // try to import data from the external previously generated struct file
     if ( ($data = include PATH_LIBRARY . 'db.struct.php') && is_array($data) ) db::$struct = $data;

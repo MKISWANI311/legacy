@@ -6,7 +6,7 @@
  */
 
 // main application include
-include '../library/core.php';
+include './library/core.php';
 
 // additional modules
 //include PATH_LIBRARY . 'firephp.php';
