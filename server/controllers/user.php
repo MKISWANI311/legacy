@@ -6,6 +6,9 @@
  */
 class user extends controller {
 
+    /**
+     * Login/register
+     */
     function auth () {
         $_REQUEST = json_decode(file_get_contents('php://input'), true);
 
@@ -59,10 +62,17 @@ class user extends controller {
         response::json($result);
     }
 
+    /**
+     * Check if user session exists
+     */
     function info () {
         response::json(array_key_exists('user', $_SESSION) ? $_SESSION['user'] : null);
     }
 
+
+    /**
+     * Get dictionaries and tags data
+     */
     function data () {
         response::json(array(
             'entry_types' => json_decode(cache::db_entry_types()),
@@ -72,47 +82,10 @@ class user extends controller {
         ));
     }
 
-    /**
-     * Save the master password hash
-     * @param string $action - "save" at the moment
-     */
-//    function hash ( $action ) {
-//        $result = array('ok'=>false);
-//        // save master password hash
-//        if ( strtolower(trim($action)) == 'save' ) {
-//            if ( !empty($_REQUEST['hash']) ) {
-//                db::update('users', array('hash' => $_REQUEST['hash']), 'id = @s', $_SESSION['user']['id']);
-//                $_SESSION['user']['hash'] = $_REQUEST['hash'];
-//                $result['ok'] = true;
-//            } else {
-//
-//            }
-//        }
-//        response::json($result);
-//    }
 
     /**
-     * Captcha image to test if a user
+     * End session
      */
-    function captcha () {
-        $result = array();
-
-        include(PATH_PUBLIC . 'captcha/simple-php-captcha.php');
-        try {
-            $_SESSION['captcha'] = simple_php_captcha(array(
-                'min_length' => 6,
-                'max_length' => 6,
-                'min_font_size' => 24,
-                'max_font_size' => 30,
-            ));
-            $result['src'] = $_SESSION['captcha']['image_src'];
-        } catch ( Exception $e ) {
-            // todo: add
-        }
-
-        response::json($result);
-    }
-
     function signout () {
         $result = false;
 
@@ -130,6 +103,7 @@ class user extends controller {
 
         response::json($result);
     }
+
 
     /**
      * Collects and dumps all the user data
@@ -174,6 +148,7 @@ class user extends controller {
             response::zip($data);
         }
     }
+
 
     /**
      * Handles the backup restore process
@@ -228,6 +203,7 @@ class user extends controller {
         //fb($result, 'import');
         response::json($result);
     }
+
 
     /**
      * Clears old data and insert the data from uploaded backup
@@ -352,4 +328,5 @@ class user extends controller {
         }
         return false;
     }
+
 }

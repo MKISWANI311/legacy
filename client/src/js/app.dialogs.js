@@ -453,7 +453,7 @@ DlgUserRegister = new DialogModal({
     onShow: function () {
         var self = this;
 
-        api.get('user/captcha', function ( error, data ) {
+        api.get('captcha/uri', function ( error, data ) {
             if ( error ) {
                 console.error(error);
                 return;
@@ -461,7 +461,7 @@ DlgUserRegister = new DialogModal({
 
             console.log('user captcha', data);
 
-            self.data.cimg.src = data.src;
+            self.data.cimg.src = api.defaults.server + data.src;
         });
     },
 
