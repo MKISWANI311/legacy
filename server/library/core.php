@@ -122,12 +122,16 @@ class app {
             return;
         }
 
+        ini_set('session.save_path',$_SERVER['DOCUMENT_ROOT'] . '/sessions/');
+        ini_set('session.hash_function','sha512');
+        ini_set('session.sid_length',64);
+        ini_set('session.sid_bits_per_character',5);
         session_start();
 
         // prepare uri parts from incoming request
         self::$uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
-        // set route if specified (defaulds otherwise)
+        // set route if specified (defaults otherwise)
         if ( !empty(self::$uri[0]) ) self::$class  = self::$uri[0];  // controller and class
         if ( !empty(self::$uri[1]) ) self::$method = self::$uri[1];  // method
 
