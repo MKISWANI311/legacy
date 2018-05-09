@@ -8,8 +8,8 @@
 var //autocomplete = require('autocompleter'),
     app = require('./app'),
     api = require('./api'),
-    NoteList = require('./app.note.list'),
-    TagManager = require('./app.tag.manager');
+    NoteList = require('./note.list'),
+    TagManager = require('./tag.manager');
 
 
 /**

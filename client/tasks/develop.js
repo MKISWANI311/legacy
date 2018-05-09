@@ -65,7 +65,7 @@ tasks.static({
 });
 
 tasks.webpack({
-    entry: path.resolve(path.join(source, 'js', 'app.main.js')),
+    entry: path.resolve(path.join(source, 'js', 'main.js')),
     output: {
         filename: 'main.js',
         path: path.resolve(target),

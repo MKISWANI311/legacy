@@ -8,7 +8,7 @@
 var app = require('./app'),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
-    TagManager = require('./app.tag.manager');
+    TagManager = require('./tag.manager');
 
 
 /**

@@ -10,9 +10,9 @@ var //autocomplete = require('autocompleter'),
     app = require('./app'),
     api = require('./api'),
     //NoteFilter   = require('./app.note.filter'),
-    NoteList = require('./app.note.list'),
-    TemplateList = require('./app.template.list'),
-    TagManager = require('./app.tag.manager');
+    NoteList = require('./note.list'),
+    TemplateList = require('./template.list'),
+    TagManager = require('./tag.manager');
 
 
 window.NoteEditor = new function () {
@@ -565,7 +565,7 @@ window.NoteEditor = new function () {
                 entry.nextSibling.dom.name.focus();
             }
         });
-        
+
         // icon image
         entry.dom.icon = element('img', {
             src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'

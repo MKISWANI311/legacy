@@ -8,8 +8,8 @@
 var app = require('./app'),
     sjcl = require('./sjcl.min'),
     api = require('./api'),
-    DialogModal = require('./app.modal'),
-    FieldList = require('./app.fldlist');
+    DialogModal = require('./modal'),
+    FieldList = require('./fldlist');
 
 
 var DlgExport = null;

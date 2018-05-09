@@ -10,17 +10,17 @@ var app     = require('./app'),
     api     = require('./api'),
     //dialogs = require('./app.dialogs'),
     //NoteFilter   = require('./app.note.filter'),
-    NoteList     = require('./app.note.list'),
-    TemplateList = require('./app.template.list'),
+    NoteList     = require('./note.list'),
+    TemplateList = require('./template.list'),
     //NoteEditor   = require('./app.note.editor'),
-    TagManager   = require('./app.tag.manager'),
+    TagManager   = require('./tag.manager'),
     collectTimer;
 
 
-require('./app.note.filter');
-require('./app.note.editor');
-require('./app.tools');
-require('./app.dialogs');
+require('./note.filter');
+require('./note.editor');
+require('./tools');
+require('./dialogs');
 
 //require('./jquery');
 //window.$ = require('jquery');
@@ -52,6 +52,8 @@ window.initData = function initData ( data, callback ) {
 
             return;
         }
+
+        console.log('user data', data);
 
         window.dataEntryTypes = data.entry_types;
         window.dataTemplates = data.templates;
