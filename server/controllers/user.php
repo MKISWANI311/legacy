@@ -4,7 +4,7 @@
  *   - login/logout
  *   - master password hash save
  */
-class user extends controller {
+class user {
 
     /**
      * Login/register
@@ -53,9 +53,6 @@ class user extends controller {
             if ( !empty($result['id']) ) {
                 // set lifetime of the session cookie to 30 days and start
                 session_set_cookie_params(2592000);
-                // create cache dir for user searches if not exist
-                //$path = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $result['id']);
-                //if ( !is_dir($path) ) mkdir($path);
                 $_SESSION['user'] = $result;
             }
         }
@@ -91,10 +88,6 @@ class user extends controller {
 
         // check if session id set
         if ( !empty($_COOKIE[session_name()]) ) {
-            // clear cache
-            //cache::user_clear('tags');
-            //cache::user_clear('searches');
-            //fb('/user/signout');
             session_unset();
             $params = session_get_cookie_params();
             setcookie(session_name(), '', INIT_TIMESTAMP - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
@@ -158,11 +151,8 @@ class user extends controller {
     function import ( $type = '' ) {
         // check if logged in
         if ( !empty($_SESSION['user']['id']) && $_SESSION['user']['id'] ) {
-            //fb($_FILES);
             $result = array();
-            /*if ( $type != 'zip' ) {
-                $result['error'] = 'Import type must be zip';
-            } else */
+
             if ( !isset($_FILES['file']) ) {
                 $result['error'] = 'No file was uploaded';
             } else if ( $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE ) {
@@ -176,17 +166,12 @@ class user extends controller {
                 if ( is_uploaded_file($_FILES['file']['tmp_name']) ) {
                     $data = file_get_contents($_FILES['file']['tmp_name']);
                     if ( $data ) {
-                        //$data = gzdecode($data);
-                        //if ( $data ) {
-                            $data = json_decode($data, true);
-                            if ( !is_null($data) ) {
-                                $result = self::import_json($data);
-                            } else {
-                                $result['error'] = 'Failed to decode JSON';
-                            }
-                        //} else {
-                        //    $result['error'] = 'Failed to decompress the file';
-                        //}
+                        $data = json_decode($data, true);
+                        if ( !is_null($data) ) {
+                            $result = self::import_json($data);
+                        } else {
+                            $result['error'] = 'Failed to decode JSON';
+                        }
                     } else {
                         $result['error'] = 'Failed to read the file';
                     }
@@ -200,7 +185,6 @@ class user extends controller {
             $result['error'] = 'not authorized';
         }
 
-        //fb($result, 'import');
         response::json($result);
     }
 
@@ -314,11 +298,6 @@ class user extends controller {
             if ( !$db_fail ) {
                 // finalization
                 db::commit();
-                // reset cache
-                //cache::user_clear('tags');
-                //cache::user_clear('searches');
-                // restore user search cache dir manually as next time it will be only on login
-                //mkdir(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user));
             } else {
                 $result['error'] = 'Database error';
                 db::rollback();
@@ -326,6 +305,7 @@ class user extends controller {
 
             return $result;
         }
+
         return false;
     }
 

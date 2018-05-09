@@ -1,6 +1,6 @@
 <?php
 
-class captcha extends controller {
+class captcha {
 
     function uri () {
         include(PATH_LIBRARY . 'captcha/index.php');

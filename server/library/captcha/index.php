@@ -104,6 +104,7 @@ if( !function_exists('hex2rgb') ) {
         } else {
             return false;
         }
+
         return $return_string ? implode($separator, $rgb_array) : $rgb_array;
     }
 }

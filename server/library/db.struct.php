@@ -1,4 +1,5 @@
 <?php
+
 return array (
     'entry_types' => array (
         'id' => true,
@@ -69,4 +70,3 @@ return array (
         'ltime' => false,
     )
 );
-?>

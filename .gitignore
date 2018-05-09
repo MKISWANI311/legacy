@@ -5,3 +5,4 @@ client/node_modules
 server/logs
 server/cache/searches
 server/cache/tags
+server/sessions

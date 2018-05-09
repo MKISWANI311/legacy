@@ -1,7 +1,4 @@
 <?php
-/**
- * Set of helper functions
- */
 
 /**
  * Returns $var value if it is set and $velse otherwise
@@ -10,7 +7,10 @@
  * @return mixed
  */
 function value ( & $var, $velse = null ) {
-    if ( !isset($var) ) return $velse;
+    if ( !isset($var) ) {
+        return $velse;
+    }
+
     return $var;
 }
 
@@ -44,6 +44,7 @@ function matrix_order ( $data, $ordfld, $valfld = null ) {
             }
         }
     }
+
     return $result;
 }
 
@@ -98,6 +99,7 @@ function matrix_group ( $data, $grpfld, $ordfld = null, $valfld = null ) {
                     $item = matrix_order($item, $ordfld, $valfld);
         }
     }
+
     return $result;
 }
 
@@ -119,6 +121,7 @@ function matrix_column ( $data, $field ) {
             $result[] = value($item[$field]);
         }
     }
+
     return $result;
 }
 
@@ -131,8 +134,8 @@ function matrix_column ( $data, $field ) {
  */
 function array_pack ( $data, $defn = array() ) {
     $result = array();
-
     $result['data'] = array();
+
     if ( $data && is_array($data) ) {
         foreach ( $data as $key => $value ) {
             $index = $key;
@@ -151,16 +154,8 @@ function array_pack ( $data, $defn = array() ) {
             $result['data'][$index] = $value;
         }
     }
+
     $result['defn'] = $defn;
+
     return $result;
 }
-
-/**
- * Sends the given data to the FirePHP Firefox Extension.
- * The data can be displayed in the Firebug Console or in the "Server" request tab.
- * @see http://www.firephp.org/Wiki/Reference/Fb
- */
-//function fb() {
-//    $callback = PHP_SAPI === 'cli' ? 'var_dump' : array(FirePHP::getInstance(true), 'fb');
-//    call_user_func_array($callback, func_get_args());
-//}

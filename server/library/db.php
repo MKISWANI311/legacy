@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Database wrapper
  * @author DarkPark
@@ -46,7 +47,7 @@ class db {
     public static $onfailure = null;
 
     /**
-     * Database sctructure for table/column names validation
+     * Database structure for table/column names validation
      * array of tables where each key is a table name and values are lists of columns
      * in a list of columns each key is a column name and its value is primary key flag
      * if set this var is using in table/column names validation
@@ -96,7 +97,7 @@ class db {
      * @return bool
      *     true on success or false on failure
      */
-    private static function init () {
+    public static function init () {
         try {
             // check init/success/error callbacks and set to null if invalid
             self::$onenginit = self::$onenginit && is_callable(self::$onenginit) ? self::$onenginit : null;
@@ -110,6 +111,7 @@ class db {
             // call user-defined init handler if given
             if ( self::$onenginit ) call_user_func(self::$onenginit);
         } catch ( PDOException $e ) { self::error($e); }
+
         // status of PDO creation
         return (self::$pdo != null);
     }
@@ -122,7 +124,10 @@ class db {
      */
     public static function begin () {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // get time for user function
         if ( self::$onsuccess ) $mtime = microtime(true);
         $result = self::$pdo->beginTransaction();
@@ -131,18 +136,22 @@ class db {
         // call user-defined success handler if given
         if ( self::$onsuccess ) call_user_func(self::$onsuccess, array(
             'sql' => 'start transaction', 'time' => $mtime, 'affected' => null));
+
         return $result;
     }
 
     /**
      * Commits an SQL transaction
-     * only if transation started previously
+     * only if transaction started previously
      * @return bool
      *     true on success or false on failure
      */
     public static function commit () {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // get time for user function
         if ( self::$onsuccess ) $mtime = microtime(true);
         $result = self::$pdo->inTransaction() && self::$pdo->commit();
@@ -151,18 +160,22 @@ class db {
         // call user-defined success handler if given
         if ( self::$onsuccess ) call_user_func(self::$onsuccess, array(
             'sql' => 'commit', 'time' => $mtime, 'affected' => null));
+
         return $result;
     }
 
     /**
      * Rolls back an SQL transaction
-     * only if transation started previously
+     * only if transaction started previously
      * @return bool
      *     true on success or false on failure
      */
     public static function rollback() {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // get time for user function
         if ( self::$onsuccess ) $mtime = microtime(true);
         $result = self::$pdo->inTransaction() && self::$pdo->rollBack();
@@ -171,6 +184,7 @@ class db {
         // call user-defined success handler if given
         if ( self::$onsuccess ) call_user_func(self::$onsuccess, array(
             'sql' => 'rollback', 'time' => $mtime, 'affected' => null));
+
         return $result;
     }
 
@@ -190,7 +204,10 @@ class db {
      */
     private static function sql_var_s ( $value ) {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // escaping and returning
         return self::$pdo->quote($value);
     }
@@ -202,7 +219,10 @@ class db {
      */
     private static function sql_var_i ( $value ) {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // convert
         return intval($value);
     }
@@ -214,7 +234,10 @@ class db {
      */
     private static function sql_var_ls ( $value ) {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // check input
         if ( $value && is_array($value) ) {
             // iterate strings and escape
@@ -222,8 +245,10 @@ class db {
                 $item = self::$pdo->quote($item);
                 unset($item);
             }
+
             return '(' . implode(',', $value) . ')';
         }
+
         return false;
     }
 
@@ -234,13 +259,18 @@ class db {
      */
     private static function sql_var_li ( $value ) {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // check input
         if ( $value && is_array($value) ) {
             // makes sure all array elements are integers
             $value = array_map('intval', $value);
+
             return '(' . implode(',', $value) . ')';
         }
+
         return false;
     }
 
@@ -303,6 +333,7 @@ class db {
         // triggers error on empty result
         if ( !$result ) self::error('Invalid SQL statement or its arguments');
         //echo $result;
+
         return (object) $result;
     }
 
@@ -320,7 +351,10 @@ class db {
         // reset affected rows
         self::$affected = null;
         // test mode so just return sql query
-        if ( self::$sqlonly ) return $sql;
+        if ( self::$sqlonly ) {
+            return $sql;
+        }
+
         $result = false;
         try {
             // get time for user function
@@ -344,6 +378,7 @@ class db {
             if ( self::$onsuccess ) call_user_func(self::$onsuccess, array(
                 'sql' => $sql, 'time' => $mtime, 'affected' => self::$affected));
         } catch ( PDOException $e ) { self::error($e); }
+
         return $result;
     }
 
@@ -357,16 +392,20 @@ class db {
      */
     public static function query () {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // prepare sql from input params and pass it to query helper
         if ( ($sql = call_user_func_array('self::sql', func_get_args())->scalar) ) {
             return call_user_func('self::helper', 'query', $sql);
         }
+
         return false;
     }
 
     /**
-     * Retrives the first row of an SQL statement result
+     * Retrieves the first row of an SQL statement result
      * @param dynamic list of params for helper
      * @return array|bool
      *     list of the selected row fields on success
@@ -376,12 +415,15 @@ class db {
         // get all rows
         $result = call_user_func_array('self::query', func_get_args());
         // take the first one
-        if ( $result && is_array($result) ) return reset($result);
+        if ( $result && is_array($result) ) {
+            return reset($result);
+        }
+
         return false;
     }
 
     /**
-     * Retrives the first column of an SQL statement result
+     * Retrieves the first column of an SQL statement result
      * @param dynamic list of params for helper
      * @return array|bool
      *     list of the first column values from each selected rows on success
@@ -392,8 +434,11 @@ class db {
         $result = call_user_func_array('self::query', func_get_args());
         if ( $result && is_array($result) ) {
             // replace each row with its first element
-            return array_map(function($row){return reset($row);}, $result);
+            return array_map(function($row){
+                return reset($row);
+            }, $result);
         }
+
         return false;
     }
 
@@ -407,11 +452,15 @@ class db {
      */
     public static function exec () {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // prepare sql from input params and pass it to exec helper
         if ( ($sql = call_user_func_array('self::sql', func_get_args())->scalar) ) {
             return call_user_func('self::helper', 'exec', $sql);
         }
+
         return false;
     }
 
@@ -427,6 +476,7 @@ class db {
         else if ( is_bool($value) ) $value = (int) $value;
         else if ( is_int($value) ) $value = (int) $value;
         else $value = self::$pdo->quote($value);
+
         return $value;
     }
 
@@ -440,7 +490,10 @@ class db {
      */
     public static function insert ( $table, $data ) {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // check given table name (using db structure if set)
         if ( is_string($table) && ($table = trim($table)) &&
             (self::$struct === null || (self::$struct && isset(self::$struct[$table]))) )
@@ -454,7 +507,9 @@ class db {
                 // check if not array of arrays then make it so
                 if ( !$multi ) $data = array($data);
                 // remove empty and invalid sub-arrays
-                $data = array_filter($data, function($item){return $item && is_array($item);});
+                $data = array_filter($data, function($item){
+                    return $item && is_array($item);
+                });
                 // remove fields with invalid names
                 foreach ( $data as & $item ) {
                     foreach ( $item as $index => $field ) {
@@ -486,7 +541,9 @@ class db {
                 if ( $data && ($fnames = array_keys(reset($data))) ) {
                     // remove subarray with mismatching field names
                     $data = array_filter($data, function($item)use($fnames){
-                        if ( $item && is_array($item) ) return $fnames == array_keys($item);
+                        if ( $item && is_array($item) ) {
+                            return $fnames == array_keys($item);
+                        }
                     });
                     if ( $data ) {
                         foreach ( $data as & $item ) {
@@ -502,7 +559,9 @@ class db {
                         // build final sql
                         $sql = sprintf('insert into %s (%s) values %s', $table, implode(', ', $fnames), implode(', ', $data));
                         // no execution in testing mode
-                        if ( self::$sqlonly ) return $sql;
+                        if ( self::$sqlonly ) {
+                            return $sql;
+                        }
                         // number of inserted rows
                         $inserted = 0;
                         // bulk operations
@@ -527,6 +586,7 @@ class db {
         }
         // triggers error
         self::error('Invalid arguments for insert');
+
         return false;
     }
 
@@ -543,7 +603,10 @@ class db {
      */
     public static function update () {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // check input - should be at least 2 params
         if ( func_num_args() >= 2 ) {
             // preparing
@@ -573,6 +636,7 @@ class db {
                             // parsing user parameters and build conditions block
                             $where = 'where ' . call_user_func_array('self::sql', $args)->scalar;
                         }
+
                         // performing the built sql
                         return call_user_func('self::helper', 'exec', trim("update $table set $fields $where"));
                     }
@@ -580,8 +644,10 @@ class db {
             }
 
         }
+
         // triggers error
         self::error('Invalid arguments for update');
+
         return false;
     }
 
@@ -597,7 +663,10 @@ class db {
      */
     public static function delete () {
         // try to init if the first time
-        if ( !self::$pdo && !self::init() ) return false;
+        /*if ( !self::$pdo && !self::init() ) {
+            return false;
+        }*/
+
         // check input - should be at least 2 params
         if ( func_num_args() >= 1 ) {
             // preparing
@@ -613,13 +682,16 @@ class db {
                     // parsing user parameters and build conditions block
                     $where = 'where ' . call_user_func_array('self::sql', $args)->scalar;
                 }
+
                 // performing the built sql
                 return call_user_func('self::helper', 'exec', trim("delete from $table $where"));
             }
 
         }
+
         // triggers error
         self::error('Invalid arguments for update');
+
         return false;
     }
 
@@ -655,8 +727,10 @@ class db {
                     self::$struct[$table][$column['Field']] = ( $column['Key'] === 'PRI' );
                 }
             }
+
             return self::$struct;
         }
+
         return false;
     }
 

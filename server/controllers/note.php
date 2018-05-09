@@ -2,25 +2,7 @@
 /**
  * Note management
  */
-class note extends controller {
-//    const
-//        note_unchanged = 0,
-//        note_added = 1,
-//        note_changed = 2,
-//        note_moved = 3,
-//        note_added = 4;
-
-//    private $response = array();
-//
-//    public function __construct () {
-//        parent::__construct();
-//
-//        // check authorization
-//        if ( empty($_SESSION['user']['id']) ) {
-//            $this->response['error'] = 'not authorized';
-//        }
-//        return false;
-//    }
+class note {
 
     /**
      * Loads the note with entries
@@ -47,7 +29,6 @@ class note extends controller {
             $result['error'] = 'not authorized';
         }
 
-        //fb($result, 'load');
         response::json($result);
     }
 
@@ -76,13 +57,10 @@ class note extends controller {
                     } else {
                         $result = $this->note_insert($id_user, $entries);
                     }
-                    // clear searches cache
-                    //array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
-                    // clear cache
-                    //cache::user_clear('notes_latest');
                     // tags return only if there are changes
-                    if ( ($tags = $this->tags_save($id_user, $result['id'])) )
+                    if ( ($tags = $this->tags_save($id_user, $result['id'])) ) {
                         $result['tags'] = $tags;
+                    }
                 // finish
                 db::commit();
             } else {
@@ -92,7 +70,6 @@ class note extends controller {
             $result['error'] = 'not authorized';
         }
 
-        //fb($result, 'save');
         response::json($result);
     }
 
@@ -111,10 +88,6 @@ class note extends controller {
             if ( !empty($_REQUEST['ids']) && is_array($ids = $_REQUEST['ids']) ) {
                 // there are some affected notes
                 if ( db::update('notes', array('is_active'=>($flag == 'undo' ? 1 : 0), 'mtime'=>INIT_TIMESTAMP), 'id_user = @i and id in @li', $id_user, $ids) ) {
-                    // clear searches cache
-                    //array_map('unlink', glob(PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . '*'));
-                    // should clear cache
-                    //cache::user_clear('notes_latest');
                     $result['count'] = db::affected();
                     // compare actually modified with requested
                     if ( $result['count'] != count($ids) ) {
@@ -130,7 +103,6 @@ class note extends controller {
             $result['error'] = 'not authorized';
         }
 
-        //fb($result, 'delete');
         response::json($result);
     }
 
@@ -148,34 +120,25 @@ class note extends controller {
             if ( ($tinc = value($_REQUEST['tinc'], array())) && is_array($tinc) ) $tinc = array_unique($tinc);
             if ( ($texc = value($_REQUEST['texc'], array())) && is_array($texc) ) $texc = array_unique($texc);
             if ( ($wcmd = value($_REQUEST['wcmd'], array())) && is_array($wcmd) ) $wcmd = array_unique($wcmd);
+
             // flag to return all the records
             $isall = value($_REQUEST['all']);
-            // cache file name generated from query request, used for saving data if the first time or receiving otherwise
-            $hash = hash('md5', sprintf('tinc:%s texc:%s wcmd:%s all:%s', implode(',',$tinc), implode(',',$texc), implode(',',$wcmd), $isall));
-            // full cache file name
-            //$file = PATH_CACHE . 'searches' . DIRECTORY_SEPARATOR . sprintf('%010s', $id_user) . DIRECTORY_SEPARATOR . $hash;
+
             // no intersection
             if ( !array_intersect($tinc, $texc) ) {
-                // try to get cached data
-//                if ( ($data = cache::file($file)) !== null ) {
-//                    // found so it can be returned immediately
-//                    //fb($file, 'search cached data used');
-//                    header('Content-Encoding: gzip');
-//                    return response::json($data, false);
-//                } else {
-
-                // no data so get some
-                //fb('no search cached data');
                 // flags
                 $is_active = in_array('deleted', $wcmd) ? 0 : 1;
                 $is_notags = in_array('notags',  $wcmd);
+
                 // modification time
                 $mtime = 'mtime > 0';
                 if ( in_array('day',   $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 86400);
                 if ( in_array('week',  $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 604800);
                 if ( in_array('month', $wcmd) ) $mtime = 'mtime > ' . (INIT_TIMESTAMP - 2592000);
+
                 // condition building
                 $where = array('id_user = '.$id_user, 'is_active = '.$is_active, $mtime);
+
                 // tagless
                 if ( $is_notags ) {
                     $where[] = 'id not in (select id_note from note_tags)';
@@ -184,8 +147,10 @@ class note extends controller {
                     if ( $tinc ) $where[] = db::sql('id in (select id_note from note_tags where id_tag in @li group by id_note having count(id_tag) = @i)', $tinc, count($tinc))->scalar;
                     if ( $texc ) $where[] = db::sql('id not in (select distinct id_note from note_tags where id_tag in @li)', $texc)->scalar;
                 }
+
                 // get total records amount
                 $result['total'] = current(current(db::query($sql = 'select count(*) as total from notes where ' . implode(' and ', $where))));
+
                 if ( $result['total'] > 0 ) {
                     // building all together
                     $sql = 'select id,ctime,mtime,atime from notes where ' . implode(' and ', $where) . ' order by mtime desc' . ($isall ? '' : ' limit 20');
@@ -203,10 +168,8 @@ class note extends controller {
                         }
                     }
                 }
-                // send result to the user and cache prepared json to file
-                //return cache::file($file, response::json($result, true, true));
+
                 return response::json($result, true, true);
-                //}
             } else {
                 $result['error'] = 'intersection of include and exclude tags';
             }
@@ -214,7 +177,6 @@ class note extends controller {
             $result['error'] = 'not authorized';
         }
 
-        //fb($result, 'search');
         return response::json($result);
     }
 
@@ -247,7 +209,6 @@ class note extends controller {
             $result['error'] = 'not authorized';
         }
 
-        //fb($result, 'history');
         response::json($result);
     }
 
@@ -257,13 +218,6 @@ class note extends controller {
      * @return array
      */
     private function entry_validate ( $entry ) {
-        // get table column list
-//        $columns = cache::db_table_columns('note_entries');
-//        // iterate all entry fields
-//        foreach ( array_keys($entry) as $ekey ) {
-//            // remove not existing fields
-//            if ( !in_array($ekey, $columns) ) unset($entry[$ekey]);
-//        }
         // check entry type and reassign or remove
         if ( isset($entry['id_type']) && ($id_type = intval($entry['id_type'])) ) $entry['id_type'] = $id_type;
         else unset($entry['id_type']);
@@ -283,7 +237,7 @@ class note extends controller {
         $data['id_note'] = $id_note;
         // validate and add entry
         $id = db::insert('note_entries', $this->entry_validate($data));
-        // prepare response
+
         return array('id'=>$id, 'added'=>(db::affected()>0));
     }
 
@@ -311,6 +265,7 @@ class note extends controller {
                 }
             }
         }
+
         return $result;
     }
 
@@ -322,7 +277,10 @@ class note extends controller {
      */
     private function entry_delete ( $id_note, $idlist ) {
         // reassemble id list to remove invalid values
-        $idlist = array_filter($idlist, function($item){return $item and intval($item);});
+        $idlist = array_filter($idlist, function($item){
+            return $item and intval($item);
+        });
+
         // update and return the number of actually deleted records
         return db::update('note_entries', array('is_active'=>0, 'time'=>INIT_TIMESTAMP),
             'id_note=@i and id in @li', $id_note, $idlist);
@@ -343,11 +301,13 @@ class note extends controller {
             'ctime'   => INIT_TIMESTAMP,
             'mtime'   => INIT_TIMESTAMP
         ));
+
         // process all entries
         foreach ( $entries as $place => $entry ) {
             // insert entry
             $result['entries'][$place] = $this->entry_insert($id_note, array('place'=>$place) + $entry);
         }
+
         return $result;
     }
 
@@ -369,7 +329,7 @@ class note extends controller {
                 $result['deleted'] = $this->entry_delete($id_note, $_REQUEST['deleted']);
             }
 
-            // list of existig active note entries and values
+            // list of existing active note entries and values
             $note_entries = matrix_order(db::query("select id,id_type,place,time,name,data from note_entries where is_active = 1 and id_note = $id_note"), 'id');
 
             // process all entries
@@ -388,6 +348,7 @@ class note extends controller {
 
             }
         }
+
         return $result;
     }
 
@@ -404,11 +365,8 @@ class note extends controller {
         $result = array();
         // check input
         if ( $id_user && $id_note && isset($_REQUEST['tags']) ) {
-            // is necessary to clear user tags cache
-            //$flag_clear_cache = false;
             // start update clearing all previous tags
             // some tags were removed so tags cache should be cleared
-            //if ( db::delete('note_tags', 'id_note = @i', $id_note) ) $flag_clear_cache = true;
             db::delete('note_tags', 'id_note = @i', $id_note);
             // there are some tags
             if ( ($tags = $_REQUEST['tags']) && is_array($tags) ) {
@@ -421,25 +379,23 @@ class note extends controller {
                         // plain id integer
                         $data[] = array('id_note'=>$id_note, 'id_tag'=>$id, 'time'=>INIT_TIMESTAMP);
                     } else {
-                        // ecrypted tag name so need to add to the tags table
-                        if ( ($id = db::insert('tags', array('id_user'=>$id_user, 'name'=>$tag, 'ctime'=>INIT_TIMESTAMP))) )
-                            $data[] = array('id_note'=>$id_note, 'id_tag'=>$id, 'time'=>INIT_TIMESTAMP);
-                        //$flag_clear_cache = true;
+                        // encrypted tag name so need to add to the tags table
+                        if ( ($id = db::insert('tags', array('id_user'=>$id_user, 'name'=>$tag, 'ctime'=>INIT_TIMESTAMP))) ) {
+                            $data[] = array('id_note' => $id_note, 'id_tag' => $id, 'time' => INIT_TIMESTAMP);
+                        }
                     }
                     // report id back to the client
                     $result[] = $id;
                 }
                 // bulk insert
                 // some tags were changed so tags cache should be cleared
-                //if ( db::insert('note_tags', $data) ) $flag_clear_cache = true;
                 db::insert('note_tags', $data);
             } else {
                 // flag for the client that tags were deleted
                 $result = true;
             }
-            // clear user tags cache
-            //if ( $flag_clear_cache ) cache::user_clear('tags');
         }
+
         return $result;
     }
 
