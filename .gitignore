@@ -1,6 +1,5 @@
 .idea
 .vscode
-client/build
 client/node_modules
 server/logs
 server/cache/searches
