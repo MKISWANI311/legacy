@@ -104,7 +104,7 @@
                     display: table-cell;
                     > {
                         .info {
-                            padding: 5px 0;
+                            padding: 8px 0;
                             > {
                                 .warn {
                                     color: $colorTextError;
@@ -128,7 +128,7 @@
                             color: $colorTextHint;
                         }
                         .tags {
-                            padding-bottom: 5px;
+                            padding-bottom: 8px;
                             line-height: 21px;
                             color: $colorTextHint;
                         }
@@ -137,6 +137,7 @@
             }
             .tags .tag {
                 border: 1px solid $colorBorder;
+                border-radius: 3px;
                 //border-left: 2px solid $colorBorder;
                 background-color: $colorBackgroundShade;
                 line-height: 25px;
