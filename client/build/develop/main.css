@@ -309,7 +309,8 @@
         height: 34px;
         line-height: 34px;
         width: 34px;
-        background: url("img/home.svg") no-repeat center center; }
+        background: url("https://image.flaticon.com/icons/svg/180/180006.svg") no-repeat center center;
+        background-size: 20px; }
     .notefilter > .search > .line {
       padding-left: 34px;
       /*font-family:"Courier New","Andale Mono",monospace*/ }
@@ -322,7 +323,8 @@
       height: 30px;
       line-height: 26px;
       width: 30px;
-      background: #ddd url("img/label.svg") no-repeat center center; }
+      background: #ddd url("https://image.flaticon.com/icons/svg/753/753877.svg") no-repeat center center;
+      background-size: 20px; }
       .notefilter > .search > .icon.loading {
         background-image: url("img/loading.16.gif"); }
   .notefilter > .messages {
@@ -416,9 +418,11 @@
           color: #f00; }
         .notelist > .notes > .note > .body > .info > .name {
           margin-right: 5px;
-          color: #bbb; }
+          color: #bbb;
+          display: inline-block; }
         .notelist > .notes > .note > .body > .info > .data {
-          margin-right: 10px; }
+          margin-right: 10px;
+          display: inline-block; }
       .notelist > .notes > .note > .body > .time {
         padding: 0 5px;
         line-height: 21px;
