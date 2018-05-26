@@ -54,7 +54,7 @@
     margin-left: 2px;
     background-color: #fafafa;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 2px 2px 2px 2px; }
+    border-radius: 3px; }
 
 .acInput {
   width: 200px; }
@@ -413,7 +413,7 @@
     .notelist > .notes > .note > .body {
       display: table-cell; }
       .notelist > .notes > .note > .body > .info {
-        padding: 5px 0; }
+        padding: 8px 0; }
         .notelist > .notes > .note > .body > .info > .warn {
           color: #f00; }
         .notelist > .notes > .note > .body > .info > .name {
@@ -430,11 +430,12 @@
         font-size: 90%;
         color: #bbb; }
       .notelist > .notes > .note > .body > .tags {
-        padding-bottom: 5px;
+        padding-bottom: 8px;
         line-height: 21px;
         color: #bbb; }
     .notelist > .notes > .note .tags .tag {
       border: 1px solid #ddd;
+      border-radius: 3px;
       background-color: #fafafa;
       line-height: 25px;
       padding: 1px 7px 0;
@@ -572,7 +573,7 @@ input.button {
   height: 28px;
   /*font-size: 12px;/**/
   border: 1px solid #ddd;
-  border-radius: 2px 2px 2px 2px;
+  border-radius: 3px;
   /**/
   cursor: pointer;
   color: #7c94c1;
