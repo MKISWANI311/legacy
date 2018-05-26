@@ -134,6 +134,7 @@ api.get('user/info', function ( error, data ) {
         // ask for a pass
         DlgPassGet.Show({escClose: false});
     } else {
-        window.pageInit.style.display = 'block';
+        //window.pageInit.style.display = 'block';
+        DlgUserLogin.Show();
     }
 });

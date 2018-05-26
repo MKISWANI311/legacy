@@ -360,11 +360,11 @@ DlgUserLogin = new DialogModal({
     },
 
     controls: {
-        'Cancel': {
+        /*'Cancel': {
             onClick: function () {
                 this.modal.Close();
             }
-        },
+        },*/
         'Login': {
             main: true,
             onClick: function () {
