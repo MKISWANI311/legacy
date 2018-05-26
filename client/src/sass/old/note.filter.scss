@@ -19,7 +19,9 @@
                         height: 34px;
                         line-height: 34px;
                         width: 34px;
-                        background: url("img/home.svg") no-repeat center center;
+                        //background: url("img/home.svg") no-repeat center center;
+                        background: url("https://image.flaticon.com/icons/svg/180/180006.svg") no-repeat center center;
+                        background-size: 20px;
                         &:hover {
                             //opacity: 1;
                         }
@@ -39,7 +41,9 @@
                     height: 30px;
                     line-height: 26px;
                     width: 30px;
-                    background: $colorBorder url("img/label.svg") no-repeat center center;
+                    //background: $colorBorder url("img/label.svg") no-repeat center center;
+                    background: $colorBorder url("https://image.flaticon.com/icons/svg/753/753877.svg") no-repeat center center;
+                    background-size: 20px;
                     &.loading {
                         background-image: url("img/loading.16.gif");
                     }
