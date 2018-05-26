@@ -27,7 +27,7 @@ class user {
                     $result['hash'] = $user['pass'];
                     db::update('users', array('ltime' => $result['time']), 'id = @i', $user['id']);
                 }
-            } else if ( !$user && $authmode == 'register' ) {
+            } else if ( !$user && $authmode == 'signup' ) {
                 if ( isset($_SESSION['captcha']) && strtolower($_REQUEST['code']) == strtolower($_SESSION['captcha']['code']) ) {
                     // clear captcha temp data
                     unset($_SESSION['captcha']);
@@ -68,22 +68,44 @@ class user {
 
 
     /**
-     * Get dictionaries and tags data
+     * Get tags data
      */
-    function data () {
-        response::json(array(
-            'entry_types' => json_decode(cache::db_entry_types()),
-            'templates' => json_decode(cache::db_templates()),
-            'template_entries' => json_decode(cache::db_template_entries()),
-            'tags' => json_decode(cache::db_tags())
-        ));
+    function tags () {
+        $id_user = $_SESSION['user']['id'];
+
+        // obtaining user tag list
+        $data = matrix_order(db::query('select id, name from tags where id_user = @i', $id_user), 'id');
+
+        if ( $data ) {
+            // expand each tag
+            foreach ( $data as & $tag ) {
+                $tag['notes'] = array();
+                $tag['uses']  = 0;
+            }
+            // get note tags connections
+            $note_tags = matrix_group(db::query('select nt.id_note,nt.id_tag from note_tags nt, notes n where nt.id_note = n.id and n.id_user = @i and n.is_active = 1', $id_user), 'id_note');
+            // determine note ids
+            foreach ( $note_tags as $links ) {
+                foreach ( $links as $lkey ) {
+                    $data[$lkey]['uses']++;
+
+                    foreach ( $links as $lval ) {
+                        if ( $lkey != $lval && !in_array($lval, $data[$lkey]['notes']) ) {
+                            $data[$lkey]['notes'][] = $lval;
+                        }
+                    }
+                }
+            }
+        }
+
+        response::json($data);
     }
 
 
     /**
      * End session
      */
-    function signout () {
+    function logout () {
         $result = false;
 
         // check if session id set

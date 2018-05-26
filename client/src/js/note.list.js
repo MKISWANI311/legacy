@@ -6,9 +6,10 @@
 'use strict';
 
 var app = require('./app'),
+    api = require('./api'),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
-    TagManager = require('./tag.manager');
+    TagManager = require('./models/tag-manager');
 
 
 /**
@@ -108,7 +109,7 @@ var NoteList = new function () {
                         }
                     }));
                     // close currently edited note if affected
-                    if ( list.has(NoteEditor.GetNoteID()) ) NoteEditor.Escape();
+                    if ( list.includes(NoteEditor.GetNoteID()) ) NoteEditor.Escape();
                     // show status message
                     NoteFilter.MsgAdd(message);
                     // refresh note list
@@ -128,11 +129,13 @@ var NoteList = new function () {
      */
     var BuildNoteInfo = function ( note, icon ) {
         var list = [], fulltext = [], url = null;
+
         // iterate all note entries
         note.entries.forEach(function ( entry ) {
             // decrypt data
-            var name = app.decode(entry.name);
-            var data = app.decode(entry.data);
+            var name = crypto.decrypt(entry.name);
+            var data = crypto.decrypt(entry.data);
+
             // prepare fulltext data
             fulltext.push(name.toLowerCase());
             fulltext.push(data.toLowerCase());
@@ -157,12 +160,13 @@ var NoteList = new function () {
                 list.push(element('span', {className: 'data'}, sdata));
             }
         });
+
         // has valid url (the first one)
         if ( url ) {
             // get rid of all unnecessary parts
             url = url.split('/');
             // parts are valid
-            if ( url[2] && url[2] != 'localhost' ) {
+            if ( url[2] && url[2] !== 'localhost' ) {
                 // try to get image, won't repclace the current one if no icon found
                 // https://www.google.com/s2/favicons?domain=google.com gives only 16px images
                 element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
@@ -175,9 +179,10 @@ var NoteList = new function () {
                         elchild(parent, this);
                         //self.dom.entries.insertBefore(entry, entry.previousSibling);
                     }
-                })
+                });
             }
         }
+
         // build search full text data
         note.fulltext = fulltext.join('\n');
         // warning if no data
@@ -216,10 +221,10 @@ var NoteList = new function () {
         if ( note.tags.length > 0 ) {
             // separate tags
             note.tags.forEach(function ( item ) {
-                if ( NoteFilter.data.tinc.has(item) ) {
-                    inc.push(window.dataTagsIdlist[item]);
+                if ( NoteFilter.data.tinc.includes(item) ) {
+                    inc.push(TagManager.dataTagsIdlist[item]);
                 } else {
-                    exc.push(window.dataTagsIdlist[item]);
+                    exc.push(TagManager.dataTagsIdlist[item]);
                 }
             });
             // forms the list of tags already selected
@@ -252,14 +257,17 @@ var NoteList = new function () {
      */
     var GetNoteIcon = function ( note ) {
         // prepare
-        var icon = 'img/tag_note.png',
-            tags = TagManager.IDs2Names(note.tags);
+        var //icon = 'img/tag_note.png',
+            icon = 'img/tags/note.svg',
+            tags = TagManager.ids2names(note.tags);
         // iterate words in the tag list
         tags.forEach(function ( item ) {
             // it's a tag from the global set
-            if ( window.iconTags.has(item) ) {
+            if ( window.iconTags.includes(item) ) {
                 // get the first match
-                icon = 'img/tag_' + item + '.png';
+                //icon = 'img/tag_' + item + '.png';
+                icon = 'img/tags/' + item + '.svg';
+
                 return;
             }
         });
@@ -328,7 +336,7 @@ var NoteList = new function () {
         this.dom.btndelete.style.display = 'none';
         this.dom.btnrestore.style.display = 'none';
         // show only the corresponding one
-        if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
+        if ( checked.length > 0 ) (NoteFilter.data.wcmd.includes('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
         // show/hide block depending on notes amount
         this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
     }
@@ -395,7 +403,7 @@ var NoteList = new function () {
             if ( list[i].data.id === id ) return list[i];
         }
         return false;
-    }
+    };
 
     /**
      * Returns the list of visible notes
@@ -408,10 +416,10 @@ var NoteList = new function () {
             if ( !list[i].style.display ) result.push(list[i]);
         }
         return result;
-    }
+    };
 
     /**
-     * Whole note ckick handler
+     * Whole note click handler
      * highlights the active note or note range
      * holding Ctrl checks/unchecks the selected notes
      * holding Shift selects all the notes between old and new selected notes
@@ -435,6 +443,7 @@ var NoteList = new function () {
                 self.ClearNotesState();
                 // check if the edited note is not already active
                 if ( NoteEditor.GetNoteID() !== this.data.id ) {
+                    console.log('NoteEditor.Load', this.data);
                     // show note details
                     NoteEditor.Load(this.data);
                 }
@@ -580,7 +589,9 @@ var NoteList = new function () {
                 self.SetNotesVisibility([note]);
                 elchild(self.dom.notes, note);
                 // highlight the edited at the moment note
-                if ( neid === item.id ) self.SetNotesState([note], 'active');
+                if ( neid === item.id ) {
+                    self.SetNotesState([note], 'active');
+                }
             });
         }
         // show/hide control panel

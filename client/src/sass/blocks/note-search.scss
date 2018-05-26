@@ -1,0 +1,41 @@
+.note-search {
+    //border: 1px solid $colorBorder;
+
+    // temp
+    margin-bottom: 10px;
+
+    &--hidden {
+        display: none;
+    }
+
+    &__title {
+        background-color: $colorBackgroundShade;
+        position: relative;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+    }
+
+    &__items {}
+
+    &__item {
+        border-top: 1px solid $colorBorder;
+        cursor: pointer;
+        margin: 0;
+        //background: url("https://image.flaticon.com/icons/svg/243/243378.svg") no-repeat 10px center;
+        background: url("https://image.flaticon.com/icons/svg/137/137132.svg") no-repeat 10px center;
+        background-size: 28px;
+        padding: 6px 6px 6px 48px;
+
+        &:hover {
+            background-color: $colorBackgroundHover;
+        }
+
+        &-name {}
+
+        &-hint {
+            font-size: 90%;
+            color: $colorTextHint;
+        }
+    }
+}

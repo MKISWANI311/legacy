@@ -100,7 +100,7 @@
         .title {
             .name input {
                 //color: inherit;
-                //background-color: #fff;
+                background-color: $colorBackgroundMain;
                 border: none;
                 //font-size: inherit;
                 font-weight: bold;
@@ -257,7 +257,7 @@
         }
     }
     .tbuttons {
-        padding-top: 10px;
+        //padding-top: 10px;
         padding-bottom: 10px;
         margin-bottom: 10px;
         text-align: right;

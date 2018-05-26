@@ -7,12 +7,14 @@
 'use strict';
 
 var //autocomplete = require('autocompleter'),
-    app = require('./app'),
+    //app = require('./app'),
+    crypto = require('./crypto'),
     api = require('./api'),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = require('./note.list'),
-    TemplateList = require('./template.list'),
-    TagManager = require('./tag.manager');
+    TemplateList = require('./template-list'),
+    TagManager = require('./models/tag-manager'),
+    entryTypes = require('./data.entry.types');
 
 
 window.NoteEditor = new function () {
@@ -56,11 +58,11 @@ window.NoteEditor = new function () {
                 //with ( this.dom.entries.childNodes[i] ) {
 
                 // set post data
-                entry.post.name_dec = app.decode(entry.post.name);
-                entry.post.data_dec = app.decode(entry.post.data);
+                entry.post.name_dec = crypto.decrypt(entry.post.name);
+                entry.post.data_dec = crypto.decrypt(entry.post.data);
                 // set current data (taking either from post or decrypt)
-                entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
-                entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
+                entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : crypto.decrypt(entry.data.name);
+                entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : crypto.decrypt(entry.data.data);
                 // enable all inputs
                 entry.dom.name.disabled = entry.dom.data.disabled = false;
                 // change input to decrypted values
@@ -70,14 +72,14 @@ window.NoteEditor = new function () {
                 entry.dom.data.onkeyup();
                 //}
             }
-            EnableControls(true);
+            //EnableControls(true);
             // tags block
             this.dom.tags.input.disabled = false;
-            this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
+            this.dom.tags.input.value = TagManager.ids2str(this.data.tags).toLowerCase();
             // fill autocompleter
             var data = [];
             // prepare all tags
-            for ( var tid in window.dataTagsIdlist ) data.push([window.dataTagsIdlist[tid], tid]);
+            for ( var tid in TagManager.dataTagsIdlist ) data.push([TagManager.dataTagsIdlist[tid], tid]);
             $(this.dom.tags.input).data('autocompleter').options.data = data;
         }
         // component state flag
@@ -97,8 +99,8 @@ window.NoteEditor = new function () {
                 var entry = this.dom.entries.childNodes[i];
                 //with ( this.dom.entries.childNodes[i] ) {
                 // if data changed than reassing (taking either from post or encrypt)
-                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
-                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
+                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : crypto.encrypt(entry.dom.name.value);
+                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : crypto.encrypt(entry.dom.data.value);
                 // clear post and current data
                 entry.post.name_dec = entry.data.name_dec = null;
                 entry.post.data_dec = entry.data.data_dec = null;
@@ -115,10 +117,10 @@ window.NoteEditor = new function () {
                 delete entry.data.history;
                 //}
             }
-            EnableControls(false);
+            //EnableControls(false);
             // tags block
             this.dom.tags.input.disabled = true;
-            this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value.toLowerCase());
+            this.data.tags = TagManager.str2ids(this.dom.tags.input.value.toLowerCase());
             this.dom.tags.input.value = '[encrypted tags]';
             // clear autocompleter
             $(this.dom.tags.input).data('autocompleter').options.data = [];
@@ -135,17 +137,17 @@ window.NoteEditor = new function () {
      */
     var TagsChanged = function ( data, post ) {
         // prepare input
-        data = TagManager.Str2Names(data);
+        data = TagManager.str2names(data);
         post = post || [];
         // different size
         if ( data.length !== post.length ) return true;
         // check parsed string
         for ( var id = null, i = 0; i < data.length; i++ ) {
-            id = window.dataTagsNmlist[data[i]];
+            id = TagManager.dataTagsNmlist[data[i]];
             // new tag not posted to the server
             if ( !id ) return true;
             // posted tags not include this id
-            if ( !post.has(id) ) return true;
+            if ( !post.includes(id) ) return true;
         }
         return false;
     };
@@ -158,7 +160,7 @@ window.NoteEditor = new function () {
         var i = 0, entry = null, deleted = [], ids = [];
 
         // get the list of tags ids and names
-        self.data.tags = TagManager.Str2IDs(self.dom.tags.input.value.toLowerCase());
+        self.data.tags = TagManager.str2ids(self.dom.tags.input.value.toLowerCase());
         // tags changed since the last post
         if ( self.data.tags.join() !== self.post.tags.join() ) {
             // drop flag or copy of tags
@@ -199,12 +201,12 @@ window.NoteEditor = new function () {
                 post.id_type = entry.data.id_type;
             // entry name changed or new mode
             if ( entry.post.name_dec !== entry.dom.name.value || entry.data.id === undefined ) {
-                entry.data.name = post.name = (entry.data.name_dec === entry.dom.name.value) ? entry.data.name : app.encode(entry.dom.name.value);
+                entry.data.name = post.name = (entry.data.name_dec === entry.dom.name.value) ? entry.data.name : crypto.encrypt(entry.dom.name.value);
                 entry.data.name_dec = entry.dom.name.value;
             }
             // entry value changed or new mode
             if ( entry.post.data_dec !== entry.dom.data.value || entry.data.id === undefined ) {
-                entry.data.data = post.data = (entry.data.data_dec === entry.dom.data.value) ? entry.data.data : app.encode(entry.dom.data.value);
+                entry.data.data = post.data = (entry.data.data_dec === entry.dom.data.value) ? entry.data.data : crypto.encrypt(entry.dom.data.value);
                 entry.data.data_dec = entry.dom.data.value;
             }
             // type change block
@@ -236,7 +238,7 @@ window.NoteEditor = new function () {
         }
 
         // disable controls to prevent double posting
-        EnableControls(false);
+        //EnableControls(false);
         //SetTitleIcon('img/message.loading.gif');
 
         api.post('note/save/' + (this.data.id || ''), GetData(), function ( error, data ) {
@@ -272,8 +274,8 @@ window.NoteEditor = new function () {
                     self.dom.tags.input.classList.remove('changed');
 
                     // change icons according to status
-                    if ( data.entries[i].changed ) entry.dom.icon.src = 'img/field_flag_ok.png';
-                    if ( data.entries[i].added ) entry.dom.icon.src = 'img/field_flag_add.png';
+                    //if ( data.entries[i].changed ) entry.dom.icon.src = 'img/field_flag_ok.png';
+                    //if ( data.entries[i].added ) entry.dom.icon.src = 'img/field_flag_add.png';
 
                     // rebuild global data in case some items deleted or added
                     entries.push(entry.data);
@@ -287,31 +289,31 @@ window.NoteEditor = new function () {
                             // check if the ecrypted string
                             if ( isNaN(self.data.tags[i]) ) {
                                 // add new tag id and enc/dev values to the global lookup tables
-                                TagManager.Add(data.tags[i], self.data.tags[i]);
+                                TagManager.add(data.tags[i], self.data.tags[i]);
                                 // replace the ecrypted string with received id
                                 self.data.tags[i] = data.tags[i];
                             }
                         }
                     }
                     // show ok image
-                    self.dom.tags.icon.src = 'img/field_flag_ok.png';
+                    //self.dom.tags.icon.src = 'img/field_flag_ok.png';
                 }
                 // fill current tags data
-                self.dom.tags.input.value = TagManager.IDs2Str(self.data.tags).toLowerCase();
+                self.dom.tags.input.value = TagManager.ids2str(self.data.tags).toLowerCase();
                 // confirm posted tags
                 self.post.tags = self.data.tags.slice();
                 // clear deleted entries list
                 delete self.post.deleted;
                 // timer to set default images
-                setTimeout(function () {
+                //setTimeout(function () {
                     // iterate all entries
-                    for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
+                    //for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
                         //with ( self.dom.entries.childNodes[i] )
-                        var child = self.dom.entries.childNodes[i];
-                        child.dom.icon.src = 'img/field_' + window.dataEntryTypes.data[child.data.id_type][window.dataEntryTypes.defn.name] + '.png';
-                    }
-                    self.dom.tags.icon.src = 'img/field_tag.png';
-                }, 2000);
+                        //var child = self.dom.entries.childNodes[i];
+                        //child.dom.icon.src = 'img/field_' + window.dataEntryTypes.data[child.data.id_type][window.dataEntryTypes.defn.name] + '.png';
+                    //}
+                    //self.dom.tags.icon.src = 'img/field_tag.png';
+                //}, 2000);
 
                 // flag reset
                 changed = false;
@@ -334,10 +336,10 @@ window.NoteEditor = new function () {
                 // invalid response from the server
             }
             // enable controls
-            EnableControls(true);
+            //EnableControls(true);
             //$(self.dom.controls).removeClass('loading');
             // change icon if necessary
-            SetTitleIcon();
+            //SetTitleIcon();
             //self.Escape();
         });
     };
@@ -358,24 +360,27 @@ window.NoteEditor = new function () {
 
             var cell = null;
             // build type list
-            for ( var id in window.dataEntryTypes.data ) {
+            //for ( var id in window.dataEntryTypes.data ) {
+            for ( var id in entryTypes.hash ) {
                 id = parseInt(id, 10);
-                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                //cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, entryTypes.hash[id].name, {
                     // set desc on mouse over action
                     onmouseover: function () {
                         entry.dom.desc.innerHTML = this.desc;
                     },
                     onclick: function () {
-                        if ( this.className == 'item' ) {
+                        if ( this.className === 'item' ) {
                             // change name if default
                             //if ( entry.dom.name.value == window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] ) {
-                                entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
+                            //entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
+                            entry.dom.name.value = entryTypes.hash[this.type].name;
                             //}
                             // prepare type, name and value
                             entry.data.id_type = this.type;
-                            entry.data.name = app.encode(entry.dom.name.value);
+                            entry.data.name = crypto.encrypt(entry.dom.name.value);
                             entry.data.name_dec = entry.dom.name.value;
-                            entry.data.data = app.encode(entry.dom.data.value);
+                            entry.data.data = crypto.encrypt(entry.dom.data.value);
                             entry.data.data_dec = entry.dom.data.value;
                             // clone entry and do some sync
                             var entry_new = EntryCreate(entry.data);
@@ -391,8 +396,10 @@ window.NoteEditor = new function () {
                     }
                 });
                 cell.type = id;
-                cell.name = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name];
-                cell.desc = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.description];
+                //cell.name = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name];
+                cell.name = entryTypes.hash[id].name;
+                //cell.desc = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.description];
+                cell.desc = entryTypes.hash[id].description;
                 elchild(list, cell);
             }
             elchild(entry.dom.type, list);
@@ -425,8 +432,8 @@ window.NoteEditor = new function () {
                     var tbl = element('table', {className: 'maxw'});
                     if ( history.data.length ) {
                         for ( var i = 0; i < history.data.length; i++ ) {
-                            var name = history.data[i][history.defn.name] ? app.decode(history.data[i][history.defn.name]) : '';
-                            var data = history.data[i][history.defn.data] ? app.decode(history.data[i][history.defn.data]) : '';
+                            var name = history.data[i][history.defn.name] ? crypto.decrypt(history.data[i][history.defn.name]) : '';
+                            var data = history.data[i][history.defn.data] ? crypto.decrypt(history.data[i][history.defn.data]) : '';
                             tblrow(tbl, [
                                 // name and data
                                 element('span', {title: name}, (name.length > 20) ? name.slice(0, 15) + '...' : name),
@@ -467,15 +474,16 @@ window.NoteEditor = new function () {
      */
     var EntryBtnAdd = function ( entry ) {
         // prepare name and value
-        var name = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name];
+        //var name = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name];
+        var name = entryTypes.hash[entry.data.id_type].name;
         // generate some password if pass type
-        var data = (entry.data.id_type == 4) ? pwdgen(20) : '';
+        var data = (entry.data.id_type === 4) ? pwdgen(20) : '';
         // clone
         var entry_new = EntryCreate({
             id_type: entry.data.id_type,
-            name: app.encode(name),
+            name: crypto.encrypt(name),
             name_dec: name,
-            data: app.encode(data),
+            data: crypto.encrypt(data),
             data_dec: data
         });
         self.dom.entries.insertBefore(entry_new, entry);
@@ -567,12 +575,12 @@ window.NoteEditor = new function () {
         });
 
         // icon image
-        entry.dom.icon = element('img', {
-            src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
-            //title: 'drag and drop to change the entries order'
-        });
+        // entry.dom.icon = element('img', {
+        //     src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
+        //     //title: 'drag and drop to change the entries order'
+        // });
         // top title line with name and controls
-        entry.dom.title = tblrow(element('table', {className: 'title'}), [entry.dom.icon, entry.dom.name, entry.dom.controls], [{className: 'icon'}, {className: 'name'}, {className: 'controls'}]);
+        entry.dom.title = tblrow(element('table', {className: 'title'}), [/*entry.dom.icon,*/ entry.dom.name, entry.dom.controls], [/*{className: 'icon'},*/ {className: 'name'}, {className: 'controls'}]);
     };
 
     /**
@@ -583,7 +591,8 @@ window.NoteEditor = new function () {
         // types
         entry.dom.type = element('div', {className: 'type'});
         // get the input data max length
-        var limit = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.max];
+        //var limit = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.max];
+        var limit = entryTypes.hash[entry.data.id_type].max;
         // create input depending on entry type
         if ( entry.data.id_type === 6 || entry.data.id_type === 7 ) {
             entry.dom.data = element('textarea', {
@@ -712,8 +721,10 @@ window.NoteEditor = new function () {
      */
     var EntryBlockHint = function ( entry ) {
         // entry description
-        entry.dom.desc = element('span', {}, window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description]);
-        entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
+        //entry.dom.desc = element('span', {}, window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description]);
+        entry.dom.desc = element('span', {}, entryTypes.hash[entry.data.id_type].description);
+        //entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
+        entry.dom.desc.value = entryTypes.hash[entry.data.id_type].description;
         // letters counter with max length check
         entry.dom.counter = element('span', {className: entry.dom.data.value.length === entry.dom.data.maxLength ? 'limit' : ''}, !self.open ? '' : entry.dom.data.value.length);
         // bottom entry description and counter
@@ -958,16 +969,16 @@ window.NoteEditor = new function () {
             value: ''
         });
         // icon
-        var icon = element('img', {src: 'img/field_tag.png'});
+        //var icon = element('img', {src: 'img/field_tag.png'});
         // tags container
         self.dom.tags = element('div', {className: 'tags'}, [
-            tblrow(element('table', {className: 'title'}), [icon, 'tags'], [{className: 'icon'}, {className: 'name'}]),
+            tblrow(element('table', {className: 'title'}), [/*icon, */'tags'], [/*{className: 'icon'},*/ {className: 'name'}]),
             input,
             element('div', {className: 'hint'}, 'list of associated tags separated by space')
         ]);
         // pointers
         self.dom.tags.input = input;
-        self.dom.tags.icon = icon;
+        //self.dom.tags.icon = icon;
         // change color if changed in edit mode
         input.onchange = function () {
             // only for edit mode
@@ -987,8 +998,8 @@ window.NoteEditor = new function () {
 
         var data = [];
         // prepare all tags
-        for ( var tid in window.dataTagsIdlist ) {
-            data.push([window.dataTagsIdlist[tid], tid]);
+        for ( var tid in TagManager.dataTagsIdlist ) {
+            data.push([TagManager.dataTagsIdlist[tid], tid]);
         }
 
         /*autocomplete({
@@ -1004,7 +1015,7 @@ window.NoteEditor = new function () {
 
                 // truncate available suggestion options
                 data.forEach(function ( item ) {
-                    if ( !tags.has(item[0]) ) {
+                    if ( !tags.includes(item[0]) ) {
                         result.push({item: item});
                     }
                 });
@@ -1053,7 +1064,7 @@ window.NoteEditor = new function () {
 
                 // truncate available suggestion options
                 data.forEach(function ( item ) {
-                    if ( !tags.has(item[0]) ) {
+                    if ( !tags.includes(item[0]) ) {
                         result.push(item);
                     }
                 });
@@ -1124,19 +1135,19 @@ window.NoteEditor = new function () {
             })
         ]);
 
-        self.dom.bcontrols = element('div', {className: 'bbuttons'}, [
-            //element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){self.Escape();}}),
-            element('input', {
-                type: 'button',
-                value: 'Save',
-                className: 'button bold',
-                title: hint_save
-            }, null, {
-                onclick: function () {
-                    self.Save();
-                }
-            })
-        ]);
+        // self.dom.bcontrols = element('div', {className: 'bbuttons'}, [
+        //     //element('input', {type:'button', value:'Back', className:'button'}, null, {onclick:function(){self.Escape();}}),
+        //     element('input', {
+        //         type: 'button',
+        //         value: 'Save',
+        //         className: 'button bold',
+        //         title: hint_save
+        //     }, null, {
+        //         onclick: function () {
+        //             self.Save();
+        //         }
+        //     })
+        // ]);
     };
 
     /**
@@ -1171,14 +1182,14 @@ window.NoteEditor = new function () {
      * Enebles/disables the control buttons
      * @param state bool flag
      */
-    var EnableControls = function ( state ) {
+    /*var EnableControls = function ( state ) {
         if ( self.dom.bcontrols ) {
             var controls = self.dom.bcontrols.childNodes;
             for ( var i = 0; i < controls.length; i++ ) {
                 controls[i].disabled = !state;
             }
         }
-    };
+    };*/
 
     /**
      * Asks user about modifications
@@ -1214,15 +1225,16 @@ window.NoteEditor = new function () {
         // iterate the current entry list
         this.data.entries.forEach(function ( entry ) {
             // prepare name and data
-            name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
+            //name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
+            name = entryTypes.hash[entry.id_type].name;
             // generate some password if pass type
             data = (entry.id_type == 4) ? pwdgen(20) : '';
             // append the entry list
             entries.push({
                 id_type: entry.id_type,
-                name: app.encode(name),
+                name: crypto.encrypt(name),
                 name_dec: name,
-                data: app.encode(data),
+                data: crypto.encrypt(data),
                 data_dec: data
             });
         });
@@ -1233,13 +1245,13 @@ window.NoteEditor = new function () {
             // compile all blocks together
             Build();
             // update the icon
-            SetTitleIcon();
+            //SetTitleIcon();
             // set flag
             changed = true;
             // focus to the first input
             this.dom.entries.childNodes[0].dom.data.focus();
         }
-    }
+    };
 
     /**
      * Leaves the current note editing
@@ -1253,12 +1265,12 @@ window.NoteEditor = new function () {
         // not changed or user confirmed his wish
         if ( !has_changes || (has_changes && this.ConfirmExit()) ) {
             // get note from the list using current id
-            var note = NoteList.GetNoteByID(self.data.id);
+            //var note = NoteList.GetNoteByID(self.data.id);
             // found
-            if ( note !== false ) {
+            /*if ( note !== false ) {
                 // remove acitve cursor
                 NoteList.SetNotesState([note], 'active', false);
-            }
+            }*/
             // clear previous content
             elclear(this.dom.handle);
             // set data
@@ -1270,7 +1282,7 @@ window.NoteEditor = new function () {
             // not full escape
             if ( !noswitch ) {
                 self.Show(false);
-                TemplateList.Show(true);
+                window.templateList.show();
             }
             return true;
         }
@@ -1287,41 +1299,48 @@ window.NoteEditor = new function () {
         // data to be send on save
         this.post = {tags: []};
         // local vars
-        var id_template = template[window.dataTemplates.defn.id],
+        //var id_template = template[window.dataTemplates.defn.id],
+        var //id_template = template.id,
+            self = this,
             id_type, name, data, tag;
-        // template is given and valid
-        if ( template && window.dataTemplateEntries.data[id_template] ) {
+
+        // template is given
+        if ( template ) {
             // fill the list of entries
-            for ( var i = 0; i < window.dataTemplateEntries.data[id_template].length; i++ ) {
+            //for ( var i = 0; i < template.entries.length; i++ ) {
+            template.entries.forEach(function ( entry ) {
                 //for ( var i in window.dataTemplateEntries.data[id_template] ) {
                 // get the entry type
-                id_type = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.id_type];
+                //id_type = entry.id;
                 // prepare name and data
-                name = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.name];
+                //name = entry.name;
                 // generate some password if pass type
-                data = (id_type == 4) ? pwdgen(20) : '';
+                data = (entry.id === 4) ? pwdgen(20) : '';
                 // adding
-                this.data.entries.push({
-                    id_type: id_type,
-                    name: app.encode(name),
-                    name_dec: name,
-                    data: app.encode(data),
+                self.data.entries.push({
+                    id_type: entry.id,
+                    name: crypto.encrypt(entry.name),
+                    name_dec: entry.name,
+                    data: crypto.encrypt(data),
                     data_dec: data
                 });
-            }
+            });
+
+            //}
             // default tag
-            tag = template[window.dataTemplates.defn.tag];
-            this.data.tags = TagManager.Str2IDs(tag);
+            tag = template.name;
+            this.data.tags = TagManager.str2ids(tag);
             // no templates selected so just add one simple entry
         } else {
-            name = window.dataEntryTypes.data[1][window.dataEntryTypes.defn.name];
+            //name = window.dataEntryTypes.data[1][window.dataEntryTypes.defn.name];
+            name = entryTypes.hash[1].name;
             data = tag = '';
             // adding
             this.data.entries = [{
                 id_type: 1,
-                name: app.encode(name),
+                name: crypto.encrypt(name),
                 name_dec: name,
-                data: app.encode(data),
+                data: crypto.encrypt(data),
                 data_dec: data
             }];
         }
@@ -1329,7 +1348,7 @@ window.NoteEditor = new function () {
         Build();
         // tags plain string
         this.dom.tags.input.value = tag.toLowerCase();
-        SetTitleIcon();
+        //SetTitleIcon();
         // focus to the first input
         this.dom.entries.childNodes[0].dom.data.focus();
         console.timeEnd('entry create');
@@ -1353,8 +1372,8 @@ window.NoteEditor = new function () {
             for ( var i = 0; i < data.entries.length; i++ ) {
                 var entry = data.entries[i];
                 // wrap encoded and decoded values
-                entry.name_dec = app.decode(entry.name);
-                entry.data_dec = app.decode(entry.data);
+                entry.name_dec = crypto.decrypt(entry.name);
+                entry.data_dec = crypto.decrypt(entry.data);
             }
         } else {
             // invalid input so switch to new mode
@@ -1363,8 +1382,8 @@ window.NoteEditor = new function () {
         // compile all blocks together
         Build();
         // tags plain string
-        this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
-        SetTitleIcon();
+        this.dom.tags.input.value = TagManager.ids2str(this.data.tags).toLowerCase();
+        //SetTitleIcon();
         console.timeEnd('entry load');
     };
 
@@ -1375,16 +1394,18 @@ window.NoteEditor = new function () {
         return (this.data && this.data.id ? this.data.id : null);
     };
 
-    var SetTitleIcon = function ( icon ) {
+    /*var SetTitleIcon = function ( icon ) {
         if ( !icon ) {
-            icon = 'img/tag_note.png';
+            //icon = 'img/tag_note.png';
+            icon = 'img/tags/note.svg';
             var tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
             // check parsed string
             if ( tags && tags instanceof Array ) {
                 // iterate words in the input string
                 for ( var i = 0; i < tags.length; i++ ) {
-                    if ( window.iconTags.has(tags[i]) ) {
-                        icon = 'img/tag_' + tags[i] + '.png';
+                    if ( window.iconTags.includes(tags[i]) ) {
+                        //icon = 'img/tag_' + tags[i] + '.png';
+                        icon = 'img/tags/' + tags[i] + '.svg';
                         break;
                     }
                 }
@@ -1393,7 +1414,7 @@ window.NoteEditor = new function () {
         if ( self.dom.title.icon.src.search(icon) < 0 ) {
             self.dom.title.icon.src = icon;
         }
-    };
+    };*/
 
     /**
      * Compiles all blocks together
@@ -1402,7 +1423,7 @@ window.NoteEditor = new function () {
         //with ( self ) {
         changed = false;
         // all blocks
-        BlockTitle();
+        //BlockTitle();
         BlockEntries();
         BlockTags();
         BlockControls();
@@ -1412,16 +1433,16 @@ window.NoteEditor = new function () {
 
         // build all blocks together
         elchild(self.dom.handle, [
-            self.dom.title,
+            //self.dom.title,
             self.dom.tcontrols,
             self.dom.entries,
             element('div', {className: 'divider'}),
             self.dom.tags,
-            element('div', {className: 'divider'}),
-            self.dom.bcontrols
+            element('div', {className: 'divider'})
+            //self.dom.bcontrols
         ]);
         //}
-        TemplateList.Show(false);
+        //TemplateList.Show(false);
         self.Show(true);
 
     };

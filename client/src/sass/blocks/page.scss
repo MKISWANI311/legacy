@@ -1,78 +1,124 @@
 .page {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
-    //position: absolute;
-
-    /*height: 100%;
-    position: absolute;
-    width: 100%;
-    display: flex;
-    flex-direction: column;*/
+    min-height: 100%;
+    min-width: 100%;
 
     &--hidden {
-        //visibility: hidden;
         display: none;
     }
 
-    &__header, &__footer {
-        background-color: $colorBackgroundShade;
-        //height: $headerHeight;
-    }
+    &__header {}
+    &__body {}
+    &__footer {}
 
-    &__header {
-        height: $headerHeight;
-        border-bottom: 1px solid $colorBorder;
-        //display: flex;
-        flex: none;
-        //flex-flow: row nowrap;
-        //justify-content: space-between;
-        padding: 0 $paddingNormal;
-        //display: table;
-        //width: 100%;
-        // @media (min-width: $mediaSmall) {
-        //     background: $colorBackgroundShade url("https://images.filehippo.net/img/ex/1308__msseces.png") no-repeat $paddingLarge center;
-        //     background: $colorBackgroundShade url("https://cdn0.iconfinder.com/data/icons/security-double-colour-blue-black-vol-2/52/hosting__security__service__web-32.png") no-repeat $paddingLarge center;
-        //     background: $colorBackgroundShade url("https://cdn0.iconfinder.com/data/icons/security-double-colour-blue-black-vol-3/52/protection__safety__security__shield-32.png") no-repeat $paddingLarge center;
-        //     padding-left: 65px;
-        // }
-    }
 
-    //&__title {
-    //    //height: $headerHeight;
-    //    //line-height: $headerHeight;
-    //    font-size: 110%;
-    //    font-weight: bold;
-    //    //padding: $paddingNormal;
-    //}
+    &--user {
+        align-items: center;
+        background-color: $colorLink;
+        justify-content: center;
+        /*background: linear-gradient(
+            rgba($colorLink, 0.5),
+            $colorLink,
+            $colorLink,
+            $colorLink,
+            rgba($colorLink, 0.5)
+        );*/
 
-    &__body {
-        display: flex;
-        flex: 1 0 auto;
+        .page {
+            &__header {
+                color: $colorBackgroundMain;
+                font-size: 200%;
+                line-height: 100%;
+                margin-top: $paddingNormal * 3;
+            }
 
-        /*flex-grow: 1;
-        border-top: 1px solid $colorBorder;
-        border-bottom: 1px solid $colorBorder;
-        overflow-y: auto;*/
+            &__body {
+                background-color: $colorBackgroundMain;
+                border-radius: $borderRadius;
+                padding: $paddingNormal * 3;
+                margin: $paddingNormal * 3;
+                max-width: 450px;
+            }
 
-        &--centered {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            &__footer {
+                color: $colorBackgroundMain;
+                margin-bottom: $paddingNormal * 3;
+                text-align: center;
+            }
+
+            &__link {
+                color: $colorBackgroundMain;
+                margin: 0 $paddingNormal;
+            }
+
+            &__copyright {
+                margin-top: $paddingNormal;
+                color: $colorBackgroundMain;
+                opacity: 0.4;
+            }
         }
     }
 
-    &__footer {
-        flex-shrink: 0;
-        border-top: 1px solid $colorBorder;
-        text-align: center;
+    &--main {
+        .page {
+            &__header, &__footer {
+                flex-shrink: 0;
+                //height: $headerHeight;
+            }
 
-        /*display: flex;
-        justify-content: center;
-        align-items: center;*/
-        font-size: 90%;
-        padding: $paddingNormal;
-        //height: 40px;
+            &__header {
+                align-items: center;
+                //height: $headerHeight;
+                background-color: $colorLink;
+                //border-bottom: 1px solid $colorBorder;
+                color: $colorBackgroundMain;
+                display: flex;
+                //display: flex;
+                //flex: none;
+                //flex-flow: row nowrap;
+                //justify-content: space-between;
+                //padding: 0 $paddingNormal;
+
+                //padding: 0 $paddingNormal;
+                font-size: 140%;
+                //background: url("img/safebox.svg") no-repeat 10px center;
+                //background-size: 32px;
+
+                //display: table;
+                //width: 100%;
+                // @media (min-width: $mediaSmall) {
+                //     background: $colorBackgroundShade url("https://images.filehippo.net/img/ex/1308__msseces.png") no-repeat $paddingLarge center;
+                //     background: $colorBackgroundShade url("https://cdn0.iconfinder.com/data/icons/security-double-colour-blue-black-vol-2/52/hosting__security__service__web-32.png") no-repeat $paddingLarge center;
+                //     background: $colorBackgroundShade url("https://cdn0.iconfinder.com/data/icons/security-double-colour-blue-black-vol-3/52/protection__safety__security__shield-32.png") no-repeat $paddingLarge center;
+                //     padding-left: 65px;
+                // }
+            }
+
+            &__icon {
+                width: 32px;
+                height: 32px;
+                margin: $paddingNormal;
+            }
+
+            &__body {
+                background-color: $colorBackgroundShade;
+                //display: flex;
+                flex: 1 0 auto;
+
+                &--centered {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+
+            &__footer {
+                border-top: 1px solid $colorBorder;
+                text-align: center;
+                font-size: 90%;
+                padding: $paddingNormal;
+            }
+        }
     }
 }

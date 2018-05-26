@@ -5,7 +5,42 @@
 @import "old/note.filter";
 @import "old/note.list";
 @import "old/style";
-@import "old/template.list";
-//@import "../css/tplist";
+
+@import "blocks/button";
+@import "blocks/dialog";
+@import "blocks/list";
+@import "blocks/note";
+//@import "blocks/note-list";
+@import "blocks/note-search";
+@import "blocks/page";
+@import "blocks/tab";
+@import "blocks/template-list";
 
 //@import "./blocks/autocomplete";
+
+
+.develop-focused {
+    outline: 1px dashed red;
+    outline-offset: -1px;
+}
+
+
+input {
+    border: 1px solid $colorBorder;
+    font: inherit;
+    padding: 7px;
+    width: 100%;
+    //border-radius: $borderRadius;
+    box-sizing: border-box;
+    color: $colorTextMain;
+    //background-color: $colorBackgroundShade;
+
+    &:focus {
+        border: 1px solid $colorLink;
+        outline: none;
+        color: $colorTextDark;
+        //background-color: $colorBackgroundMain;
+        //outline: 1px solid $colorButton;
+        //outline-offset: -1px;
+    }
+}

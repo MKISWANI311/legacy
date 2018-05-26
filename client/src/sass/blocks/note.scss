@@ -1,0 +1,97 @@
+.note {
+    //border: 1px solid $colorBorder;
+
+    // temp
+    //margin-bottom: 50px;
+
+    &--hidden {
+        display: none;
+    }
+
+    &__entries {}
+
+    &__entry, &__name, &__data {
+        //margin-right: 5px;
+    }
+
+    &__entry {}
+
+    &__name {}
+
+    &__tags {}
+
+    &__tag {
+        border: 1px solid $colorBorder;
+        background-color: $colorBackgroundShade;
+        padding: 3px 8px;
+        color: $colorTextHint;
+        cursor: pointer;
+        margin-right: 5px;
+        display: inline-block;
+        &:hover {
+            background-color: $colorBorder;
+            color: $colorTextMain;
+            //color: #fff;
+        }
+        //&.include {
+        //    color: $colorTextMain;
+        //    background-color: $colorBorder;
+        //    //font-weight: bold;
+        //    &:hover {
+        //        //background-color: #ffcc66;
+        //    }
+        //}
+    }
+
+    &--lister {
+        .note {
+            color: $colorTextHint;
+
+            &__tags {
+                margin-top: 5px;
+            }
+        }
+    }
+
+    &--viewer {
+        background-color: $colorBackgroundMain;
+        border: 1px solid $colorBorder;
+        padding: $paddingNormal;
+
+        .note {
+            &__entry {
+                display: flex;
+                //align-items: center;
+                margin-bottom: $paddingNormal * 2;
+            }
+
+            &__name {
+                font-weight: bold;
+                margin-bottom: $paddingSmall;
+            }
+
+            &__icon {
+                flex-basis: 32px;
+                margin-right: $paddingNormal;
+                margin-top: $paddingSmall;
+                height: 32px;
+                width: 32px;
+                opacity: 0.3;
+            }
+
+            &__body {
+                cursor: pointer;
+                flex: 1;
+                &:hover {
+                    background: url("https://image.flaticon.com/icons/svg/832/832192.svg") no-repeat top $paddingSmall right;
+                    background-size: 26px;
+                }
+            }
+
+            &__tags {
+                border-top: 1px dashed $colorBorder;
+                padding-top: $paddingNormal;
+            }
+        }
+    }
+}

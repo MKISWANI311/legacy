@@ -4,7 +4,7 @@
 
 /* clear previous data */
 
-drop table if exists entry_types;
+/*drop table if exists entry_types;*/
 drop table if exists entry_values;
 drop table if exists note_entries;
 drop table if exists notes;
@@ -16,12 +16,14 @@ drop table if exists templates;
 
 /* tables creation */
 
+/*
 CREATE TABLE "entry_types" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,
     "max" mediumint(8) NOT NULL,
     "name" varchar(256) NOT NULL,
     "description" varchar(512) DEFAULT NULL
 );
+*/
 
 CREATE TABLE "entry_values" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,
@@ -68,6 +70,7 @@ CREATE TABLE "tags" (
     "mtime" INTEGER DEFAULT 0
 );
 
+/*
 CREATE TABLE "template_entries" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,
     "id_template" INTEGER NOT NULL,
@@ -84,6 +87,7 @@ CREATE TABLE "templates" (
     "tag" varchar(256) NOT NULL,
     "description" varchar(512) DEFAULT NULL
 );
+*/
 
 CREATE TABLE "users" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,
@@ -102,11 +106,14 @@ CREATE INDEX "note_tags_idx_id_note" ON "note_tags" ("id_note");
 CREATE INDEX "note_tags_idx_id_tag" ON "note_tags" ("id_tag");
 CREATE INDEX "note_entries_idx_id_note" ON "note_entries" ("id_note");
 CREATE INDEX "tags_idx_id_user" ON "tags" ("id_user");
+/*
 CREATE INDEX "template_entries_idx_id_template" ON "template_entries" ("id_template");
 CREATE INDEX "templates_idx_id_user" ON "templates" ("id_user");
+*/
 
 /* default data insertion */
 
+/*
 insert into entry_types (id, max, name, description) values
     (1, 1024,  'line',    'title or short one line text description'),
     (2, 2048,  'uri',   'any addresses - http/https/ftp/ssh or file path'),
@@ -183,3 +190,4 @@ insert into template_entries (id_template, id_type, name, place) values
     ((select id from templates where name = 'database'), 3, 'username', 2),
     ((select id from templates where name = 'database'), 4, 'password', 3),
     ((select id from templates where name = 'database'), 6, 'comments', 4);
+*/

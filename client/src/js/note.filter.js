@@ -9,7 +9,7 @@ var //autocomplete = require('autocompleter'),
     app = require('./app'),
     api = require('./api'),
     NoteList = require('./note.list'),
-    TagManager = require('./tag.manager');
+    TagManager = require('./models/tag-manager');
 
 
 /**
@@ -49,12 +49,12 @@ var NoteFilter = new function () {
      */
     this.EventOpen = function () {
         // decrypt input data if not the first time
-        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
+        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(crypto.decrypt(this.dom.input.data));
         // restore backuped value
         this.dom.input.value = this.dom.input.data.encval;
         // inner parsed data
-        this.data = TagManager.StrParse(this.dom.input.value);
-        this.post = TagManager.StrParse();
+        this.data = TagManager.strParse(this.dom.input.value);
+        this.post = TagManager.strParse();
         // build notes
         PerformSearch();
         // show/hide info and controls
@@ -76,7 +76,7 @@ var NoteFilter = new function () {
             // backup and clear search string
             this.dom.input.data.encval = this.dom.input.value;
             // encrypt input data
-            this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
+            this.dom.input.data = crypto.encrypt(JSON.stringify(this.dom.input.data));
             // hide current value
             this.dom.input.value = '[encrypted data]';
             // inner parsed data
@@ -160,7 +160,9 @@ var NoteFilter = new function () {
         // show loading progress
         LoadingStart();
         // clone current data to post data
-        for ( var item in this.data ) this.post[item] = this.data[item].slice();
+        for ( var item in this.data ) {
+            this.post[item] = this.data[item].slice();
+        }
 
         api.post('note/search', {
             tinc: this.post.tinc,
@@ -178,13 +180,14 @@ var NoteFilter = new function () {
                 // make note list using the received data
                 NoteList.BuildTable(data.notes, data.total);
                 // check if no data but show message only if there were some search options uses
-                if ( data.total == 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
-                // no data, need to inform and suggest to see for example the latest notes
+                if ( data.total === 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) ) {
+                    // no data, need to inform and suggest to see for example the latest notes
                     self.MsgAdd([msg_info_no_data, element('a', {className: 'bold'}, 'latest notes', {
                         onclick: function () {
                             self.RequestLatest();
                         }
                     })]);
+                }
             } else {
                 // server error
                 self.MsgAdd(msg_fail_server_error + data.error, 'fail');
@@ -202,7 +205,7 @@ var NoteFilter = new function () {
         // check if old and current values match
         if ( this.dom.input.value.trim() !== this.dom.input.data.oldval.trim() ) {
             // updating parsed data
-            this.data = TagManager.StrParse(this.dom.input.value);
+            this.data = TagManager.strParse(this.dom.input.value);
             // save current values
             this.dom.input.data.oldval = this.dom.input.value;
         }
@@ -229,7 +232,9 @@ var NoteFilter = new function () {
         }
         //}
         // update user input if necessary
-        if ( ctrl ) this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+        if ( ctrl ) {
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.strBuild(this.data);
+        }
         // do search
         PerformSearch();
     };
@@ -272,8 +277,8 @@ var NoteFilter = new function () {
 //            // show latest
 //            NoteList.BuildTable(false);
 //            // reset inner data
-//            self.data = TagManager.StrParse();
-//            self.post = TagManager.StrParse();
+//            self.data = TagManager.strParse();
+//            self.post = TagManager.strParse();
 //        }
     };
 
@@ -283,14 +288,14 @@ var NoteFilter = new function () {
      */
     this.TagInclude = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataTagsNmlist[tagnm];
         // not added already and valid id
-        if ( tagid && !this.data.tinc.has(tagid) ) {
+        if ( tagid && !this.data.tinc.includes(tagid) ) {
             // prepare inner parsed data
             this.data.tinc.push(tagid);
             this.data.ninc.push(tagnm);
             // reforman input
-            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.strBuild(this.data);
         }
         // execute
         PerformSearch();
@@ -302,9 +307,9 @@ var NoteFilter = new function () {
      */
     this.TagExclude = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataTagsNmlist[tagnm];
         // exists in the search line and valid id
-        if ( tagid && this.data.tinc.has(tagid) ) {
+        if ( tagid && this.data.tinc.includes(tagid) ) {
             // locate tag name and id in the inner parsed data
             var tinci = this.data.tinc.indexOf(tagid);
             var ninci = this.data.ninc.indexOf(tagnm);
@@ -312,7 +317,7 @@ var NoteFilter = new function () {
             if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
             if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
             // reforman input
-            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.strBuild(this.data);
             //ReworkSearchStr();
         }
         // execute
@@ -325,9 +330,9 @@ var NoteFilter = new function () {
      */
     this.TagSubtract = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataTagsNmlist[tagnm];
         // not subtracted already and valid id
-        if ( tagid && !this.data.texc.has(tagid) ) {
+        if ( tagid && !this.data.texc.includes(tagid) ) {
             // locate tag name and id in the inner parsed data
             var tinci = this.data.tinc.indexOf(tagid);
             var ninci = this.data.ninc.indexOf(tagnm);
@@ -338,7 +343,7 @@ var NoteFilter = new function () {
             this.data.texc.push(tagid);
             this.data.nexc.push(tagnm);
             // reforman input
-            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.strBuild(this.data);
             //ReworkSearchStr();
         }
         // execute
@@ -361,7 +366,7 @@ var NoteFilter = new function () {
                 self.MsgClear();
             }
             // reforman input
-            self.dom.input.data.oldval = self.dom.input.value = TagManager.StrBuild(self.data);
+            self.dom.input.data.oldval = self.dom.input.value = TagManager.strBuild(self.data);
             // filtering all the table
             NoteList.SetNotesVisibility();
         }
@@ -375,8 +380,8 @@ var NoteFilter = new function () {
         this.dom.input.data.oldval = this.dom.input.value = '';
         self.dom.input.focus();
         // clear tags data
-        this.data = TagManager.StrParse();
-        this.post = TagManager.StrParse();
+        this.data = TagManager.strParse();
+        this.post = TagManager.strParse();
         // delete all messages
         self.MsgClear();
     }
@@ -392,8 +397,8 @@ var NoteFilter = new function () {
         this.dom = {handle: params.handle};
 
         // parsed input data and its copy on post
-        this.data = TagManager.StrParse();
-        this.post = TagManager.StrParse();
+        this.data = TagManager.strParse();
+        this.post = TagManager.strParse();
 
         // build all blocks together
         elchild(this.dom.handle, [
@@ -432,27 +437,27 @@ var NoteFilter = new function () {
                 // preparing
                 var data = [];
                 // commands
-                if ( !self.data.wcmd.has('deleted') ) {
+                if ( !self.data.wcmd.includes('deleted') ) {
                     data.push({item: [':deleted', 0]});
                 }
-                if ( !self.data.wcmd.has('notags') ) {
+                if ( !self.data.wcmd.includes('notags') ) {
                     data.push({item: [':notags', 0]});
                 }
-                if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+                if ( !self.data.wcmd.includes('day') && !self.data.wcmd.includes('week') && !self.data.wcmd.includes('month') )
                     data.push({item: [':day', 0]}, {item: [':week', 0]}, {item: [':month', 0]});
                 // if notags mode than no tags suggesting
-                if ( !self.data.wcmd.has('notags') ) {
+                if ( !self.data.wcmd.includes('notags') ) {
                     var lnids = [];
                     // get linked tags to already selected
-                    if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+                    if ( self.data.tinc.length > 0 ) lnids = TagManager.linked(self.data.tinc);
                     // iterate all tags
                     for ( var tnm in window.dataTagsNmlist ) {
                         // get tag id
                         var tid = window.dataTagsNmlist[tnm];
                         // there are no including tags selected or it's one of the linked tag
-                        if ( self.data.tinc.length === 0 || lnids.has(tid) ) {
+                        if ( self.data.tinc.length === 0 || lnids.includes(tid) ) {
                             // was not added so add it
-                            if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) {
+                            if ( !self.data.tinc.includes(tid) && !self.data.texc.includes(tid) ) {
                                 data.push({item: [tnm, tid]}, {item: ['-' + tnm, tid]});
                             }
                         }
@@ -525,23 +530,23 @@ var NoteFilter = new function () {
                     // preparing
                     data = [];
                     // commands
-                    if ( !self.data.wcmd.has('deleted') ) data.push([':deleted', 0]);
-                    if ( !self.data.wcmd.has('notags') ) data.push([':notags', 0]);
-                    if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+                    if ( !self.data.wcmd.includes('deleted') ) data.push([':deleted', 0]);
+                    if ( !self.data.wcmd.includes('notags') ) data.push([':notags', 0]);
+                    if ( !self.data.wcmd.includes('day') && !self.data.wcmd.includes('week') && !self.data.wcmd.includes('month') )
                         data.push([':day', 0], [':week', 0], [':month', 0]);
                     // if notags mode than no tags suggesting
-                    if ( !self.data.wcmd.has('notags') ) {
+                    if ( !self.data.wcmd.includes('notags') ) {
                         var lnids = [];
                         // get linked tags to already selected
-                        if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+                        if ( self.data.tinc.length > 0 ) lnids = TagManager.linked(self.data.tinc);
                         // iterate all tags
-                        for ( var tnm in window.dataTagsNmlist ) {
+                        for ( var tnm in TagManager.dataTagsNmlist ) {
                             // get tag id
-                            var tid = window.dataTagsNmlist[tnm];
+                            var tid = TagManager.dataTagsNmlist[tnm];
                             // there are no including tags selected or it's one of the linked tag
-                            if ( self.data.tinc.length === 0 || lnids.has(tid) )
+                            if ( self.data.tinc.length === 0 || lnids.includes(tid) )
                             // was not added so add it
-                                if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) data.push([tnm, tid], ['-' + tnm, tid]);
+                                if ( !self.data.tinc.includes(tid) && !self.data.texc.includes(tid) ) data.push([tnm, tid], ['-' + tnm, tid]);
                         }
                     }
                 }

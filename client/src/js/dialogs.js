@@ -43,8 +43,8 @@ DlgExport = new DialogModal({
                     // check type
                     if ( window.exportData.notes[idNote] instanceof Array ) {
                         window.exportData.notes[idNote].forEach(function ( entry ) {
-                            var name = app.decode(entry.name, true);
-                            var data = app.decode(entry.data, true);
+                            var name = crypto.decrypt(entry.name, true);
+                            var data = crypto.decrypt(entry.data, true);
                             if ( name && data ) {
                                 DlgExport.dom.text.value += name + ': ' + data + '\n';
                             }
@@ -54,7 +54,7 @@ DlgExport = new DialogModal({
                     if ( window.exportData.note_tags[idNote] instanceof Array ) {
                         var tags = [];
                         window.exportData.note_tags[idNote].forEach(function ( idTag ) {
-                            if ( window.exportData.tags[idTag] ) tags.push(app.decode(window.exportData.tags[idTag], true));
+                            if ( window.exportData.tags[idTag] ) tags.push(crypto.decrypt(window.exportData.tags[idTag], true));
                         });
                         if ( tags.length > 0 ) {
                             DlgExport.dom.text.value += 'tags: ' + tags.join(' ') + '\n';
@@ -234,7 +234,7 @@ DlgPassGet = new DialogModal({
             attr: {}
         });
         this.data.pass = element('input', {type: 'password', autocomplete: 'current-password', className: 'line'});
-        this.data.linkset = element('a', {className: 'combo', title: 'click to change the password storing time'});
+        //this.data.linkset = element('a', {className: 'combo', title: 'click to change the password storing time'});
         onEnterClick(this.data.pass, this.params.controls['Continue'].dom);
 
         this.data.fldlist.AddRow([
@@ -290,6 +290,9 @@ DlgPassGet = new DialogModal({
             onClick: function () {
                 var modal = this.modal;
                 var pass = modal.data.pass.value;
+
+                console.log('Continue.onClick');
+
                 // check pass
                 if ( app.checkPass(pass) ) {
                     initData(window.dataUser, function () {
@@ -309,7 +312,7 @@ DlgPassGet = new DialogModal({
                 } else {
                     modal.data.pass.focus();
                     modal.data.attempts++;
-                    if ( modal.data.attempts == 1 )
+                    if ( modal.data.attempts === 1 )
                         modal.SetMessage('Password is invalid!');
                     else
                         modal.SetMessage(['Password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
@@ -414,7 +417,7 @@ DlgUserLogin = new DialogModal({
                                     modal.Close();
                                     //NoteFilter.SetFocus();
 
-                                    window.pageInit.style.display = 'none';
+                                    //window.pageInit.style.display = 'none';
                                     //window.pageMain.style.display = 'block';
                                     //}, 500);
                                 });
@@ -546,7 +549,7 @@ DlgUserRegister = new DialogModal({
                 var pass1 = modal.data.pass1.value;
                 var pass2 = modal.data.pass2.value;
                 // verification
-                if ( username && pass1 && pass2 && pass1 == pass2 ) {
+                if ( username && pass1 && pass2 && pass1 === pass2 ) {
                     // make hash
                     username = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(username));
                     password = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(pass1));
@@ -595,8 +598,8 @@ DlgUserRegister = new DialogModal({
                                         //window.location.href = window.location.href;
                                         modal.Close();
 
-                                        window.pageInit.style.display = 'none';
-                                        window.pageMain.style.display = 'block';
+                                        //window.pageInit.style.display = 'none';
+                                        //window.pageMain.style.display = 'block';
                                         //}, 500);
                                     });
                                     return;

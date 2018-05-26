@@ -37,7 +37,7 @@ function TagList ( params ) {
         console.time('decode tags');
         // decode tags
         for ( var id in window.dataTags.data ) {
-            var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
+            var name = crypto.decrypt(window.dataTags.data[id][window.dataTags.defn.name]);
             window.dataTagsNmlist[name] = id = parseInt(id, 10);
             window.dataTagsIdlist[id] = name;
         }
@@ -132,7 +132,7 @@ function TagList ( params ) {
                             result.push(window.dataTagsNmlist[data[i]]);
 //                        } else {
 //                            // not found so encrypt
-//                            result.push(app.encode(data[i]));
+//                            result.push(crypto.encrypt(data[i]));
                         }
                         // add word
                         words.push(data[i]);
@@ -164,7 +164,7 @@ function TagList ( params ) {
                         var text = self.dom.input.value.trim();
                         self.dom.input.value = text + (text ? ' ' : '') + this.tagnm;
                         for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
-                            if ( !window.dataTags.data[id][window.dataTags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
+                            if ( !window.dataTags.data[id][window.dataTags.defn.links].includes(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
                                 //$(self.dom.tags.childNodes[i]).addClass('inactive');
                                 self.dom.tags.childNodes[i].classList.add('inactive');
                             }
@@ -172,7 +172,7 @@ function TagList ( params ) {
                     } else {
                         self.dom.input.value = self.dom.input.value.replace(this.tagnm, '').replace('  ', ' ').trim();
                         for ( i = 0; i < self.dom.tags.childNodes.length; i++ ) {
-                            //if ( !window.dataTags.data[id][window.dataTags.defn.links].has(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
+                            //if ( !window.dataTags.data[id][window.dataTags.defn.links].includes(self.dom.tags.childNodes[i].tagid) && self.dom.tags.childNodes[i].tagid != id ) {
                             //$(self.dom.tags.childNodes[i]).removeClass('inactive');
                             self.dom.tags.childNodes[i].classList.remove('inactive');
                             //}

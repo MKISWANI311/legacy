@@ -6,9 +6,9 @@ var sjcl = require('./sjcl.min');
 
 
 // array prototypes
-Array.prototype.has = function ( value ) {
-    return this.indexOf(value) >= 0;
-};
+// Array.prototype.has = function ( value ) {
+//     return this.indexOf(value) >= 0;
+// };
 // Array.prototype.empty = function () {
 //     return !(this.length > 0);
 // };
@@ -82,7 +82,7 @@ Array.prototype.has = function ( value ) {
 window.onEnterClick = function onEnterClick ( src, dest ) {
     src.addEventListener('keydown', function ( event ) {
         if ( event.keyCode === 13 ) {
-            dest.focus();
+            //dest.focus();
             dest.click();
         }
     });
@@ -281,12 +281,14 @@ window.TimestampToDateStr = function TimestampToDateStr ( tstamp ) {
 
 /**
  * Password generator with SJCL entropy mechanism
- * @param {Number} length size of the result password
- * @return {String}
+ * @param {number} length size of the result password
+ * @return {string}
  */
 window.pwdgen = function pwdgen ( length ) {
     var charset = 'abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&{}()[]=+?*<>;,.:-_',
-        letters = [], letter, result = '';
+        letters = [],
+        result  = '',
+        letter;
 
     while ( result.length < length ) {
         letter = null;
@@ -295,7 +297,9 @@ window.pwdgen = function pwdgen ( length ) {
             // get
             letter = String.fromCharCode(parseInt(sjcl.codec.hex.fromBits(sjcl.random.randomWords(1)).substr(0, 2), 16));
             // invalidate if not in dictionary
-            if ( charset.indexOf(letter) === -1 ) letter = null;
+            if ( charset.indexOf(letter) === -1 ) {
+                letter = null;
+            }
         } else {
             letter = charset.charAt(Math.floor(Math.random() * charset.length));
         }
@@ -310,6 +314,7 @@ window.pwdgen = function pwdgen ( length ) {
             }
         }
     }
+
     return result;
 };
 

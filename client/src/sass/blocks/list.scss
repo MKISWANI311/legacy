@@ -1,0 +1,166 @@
+.list {
+    background-color: $colorBackgroundMain;
+    border: 1px solid $colorBorder;
+
+    &--focused {
+        border: 1px solid $colorLink;
+    }
+
+    &--hidden {
+        display: none;
+    }
+
+    &__item {
+        cursor: pointer;
+        border-bottom: 1px solid $colorBorder;
+        padding: 8px 10px;
+
+        &--focused {
+            background-color: $colorBackgroundHover;
+        }
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: $colorBackgroundHover;
+        }
+    }
+
+    &--template-list {
+        .list {
+            &__item {
+                display: flex;
+                align-items: center;
+
+                //background: url("https://image.flaticon.com/icons/svg/243/243378.svg") no-repeat 10px center;
+                //background: url("https://image.flaticon.com/icons/svg/137/137132.svg") no-repeat 10px center;
+
+                //padding: 6px 6px 6px 48px;
+
+                &:hover {
+                    //background-color: $colorBackgroundHover;
+                }
+
+                &-icon {
+                    flex-basis: 32px;
+                    margin-right: 10px;
+                    width: 32px;
+                    height: 32px;
+                }
+
+                &-body {
+                    flex: 1;
+                }
+
+                &-name {}
+
+                &-hint {
+                    font-size: 90%;
+                    color: $colorTextHint;
+                }
+            }
+        }
+    }
+
+    &--note-list {
+        // temp
+        //margin-bottom: 50px;
+
+        //border: none;
+
+        .list {
+            &__item {
+                display: flex;
+                align-items: center;
+
+                //border-bottom: none;
+                //border-top: 1px dashed $colorBorder;
+
+                //border-top: 1px solid $colorBorder;
+                //cursor: pointer;
+                //margin: 0;
+                //background: url("https://image.flaticon.com/icons/svg/243/243378.svg") no-repeat 10px center;
+                //background: url("https://image.flaticon.com/icons/svg/137/137132.svg") no-repeat 10px center;
+                //background-size: 28px;
+                //padding: 6px 6px 6px 48px;
+
+                //&:hover {
+                //    background-color: $colorBackgroundHover;
+                //}
+
+                /*&:last-of-type {
+                    border-bottom: 1px dashed $colorBorder;
+                }*/
+            }
+
+            &__check {
+                opacity: 0.3;
+                flex-basis: 24px;
+                height: 24px;
+                margin: 0 15px 0 5px;
+                width: 24px;
+            }
+
+            &__icon {
+                flex-basis: 32px;
+                height: 32px;
+                margin-right: 10px;
+                width: 32px;
+            }
+
+            &__body {
+                flex: 1;
+            }
+
+            &__entries {}
+
+            &__entry, &__name, &__data {
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+            &__entry {
+
+            }
+
+            &__name {
+                color: $colorTextHint;
+            }
+
+            &__tags {
+                //font-size: 90%;
+                //color: $colorTextHint;
+                //margin-top: 5px;
+            }
+
+            &__tag {
+                border: 1px solid $colorBorder;
+                background-color: $colorBackgroundShade;
+                padding: 3px 8px;
+                color: $colorTextHint;
+                cursor: pointer;
+                margin-right: 5px;
+                margin-top: 5px;
+                display: inline-block;
+
+                &:hover {
+                    background-color: $colorBorder;
+                    color: $colorTextMain;
+                    //color: #fff;
+                }
+
+
+                //&.include {
+                //    color: $colorTextMain;
+                //    background-color: $colorBorder;
+                //    //font-weight: bold;
+                //    &:hover {
+                //        //background-color: #ffcc66;
+                //    }
+                //}
+            }
+        }
+    }
+}
