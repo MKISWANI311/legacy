@@ -162,8 +162,8 @@ var NoteList = new function () {
             // get rid of all unnecessary parts
             url = url.split('/');
             // parts are valid
-            if ( url[2] && url[2] != 'localhost' ) {
-                // try to get image, won't repclace the current one if no icon found
+            if ( url[2] && url[2] !== 'localhost' ) {
+                // try to get image, won't replace the current one if no icon found
                 // https://www.google.com/s2/favicons?domain=google.com gives only 16px images
                 element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
                     onload: function () {
