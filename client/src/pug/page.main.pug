@@ -1,0 +1,22 @@
+#pageMain.hidden(style='height: 100%;')
+    table.body_content.maxh.maxw
+        tr.header
+            td.logo FortNotes
+            td(style='color:red; text-align:center') This version is deprecated. Please consider switching to a new one.
+            td.menu
+                a(href='javascript:DlgOptions.Show()') Options
+                span |
+                a(href='javascript:SignOut()') Exit
+        tr
+            td(colspan='3' style='vertical-align: top;')
+                table.maxw
+                    tr
+                        td(style='padding:10px; vertical-align:top')
+                            .notefilter
+                            .notelist
+                        td(style='padding:10px; width:415px; vertical-align:top; min-height:800px;')
+                            .templatelist
+                            .noteeditor
+        tr.footer
+            td(colspan='3' style='font-size: 90%;')
+                | Copyright &copy; 2013 FortNotes. All rights reserved.
