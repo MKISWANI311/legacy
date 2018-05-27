@@ -339,7 +339,17 @@ DlgUserLogin = new DialogModal({
             type: 'text',
             value: app.get('username_last_used', '')
         });
-        this.data.pass = element('input', {className: 'line', autocomplete: 'current-password', type: 'password'});
+        this.data.pass = element('input', {
+            className: 'line',
+            autocomplete: 'current-password',
+            type: 'password'
+        });
+        this.data.serv = element('input', {
+            className: 'line',
+            autocomplete: 'server',
+            type: 'url',
+            value: app.get('server', 'https://fortnotes.com/')
+        });
 
         //onEnterFocus(this.data.name, this.data.pass);
         onEnterClick(this.data.pass, this.params.controls['Login'].dom);
@@ -355,6 +365,12 @@ DlgUserLogin = new DialogModal({
                 element('br'),
                 element('span', {className: 'fldhint'}, 'your secret key')],
             this.data.pass
+        ], {});
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'server'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'data storage')],
+            this.data.serv
         ], {});
         this.SetContent(element('form', {}, this.data.fldlist.dom.table));
     },
@@ -385,6 +401,9 @@ DlgUserLogin = new DialogModal({
                         modal.SetLoading("Sending server request ...");
                     }
 
+                    app.set('server', modal.data.serv.value, true);
+                    api.defaults.server = modal.data.serv.value;
+
                     api.post('user/auth', {name: username, pass: password, mode: 'login'}, function ( error, data ) {
                         if ( error ) {
                             console.error(error);
@@ -414,7 +433,7 @@ DlgUserLogin = new DialogModal({
                                     modal.Close();
                                     //NoteFilter.SetFocus();
 
-                                    window.pageInit.style.display = 'none';
+                                    //window.pageInit.style.display = 'none';
                                     //window.pageMain.style.display = 'block';
                                     //}, 500);
                                 });
@@ -595,7 +614,7 @@ DlgUserRegister = new DialogModal({
                                         //window.location.href = window.location.href;
                                         modal.Close();
 
-                                        window.pageInit.style.display = 'none';
+                                        //window.pageInit.style.display = 'none';
                                         window.pageMain.style.display = 'block';
                                         //}, 500);
                                     });
