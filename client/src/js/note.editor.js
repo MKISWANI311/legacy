@@ -1377,14 +1377,14 @@ window.NoteEditor = new function () {
 
     var SetTitleIcon = function ( icon ) {
         if ( !icon ) {
-            icon = 'img/tag_note.png';
+            icon = 'img/tags/note.svg';
             var tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
             // check parsed string
             if ( tags && tags instanceof Array ) {
                 // iterate words in the input string
                 for ( var i = 0; i < tags.length; i++ ) {
                     if ( window.iconTags.has(tags[i]) ) {
-                        icon = 'img/tag_' + tags[i] + '.png';
+                        icon = 'img/tags/' + tags[i] + '.svg';
                         break;
                     }
                 }

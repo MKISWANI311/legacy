@@ -252,14 +252,14 @@ var NoteList = new function () {
      */
     var GetNoteIcon = function ( note ) {
         // prepare
-        var icon = 'img/tag_note.png',
+        var icon = 'img/tags/note.svg',
             tags = TagManager.IDs2Names(note.tags);
         // iterate words in the tag list
         tags.forEach(function ( item ) {
             // it's a tag from the global set
             if ( window.iconTags.has(item) ) {
                 // get the first match
-                icon = 'img/tag_' + item + '.png';
+                icon = 'img/tags/' + item + '.svg';
                 return;
             }
         });
