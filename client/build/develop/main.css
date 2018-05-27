@@ -309,7 +309,7 @@
         height: 34px;
         line-height: 34px;
         width: 34px;
-        background: url("https://image.flaticon.com/icons/svg/180/180006.svg") no-repeat center center;
+        background: url("img/home.svg") no-repeat center center;
         background-size: 20px; }
     .notefilter > .search > .line {
       padding-left: 34px;
@@ -323,7 +323,7 @@
       height: 30px;
       line-height: 26px;
       width: 30px;
-      background: #ddd url("https://image.flaticon.com/icons/svg/753/753877.svg") no-repeat center center;
+      background: #ddd url("img/label.svg") no-repeat center center;
       background-size: 20px; }
       .notefilter > .search > .icon.loading {
         background-image: url("img/loading.16.gif"); }
@@ -743,13 +743,14 @@ input.email:hover, input.line:hover, textarea.text:hover {
   .templatelist > .list > .item {
     cursor: pointer;
     margin: 0;
-    padding: 4px 4px 4px 15px;
+    padding: 5px 5px 5px 10px;
     position: relative; }
     .templatelist > .list > .item:hover {
       background-color: #e3ecfd; }
     .templatelist > .list > .item .line {
-      background: url("img/template.png") no-repeat left center;
-      padding-left: 25px; }
+      background: url("img/template.svg") no-repeat left center;
+      background-size: 20px;
+      padding-left: 30px; }
     .templatelist > .list > .item .name {
       font-weight: bold; }
     .templatelist > .list > .item .hint {

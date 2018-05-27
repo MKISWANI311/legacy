@@ -1055,8 +1055,8 @@ var NoteList = new function () {
             // get rid of all unnecessary parts
             url = url.split('/');
             // parts are valid
-            if ( url[2] && url[2] != 'localhost' ) {
-                // try to get image, won't repclace the current one if no icon found
+            if ( url[2] && url[2] !== 'localhost' ) {
+                // try to get image, won't replace the current one if no icon found
                 // https://www.google.com/s2/favicons?domain=google.com gives only 16px images
                 element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
                     onload: function () {
@@ -1145,14 +1145,14 @@ var NoteList = new function () {
      */
     var GetNoteIcon = function ( note ) {
         // prepare
-        var icon = 'img/tag_note.png',
+        var icon = 'img/tags/note.svg',
             tags = TagManager.IDs2Names(note.tags);
         // iterate words in the tag list
         tags.forEach(function ( item ) {
             // it's a tag from the global set
             if ( window.iconTags.has(item) ) {
                 // get the first match
-                icon = 'img/tag_' + item + '.png';
+                icon = 'img/tags/' + item + '.svg';
                 return;
             }
         });
@@ -3843,14 +3843,14 @@ window.NoteEditor = new function () {
 
     var SetTitleIcon = function ( icon ) {
         if ( !icon ) {
-            icon = 'img/tag_note.png';
+            icon = 'img/tags/note.svg';
             var tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
             // check parsed string
             if ( tags && tags instanceof Array ) {
                 // iterate words in the input string
                 for ( var i = 0; i < tags.length; i++ ) {
                     if ( window.iconTags.has(tags[i]) ) {
-                        icon = 'img/tag_' + tags[i] + '.png';
+                        icon = 'img/tags/' + tags[i] + '.svg';
                         break;
                     }
                 }
