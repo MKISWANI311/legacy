@@ -107,7 +107,7 @@ class user {
     /**
      * End session
      */
-    function signout () {
+    function logout () {
         $result = false;
 
         // check if session id set

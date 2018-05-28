@@ -282,7 +282,7 @@ DlgPassGet = new DialogModal({
             main: false,
             onClick: function () {
                 this.modal.Close();
-                SignOut();
+                Logout();
             }
         },
         Continue: {

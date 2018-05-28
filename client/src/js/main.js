@@ -27,15 +27,15 @@ require('./dialogs');
 //require('./_jquery-1.9.1.min');
 //require('./_jquery.simplemodal.1.4.4.min');
 
-window.SignOut = function SignOut () {
-    api.post('user/signout', null, function ( error, data ) {
+window.Logout = function SignOut () {
+    api.post('user/logout', null, function ( error, data ) {
         if ( error ) {
             console.error(error);
             return;
         }
 
         // true or false
-        console.log('signout', data);
+        console.log('logout', data);
 
         location.reload();
     });
