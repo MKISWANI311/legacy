@@ -710,7 +710,6 @@ input.email:hover, input.line:hover, textarea.text:hover {
 
 .templatelist > .title {
   border: 1px solid #ddd;
-  background: url("img/folder.png") no-repeat 7px center;
   background-color: #fafafa;
   position: relative;
   height: 34px; }
@@ -718,9 +717,9 @@ input.email:hover, input.line:hover, textarea.text:hover {
     color: #bbb;
     /*font-size:13px;*/
     font-weight: bold;
-    padding-left: 30px;
-    height: 30px;
-    line-height: 30px; }
+    height: 34px;
+    line-height: 34px;
+    text-align: center; }
   .templatelist > .title > input {
     position: absolute;
     top: 6px;
@@ -748,9 +747,22 @@ input.email:hover, input.line:hover, textarea.text:hover {
     .templatelist > .list > .item:hover {
       background-color: #e3ecfd; }
     .templatelist > .list > .item .line {
-      background: url("img/template.svg") no-repeat left center;
-      background-size: 20px;
+      background-size: 20px !important;
       padding-left: 30px; }
+      .templatelist > .list > .item .line.database {
+        background: url("img/tags/database.svg") no-repeat left center; }
+      .templatelist > .list > .item .line.email {
+        background: url("img/tags/email.svg") no-repeat left center; }
+      .templatelist > .list > .item .line.ftp {
+        background: url("img/tags/ftp.svg") no-repeat left center; }
+      .templatelist > .list > .item .line.messenger {
+        background: url("img/tags/messenger.svg") no-repeat left center; }
+      .templatelist > .list > .item .line.note {
+        background: url("img/tags/note.svg") no-repeat left center; }
+      .templatelist > .list > .item .line.site {
+        background: url("img/tags/site.svg") no-repeat left center; }
+      .templatelist > .list > .item .line.ssh {
+        background: url("img/tags/ssh.svg") no-repeat left center; }
     .templatelist > .list > .item .name {
       font-weight: bold; }
     .templatelist > .list > .item .hint {

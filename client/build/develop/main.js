@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -76,7 +76,7 @@
 
 
 
-var sjcl = __webpack_require__(1);
+var sjcl = __webpack_require__(2);
 
 
 var app = new function () {
@@ -383,55 +383,6 @@ module.exports = app;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var sjcl={cipher:{},hash:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a}}};
-sjcl.cipher.aes=function(a){this.h[0][0][0]||this.w();var b,c,d,e,f=this.h[0][4],g=this.h[1];b=a.length;var h=1;if(b!==4&&b!==6&&b!==8)throw new sjcl.exception.invalid("invalid aes key size");this.a=[d=a.slice(0),e=[]];for(a=b;a<4*b+28;a++){c=d[a-1];if(a%b===0||b===8&&a%b===4){c=f[c>>>24]<<24^f[c>>16&255]<<16^f[c>>8&255]<<8^f[c&255];if(a%b===0){c=c<<8^c>>>24^h<<24;h=h<<1^(h>>7)*283}}d[a]=d[a-b]^c}for(b=0;a;b++,a--){c=d[b&3?a:a-4];e[b]=a<=4||b<4?c:g[0][f[c>>>24]]^g[1][f[c>>16&255]]^g[2][f[c>>8&255]]^
-g[3][f[c&255]]}};
-sjcl.cipher.aes.prototype={encrypt:function(a){return this.H(a,0)},decrypt:function(a){return this.H(a,1)},h:[[[],[],[],[],[]],[[],[],[],[],[]]],w:function(){var a=this.h[0],b=this.h[1],c=a[4],d=b[4],e,f,g,h=[],i=[],k,j,l,m;for(e=0;e<0x100;e++)i[(h[e]=e<<1^(e>>7)*283)^e]=e;for(f=g=0;!c[f];f^=k||1,g=i[g]||1){l=g^g<<1^g<<2^g<<3^g<<4;l=l>>8^l&255^99;c[f]=l;d[l]=f;j=h[e=h[k=h[f]]];m=j*0x1010101^e*0x10001^k*0x101^f*0x1010100;j=h[l]*0x101^l*0x1010100;for(e=0;e<4;e++){a[e][f]=j=j<<24^j>>>8;b[e][l]=m=m<<24^m>>>8}}for(e=
-0;e<5;e++){a[e]=a[e].slice(0);b[e]=b[e].slice(0)}},H:function(a,b){if(a.length!==4)throw new sjcl.exception.invalid("invalid aes block size");var c=this.a[b],d=a[0]^c[0],e=a[b?3:1]^c[1],f=a[2]^c[2];a=a[b?1:3]^c[3];var g,h,i,k=c.length/4-2,j,l=4,m=[0,0,0,0];g=this.h[b];var n=g[0],o=g[1],p=g[2],q=g[3],r=g[4];for(j=0;j<k;j++){g=n[d>>>24]^o[e>>16&255]^p[f>>8&255]^q[a&255]^c[l];h=n[e>>>24]^o[f>>16&255]^p[a>>8&255]^q[d&255]^c[l+1];i=n[f>>>24]^o[a>>16&255]^p[d>>8&255]^q[e&255]^c[l+2];a=n[a>>>24]^o[d>>16&
-255]^p[e>>8&255]^q[f&255]^c[l+3];l+=4;d=g;e=h;f=i}for(j=0;j<4;j++){m[b?3&-j:j]=r[d>>>24]<<24^r[e>>16&255]<<16^r[f>>8&255]<<8^r[a&255]^c[l++];g=d;d=e;e=f;f=a;a=g}return m}};
-sjcl.bitArray={bitSlice:function(a,b,c){a=sjcl.bitArray.P(a.slice(b/32),32-(b&31)).slice(1);return c===undefined?a:sjcl.bitArray.clamp(a,c-b)},concat:function(a,b){if(a.length===0||b.length===0)return a.concat(b);var c=a[a.length-1],d=sjcl.bitArray.getPartial(c);return d===32?a.concat(b):sjcl.bitArray.P(b,d,c|0,a.slice(0,a.length-1))},bitLength:function(a){var b=a.length;if(b===0)return 0;return(b-1)*32+sjcl.bitArray.getPartial(a[b-1])},clamp:function(a,b){if(a.length*32<b)return a;a=a.slice(0,Math.ceil(b/
-32));var c=a.length;b&=31;if(c>0&&b)a[c-1]=sjcl.bitArray.partial(b,a[c-1]&2147483648>>b-1,1);return a},partial:function(a,b,c){if(a===32)return b;return(c?b|0:b<<32-a)+a*0x10000000000},getPartial:function(a){return Math.round(a/0x10000000000)||32},equal:function(a,b){if(sjcl.bitArray.bitLength(a)!==sjcl.bitArray.bitLength(b))return false;var c=0,d;for(d=0;d<a.length;d++)c|=a[d]^b[d];return c===0},P:function(a,b,c,d){var e;e=0;if(d===undefined)d=[];for(;b>=32;b-=32){d.push(c);c=0}if(b===0)return d.concat(a);
-for(e=0;e<a.length;e++){d.push(c|a[e]>>>b);c=a[e]<<32-b}e=a.length?a[a.length-1]:0;a=sjcl.bitArray.getPartial(e);d.push(sjcl.bitArray.partial(b+a&31,b+a>32?c:d.pop(),1));return d},k:function(a,b){return[a[0]^b[0],a[1]^b[1],a[2]^b[2],a[3]^b[3]]}};
-sjcl.codec.utf8String={fromBits:function(a){var b="",c=sjcl.bitArray.bitLength(a),d,e;for(d=0;d<c/8;d++){if((d&3)===0)e=a[d/4];b+=String.fromCharCode(e>>>24);e<<=8}return decodeURIComponent(escape(b))},toBits:function(a){a=unescape(encodeURIComponent(a));var b=[],c,d=0;for(c=0;c<a.length;c++){d=d<<8|a.charCodeAt(c);if((c&3)===3){b.push(d);d=0}}c&3&&b.push(sjcl.bitArray.partial(8*(c&3),d));return b}};
-sjcl.codec.hex={fromBits:function(a){var b="",c;for(c=0;c<a.length;c++)b+=((a[c]|0)+0xf00000000000).toString(16).substr(4);return b.substr(0,sjcl.bitArray.bitLength(a)/4)},toBits:function(a){var b,c=[],d;a=a.replace(/\s|0x/g,"");d=a.length;a+="00000000";for(b=0;b<a.length;b+=8)c.push(parseInt(a.substr(b,8),16)^0);return sjcl.bitArray.clamp(c,d*4)}};
-sjcl.codec.base64={D:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",fromBits:function(a,b){var c="",d,e=0,f=sjcl.codec.base64.D,g=0,h=sjcl.bitArray.bitLength(a);for(d=0;c.length*6<h;){c+=f.charAt((g^a[d]>>>e)>>>26);if(e<6){g=a[d]<<6-e;e+=26;d++}else{g<<=6;e-=6}}for(;c.length&3&&!b;)c+="=";return c},toBits:function(a){a=a.replace(/\s|=/g,"");var b=[],c,d=0,e=sjcl.codec.base64.D,f=0,g;for(c=0;c<a.length;c++){g=e.indexOf(a.charAt(c));if(g<0)throw new sjcl.exception.invalid("this isn't base64!");
-if(d>26){d-=26;b.push(f^g>>>d);f=g<<32-d}else{d+=6;f^=g<<32-d}}d&56&&b.push(sjcl.bitArray.partial(d&56,f,1));return b}};sjcl.hash.sha256=function(a){this.a[0]||this.w();if(a){this.n=a.n.slice(0);this.i=a.i.slice(0);this.e=a.e}else this.reset()};sjcl.hash.sha256.hash=function(a){return(new sjcl.hash.sha256).update(a).finalize()};
-sjcl.hash.sha256.prototype={blockSize:512,reset:function(){this.n=this.N.slice(0);this.i=[];this.e=0;return this},update:function(a){if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);var b,c=this.i=sjcl.bitArray.concat(this.i,a);b=this.e;a=this.e=b+sjcl.bitArray.bitLength(a);for(b=512+b&-512;b<=a;b+=512)this.C(c.splice(0,16));return this},finalize:function(){var a,b=this.i,c=this.n;b=sjcl.bitArray.concat(b,[sjcl.bitArray.partial(1,1)]);for(a=b.length+2;a&15;a++)b.push(0);b.push(Math.floor(this.e/
-4294967296));for(b.push(this.e|0);b.length;)this.C(b.splice(0,16));this.reset();return c},N:[],a:[],w:function(){function a(e){return(e-Math.floor(e))*0x100000000|0}var b=0,c=2,d;a:for(;b<64;c++){for(d=2;d*d<=c;d++)if(c%d===0)continue a;if(b<8)this.N[b]=a(Math.pow(c,0.5));this.a[b]=a(Math.pow(c,1/3));b++}},C:function(a){var b,c,d=a.slice(0),e=this.n,f=this.a,g=e[0],h=e[1],i=e[2],k=e[3],j=e[4],l=e[5],m=e[6],n=e[7];for(a=0;a<64;a++){if(a<16)b=d[a];else{b=d[a+1&15];c=d[a+14&15];b=d[a&15]=(b>>>7^b>>>18^
-b>>>3^b<<25^b<<14)+(c>>>17^c>>>19^c>>>10^c<<15^c<<13)+d[a&15]+d[a+9&15]|0}b=b+n+(j>>>6^j>>>11^j>>>25^j<<26^j<<21^j<<7)+(m^j&(l^m))+f[a];n=m;m=l;l=j;j=k+b|0;k=i;i=h;h=g;g=b+(h&i^k&(h^i))+(h>>>2^h>>>13^h>>>22^h<<30^h<<19^h<<10)|0}e[0]=e[0]+g|0;e[1]=e[1]+h|0;e[2]=e[2]+i|0;e[3]=e[3]+k|0;e[4]=e[4]+j|0;e[5]=e[5]+l|0;e[6]=e[6]+m|0;e[7]=e[7]+n|0}};
-sjcl.mode.ccm={name:"ccm",encrypt:function(a,b,c,d,e){var f,g=b.slice(0),h=sjcl.bitArray,i=h.bitLength(c)/8,k=h.bitLength(g)/8;e=e||64;d=d||[];if(i<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(f=2;f<4&&k>>>8*f;f++);if(f<15-i)f=15-i;c=h.clamp(c,8*(15-f));b=sjcl.mode.ccm.G(a,b,c,d,e,f);g=sjcl.mode.ccm.I(a,g,c,b,e,f);return h.concat(g.data,g.tag)},decrypt:function(a,b,c,d,e){e=e||64;d=d||[];var f=sjcl.bitArray,g=f.bitLength(c)/8,h=f.bitLength(b),i=f.clamp(b,h-e),k=f.bitSlice(b,
-h-e);h=(h-e)/8;if(g<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(b=2;b<4&&h>>>8*b;b++);if(b<15-g)b=15-g;c=f.clamp(c,8*(15-b));i=sjcl.mode.ccm.I(a,i,c,k,e,b);a=sjcl.mode.ccm.G(a,i.data,c,d,e,b);if(!f.equal(i.tag,a))throw new sjcl.exception.corrupt("ccm: tag doesn't match");return i.data},G:function(a,b,c,d,e,f){var g=[],h=sjcl.bitArray,i=h.k;e/=8;if(e%2||e<4||e>16)throw new sjcl.exception.invalid("ccm: invalid tag length");if(d.length>0xffffffff||b.length>0xffffffff)throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
-f=[h.partial(8,(d.length?64:0)|e-2<<2|f-1)];f=h.concat(f,c);f[3]|=h.bitLength(b)/8;f=a.encrypt(f);if(d.length){c=h.bitLength(d)/8;if(c<=65279)g=[h.partial(16,c)];else if(c<=0xffffffff)g=h.concat([h.partial(16,65534)],[c]);g=h.concat(g,d);for(d=0;d<g.length;d+=4)f=a.encrypt(i(f,g.slice(d,d+4)))}for(d=0;d<b.length;d+=4)f=a.encrypt(i(f,b.slice(d,d+4)));return h.clamp(f,e*8)},I:function(a,b,c,d,e,f){var g,h=sjcl.bitArray;g=h.k;var i=b.length,k=h.bitLength(b);c=h.concat([h.partial(8,f-1)],c).concat([0,
-0,0]).slice(0,4);d=h.bitSlice(g(d,a.encrypt(c)),0,e);if(!i)return{tag:d,data:[]};for(g=0;g<i;g+=4){c[3]++;e=a.encrypt(c);b[g]^=e[0];b[g+1]^=e[1];b[g+2]^=e[2];b[g+3]^=e[3]}return{tag:d,data:h.clamp(b,k)}}};
-sjcl.mode.ocb2={name:"ocb2",encrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");var g,h=sjcl.mode.ocb2.A,i=sjcl.bitArray,k=i.k,j=[0,0,0,0];c=h(a.encrypt(c));var l,m=[];d=d||[];e=e||64;for(g=0;g+4<b.length;g+=4){l=b.slice(g,g+4);j=k(j,l);m=m.concat(k(c,a.encrypt(k(c,l))));c=h(c)}l=b.slice(g);b=i.bitLength(l);g=a.encrypt(k(c,[0,0,0,b]));l=i.clamp(k(l,g),b);j=k(j,k(l,g));j=a.encrypt(k(j,k(c,h(c))));if(d.length)j=k(j,f?d:sjcl.mode.ocb2.pmac(a,
-d));return m.concat(i.concat(l,i.clamp(j,e)))},decrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");e=e||64;var g=sjcl.mode.ocb2.A,h=sjcl.bitArray,i=h.k,k=[0,0,0,0],j=g(a.encrypt(c)),l,m,n=sjcl.bitArray.bitLength(b)-e,o=[];d=d||[];for(c=0;c+4<n/32;c+=4){l=i(j,a.decrypt(i(j,b.slice(c,c+4))));k=i(k,l);o=o.concat(l);j=g(j)}m=n-c*32;l=a.encrypt(i(j,[0,0,0,m]));l=i(l,h.clamp(b.slice(c),m));k=i(k,l);k=a.encrypt(i(k,i(j,g(j))));if(d.length)k=
-i(k,f?d:sjcl.mode.ocb2.pmac(a,d));if(!h.equal(h.clamp(k,e),h.bitSlice(b,n)))throw new sjcl.exception.corrupt("ocb: tag doesn't match");return o.concat(h.clamp(l,m))},pmac:function(a,b){var c,d=sjcl.mode.ocb2.A,e=sjcl.bitArray,f=e.k,g=[0,0,0,0],h=a.encrypt([0,0,0,0]);h=f(h,d(d(h)));for(c=0;c+4<b.length;c+=4){h=d(h);g=f(g,a.encrypt(f(h,b.slice(c,c+4))))}b=b.slice(c);if(e.bitLength(b)<128){h=f(h,d(h));b=e.concat(b,[2147483648|0])}g=f(g,b);return a.encrypt(f(d(f(h,d(h))),g))},A:function(a){return[a[0]<<
-1^a[1]>>>31,a[1]<<1^a[2]>>>31,a[2]<<1^a[3]>>>31,a[3]<<1^(a[0]>>>31)*135]}};sjcl.misc.hmac=function(a,b){this.M=b=b||sjcl.hash.sha256;var c=[[],[]],d=b.prototype.blockSize/32;this.l=[new b,new b];if(a.length>d)a=b.hash(a);for(b=0;b<d;b++){c[0][b]=a[b]^909522486;c[1][b]=a[b]^1549556828}this.l[0].update(c[0]);this.l[1].update(c[1])};sjcl.misc.hmac.prototype.encrypt=sjcl.misc.hmac.prototype.mac=function(a,b){a=(new this.M(this.l[0])).update(a,b).finalize();return(new this.M(this.l[1])).update(a).finalize()};
-sjcl.misc.pbkdf2=function(a,b,c,d,e){c=c||1E3;if(d<0||c<0)throw sjcl.exception.invalid("invalid params to pbkdf2");if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);e=e||sjcl.misc.hmac;a=new e(a);var f,g,h,i,k=[],j=sjcl.bitArray;for(i=1;32*k.length<(d||1);i++){e=f=a.encrypt(j.concat(b,[i]));for(g=1;g<c;g++){f=a.encrypt(f);for(h=0;h<f.length;h++)e[h]^=f[h]}k=k.concat(e)}if(d)k=j.clamp(k,d);return k};
-sjcl.random={randomWords:function(a,b){var c=[];b=this.isReady(b);var d;if(b===0)throw new sjcl.exception.notready("generator isn't seeded");else b&2&&this.U(!(b&1));for(b=0;b<a;b+=4){(b+1)%0x10000===0&&this.L();d=this.u();c.push(d[0],d[1],d[2],d[3])}this.L();return c.slice(0,a)},setDefaultParanoia:function(a){this.t=a},addEntropy:function(a,b,c){c=c||"user";var d,e,f=(new Date).valueOf(),g=this.q[c],h=this.isReady();d=this.F[c];if(d===undefined)d=this.F[c]=this.R++;if(g===undefined)g=this.q[c]=0;this.q[c]=
-(this.q[c]+1)%this.b.length;switch(typeof a){case "number":break;case "object":if(b===undefined)for(c=b=0;c<a.length;c++)for(e=a[c];e>0;){b++;e>>>=1}this.b[g].update([d,this.J++,2,b,f,a.length].concat(a));break;case "string":if(b===undefined)b=a.length;this.b[g].update([d,this.J++,3,b,f,a.length]);this.b[g].update(a);break;default:throw new sjcl.exception.bug("random: addEntropy only supports number, array or string");}this.j[g]+=b;this.f+=b;if(h===0){this.isReady()!==0&&this.K("seeded",Math.max(this.g,
-this.f));this.K("progress",this.getProgress())}},isReady:function(a){a=this.B[a!==undefined?a:this.t];return this.g&&this.g>=a?this.j[0]>80&&(new Date).valueOf()>this.O?3:1:this.f>=a?2:0},getProgress:function(a){a=this.B[a?a:this.t];return this.g>=a?1["0"]:this.f>a?1["0"]:this.f/a},startCollectors:function(){if(!this.m){if(window.addEventListener){window.addEventListener("load",this.o,false);window.addEventListener("mousemove",this.p,false)}else if(document.attachEvent){document.attachEvent("onload",
-this.o);document.attachEvent("onmousemove",this.p)}else throw new sjcl.exception.bug("can't attach event");this.m=true}},stopCollectors:function(){if(this.m){if(window.removeEventListener){window.removeEventListener("load",this.o);window.removeEventListener("mousemove",this.p)}else if(window.detachEvent){window.detachEvent("onload",this.o);window.detachEvent("onmousemove",this.p)}this.m=false}},addEventListener:function(a,b){this.r[a][this.Q++]=b},removeEventListener:function(a,b){var c;a=this.r[a];
-var d=[];for(c in a)a.hasOwnProperty[c]&&a[c]===b&&d.push(c);for(b=0;b<d.length;b++){c=d[b];delete a[c]}},b:[new sjcl.hash.sha256],j:[0],z:0,q:{},J:0,F:{},R:0,g:0,f:0,O:0,a:[0,0,0,0,0,0,0,0],d:[0,0,0,0],s:undefined,t:6,m:false,r:{progress:{},seeded:{}},Q:0,B:[0,48,64,96,128,192,0x100,384,512,768,1024],u:function(){for(var a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}return this.s.encrypt(this.d)},L:function(){this.a=this.u().concat(this.u());this.s=new sjcl.cipher.aes(this.a)},T:function(a){this.a=
-sjcl.hash.sha256.hash(this.a.concat(a));this.s=new sjcl.cipher.aes(this.a);for(a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}},U:function(a){var b=[],c=0,d;this.O=b[0]=(new Date).valueOf()+3E4;for(d=0;d<16;d++)b.push(Math.random()*0x100000000|0);for(d=0;d<this.b.length;d++){b=b.concat(this.b[d].finalize());c+=this.j[d];this.j[d]=0;if(!a&&this.z&1<<d)break}if(this.z>=1<<this.b.length){this.b.push(new sjcl.hash.sha256);this.j.push(0)}this.f-=c;if(c>this.g)this.g=c;this.z++;this.T(b)},p:function(a){sjcl.random.addEntropy([a.x||
-a.clientX||a.offsetX,a.y||a.clientY||a.offsetY],2,"mouse")},o:function(){sjcl.random.addEntropy(new Date,2,"loadtime")},K:function(a,b){var c;a=sjcl.random.r[a];var d=[];for(c in a)a.hasOwnProperty(c)&&d.push(a[c]);for(c=0;c<d.length;c++)d[c](b)}};
-sjcl.json={defaults:{v:1,iter:1E3,ks:128,ts:64,mode:"ccm",adata:"",cipher:"aes"},encrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json,f=e.c({iv:sjcl.random.randomWords(4,0)},e.defaults);e.c(f,c);if(typeof f.salt==="string")f.salt=sjcl.codec.base64.toBits(f.salt);if(typeof f.iv==="string")f.iv=sjcl.codec.base64.toBits(f.iv);if(!sjcl.mode[f.mode]||!sjcl.cipher[f.cipher]||typeof a==="string"&&f.iter<=100||f.ts!==64&&f.ts!==96&&f.ts!==128||f.ks!==128&&f.ks!==192&&f.ks!==0x100||f.iv.length<2||f.iv.length>
-4)throw new sjcl.exception.invalid("json encrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,f);a=c.key.slice(0,f.ks/32);f.salt=c.salt}if(typeof b==="string")b=sjcl.codec.utf8String.toBits(b);c=new sjcl.cipher[f.cipher](a);e.c(d,f);d.key=a;f.ct=sjcl.mode[f.mode].encrypt(c,b,f.iv,f.adata,f.tag);return e.encode(e.V(f,e.defaults))},decrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json;b=e.c(e.c(e.c({},e.defaults),e.decode(b)),c,true);if(typeof b.salt==="string")b.salt=
-sjcl.codec.base64.toBits(b.salt);if(typeof b.iv==="string")b.iv=sjcl.codec.base64.toBits(b.iv);if(!sjcl.mode[b.mode]||!sjcl.cipher[b.cipher]||typeof a==="string"&&b.iter<=100||b.ts!==64&&b.ts!==96&&b.ts!==128||b.ks!==128&&b.ks!==192&&b.ks!==0x100||!b.iv||b.iv.length<2||b.iv.length>4)throw new sjcl.exception.invalid("json decrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,b);a=c.key.slice(0,b.ks/32);b.salt=c.salt}c=new sjcl.cipher[b.cipher](a);c=sjcl.mode[b.mode].decrypt(c,
-b.ct,b.iv,b.adata,b.tag);e.c(d,b);d.key=a;return sjcl.codec.utf8String.fromBits(c)},encode:function(a){var b,c="{",d="";for(b in a)if(a.hasOwnProperty(b)){if(!b.match(/^[a-z0-9]+$/i))throw new sjcl.exception.invalid("json encode: invalid property name");c+=d+b+":";d=",";switch(typeof a[b]){case "number":case "boolean":c+=a[b];break;case "string":c+='"'+escape(a[b])+'"';break;case "object":c+='"'+sjcl.codec.base64.fromBits(a[b],1)+'"';break;default:throw new sjcl.exception.bug("json encode: unsupported type");
-}}return c+"}"},decode:function(a){a=a.replace(/\s/g,"");if(!a.match(/^\{.*\}$/))throw new sjcl.exception.invalid("json decode: this isn't json!");a=a.replace(/^\{|\}$/g,"").split(/,/);var b={},c,d;for(c=0;c<a.length;c++){if(!(d=a[c].match(/^([a-z][a-z0-9]*):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i)))throw new sjcl.exception.invalid("json decode: this isn't json!");b[d[1]]=d[2]?parseInt(d[2],10):d[1].match(/^(ct|salt|iv)$/)?sjcl.codec.base64.toBits(d[3]):unescape(d[3])}return b},c:function(a,b,c){if(a===
-undefined)a={};if(b===undefined)return a;var d;for(d in b)if(b.hasOwnProperty(d)){if(c&&a[d]!==undefined&&a[d]!==b[d])throw new sjcl.exception.invalid("required parameter overridden");a[d]=b[d]}return a},V:function(a,b){var c={},d;for(d in a)if(a.hasOwnProperty(d)&&a[d]!==b[d])c[d]=a[d];return c},W:function(a,b){var c={},d;for(d=0;d<b.length;d++)if(a[b[d]]!==undefined)c[b[d]]=a[b[d]];return c}};sjcl.encrypt=sjcl.json.encrypt;sjcl.decrypt=sjcl.json.decrypt;sjcl.misc.S={};
-sjcl.misc.cachedPbkdf2=function(a,b){var c=sjcl.misc.S,d;b=b||{};d=b.iter||1E3;c=c[a]=c[a]||{};d=c[d]=c[d]||{firstSalt:b.salt&&b.salt.length?b.salt.slice(0):sjcl.random.randomWords(2,0)};c=b.salt===undefined?d.firstSalt:b.salt;d[c]=d[c]||sjcl.misc.pbkdf2(a,c,b.iter);return{key:d[c].slice(0),salt:c.slice(0)}};
-
-// public
-module.exports = sjcl;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /**
  * @license The MIT License (MIT)
  * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
@@ -506,6 +457,55 @@ module.exports = {
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var sjcl={cipher:{},hash:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a}}};
+sjcl.cipher.aes=function(a){this.h[0][0][0]||this.w();var b,c,d,e,f=this.h[0][4],g=this.h[1];b=a.length;var h=1;if(b!==4&&b!==6&&b!==8)throw new sjcl.exception.invalid("invalid aes key size");this.a=[d=a.slice(0),e=[]];for(a=b;a<4*b+28;a++){c=d[a-1];if(a%b===0||b===8&&a%b===4){c=f[c>>>24]<<24^f[c>>16&255]<<16^f[c>>8&255]<<8^f[c&255];if(a%b===0){c=c<<8^c>>>24^h<<24;h=h<<1^(h>>7)*283}}d[a]=d[a-b]^c}for(b=0;a;b++,a--){c=d[b&3?a:a-4];e[b]=a<=4||b<4?c:g[0][f[c>>>24]]^g[1][f[c>>16&255]]^g[2][f[c>>8&255]]^
+g[3][f[c&255]]}};
+sjcl.cipher.aes.prototype={encrypt:function(a){return this.H(a,0)},decrypt:function(a){return this.H(a,1)},h:[[[],[],[],[],[]],[[],[],[],[],[]]],w:function(){var a=this.h[0],b=this.h[1],c=a[4],d=b[4],e,f,g,h=[],i=[],k,j,l,m;for(e=0;e<0x100;e++)i[(h[e]=e<<1^(e>>7)*283)^e]=e;for(f=g=0;!c[f];f^=k||1,g=i[g]||1){l=g^g<<1^g<<2^g<<3^g<<4;l=l>>8^l&255^99;c[f]=l;d[l]=f;j=h[e=h[k=h[f]]];m=j*0x1010101^e*0x10001^k*0x101^f*0x1010100;j=h[l]*0x101^l*0x1010100;for(e=0;e<4;e++){a[e][f]=j=j<<24^j>>>8;b[e][l]=m=m<<24^m>>>8}}for(e=
+0;e<5;e++){a[e]=a[e].slice(0);b[e]=b[e].slice(0)}},H:function(a,b){if(a.length!==4)throw new sjcl.exception.invalid("invalid aes block size");var c=this.a[b],d=a[0]^c[0],e=a[b?3:1]^c[1],f=a[2]^c[2];a=a[b?1:3]^c[3];var g,h,i,k=c.length/4-2,j,l=4,m=[0,0,0,0];g=this.h[b];var n=g[0],o=g[1],p=g[2],q=g[3],r=g[4];for(j=0;j<k;j++){g=n[d>>>24]^o[e>>16&255]^p[f>>8&255]^q[a&255]^c[l];h=n[e>>>24]^o[f>>16&255]^p[a>>8&255]^q[d&255]^c[l+1];i=n[f>>>24]^o[a>>16&255]^p[d>>8&255]^q[e&255]^c[l+2];a=n[a>>>24]^o[d>>16&
+255]^p[e>>8&255]^q[f&255]^c[l+3];l+=4;d=g;e=h;f=i}for(j=0;j<4;j++){m[b?3&-j:j]=r[d>>>24]<<24^r[e>>16&255]<<16^r[f>>8&255]<<8^r[a&255]^c[l++];g=d;d=e;e=f;f=a;a=g}return m}};
+sjcl.bitArray={bitSlice:function(a,b,c){a=sjcl.bitArray.P(a.slice(b/32),32-(b&31)).slice(1);return c===undefined?a:sjcl.bitArray.clamp(a,c-b)},concat:function(a,b){if(a.length===0||b.length===0)return a.concat(b);var c=a[a.length-1],d=sjcl.bitArray.getPartial(c);return d===32?a.concat(b):sjcl.bitArray.P(b,d,c|0,a.slice(0,a.length-1))},bitLength:function(a){var b=a.length;if(b===0)return 0;return(b-1)*32+sjcl.bitArray.getPartial(a[b-1])},clamp:function(a,b){if(a.length*32<b)return a;a=a.slice(0,Math.ceil(b/
+32));var c=a.length;b&=31;if(c>0&&b)a[c-1]=sjcl.bitArray.partial(b,a[c-1]&2147483648>>b-1,1);return a},partial:function(a,b,c){if(a===32)return b;return(c?b|0:b<<32-a)+a*0x10000000000},getPartial:function(a){return Math.round(a/0x10000000000)||32},equal:function(a,b){if(sjcl.bitArray.bitLength(a)!==sjcl.bitArray.bitLength(b))return false;var c=0,d;for(d=0;d<a.length;d++)c|=a[d]^b[d];return c===0},P:function(a,b,c,d){var e;e=0;if(d===undefined)d=[];for(;b>=32;b-=32){d.push(c);c=0}if(b===0)return d.concat(a);
+for(e=0;e<a.length;e++){d.push(c|a[e]>>>b);c=a[e]<<32-b}e=a.length?a[a.length-1]:0;a=sjcl.bitArray.getPartial(e);d.push(sjcl.bitArray.partial(b+a&31,b+a>32?c:d.pop(),1));return d},k:function(a,b){return[a[0]^b[0],a[1]^b[1],a[2]^b[2],a[3]^b[3]]}};
+sjcl.codec.utf8String={fromBits:function(a){var b="",c=sjcl.bitArray.bitLength(a),d,e;for(d=0;d<c/8;d++){if((d&3)===0)e=a[d/4];b+=String.fromCharCode(e>>>24);e<<=8}return decodeURIComponent(escape(b))},toBits:function(a){a=unescape(encodeURIComponent(a));var b=[],c,d=0;for(c=0;c<a.length;c++){d=d<<8|a.charCodeAt(c);if((c&3)===3){b.push(d);d=0}}c&3&&b.push(sjcl.bitArray.partial(8*(c&3),d));return b}};
+sjcl.codec.hex={fromBits:function(a){var b="",c;for(c=0;c<a.length;c++)b+=((a[c]|0)+0xf00000000000).toString(16).substr(4);return b.substr(0,sjcl.bitArray.bitLength(a)/4)},toBits:function(a){var b,c=[],d;a=a.replace(/\s|0x/g,"");d=a.length;a+="00000000";for(b=0;b<a.length;b+=8)c.push(parseInt(a.substr(b,8),16)^0);return sjcl.bitArray.clamp(c,d*4)}};
+sjcl.codec.base64={D:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",fromBits:function(a,b){var c="",d,e=0,f=sjcl.codec.base64.D,g=0,h=sjcl.bitArray.bitLength(a);for(d=0;c.length*6<h;){c+=f.charAt((g^a[d]>>>e)>>>26);if(e<6){g=a[d]<<6-e;e+=26;d++}else{g<<=6;e-=6}}for(;c.length&3&&!b;)c+="=";return c},toBits:function(a){a=a.replace(/\s|=/g,"");var b=[],c,d=0,e=sjcl.codec.base64.D,f=0,g;for(c=0;c<a.length;c++){g=e.indexOf(a.charAt(c));if(g<0)throw new sjcl.exception.invalid("this isn't base64!");
+if(d>26){d-=26;b.push(f^g>>>d);f=g<<32-d}else{d+=6;f^=g<<32-d}}d&56&&b.push(sjcl.bitArray.partial(d&56,f,1));return b}};sjcl.hash.sha256=function(a){this.a[0]||this.w();if(a){this.n=a.n.slice(0);this.i=a.i.slice(0);this.e=a.e}else this.reset()};sjcl.hash.sha256.hash=function(a){return(new sjcl.hash.sha256).update(a).finalize()};
+sjcl.hash.sha256.prototype={blockSize:512,reset:function(){this.n=this.N.slice(0);this.i=[];this.e=0;return this},update:function(a){if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);var b,c=this.i=sjcl.bitArray.concat(this.i,a);b=this.e;a=this.e=b+sjcl.bitArray.bitLength(a);for(b=512+b&-512;b<=a;b+=512)this.C(c.splice(0,16));return this},finalize:function(){var a,b=this.i,c=this.n;b=sjcl.bitArray.concat(b,[sjcl.bitArray.partial(1,1)]);for(a=b.length+2;a&15;a++)b.push(0);b.push(Math.floor(this.e/
+4294967296));for(b.push(this.e|0);b.length;)this.C(b.splice(0,16));this.reset();return c},N:[],a:[],w:function(){function a(e){return(e-Math.floor(e))*0x100000000|0}var b=0,c=2,d;a:for(;b<64;c++){for(d=2;d*d<=c;d++)if(c%d===0)continue a;if(b<8)this.N[b]=a(Math.pow(c,0.5));this.a[b]=a(Math.pow(c,1/3));b++}},C:function(a){var b,c,d=a.slice(0),e=this.n,f=this.a,g=e[0],h=e[1],i=e[2],k=e[3],j=e[4],l=e[5],m=e[6],n=e[7];for(a=0;a<64;a++){if(a<16)b=d[a];else{b=d[a+1&15];c=d[a+14&15];b=d[a&15]=(b>>>7^b>>>18^
+b>>>3^b<<25^b<<14)+(c>>>17^c>>>19^c>>>10^c<<15^c<<13)+d[a&15]+d[a+9&15]|0}b=b+n+(j>>>6^j>>>11^j>>>25^j<<26^j<<21^j<<7)+(m^j&(l^m))+f[a];n=m;m=l;l=j;j=k+b|0;k=i;i=h;h=g;g=b+(h&i^k&(h^i))+(h>>>2^h>>>13^h>>>22^h<<30^h<<19^h<<10)|0}e[0]=e[0]+g|0;e[1]=e[1]+h|0;e[2]=e[2]+i|0;e[3]=e[3]+k|0;e[4]=e[4]+j|0;e[5]=e[5]+l|0;e[6]=e[6]+m|0;e[7]=e[7]+n|0}};
+sjcl.mode.ccm={name:"ccm",encrypt:function(a,b,c,d,e){var f,g=b.slice(0),h=sjcl.bitArray,i=h.bitLength(c)/8,k=h.bitLength(g)/8;e=e||64;d=d||[];if(i<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(f=2;f<4&&k>>>8*f;f++);if(f<15-i)f=15-i;c=h.clamp(c,8*(15-f));b=sjcl.mode.ccm.G(a,b,c,d,e,f);g=sjcl.mode.ccm.I(a,g,c,b,e,f);return h.concat(g.data,g.tag)},decrypt:function(a,b,c,d,e){e=e||64;d=d||[];var f=sjcl.bitArray,g=f.bitLength(c)/8,h=f.bitLength(b),i=f.clamp(b,h-e),k=f.bitSlice(b,
+h-e);h=(h-e)/8;if(g<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(b=2;b<4&&h>>>8*b;b++);if(b<15-g)b=15-g;c=f.clamp(c,8*(15-b));i=sjcl.mode.ccm.I(a,i,c,k,e,b);a=sjcl.mode.ccm.G(a,i.data,c,d,e,b);if(!f.equal(i.tag,a))throw new sjcl.exception.corrupt("ccm: tag doesn't match");return i.data},G:function(a,b,c,d,e,f){var g=[],h=sjcl.bitArray,i=h.k;e/=8;if(e%2||e<4||e>16)throw new sjcl.exception.invalid("ccm: invalid tag length");if(d.length>0xffffffff||b.length>0xffffffff)throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
+f=[h.partial(8,(d.length?64:0)|e-2<<2|f-1)];f=h.concat(f,c);f[3]|=h.bitLength(b)/8;f=a.encrypt(f);if(d.length){c=h.bitLength(d)/8;if(c<=65279)g=[h.partial(16,c)];else if(c<=0xffffffff)g=h.concat([h.partial(16,65534)],[c]);g=h.concat(g,d);for(d=0;d<g.length;d+=4)f=a.encrypt(i(f,g.slice(d,d+4)))}for(d=0;d<b.length;d+=4)f=a.encrypt(i(f,b.slice(d,d+4)));return h.clamp(f,e*8)},I:function(a,b,c,d,e,f){var g,h=sjcl.bitArray;g=h.k;var i=b.length,k=h.bitLength(b);c=h.concat([h.partial(8,f-1)],c).concat([0,
+0,0]).slice(0,4);d=h.bitSlice(g(d,a.encrypt(c)),0,e);if(!i)return{tag:d,data:[]};for(g=0;g<i;g+=4){c[3]++;e=a.encrypt(c);b[g]^=e[0];b[g+1]^=e[1];b[g+2]^=e[2];b[g+3]^=e[3]}return{tag:d,data:h.clamp(b,k)}}};
+sjcl.mode.ocb2={name:"ocb2",encrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");var g,h=sjcl.mode.ocb2.A,i=sjcl.bitArray,k=i.k,j=[0,0,0,0];c=h(a.encrypt(c));var l,m=[];d=d||[];e=e||64;for(g=0;g+4<b.length;g+=4){l=b.slice(g,g+4);j=k(j,l);m=m.concat(k(c,a.encrypt(k(c,l))));c=h(c)}l=b.slice(g);b=i.bitLength(l);g=a.encrypt(k(c,[0,0,0,b]));l=i.clamp(k(l,g),b);j=k(j,k(l,g));j=a.encrypt(k(j,k(c,h(c))));if(d.length)j=k(j,f?d:sjcl.mode.ocb2.pmac(a,
+d));return m.concat(i.concat(l,i.clamp(j,e)))},decrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");e=e||64;var g=sjcl.mode.ocb2.A,h=sjcl.bitArray,i=h.k,k=[0,0,0,0],j=g(a.encrypt(c)),l,m,n=sjcl.bitArray.bitLength(b)-e,o=[];d=d||[];for(c=0;c+4<n/32;c+=4){l=i(j,a.decrypt(i(j,b.slice(c,c+4))));k=i(k,l);o=o.concat(l);j=g(j)}m=n-c*32;l=a.encrypt(i(j,[0,0,0,m]));l=i(l,h.clamp(b.slice(c),m));k=i(k,l);k=a.encrypt(i(k,i(j,g(j))));if(d.length)k=
+i(k,f?d:sjcl.mode.ocb2.pmac(a,d));if(!h.equal(h.clamp(k,e),h.bitSlice(b,n)))throw new sjcl.exception.corrupt("ocb: tag doesn't match");return o.concat(h.clamp(l,m))},pmac:function(a,b){var c,d=sjcl.mode.ocb2.A,e=sjcl.bitArray,f=e.k,g=[0,0,0,0],h=a.encrypt([0,0,0,0]);h=f(h,d(d(h)));for(c=0;c+4<b.length;c+=4){h=d(h);g=f(g,a.encrypt(f(h,b.slice(c,c+4))))}b=b.slice(c);if(e.bitLength(b)<128){h=f(h,d(h));b=e.concat(b,[2147483648|0])}g=f(g,b);return a.encrypt(f(d(f(h,d(h))),g))},A:function(a){return[a[0]<<
+1^a[1]>>>31,a[1]<<1^a[2]>>>31,a[2]<<1^a[3]>>>31,a[3]<<1^(a[0]>>>31)*135]}};sjcl.misc.hmac=function(a,b){this.M=b=b||sjcl.hash.sha256;var c=[[],[]],d=b.prototype.blockSize/32;this.l=[new b,new b];if(a.length>d)a=b.hash(a);for(b=0;b<d;b++){c[0][b]=a[b]^909522486;c[1][b]=a[b]^1549556828}this.l[0].update(c[0]);this.l[1].update(c[1])};sjcl.misc.hmac.prototype.encrypt=sjcl.misc.hmac.prototype.mac=function(a,b){a=(new this.M(this.l[0])).update(a,b).finalize();return(new this.M(this.l[1])).update(a).finalize()};
+sjcl.misc.pbkdf2=function(a,b,c,d,e){c=c||1E3;if(d<0||c<0)throw sjcl.exception.invalid("invalid params to pbkdf2");if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);e=e||sjcl.misc.hmac;a=new e(a);var f,g,h,i,k=[],j=sjcl.bitArray;for(i=1;32*k.length<(d||1);i++){e=f=a.encrypt(j.concat(b,[i]));for(g=1;g<c;g++){f=a.encrypt(f);for(h=0;h<f.length;h++)e[h]^=f[h]}k=k.concat(e)}if(d)k=j.clamp(k,d);return k};
+sjcl.random={randomWords:function(a,b){var c=[];b=this.isReady(b);var d;if(b===0)throw new sjcl.exception.notready("generator isn't seeded");else b&2&&this.U(!(b&1));for(b=0;b<a;b+=4){(b+1)%0x10000===0&&this.L();d=this.u();c.push(d[0],d[1],d[2],d[3])}this.L();return c.slice(0,a)},setDefaultParanoia:function(a){this.t=a},addEntropy:function(a,b,c){c=c||"user";var d,e,f=(new Date).valueOf(),g=this.q[c],h=this.isReady();d=this.F[c];if(d===undefined)d=this.F[c]=this.R++;if(g===undefined)g=this.q[c]=0;this.q[c]=
+(this.q[c]+1)%this.b.length;switch(typeof a){case "number":break;case "object":if(b===undefined)for(c=b=0;c<a.length;c++)for(e=a[c];e>0;){b++;e>>>=1}this.b[g].update([d,this.J++,2,b,f,a.length].concat(a));break;case "string":if(b===undefined)b=a.length;this.b[g].update([d,this.J++,3,b,f,a.length]);this.b[g].update(a);break;default:throw new sjcl.exception.bug("random: addEntropy only supports number, array or string");}this.j[g]+=b;this.f+=b;if(h===0){this.isReady()!==0&&this.K("seeded",Math.max(this.g,
+this.f));this.K("progress",this.getProgress())}},isReady:function(a){a=this.B[a!==undefined?a:this.t];return this.g&&this.g>=a?this.j[0]>80&&(new Date).valueOf()>this.O?3:1:this.f>=a?2:0},getProgress:function(a){a=this.B[a?a:this.t];return this.g>=a?1["0"]:this.f>a?1["0"]:this.f/a},startCollectors:function(){if(!this.m){if(window.addEventListener){window.addEventListener("load",this.o,false);window.addEventListener("mousemove",this.p,false)}else if(document.attachEvent){document.attachEvent("onload",
+this.o);document.attachEvent("onmousemove",this.p)}else throw new sjcl.exception.bug("can't attach event");this.m=true}},stopCollectors:function(){if(this.m){if(window.removeEventListener){window.removeEventListener("load",this.o);window.removeEventListener("mousemove",this.p)}else if(window.detachEvent){window.detachEvent("onload",this.o);window.detachEvent("onmousemove",this.p)}this.m=false}},addEventListener:function(a,b){this.r[a][this.Q++]=b},removeEventListener:function(a,b){var c;a=this.r[a];
+var d=[];for(c in a)a.hasOwnProperty[c]&&a[c]===b&&d.push(c);for(b=0;b<d.length;b++){c=d[b];delete a[c]}},b:[new sjcl.hash.sha256],j:[0],z:0,q:{},J:0,F:{},R:0,g:0,f:0,O:0,a:[0,0,0,0,0,0,0,0],d:[0,0,0,0],s:undefined,t:6,m:false,r:{progress:{},seeded:{}},Q:0,B:[0,48,64,96,128,192,0x100,384,512,768,1024],u:function(){for(var a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}return this.s.encrypt(this.d)},L:function(){this.a=this.u().concat(this.u());this.s=new sjcl.cipher.aes(this.a)},T:function(a){this.a=
+sjcl.hash.sha256.hash(this.a.concat(a));this.s=new sjcl.cipher.aes(this.a);for(a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}},U:function(a){var b=[],c=0,d;this.O=b[0]=(new Date).valueOf()+3E4;for(d=0;d<16;d++)b.push(Math.random()*0x100000000|0);for(d=0;d<this.b.length;d++){b=b.concat(this.b[d].finalize());c+=this.j[d];this.j[d]=0;if(!a&&this.z&1<<d)break}if(this.z>=1<<this.b.length){this.b.push(new sjcl.hash.sha256);this.j.push(0)}this.f-=c;if(c>this.g)this.g=c;this.z++;this.T(b)},p:function(a){sjcl.random.addEntropy([a.x||
+a.clientX||a.offsetX,a.y||a.clientY||a.offsetY],2,"mouse")},o:function(){sjcl.random.addEntropy(new Date,2,"loadtime")},K:function(a,b){var c;a=sjcl.random.r[a];var d=[];for(c in a)a.hasOwnProperty(c)&&d.push(a[c]);for(c=0;c<d.length;c++)d[c](b)}};
+sjcl.json={defaults:{v:1,iter:1E3,ks:128,ts:64,mode:"ccm",adata:"",cipher:"aes"},encrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json,f=e.c({iv:sjcl.random.randomWords(4,0)},e.defaults);e.c(f,c);if(typeof f.salt==="string")f.salt=sjcl.codec.base64.toBits(f.salt);if(typeof f.iv==="string")f.iv=sjcl.codec.base64.toBits(f.iv);if(!sjcl.mode[f.mode]||!sjcl.cipher[f.cipher]||typeof a==="string"&&f.iter<=100||f.ts!==64&&f.ts!==96&&f.ts!==128||f.ks!==128&&f.ks!==192&&f.ks!==0x100||f.iv.length<2||f.iv.length>
+4)throw new sjcl.exception.invalid("json encrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,f);a=c.key.slice(0,f.ks/32);f.salt=c.salt}if(typeof b==="string")b=sjcl.codec.utf8String.toBits(b);c=new sjcl.cipher[f.cipher](a);e.c(d,f);d.key=a;f.ct=sjcl.mode[f.mode].encrypt(c,b,f.iv,f.adata,f.tag);return e.encode(e.V(f,e.defaults))},decrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json;b=e.c(e.c(e.c({},e.defaults),e.decode(b)),c,true);if(typeof b.salt==="string")b.salt=
+sjcl.codec.base64.toBits(b.salt);if(typeof b.iv==="string")b.iv=sjcl.codec.base64.toBits(b.iv);if(!sjcl.mode[b.mode]||!sjcl.cipher[b.cipher]||typeof a==="string"&&b.iter<=100||b.ts!==64&&b.ts!==96&&b.ts!==128||b.ks!==128&&b.ks!==192&&b.ks!==0x100||!b.iv||b.iv.length<2||b.iv.length>4)throw new sjcl.exception.invalid("json decrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,b);a=c.key.slice(0,b.ks/32);b.salt=c.salt}c=new sjcl.cipher[b.cipher](a);c=sjcl.mode[b.mode].decrypt(c,
+b.ct,b.iv,b.adata,b.tag);e.c(d,b);d.key=a;return sjcl.codec.utf8String.fromBits(c)},encode:function(a){var b,c="{",d="";for(b in a)if(a.hasOwnProperty(b)){if(!b.match(/^[a-z0-9]+$/i))throw new sjcl.exception.invalid("json encode: invalid property name");c+=d+b+":";d=",";switch(typeof a[b]){case "number":case "boolean":c+=a[b];break;case "string":c+='"'+escape(a[b])+'"';break;case "object":c+='"'+sjcl.codec.base64.fromBits(a[b],1)+'"';break;default:throw new sjcl.exception.bug("json encode: unsupported type");
+}}return c+"}"},decode:function(a){a=a.replace(/\s/g,"");if(!a.match(/^\{.*\}$/))throw new sjcl.exception.invalid("json decode: this isn't json!");a=a.replace(/^\{|\}$/g,"").split(/,/);var b={},c,d;for(c=0;c<a.length;c++){if(!(d=a[c].match(/^([a-z][a-z0-9]*):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i)))throw new sjcl.exception.invalid("json decode: this isn't json!");b[d[1]]=d[2]?parseInt(d[2],10):d[1].match(/^(ct|salt|iv)$/)?sjcl.codec.base64.toBits(d[3]):unescape(d[3])}return b},c:function(a,b,c){if(a===
+undefined)a={};if(b===undefined)return a;var d;for(d in b)if(b.hasOwnProperty(d)){if(c&&a[d]!==undefined&&a[d]!==b[d])throw new sjcl.exception.invalid("required parameter overridden");a[d]=b[d]}return a},V:function(a,b){var c={},d;for(d in a)if(a.hasOwnProperty(d)&&a[d]!==b[d])c[d]=a[d];return c},W:function(a,b){var c={},d;for(d=0;d<b.length;d++)if(a[b[d]]!==undefined)c[b[d]]=a[b[d]];return c}};sjcl.encrypt=sjcl.json.encrypt;sjcl.decrypt=sjcl.json.decrypt;sjcl.misc.S={};
+sjcl.misc.cachedPbkdf2=function(a,b){var c=sjcl.misc.S,d;b=b||{};d=b.iter||1E3;c=c[a]=c[a]||{};d=c[d]=c[d]||{firstSalt:b.salt&&b.salt.length?b.salt.slice(0):sjcl.random.randomWords(2,0)};c=b.salt===undefined?d.firstSalt:b.salt;d[c]=d[c]||sjcl.misc.pbkdf2(a,c,b.iter);return{key:d[c].slice(0),salt:c.slice(0)}};
+
+// public
+module.exports = sjcl;
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -532,33 +532,42 @@ var TagManager = new function () {
     // false - no plain data, everything is encrypted
     this.open = false;
 
+    // decoded to these two lists
+    this.dataNmlist = {}; // {note:1, site:2, email:3}
+    this.dataIdlist = {}; // {1:note, 2:site, 3:email}
+    // they are filling on page loading and on note creation
+    // if there are some new tags
+
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        console.time('TagManager: decrypt tags');
-        // decrypt tags
-        for ( var id in window.dataTags.data ) {
-            var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
-            // fill service lookup tables of tags by id and by name
-            window.dataTagsNmlist[name] = id = parseInt(id, 10);
-            window.dataTagsIdlist[id] = name;
-        }
-        console.timeEnd('TagManager: decrypt tags');
-    };
+    // this.EventOpen = function () {
+    //     console.time('TagManager: decrypt tags');
+    //     // decrypt tags
+    //     for ( var id in window.dataTags.data ) {
+    //         var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
+    //         // fill service lookup tables of tags by id and by name
+    //         window.dataTagsNmlist[name] = id = parseInt(id, 10);
+    //         window.dataTagsIdlist[id] = name;
+    //     }
+    //     console.timeEnd('TagManager: decrypt tags');
+    // };
+
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // clear service lookup tables
-        window.dataTagsNmlist = {};
-        window.dataTagsIdlist = {};
-    };
+    // this.EventClose = function () {
+    //     // clear service lookup tables
+    //     window.dataTagsNmlist = {};
+    //     window.dataTagsIdlist = {};
+    // };
+
 
     /**
      * Adds new tag id and enc/dev values to the global lookup tables
@@ -569,10 +578,11 @@ var TagManager = new function () {
     this.Add = function ( id, enc, dec ) {
         // decrypt name if necessary
         dec = dec || app.decode(enc, true);
-        window.dataTags.data[id] = [enc, [], 1];
-        window.dataTagsNmlist[dec] = id;
-        window.dataTagsIdlist[id] = dec;
+        this.data[id] = [enc, [], 1];
+        this.dataNmlist[dec] = id;
+        this.dataIdlist[id] = dec;
     };
+
 
     /**
      * Returns the sorted list of tag ids by usage
@@ -581,8 +591,8 @@ var TagManager = new function () {
     this.SortByUses = function () {
         var result = [];
         // prepare list of id/usage
-        for ( var id in window.dataTags.data ) {
-            result.push({id: parseInt(id, 10), uses: window.dataTags.data[id][window.dataTags.defn.uses]});
+        for ( var id in this.data ) {
+            result.push({id: parseInt(id, 10), uses: this.data[id][this.defn.uses]});
         }
         // custom sort
         result.sort(function ( a, b ) {
@@ -594,6 +604,7 @@ var TagManager = new function () {
         }
         return result;
     };
+
 
     /**
      * Converts the array of tags ids to tags names
@@ -614,13 +625,14 @@ var TagManager = new function () {
                     if ( (name = app.decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
                 } else {
                     // seems normal tag id
-                    if ( window.dataTagsIdlist[data[i]] )
+                    if ( this.dataIdlist[data[i]] )
                     // tag found in the global list
-                        result.push((prefix ? prefix : '') + window.dataTagsIdlist[data[i]]);
+                        result.push((prefix ? prefix : '') + this.dataIdlist[data[i]]);
                 }
             }
         return result.sort();
     };
+
 
     /**
      * Returns the string of tag names from the tags ids
@@ -630,6 +642,7 @@ var TagManager = new function () {
         data = this.IDs2Names(data);
         return data.length > 0 ? data.join(' ') : '';
     };
+
 
     /**
      * Converts a tags names array to array of ids or encrypted strings
@@ -651,9 +664,9 @@ var TagManager = new function () {
                 var name = data[i].slice(0, maxlength_tag);
                 // check if this word already processed
                 if ( !words.has(name) ) {
-                    if ( window.dataTagsNmlist[name] ) {
+                    if ( this.dataNmlist[name] ) {
                         // tag found in the global data
-                        result.push(window.dataTagsNmlist[name]);
+                        result.push(this.dataNmlist[name]);
                     } else {
                         // not found so encrypt and cache if not skipped
                         if ( !skip_new && (enc = app.encode(name, true)) !== false ) {
@@ -668,6 +681,7 @@ var TagManager = new function () {
         return result;
     };
 
+
     /**
      * Converts a tags string to array of ids or encrypted strings
      * @param data tags string
@@ -680,6 +694,7 @@ var TagManager = new function () {
         // do convert
         return this.Names2IDs(this.Str2Names(data), skip_new);
     };
+
 
 //    this.NamesMissed = function ( names, data ) {
 //        var result = [];
@@ -698,6 +713,7 @@ var TagManager = new function () {
 //        }
 //        return result;
 //    };
+
 
     /**
      * Converts a string to array of words
@@ -725,6 +741,7 @@ var TagManager = new function () {
         return result;
     };
 
+
     /**
      * Parses the user input into inner data lists
      * @param data string of tags input
@@ -751,7 +768,7 @@ var TagManager = new function () {
                     wcmd.push(word);
                 } else {
                     // just a tag
-                    var tid = window.dataTagsNmlist[word];
+                    var tid = self.dataNmlist[word];
                     // tag id found in the global data
                     if ( tid ) {
                         if ( fexc ) {
@@ -780,7 +797,8 @@ var TagManager = new function () {
             winc: winc, wexc: wexc,
             wcmd: wcmd
         };
-    }
+    };
+
 
     /**
      * Build the user input string from the parsed inner data
@@ -807,7 +825,8 @@ var TagManager = new function () {
         });
         // implode data into one line separated by spaces
         return list.join(' ');
-    }
+    };
+
 
     /**
      * Splits the string with words into two lists - inc and exc
@@ -836,6 +855,7 @@ var TagManager = new function () {
 //        return { winc:winc, wexc:wexc };
 //    }
 
+
 //    this.StrCombine = function ( data ) {
 //        var texc = [];
 //        data.texc.forEach(function(id){
@@ -845,15 +865,16 @@ var TagManager = new function () {
 //        return texc.join(' ') + (texc.length > 0 ? ' ' : '') + this.IDs2Str(data.tinc);
 //    }
 
+
     this.Linked = function ( data ) {
         var result = [], list = {}, i;
         //data = data.slice();
         if ( data && data instanceof Array ) {
             if ( data.length === 1 ) {
-                result = window.dataTags.data[data[0]][window.dataTags.defn.links];
+                result = this.data[data[0]][this.defn.links];
             } else {
                 data.forEach(function ( id ) {
-                    var links = window.dataTags.data[id][window.dataTags.defn.links];
+                    var links = self.data[id][self.defn.links];
                     links.forEach(function ( link ) {
                         list[link] = (list[link] ? list[link] : 0) + 1;
                     });
@@ -877,6 +898,22 @@ var TagManager = new function () {
         }
         //fb(result);
         return result;
+    };
+
+
+    this.Init = function ( tags ) {
+        this.data = tags.data;
+        this.defn = tags.defn;
+
+        console.time('TagManager: decrypt tags');
+        // decrypt tags
+        for ( var id in this.data ) {
+            var name = app.decode(this.data[id][this.defn.name]);
+            // fill service lookup tables of tags by id and by name
+            this.dataNmlist[name] = id = parseInt(id, 10);
+            this.dataIdlist[id] = name;
+        }
+        console.timeEnd('TagManager: decrypt tags');
     }
 
 };
@@ -899,8 +936,10 @@ module.exports = TagManager;
 
 
 var app = __webpack_require__(0),
+    api = __webpack_require__(1),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
+    templates  = __webpack_require__(5),
     TagManager = __webpack_require__(3);
 
 
@@ -915,7 +954,7 @@ var NoteList = new function () {
     // component state flag
     // true  - everything is decoded
     // false - no plain data, everything is encrypted
-    this.open = false;
+    //this.open = false;
 
     var hint_tag_include = 'click on this tag to include it to the search';
     var hint_tag_exclude = 'click on this tag to exclude it from the search';
@@ -931,46 +970,48 @@ var NoteList = new function () {
     var msg_checked_notes_removed = 'The selected notes were successfully removed ';
     var msg_checked_notes_restored = 'The selected notes were successfully restored ';
 
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        elclear(this.dom.notes);
-        // show info and controls
-        this.dom.tpbar.style.display = 'block';
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     elclear(this.dom.notes);
+    //     // show info and controls
+    //     this.dom.tpbar.style.display = 'block';
+    //     // component state flag
+    //     this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment
-        if ( this.open ) {
-            // clear decoded entries data in the requested notes
-            this.data.notes.forEach(function ( note ) {
-                // all note entries
-                note.entries.forEach(function ( entry ) {
-                    // remove if exist
-                    delete entry.name_dec;
-                    delete entry.data_dec;
-                });
-                // all data for filtering
-                delete note.fulltext;
-            });
-            // hide info and controls
-            this.dom.tpbar.style.display = 'none';
-            // clear notes
-            elclear(this.dom.notes);
-            // component state flag
-            this.open = false;
-        }
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         // clear decoded entries data in the requested notes
+    //         this.data.notes.forEach(function ( note ) {
+    //             // all note entries
+    //             note.entries.forEach(function ( entry ) {
+    //                 // remove if exist
+    //                 delete entry.name_dec;
+    //                 delete entry.data_dec;
+    //             });
+    //             // all data for filtering
+    //             delete note.fulltext;
+    //         });
+    //         // hide info and controls
+    //         this.dom.tpbar.style.display = 'none';
+    //         // clear notes
+    //         elclear(this.dom.notes);
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
 
     /**
      * Deletes or restores the given list of notes depending on the undo flag
@@ -1012,6 +1053,7 @@ var NoteList = new function () {
             });
         }
     };
+
 
     /**
      * Makes a visualization of the given note entries details
@@ -1077,6 +1119,7 @@ var NoteList = new function () {
         return list.length > 0 ? list : element('div', {className: 'warn'}, hint_info_missing);
     }
 
+
     /**
      * Tag button click handler
      * include, exclude and subtract
@@ -1098,6 +1141,7 @@ var NoteList = new function () {
         return false;
     };
 
+
     /**
      * Makes a list of note tags buttons with handlers
      * @param note array note attributes
@@ -1110,9 +1154,9 @@ var NoteList = new function () {
             // separate tags
             note.tags.forEach(function ( item ) {
                 if ( NoteFilter.data.tinc.has(item) ) {
-                    inc.push(window.dataTagsIdlist[item]);
+                    inc.push(TagManager.dataIdlist[item]);
                 } else {
-                    exc.push(window.dataTagsIdlist[item]);
+                    exc.push(TagManager.dataIdlist[item]);
                 }
             });
             // forms the list of tags already selected
@@ -1138,26 +1182,33 @@ var NoteList = new function () {
         return list.length > 0 ? list : hint_tags_missing;
     }
 
+
     /**
      * Returns the corresponding note icon image address
      * @param note array note attributes
-     * @return url string
+     * @return string
      */
     var GetNoteIcon = function ( note ) {
         // prepare
         var icon = 'img/tags/note.svg',
             tags = TagManager.IDs2Names(note.tags);
+
         // iterate words in the tag list
-        tags.forEach(function ( item ) {
+        tags.forEach(function ( tag ) {
+            var has = templates.some(function ( template ) {
+                return template.name === tag;
+            });
+
             // it's a tag from the global set
-            if ( window.iconTags.has(item) ) {
+            if ( has ) {
                 // get the first match
-                icon = 'img/tags/' + item + '.svg';
-                return;
+                icon = 'img/tags/' + tag + '.svg';
             }
         });
+
         return icon;
-    }
+    };
+
 
     /**
      * Shows/hides checked notes controls and general notes info
@@ -1226,6 +1277,7 @@ var NoteList = new function () {
         this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
     }
 
+
     /**
      * Set the default note state, removes additional classes and resets the state flags
      * @param notes if given than it's the only note list to be reset
@@ -1241,6 +1293,7 @@ var NoteList = new function () {
             list[i].state.active = list[i].state.marked = false;
         }
     }
+
 
     /**
      * Sets the flag and clall to the given note/notes
@@ -1261,6 +1314,7 @@ var NoteList = new function () {
         }
     };
 
+
     /**
      * Returns the list of notes with the given state
      * @param type string state name active | marked
@@ -1276,6 +1330,7 @@ var NoteList = new function () {
         return result;
     }
 
+
     /**
      * Returns the html note block by id if found or false otherwise
      * @param id int note attribute
@@ -1290,6 +1345,7 @@ var NoteList = new function () {
         return false;
     }
 
+
     /**
      * Returns the list of visible notes
      * @return array of nodes
@@ -1302,6 +1358,7 @@ var NoteList = new function () {
         }
         return result;
     }
+
 
     /**
      * Whole note ckick handler
@@ -1359,6 +1416,7 @@ var NoteList = new function () {
         //return false;
     }
 
+
     /**
      * Note checkbox ckick handler
      */
@@ -1370,6 +1428,7 @@ var NoteList = new function () {
         // prevent bubbling
         return false;
     }
+
 
     /**
      * Forms the note wrapper
@@ -1401,6 +1460,7 @@ var NoteList = new function () {
         // note html body
         return note;
     };
+
 
     /**
      * Shows/hides notes according to the filter
@@ -1449,6 +1509,7 @@ var NoteList = new function () {
         this.UpdateCtrlBlock();
     }
 
+
     /**
      * Fills the note list with generated notes
      * @param notes array of notes or false if gloabal latest list should be used
@@ -1480,6 +1541,7 @@ var NoteList = new function () {
         this.UpdateCtrlBlock();
     };
 
+
     /**
      * Deletes or restore selected notes depending on undo flag
      */
@@ -1496,6 +1558,7 @@ var NoteList = new function () {
             NotesDelete(list, this.undo);
         }
     }
+
 
     /**
      * Main init method
@@ -1561,6 +1624,97 @@ module.exports = NoteList;
 
 "use strict";
 /**
+ * @license The MIT License (MIT)
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+var list = [
+    {
+        name: 'note',
+        description: 'simple note with title and text',
+        entries: [
+            {id: 1, name: 'title'},
+            {id: 6, name: 'description'}
+        ]
+    },
+    {
+        name: 'site',
+        description: 'regular site bookmark',
+        entries: [
+            {id: 2, name: 'site url'},
+            {id: 5, name: 'email'},
+            {id: 4, name: 'password'},
+            {id: 6, name: 'comments'}
+        ]
+    },
+    {
+        name: 'email',
+        description: 'email address record',
+        entries: [
+            {id: 2, name: 'site url'},
+            {id: 5, name: 'email'},
+            {id: 4, name: 'password'},
+            {id: 6, name: 'comments'}
+        ]
+    },
+    {
+        name: 'messenger',
+        description: 'instant messenger account information',
+        entries: [
+            {id: 2, name: 'site url'},
+            {id: 5, name: 'email'},
+            {id: 3, name: 'username'},
+            {id: 4, name: 'password'},
+            {id: 1, name: 'phone'},
+            {id: 6, name: 'comments'}
+        ]
+    },
+    {
+        name: 'ftp',
+        description: 'ftp server data',
+        entries: [
+            {id: 2, name: 'server address'},
+            {id: 3, name: 'username'},
+            {id: 4, name: 'password'},
+            {id: 6, name: 'comments'}
+        ]
+    },
+    {
+        name: 'ssh',
+        description: 'ssh server data',
+        entries: [
+            {id: 2, name: 'server address'},
+            {id: 3, name: 'username'},
+            {id: 4, name: 'password'},
+            {id: 6, name: 'comments'}
+        ]
+    },
+    {
+        name: 'database',
+        description: 'database access parameters',
+        entries: [
+            {id: 2, name: 'server address'},
+            {id: 1, name: 'database name'},
+            {id: 3, name: 'username'},
+            {id: 4, name: 'password'},
+            {id: 6, name: 'comments'}
+        ]
+    }
+];
+
+
+// public
+module.exports = list;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
  * List of note templates
  * @license The MIT License (MIT)
  * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
@@ -1568,7 +1722,7 @@ module.exports = NoteList;
 
 
 
-//var NoteEditor = require('./app.note.editor');
+var templates = __webpack_require__(5);
 
 
 var TemplateList = new function () {
@@ -1577,32 +1731,35 @@ var TemplateList = new function () {
 
     var hint_main = 'In the list above please select a template to be used to create your new note.';
     var hint_item = 'This template will create a note with this set of entries:<br>';
-    var hint_filter = 'filter by name or description ...';
+    //var hint_filter = 'filter by name or description ...';
+
 
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        this.Fill();
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     console.log('TemplateList.EventOpen');
+    //     //this.Fill();
+    //     // component state flag
+    //     this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment
-        if ( this.open ) {
-            elclear(this.dom.list);
-            // component state flag
-            this.open = false;
-        }
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         elclear(this.dom.list);
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
 
     /**
      * Fills the list with templates
@@ -1611,12 +1768,13 @@ var TemplateList = new function () {
         // prepare
         elclear(self.dom.list);
         // iterate all templates
-        window.dataTemplates.data.forEach(function ( data ) {
+        //window.dataTemplates.data.forEach(function ( data ) {
+        templates.forEach(function ( data ) {
             // template body
             var item = element('div', {className: 'item', /*style:'display:none',*/ data: data},
-                element('div', {className: 'line'}, [
-                    element('div', {className: 'name'}, data[window.dataTemplates.defn.name]),
-                    element('div', {className: 'hint'}, data[window.dataTemplates.defn.description])
+                element('div', {className: 'line ' + data.name}, [
+                    element('div', {className: 'name'}, data.name),
+                    element('div', {className: 'hint'}, data.description)
                 ]));
             // append
             elchild(self.dom.list, item);
@@ -1629,32 +1787,37 @@ var TemplateList = new function () {
             //$(item).mouseenter(function(){
             item.addEventListener('mouseenter', function () {
                 var list = [];
-                window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
-                    list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
+                data.entries.forEach(function ( entry ) {
+                    list.push('<b>' + entry.name + '</b>');
                 });
+                // window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
+                //     list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
+                // });
                 self.dom.hint.innerHTML = hint_item + list.join(', ');
             });
         });
-        this.Filter();
+        //this.Filter();
     };
+
 
     /**
      * Filters by given text
      * @param text string to search in each template name or description
      */
-    this.Filter = function ( text ) {
-        text = text || this.dom.filter.value;
-        text = text.toLowerCase();
-        for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
-            // prepare
-            var item = self.dom.list.childNodes[i];
-            var name = item.data[window.dataTemplates.defn.name].toLowerCase();
-            var desc = item.data[window.dataTemplates.defn.description].toLowerCase();
-            // search substring and show/hide
-            //$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
-            item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
-        }
-    };
+    // this.Filter = function ( text ) {
+    //     text = text || this.dom.filter.value;
+    //     text = text.toLowerCase();
+    //     for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
+    //         // prepare
+    //         var item = self.dom.list.childNodes[i];
+    //         var name = item.data[window.dataTemplates.defn.name].toLowerCase();
+    //         var desc = item.data[window.dataTemplates.defn.description].toLowerCase();
+    //         // search substring and show/hide
+    //         //$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+    //         item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
+    //     }
+    // };
+
 
     /**
      * Shows/hides the component
@@ -1662,7 +1825,8 @@ var TemplateList = new function () {
      */
     this.Show = function ( state ) {
         this.dom.handle.style.display = state ? 'block' : 'none';
-    }
+    };
+
 
     /**
      * Main init method
@@ -1686,17 +1850,19 @@ var TemplateList = new function () {
         });
 
         //this.dom.filter = element('input', {type:'text', value:hint_filter});
-        this.dom.filter = element('input', {type: 'text', placeholder: hint_filter});
+        //this.dom.filter = element('input', {type: 'text', placeholder: hint_filter});
         // watermark and filtering
         //watermark(this.dom.filter, hint_filter, '#000');
         //$(this.dom.filter).keyup(function(){
-        this.dom.filter.addEventListener('keyup', function () {
-            self.Filter(this.value);
-        });
+        // this.dom.filter.addEventListener('keyup', function () {
+        //     self.Filter(this.value);
+        // });
 
         // title
-        elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates'), this.dom.filter]);
-    }
+        elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates')/*, this.dom.filter*/]);
+
+        this.Fill();
+    };
 };
 
 
@@ -1705,7 +1871,7 @@ module.exports = TemplateList;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1717,84 +1883,82 @@ module.exports = TemplateList;
 
 
 var app     = __webpack_require__(0),
-    sjcl    = __webpack_require__(1),
-    api     = __webpack_require__(2),
+    sjcl    = __webpack_require__(2),
+    api     = __webpack_require__(1),
     //dialogs = require('./app.dialogs'),
     //NoteFilter   = require('./app.note.filter'),
     NoteList     = __webpack_require__(4),
-    TemplateList = __webpack_require__(5),
+    TemplateList = __webpack_require__(6),
     //NoteEditor   = require('./app.note.editor'),
     TagManager   = __webpack_require__(3),
     collectTimer;
 
 
-__webpack_require__(7);
 __webpack_require__(8);
 __webpack_require__(9);
-__webpack_require__(10);
+__webpack_require__(11);
+__webpack_require__(12);
 
-//require('./jquery');
-//window.$ = require('jquery');
-//require('./_jquery-1.9.1.min');
-//require('./_jquery.simplemodal.1.4.4.min');
 
-window.SignOut = function SignOut () {
-    api.post('user/signout', null, function ( error, data ) {
+window.Logout = function SignOut () {
+    api.post('user/logout', null, function ( error, data ) {
         if ( error ) {
             console.error(error);
             return;
         }
 
         // true or false
-        console.log('signout', data);
+        console.log('logout', data);
 
         location.reload();
     });
 };
 
 
-window.initData = function initData ( data, callback ) {
-    window.dataUser = data;
+window.initData = function initData ( user, pass, callback ) {
+    app.setPass(pass);
+    window.dataUser = user;
 
-    api.get('user/data', function ( error, data ) {
+    api.get('user/tags', function ( error, tags ) {
         if ( error ) {
             console.error(error);
-            callback();
+            //callback();
 
             return;
         }
 
-        console.log('user data', data);
+        console.log('user tags', tags);
 
-        window.dataEntryTypes = data.entry_types;
-        window.dataTemplates = data.templates;
-        window.dataTemplateEntries = data.template_entries;
+        //window.dataEntryTypes = data.entry_types;
+        //window.dataTemplates = data.templates;
+        //window.dataTemplateEntries = data.template_entries;
 
         // compacted list of all encoded tags with links and use counters
-        window.dataTags = data.tags;
+        //window.dataTags = tags;
         // need to correct type if empty
         // if ( !window.dataTags.data.length ) {
         //     window.dataTags.data = {};
         //     window.dataTags.defn = {name:0, links:1, uses:2};
         // }
-        // decoded to these two lists
-        window.dataTagsNmlist = {}; // {note:1, site:2, email:3}
-        window.dataTagsIdlist = {}; // {1:note, 2:site, 3:email}
-        // they are filling on page loading and on note creation
-        // if there are some new tags
+        // // decoded to these two lists
+        // window.dataTagsNmlist = {}; // {note:1, site:2, email:3}
+        // window.dataTagsIdlist = {}; // {1:note, 2:site, 3:email}
+        // // they are filling on page loading and on note creation
+        // // if there are some new tags
 
         // main components initialization
-        NoteFilter.Init({handle: document.querySelector('div.notefilter')});
+        TagManager.Init(tags);
         NoteList.Init({handle: document.querySelector('div.notelist')});
+        NoteFilter.Init({handle: document.querySelector('div.notefilter')});
         TemplateList.Init({handle: document.querySelector('div.templatelist')});
         NoteEditor.Init({handle: document.querySelector('div.noteeditor')});
 
         // to receive password change events
-        app.subscribe(TagManager);
-        app.subscribe(TemplateList);
-        app.subscribe(NoteList);
-        app.subscribe(NoteFilter);
-        app.subscribe(NoteEditor);
+        //app.subscribe(TagManager);
+        //app.subscribe(TemplateList);
+        //app.subscribe(NoteList);
+        //app.subscribe(NoteFilter);
+        //app.subscribe(NoteEditor);
 
         // show
         window.pageMain.style.display = 'block';
@@ -1809,7 +1973,7 @@ window.initData = function initData ( data, callback ) {
 window.exportData = null;
 
 // list of tag names with title images
-window.iconTags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber', 'msn', 'database'];
+//window.iconTags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber', 'msn', 'database'];
 
 //window.pageInit = document.getElementById('pageInit');
 window.pageMain = document.getElementById('pageMain');
@@ -1846,13 +2010,13 @@ api.get('user/info', function ( error, data ) {
         DlgPassGet.Show({escClose: false});
     } else {
         //window.pageInit.style.display = 'block';
-        DlgUserLogin.Show();
+        DlgUserLogin.Show({escClose: false});
     }
 });
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1864,8 +2028,8 @@ api.get('user/info', function ( error, data ) {
 
 
 var //autocomplete = require('autocompleter'),
-    app = __webpack_require__(0),
-    api = __webpack_require__(2),
+    //app = require('./app'),
+    api = __webpack_require__(1),
     NoteList = __webpack_require__(4),
     TagManager = __webpack_require__(3);
 
@@ -1881,7 +2045,7 @@ var NoteFilter = new function () {
     // component state flag
     // true  - everything is decoded
     // false - no plain data, everything is encrypted
-    this.open = false;
+    //this.open = false;
 
     // hints
     var hint_wexclude = 'click on this word to remove it from the filtering';
@@ -1900,59 +2064,64 @@ var NoteFilter = new function () {
     var msg_info_no_data = 'There are no records to meet the given search options. You can change these options or see your ';
     var msg_fail_server_error = 'The request was not successful. The response from the server: ';
 
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        // decrypt input data if not the first time
-        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
-        // restore backuped value
-        this.dom.input.value = this.dom.input.data.encval;
-        // inner parsed data
-        this.data = TagManager.StrParse(this.dom.input.value);
-        this.post = TagManager.StrParse();
-        // build notes
-        PerformSearch();
-        // show/hide info and controls
-        NoteList.UpdateCtrlBlock(true);
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     // decrypt input data if not the first time
+    //     if ( this.dom.input.data.length ) {
+    //         this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
+    //     }
+    //     // restore backuped value
+    //     this.dom.input.value = this.dom.input.data.encval;
+    //     // inner parsed data
+    //     this.data = TagManager.StrParse(this.dom.input.value);
+    //     this.post = TagManager.StrParse();
+    //     // build notes
+    //     PerformSearch();
+    //     // show/hide info and controls
+    //     NoteList.UpdateCtrlBlock(true);
+    //     // component state flag
+    //     this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment
-        if ( this.open ) {
-            // delete messages
-            self.MsgClear();
-            // backup and clear search string
-            this.dom.input.data.encval = this.dom.input.value;
-            // encrypt input data
-            this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
-            // hide current value
-            this.dom.input.value = '[encrypted data]';
-            // inner parsed data
-            this.data = {};
-            this.post = {};
-            // clear autocompleter
-            $(this.dom.input).data('autocompleter').options.data = [true];
-            // component state flag
-            this.open = false;
-        }
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         // delete messages
+    //         self.MsgClear();
+    //         // backup and clear search string
+    //         this.dom.input.data.encval = this.dom.input.value;
+    //         // encrypt input data
+    //         this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
+    //         // hide current value
+    //         this.dom.input.value = '[encrypted data]';
+    //         // inner parsed data
+    //         this.data = {};
+    //         this.post = {};
+    //         // clear autocompleter
+    //         $(this.dom.input).data('autocompleter').options.data = [true];
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
 
     /**
      * Removes all the messages
      */
     this.MsgClear = function () {
         elclear(this.dom.messages);
-    }
+    };
+
 
     /**
      * Appends the given message
@@ -1963,6 +2132,7 @@ var NoteFilter = new function () {
         elchild(this.dom.messages, element('div', {className: type || 'info'}, text));
     };
 
+
     /**
      * Set focus to tag search field
      */
@@ -1970,13 +2140,15 @@ var NoteFilter = new function () {
         this.dom.input.focus();
     };
 
+
     /**
      * Visual flags
      */
     var LoadingStart = function () {
         self.dom.icon.className = 'icon loading';
         self.dom.messages.className = 'messages loading';
-    }
+    };
+
 
     /**
      * Visual flags
@@ -1984,7 +2156,8 @@ var NoteFilter = new function () {
     var LoadingStop = function () {
         self.dom.icon.className = 'icon';
         self.dom.messages.className = 'messages';
-    }
+    };
+
 
     /**
      * Resets the current search options
@@ -1993,7 +2166,8 @@ var NoteFilter = new function () {
     this.RequestLatest = function () {
         this.Reset();
         this.NotesRequest();
-    }
+    };
+
 
     /**
      * Resets the current search options
@@ -2008,7 +2182,8 @@ var NoteFilter = new function () {
         this.UpdateParsedInput();
         // get data and build note list
         this.NotesRequest();
-    }
+    };
+
 
     /**
      * Sends ajax request to receive notes by tags and
@@ -2036,7 +2211,7 @@ var NoteFilter = new function () {
                 // make note list using the received data
                 NoteList.BuildTable(data.notes, data.total);
                 // check if no data but show message only if there were some search options uses
-                if ( data.total == 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
+                if ( data.total === 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
                 // no data, need to inform and suggest to see for example the latest notes
                     self.MsgAdd([msg_info_no_data, element('a', {className: 'bold'}, 'latest notes', {
                         onclick: function () {
@@ -2053,6 +2228,7 @@ var NoteFilter = new function () {
         });
     };
 
+
     /**
      * Updates inner data from user input if changed since last time
      */
@@ -2065,6 +2241,7 @@ var NoteFilter = new function () {
             this.dom.input.data.oldval = this.dom.input.value;
         }
     };
+
 
     /**
      * Search handler
@@ -2091,6 +2268,7 @@ var NoteFilter = new function () {
         // do search
         PerformSearch();
     };
+
 
     /**
      * Keyboard input handler for tag search
@@ -2135,13 +2313,14 @@ var NoteFilter = new function () {
 //        }
     };
 
+
     /**
      * Adds the given tag to the search
      * @param tagnm string tag name to be processed
      */
     this.TagInclude = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataNmlist[tagnm];
         // not added already and valid id
         if ( tagid && !this.data.tinc.has(tagid) ) {
             // prepare inner parsed data
@@ -2154,13 +2333,14 @@ var NoteFilter = new function () {
         PerformSearch();
     };
 
+
     /**
      * Removes the given tag from the search
      * @param tagnm string tag name to be processed
      */
     this.TagExclude = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataNmlist[tagnm];
         // exists in the search line and valid id
         if ( tagid && this.data.tinc.has(tagid) ) {
             // locate tag name and id in the inner parsed data
@@ -2177,13 +2357,14 @@ var NoteFilter = new function () {
         PerformSearch();
     };
 
+
     /**
      * Subtracts the given tag in the search
      * @param tagnm string tag name to be processed
      */
     this.TagSubtract = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataNmlist[tagnm];
         // not subtracted already and valid id
         if ( tagid && !this.data.texc.has(tagid) ) {
             // locate tag name and id in the inner parsed data
@@ -2202,6 +2383,7 @@ var NoteFilter = new function () {
         // execute
         PerformSearch();
     };
+
 
     /**
      * Removes the clicked word from the search
@@ -2225,6 +2407,7 @@ var NoteFilter = new function () {
         }
     };
 
+
     /**
      * Set default search hints and remove messages
      */
@@ -2237,7 +2420,8 @@ var NoteFilter = new function () {
         this.post = TagManager.StrParse();
         // delete all messages
         self.MsgClear();
-    }
+    };
+
 
     /**
      * Main init method
@@ -2393,9 +2577,9 @@ var NoteFilter = new function () {
                         // get linked tags to already selected
                         if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
                         // iterate all tags
-                        for ( var tnm in window.dataTagsNmlist ) {
+                        for ( var tnm in TagManager.dataNmlist ) {
                             // get tag id
-                            var tid = window.dataTagsNmlist[tnm];
+                            var tid = TagManager.dataNmlist[tnm];
                             // there are no including tags selected or it's one of the linked tag
                             if ( self.data.tinc.length === 0 || lnids.has(tid) )
                             // was not added so add it
@@ -2449,6 +2633,11 @@ var NoteFilter = new function () {
                 self.ac.activate();
             }
         });
+
+        // build notes
+        PerformSearch();
+        // show/hide info and controls
+        NoteList.UpdateCtrlBlock(true);
     };
 };
 
@@ -2460,7 +2649,7 @@ module.exports = NoteFilter;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2474,11 +2663,13 @@ module.exports = NoteFilter;
 
 var //autocomplete = require('autocompleter'),
     app = __webpack_require__(0),
-    api = __webpack_require__(2),
+    api = __webpack_require__(1),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = __webpack_require__(4),
-    TemplateList = __webpack_require__(5),
-    TagManager = __webpack_require__(3);
+    TemplateList = __webpack_require__(6),
+    TagManager = __webpack_require__(3),
+    templates  = __webpack_require__(5),
+    entryTypes = __webpack_require__(10);
 
 
 window.NoteEditor = new function () {
@@ -2503,95 +2694,99 @@ window.NoteEditor = new function () {
     var hint_clone = 'Will save the current note as a copy.';
     var hint_save = 'Will save all your changes. You can also press Ctrl+Enter';
 
+
     // component state flag
     // true - everything is decoded
     // false - no plain data, everything is encrypted
-    this.open = false;
+    //this.open = false;
 
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        // open if there is a note
-        if ( this.data ) {
-            // iterate all entries
-            for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
-                var entry = this.dom.entries.childNodes[i];
-                //with ( this.dom.entries.childNodes[i] ) {
-
-                // set post data
-                entry.post.name_dec = app.decode(entry.post.name);
-                entry.post.data_dec = app.decode(entry.post.data);
-                // set current data (taking either from post or decrypt)
-                entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
-                entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
-                // enable all inputs
-                entry.dom.name.disabled = entry.dom.data.disabled = false;
-                // change input to decrypted values
-                entry.dom.name.value = entry.data.name_dec;
-                entry.dom.data.value = entry.data.data_dec;
-                // update counter value
-                entry.dom.data.onkeyup();
-                //}
-            }
-            EnableControls(true);
-            // tags block
-            this.dom.tags.input.disabled = false;
-            this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
-            // fill autocompleter
-            var data = [];
-            // prepare all tags
-            for ( var tid in window.dataTagsIdlist ) data.push([window.dataTagsIdlist[tid], tid]);
-            $(this.dom.tags.input).data('autocompleter').options.data = data;
-        }
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     // open if there is a note
+    //     if ( this.data ) {
+    //         // iterate all entries
+    //         for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
+    //             var entry = this.dom.entries.childNodes[i];
+    //             //with ( this.dom.entries.childNodes[i] ) {
+    //
+    //             // set post data
+    //             entry.post.name_dec = app.decode(entry.post.name);
+    //             entry.post.data_dec = app.decode(entry.post.data);
+    //             // set current data (taking either from post or decrypt)
+    //             entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
+    //             entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
+    //             // enable all inputs
+    //             entry.dom.name.disabled = entry.dom.data.disabled = false;
+    //             // change input to decrypted values
+    //             entry.dom.name.value = entry.data.name_dec;
+    //             entry.dom.data.value = entry.data.data_dec;
+    //             // update counter value
+    //             entry.dom.data.onkeyup();
+    //             //}
+    //         }
+    //         EnableControls(true);
+    //         // tags block
+    //         this.dom.tags.input.disabled = false;
+    //         this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
+    //         // fill autocompleter
+    //         var data = [];
+    //         // prepare all tags
+    //         for ( var tid in TagManager.dataIdlist ) {
+    //             data.push([TagManager.dataIdlist[tid], tid]);
+    //         }
+    //         $(this.dom.tags.input).data('autocompleter').options.data = data;
+    //     }
+    //     // component state flag
+    //     //this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment and there is a note
-        if ( this.data && this.open ) {
-            // iterate all entries
-            for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
-                var entry = this.dom.entries.childNodes[i];
-                //with ( this.dom.entries.childNodes[i] ) {
-                // if data changed than reassing (taking either from post or encrypt)
-                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
-                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
-                // clear post and current data
-                entry.post.name_dec = entry.data.name_dec = null;
-                entry.post.data_dec = entry.data.data_dec = null;
-                // disable all inputs
-                entry.dom.name.disabled = entry.dom.data.disabled = true;
-                // change input to default hidden values
-                entry.dom.name.value = '********';
-                entry.dom.data.value = '[encrypted data]';
-                // hide counter value
-                entry.dom.counter.innerHTML = '';
-                // hide history block and clear content
-                entry.dom.history.style.display = 'none';
-                elclear(entry.dom.history);
-                delete entry.data.history;
-                //}
-            }
-            EnableControls(false);
-            // tags block
-            this.dom.tags.input.disabled = true;
-            this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value.toLowerCase());
-            this.dom.tags.input.value = '[encrypted tags]';
-            // clear autocompleter
-            $(this.dom.tags.input).data('autocompleter').options.data = [];
-        }
-        // component state flag
-        this.open = false;
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment and there is a note
+    //     if ( this.data && this.open ) {
+    //         // iterate all entries
+    //         for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
+    //             var entry = this.dom.entries.childNodes[i];
+    //             //with ( this.dom.entries.childNodes[i] ) {
+    //             // if data changed than reassing (taking either from post or encrypt)
+    //             if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
+    //             if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
+    //             // clear post and current data
+    //             entry.post.name_dec = entry.data.name_dec = null;
+    //             entry.post.data_dec = entry.data.data_dec = null;
+    //             // disable all inputs
+    //             entry.dom.name.disabled = entry.dom.data.disabled = true;
+    //             // change input to default hidden values
+    //             entry.dom.name.value = '********';
+    //             entry.dom.data.value = '[encrypted data]';
+    //             // hide counter value
+    //             entry.dom.counter.innerHTML = '';
+    //             // hide history block and clear content
+    //             entry.dom.history.style.display = 'none';
+    //             elclear(entry.dom.history);
+    //             delete entry.data.history;
+    //             //}
+    //         }
+    //         EnableControls(false);
+    //         // tags block
+    //         this.dom.tags.input.disabled = true;
+    //         this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value.toLowerCase());
+    //         this.dom.tags.input.value = '[encrypted tags]';
+    //         // clear autocompleter
+    //         $(this.dom.tags.input).data('autocompleter').options.data = [];
+    //     }
+    //     // component state flag
+    //     //this.open = false;
+    // };
+
 
     /**
      * Quick check if the tag input changed since the last post
@@ -2607,7 +2802,7 @@ window.NoteEditor = new function () {
         if ( data.length !== post.length ) return true;
         // check parsed string
         for ( var id = null, i = 0; i < data.length; i++ ) {
-            id = window.dataTagsNmlist[data[i]];
+            id = TagManager.dataNmlist[data[i]];
             // new tag not posted to the server
             if ( !id ) return true;
             // posted tags not include this id
@@ -2615,6 +2810,7 @@ window.NoteEditor = new function () {
         }
         return false;
     };
+
 
     /**
      * Collect all the note and entries data
@@ -2688,6 +2884,7 @@ window.NoteEditor = new function () {
 
         return self.post;
     };
+
 
     /**
      * Saves all note changes
@@ -2774,7 +2971,8 @@ window.NoteEditor = new function () {
                     for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
                         //with ( self.dom.entries.childNodes[i] )
                         var child = self.dom.entries.childNodes[i];
-                        child.dom.icon.src = 'img/field_' + window.dataEntryTypes.data[child.data.id_type][window.dataEntryTypes.defn.name] + '.png';
+                        //child.dom.icon.src = 'img/field_' + window.dataEntryTypes.data[child.data.id_type][window.dataEntryTypes.defn.name] + '.png';
+                        child.dom.icon.src = 'img/field_' + entryTypes.hash[child.data.id_type].name + '.png';
                     }
                     self.dom.tags.icon.src = 'img/field_tag.png';
                 }, 2000);
@@ -2808,6 +3006,7 @@ window.NoteEditor = new function () {
         });
     };
 
+
     /**
      * Control button change type
      * @param entry pointer to the entry data
@@ -2824,9 +3023,11 @@ window.NoteEditor = new function () {
 
             var cell = null;
             // build type list
-            for ( var id in window.dataEntryTypes.data ) {
+            //for ( var id in window.dataEntryTypes.data ) {
+            for ( var id in entryTypes.hash ) {
                 id = parseInt(id, 10);
-                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                //cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, entryTypes.hash[id].name, {
                     // set desc on mouse over action
                     onmouseover: function () {
                         entry.dom.desc.innerHTML = this.desc;
@@ -2835,7 +3036,8 @@ window.NoteEditor = new function () {
                         if ( this.className == 'item' ) {
                             // change name if default
                             //if ( entry.dom.name.value == window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] ) {
-                                entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
+                            //entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
+                            entry.dom.name.value = entryTypes.hash[this.type].name;
                             //}
                             // prepare type, name and value
                             entry.data.id_type = this.type;
@@ -2857,8 +3059,10 @@ window.NoteEditor = new function () {
                     }
                 });
                 cell.type = id;
-                cell.name = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name];
-                cell.desc = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.description];
+                //cell.name = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name];
+                cell.name = entryTypes.hash[id].name;
+                //cell.desc = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.description];
+                cell.desc = entryTypes.hash[id].description;
                 elchild(list, cell);
             }
             elchild(entry.dom.type, list);
@@ -2866,6 +3070,7 @@ window.NoteEditor = new function () {
         // show/hide block
         entry.dom.type.style.display = (entry.dom.type.style.display !== 'block' ? 'block' : 'none');
     };
+
 
     /**
      * Control button to obtain and show entry history
@@ -2927,13 +3132,15 @@ window.NoteEditor = new function () {
         entry.dom.history.style.display = (entry.dom.history.style.display !== 'block' ? 'block' : 'none');
     };
 
+
     /**
      * Control button add new
      * @param entry pointer to the entry data
      */
     var EntryBtnAdd = function ( entry ) {
         // prepare name and value
-        var name = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name];
+        //var name = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name];
+        var name = entryTypes.hash[entry.data.id_type].name;
         // generate some password if pass type
         var data = (entry.data.id_type == 4) ? pwdgen(20) : '';
         // clone
@@ -2952,6 +3159,7 @@ window.NoteEditor = new function () {
         changed = true;
     };
 
+
     /**
      * Control button move up
      * @param entry pointer to the entry data
@@ -2964,6 +3172,7 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Control button move down
      * @param entry pointer to the entry data
@@ -2975,6 +3184,7 @@ window.NoteEditor = new function () {
             changed = true;
         }
     };
+
 
     /**
      * Control button delete
@@ -2993,6 +3203,7 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Block of note entry title name input with controls
      * @param entry pointer to the entry data
@@ -3002,7 +3213,7 @@ window.NoteEditor = new function () {
         entry.dom.name = element('input', {
             type: 'text',
             maxLength: maxlengthTitle,
-            disabled: !self.open,
+            //disabled: !self.open,
             value: entry.data.name_dec
         }, '', {
             onchange: function () {
@@ -3034,12 +3245,14 @@ window.NoteEditor = new function () {
 
         // icon image
         entry.dom.icon = element('img', {
-            src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
+            //src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
+            src: 'img/field_' + entryTypes.hash[entry.data.id_type].name + '.png'
             //title: 'drag and drop to change the entries order'
         });
         // top title line with name and controls
         entry.dom.title = tblrow(element('table', {className: 'title'}), [entry.dom.icon, entry.dom.name, entry.dom.controls], [{className: 'icon'}, {className: 'name'}, {className: 'controls'}]);
     };
+
 
     /**
      * Block of note entry data input
@@ -3049,13 +3262,14 @@ window.NoteEditor = new function () {
         // types
         entry.dom.type = element('div', {className: 'type'});
         // get the input data max length
-        var limit = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.max];
+        //var limit = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.max];
+        var limit = entryTypes.hash[entry.data.id_type].max;
         // create input depending on entry type
         if ( entry.data.id_type === 6 || entry.data.id_type === 7 ) {
             entry.dom.data = element('textarea', {
                 className: 'text',
-                maxLength: limit,
-                disabled: !self.open
+                maxLength: limit
+                //disabled: !self.open
             }, entry.data.data_dec);
 
             // keyboard navigation
@@ -3076,7 +3290,7 @@ window.NoteEditor = new function () {
                 type: entry.data.id_type === 5 ? 'email' : 'text',
                 maxLength: limit,
                 className: entry.data.id_type === 5 ? 'email' : 'line',
-                disabled: !self.open,
+                //disabled: !self.open,
                 value: entry.data.data_dec
             });
 
@@ -3135,6 +3349,7 @@ window.NoteEditor = new function () {
         entry.dom.data.onkeydown = entry.dom.data.onkeyup;
     };
 
+
     // var RequestUrlTitle = function ( url ) {
     //     //delete this.data.comment;
     //     var comment = null;
@@ -3163,6 +3378,7 @@ window.NoteEditor = new function () {
     //     }
     // };
 
+
     /**
      * Parse data and fill the select list
      */
@@ -3172,19 +3388,23 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Block of note entry hint
      * @param entry pointer to the entry data
      */
     var EntryBlockHint = function ( entry ) {
         // entry description
-        entry.dom.desc = element('span', {}, window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description]);
-        entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
+        //entry.dom.desc = element('span', {}, window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description]);
+        entry.dom.desc = element('span', {}, entryTypes.hash[entry.data.id_type].description);
+        //entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
+        entry.dom.desc.value = entryTypes.hash[entry.data.id_type].description;
         // letters counter with max length check
-        entry.dom.counter = element('span', {className: entry.dom.data.value.length === entry.dom.data.maxLength ? 'limit' : ''}, !self.open ? '' : entry.dom.data.value.length);
+        entry.dom.counter = element('span', {className: entry.dom.data.value.length === entry.dom.data.maxLength ? 'limit' : ''}, entry.dom.data.value.length);
         // bottom entry description and counter
         entry.dom.hint = tblrow(element('table', {className: 'hint'}), [entry.dom.desc, entry.dom.counter], [{className: 'text'}, {className: 'counter'}]);
     };
+
 
     /**
      * Block of note entry floating controls
@@ -3288,6 +3508,7 @@ window.NoteEditor = new function () {
         return entry.dom.controls = element('div', {className: 'hidden'}, buttons);
     };
 
+
     /**
      * Single entry creation
      * @param data entry details
@@ -3335,34 +3556,34 @@ window.NoteEditor = new function () {
         //$(entry).mouseenter(function(){
         entry.addEventListener('mouseenter', function () {
             // only if not closed
-            if ( self.open ) {
-                if ( !entry.previousSibling ) {
-                    entry.dom.btn_up.className = 'disabled';
-                } else {
-                    entry.dom.btn_up.className = 'button';
-                }
-                if ( !entry.nextSibling ) {
-                    entry.dom.btn_down.className = 'disabled';
-                } else {
-                    entry.dom.btn_down.className = 'button';
-                }
-                //TODO: add real entries check (there are hidden entries so failure here)
-                if ( self.dom.entries.childNodes.length === 1 ) {
-                    entry.dom.btn_delete.className = 'disabled';
-                } else {
-                    entry.dom.btn_delete.className = 'button';
-                }
-                //$(entry.dom.controls).fadeIn();
-                entry.dom.controls.classList.remove('hidden');
+            //if ( self.open ) {
+            if ( !entry.previousSibling ) {
+                entry.dom.btn_up.className = 'disabled';
+            } else {
+                entry.dom.btn_up.className = 'button';
             }
+            if ( !entry.nextSibling ) {
+                entry.dom.btn_down.className = 'disabled';
+            } else {
+                entry.dom.btn_down.className = 'button';
+            }
+            //TODO: add real entries check (there are hidden entries so failure here)
+            if ( self.dom.entries.childNodes.length === 1 ) {
+                entry.dom.btn_delete.className = 'disabled';
+            } else {
+                entry.dom.btn_delete.className = 'button';
+            }
+            //$(entry.dom.controls).fadeIn();
+            entry.dom.controls.classList.remove('hidden');
+            //}
         });
         //$(entry).mouseleave(function(){
         entry.addEventListener('mouseleave', function () {
             // only if not closed
-            if ( self.open ) {
-                //$(entry.dom.controls).fadeOut();
-                entry.dom.controls.classList.add('hidden');
-            }
+            //if ( self.open ) {
+            //$(entry.dom.controls).fadeOut();
+            entry.dom.controls.classList.add('hidden');
+            //}
         });
         //$(entry).click(function(){
         // iterate all entries
@@ -3374,6 +3595,7 @@ window.NoteEditor = new function () {
         //});
         return entry;
     };
+
 
     /**
      * Block of note title
@@ -3389,6 +3611,7 @@ window.NoteEditor = new function () {
             ], [{className: 'icon'}, {className: 'name'}, {className: 'info'}])
         );
     };
+
 
     /**
      * Block of note entries
@@ -3411,6 +3634,7 @@ window.NoteEditor = new function () {
         return self.dom.entries;
     };
 
+
     /**
      * Block of tags work
      */
@@ -3419,7 +3643,7 @@ window.NoteEditor = new function () {
         var input = element('input', {
             type: 'text',
             maxLength: maxlengthTags,
-            disabled: !self.open,
+            //disabled: !self.open,
             className: 'line',
             value: ''
         });
@@ -3453,8 +3677,8 @@ window.NoteEditor = new function () {
 
         var data = [];
         // prepare all tags
-        for ( var tid in window.dataTagsIdlist ) {
-            data.push([window.dataTagsIdlist[tid], tid]);
+        for ( var tid in TagManager.dataIdlist ) {
+            data.push([TagManager.dataIdlist[tid], tid]);
         }
 
         /*autocomplete({
@@ -3542,6 +3766,7 @@ window.NoteEditor = new function () {
         return self.dom.tags;
     };
 
+
     /**
      * Block of button controls
      */
@@ -3605,6 +3830,7 @@ window.NoteEditor = new function () {
         ]);
     };
 
+
     /**
      * Event management
      */
@@ -3633,6 +3859,7 @@ window.NoteEditor = new function () {
         });
     };
 
+
     /**
      * Enebles/disables the control buttons
      * @param state bool flag
@@ -3646,12 +3873,14 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Asks user about modifications
      */
     this.ConfirmExit = function () {
         return confirm(msgHasChanges);
     }
+
 
     /**
      * Saves the current note as new
@@ -3672,6 +3901,7 @@ window.NoteEditor = new function () {
         this.dom.entries.childNodes[0].dom.data.focus();
     }
 
+
     /**
      * Prepares a new note with the same set of entries as the current note has
      */
@@ -3680,7 +3910,8 @@ window.NoteEditor = new function () {
         // iterate the current entry list
         this.data.entries.forEach(function ( entry ) {
             // prepare name and data
-            name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
+            //name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
+            name = entryTypes.hash[entry.id_type].name;
             // generate some password if pass type
             data = (entry.id_type == 4) ? pwdgen(20) : '';
             // append the entry list
@@ -3706,6 +3937,7 @@ window.NoteEditor = new function () {
             this.dom.entries.childNodes[0].dom.data.focus();
         }
     }
+
 
     /**
      * Leaves the current note editing
@@ -3743,6 +3975,7 @@ window.NoteEditor = new function () {
         return false;
     };
 
+
     /**
      * Creates a new note
      */
@@ -3753,34 +3986,40 @@ window.NoteEditor = new function () {
         // data to be send on save
         this.post = {tags: []};
         // local vars
-        var id_template = template[window.dataTemplates.defn.id],
+        //var id_template = template[window.dataTemplates.defn.id],
+        var //id_template = template[window.dataTemplates.defn.id],
+            self = this,
             id_type, name, data, tag;
-        // template is given and valid
-        if ( template && window.dataTemplateEntries.data[id_template] ) {
+
+        // template is given
+        if ( template ) {
             // fill the list of entries
-            for ( var i = 0; i < window.dataTemplateEntries.data[id_template].length; i++ ) {
+            //for ( var i = 0; i < window.dataTemplateEntries.data[id_template].length; i++ ) {
+            template.entries.forEach(function ( entry ) {
                 //for ( var i in window.dataTemplateEntries.data[id_template] ) {
                 // get the entry type
-                id_type = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.id_type];
+                //id_type = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.id_type];
                 // prepare name and data
-                name = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.name];
+                //name = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.name];
                 // generate some password if pass type
-                data = (id_type == 4) ? pwdgen(20) : '';
+                data = (entry.id === 4) ? pwdgen(20) : '';
                 // adding
-                this.data.entries.push({
-                    id_type: id_type,
-                    name: app.encode(name),
-                    name_dec: name,
+                self.data.entries.push({
+                    id_type: entry.id,
+                    name: app.encode(entry.name),
+                    name_dec: entry.name,
                     data: app.encode(data),
                     data_dec: data
                 });
-            }
+            });
+
             // default tag
-            tag = template[window.dataTemplates.defn.tag];
+            tag = template.name;
             this.data.tags = TagManager.Str2IDs(tag);
             // no templates selected so just add one simple entry
         } else {
-            name = window.dataEntryTypes.data[1][window.dataEntryTypes.defn.name];
+            //name = window.dataEntryTypes.data[1][window.dataEntryTypes.defn.name];
+            name = entryTypes.hash[1].name;
             data = tag = '';
             // adding
             this.data.entries = [{
@@ -3800,6 +4039,7 @@ window.NoteEditor = new function () {
         this.dom.entries.childNodes[0].dom.data.focus();
         console.timeEnd('entry create');
     };
+
 
     /**
      * Loads the existing note
@@ -3834,6 +4074,7 @@ window.NoteEditor = new function () {
         console.timeEnd('entry load');
     };
 
+
     /**
      * Returns the open at the moment note id
      */
@@ -3841,25 +4082,35 @@ window.NoteEditor = new function () {
         return (this.data && this.data.id ? this.data.id : null);
     };
 
+
     var SetTitleIcon = function ( icon ) {
+        var tags;
+
         if ( !icon ) {
             icon = 'img/tags/note.svg';
-            var tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+            tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+
             // check parsed string
-            if ( tags && tags instanceof Array ) {
-                // iterate words in the input string
-                for ( var i = 0; i < tags.length; i++ ) {
-                    if ( window.iconTags.has(tags[i]) ) {
-                        icon = 'img/tags/' + tags[i] + '.svg';
-                        break;
+            if ( tags ) {
+                tags.forEach(function ( tag ) {
+                    var has = templates.some(function ( template ) {
+                        return template.name === tag;
+                    });
+
+                    if ( has ) {
+                        icon = 'img/tags/' + tag + '.svg';
                     }
-                }
+                });
             }
         }
+
+        console.log('SetTitleIcon', icon);
+
         if ( self.dom.title.icon.src.search(icon) < 0 ) {
             self.dom.title.icon.src = icon;
         }
     };
+
 
     /**
      * Compiles all blocks together
@@ -3892,6 +4143,7 @@ window.NoteEditor = new function () {
 
     };
 
+
     /**
      * Shows/hides the component
      * @param state visibility flag: true - show, false - hide
@@ -3899,6 +4151,7 @@ window.NoteEditor = new function () {
     this.Show = function ( state ) {
         this.dom.handle.style.display = state ? 'block' : 'none';
     };
+
 
     /**
      * Checks if there are any unsaved modificatons
@@ -3931,6 +4184,7 @@ window.NoteEditor = new function () {
         return flag;
     };
 
+
     /**
      * Main init method
      * @param params list of configuration parameters
@@ -3959,14 +4213,91 @@ window.NoteEditor = new function () {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @license The MIT License (MIT)
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+var list = [
+        {
+            id: 1,
+            max: 1024,
+            name: 'line',
+            icon: 'https://image.flaticon.com/icons/svg/23/23187.svg',
+            description: 'title or short one line text description'
+        },
+        {
+            id: 2,
+            max: 2048,
+            name: 'uri',
+            icon: 'https://image.flaticon.com/icons/svg/117/117965.svg',
+            description: 'any addresses - http/https/ftp/ssh or file path'},
+        {
+            id: 3,
+            max: 1024,
+            name: 'login',
+            icon: 'https://image.flaticon.com/icons/svg/149/149452.svg',
+            description: 'user name, login or email in some cases'
+        },
+        {
+            id: 4,
+            max: 4096,
+            name: 'password',
+            icon: 'https://image.flaticon.com/icons/svg/263/263069.svg',
+            description: 'any secret letters sequence'
+        },
+        {
+            id: 5,
+            max: 1024,
+            name: 'email',
+            icon: 'https://image.flaticon.com/icons/svg/60/60381.svg',
+            description: 'email address line'
+        },
+        {
+            id: 6,
+            max: 65535,
+            name: 'text',
+            icon: 'https://image.flaticon.com/icons/svg/140/140952.svg',
+            description: 'plain text entry for notes'
+        },
+        {
+            id: 7,
+            max: 65535,
+            name: 'html',
+            icon: 'https://image.flaticon.com/icons/svg/25/25252.svg',
+            description: 'formatted text entry for notes'
+        }
+    ],
+    hash = {};
+
+
+list.forEach(function ( type ) {
+    hash[type.id] = type;
+});
+
+
+// public
+module.exports = {
+    list: list,
+    hash: hash
+};
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Helper functions
  */
 
-var sjcl = __webpack_require__(1);
+var sjcl = __webpack_require__(2);
 
 
 // array prototypes
@@ -4046,7 +4377,7 @@ Array.prototype.has = function ( value ) {
 window.onEnterClick = function onEnterClick ( src, dest ) {
     src.addEventListener('keydown', function ( event ) {
         if ( event.keyCode === 13 ) {
-            dest.focus();
+            //dest.focus();
             dest.click();
         }
     });
@@ -4313,7 +4644,7 @@ window.pwdgen = function pwdgen ( length ) {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4325,10 +4656,10 @@ window.pwdgen = function pwdgen ( length ) {
 
 
 var app = __webpack_require__(0),
-    sjcl = __webpack_require__(1),
-    api = __webpack_require__(2),
-    DialogModal = __webpack_require__(11),
-    FieldList = __webpack_require__(12);
+    sjcl = __webpack_require__(2),
+    api = __webpack_require__(1),
+    DialogModal = __webpack_require__(13),
+    FieldList = __webpack_require__(14);
 
 
 var DlgExport = null;
@@ -4601,7 +4932,7 @@ DlgPassGet = new DialogModal({
             main: false,
             onClick: function () {
                 this.modal.Close();
-                SignOut();
+                Logout();
             }
         },
         Continue: {
@@ -4611,9 +4942,9 @@ DlgPassGet = new DialogModal({
                 var pass = modal.data.pass.value;
                 // check pass
                 if ( app.checkPass(pass) ) {
-                    initData(window.dataUser, function () {
+                    initData(window.dataUser, pass, function () {
                         //app.set('pass_store_time', modal.data.linkset.value, true);
-                        app.setPass(pass);
+                        //app.setPass(pass);
                         modal.data.attempts = 0;
                         // reset value
                         modal.data.pass.value = '';
@@ -4628,7 +4959,7 @@ DlgPassGet = new DialogModal({
                 } else {
                     modal.data.pass.focus();
                     modal.data.attempts++;
-                    if ( modal.data.attempts == 1 )
+                    if ( modal.data.attempts === 1 )
                         modal.SetMessage('Password is invalid!');
                     else
                         modal.SetMessage(['Password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
@@ -4735,10 +5066,10 @@ DlgUserLogin = new DialogModal({
                         if ( data ) {
                             // check returned data
                             if ( data && data.id ) {
-                                initData(data, function () {
+                                initData(data, modal.data.pass.value, function () {
                                     // save user name of last login
                                     app.set('username_last_used', modal.data.name.value, true);
-                                    app.setPass(modal.data.pass.value);
+                                    //app.setPass(modal.data.pass.value);
                                     // reset values
                                     modal.data.name.value = '';
                                     modal.data.pass.value = '';
@@ -4915,10 +5246,10 @@ DlgUserRegister = new DialogModal({
                             if ( data.code !== false ) {
                                 // check returned data
                                 if ( data && data.id ) {
-                                    initData(data, function () {
+                                    initData(data, password, function () {
                                         // save user name for future logins
                                         app.set('username_last_used', modal.data.name.value, true);
-                                        app.setPass(password);
+                                        //app.setPass(password);
                                         // reset values
                                         modal.data.name.value = '';
                                         modal.data.pass1.value = '';
@@ -4989,7 +5320,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5141,7 +5472,7 @@ module.exports = DialogModal;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
