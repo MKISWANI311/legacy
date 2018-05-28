@@ -20,33 +20,42 @@ var TagManager = new function () {
     // false - no plain data, everything is encrypted
     this.open = false;
 
+    // decoded to these two lists
+    this.dataNmlist = {}; // {note:1, site:2, email:3}
+    this.dataIdlist = {}; // {1:note, 2:site, 3:email}
+    // they are filling on page loading and on note creation
+    // if there are some new tags
+
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        console.time('TagManager: decrypt tags');
-        // decrypt tags
-        for ( var id in window.dataTags.data ) {
-            var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
-            // fill service lookup tables of tags by id and by name
-            window.dataTagsNmlist[name] = id = parseInt(id, 10);
-            window.dataTagsIdlist[id] = name;
-        }
-        console.timeEnd('TagManager: decrypt tags');
-    };
+    // this.EventOpen = function () {
+    //     console.time('TagManager: decrypt tags');
+    //     // decrypt tags
+    //     for ( var id in window.dataTags.data ) {
+    //         var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
+    //         // fill service lookup tables of tags by id and by name
+    //         window.dataTagsNmlist[name] = id = parseInt(id, 10);
+    //         window.dataTagsIdlist[id] = name;
+    //     }
+    //     console.timeEnd('TagManager: decrypt tags');
+    // };
+
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // clear service lookup tables
-        window.dataTagsNmlist = {};
-        window.dataTagsIdlist = {};
-    };
+    // this.EventClose = function () {
+    //     // clear service lookup tables
+    //     window.dataTagsNmlist = {};
+    //     window.dataTagsIdlist = {};
+    // };
+
 
     /**
      * Adds new tag id and enc/dev values to the global lookup tables
@@ -57,10 +66,11 @@ var TagManager = new function () {
     this.Add = function ( id, enc, dec ) {
         // decrypt name if necessary
         dec = dec || app.decode(enc, true);
-        window.dataTags.data[id] = [enc, [], 1];
-        window.dataTagsNmlist[dec] = id;
-        window.dataTagsIdlist[id] = dec;
+        this.data[id] = [enc, [], 1];
+        this.dataNmlist[dec] = id;
+        this.dataIdlist[id] = dec;
     };
+
 
     /**
      * Returns the sorted list of tag ids by usage
@@ -69,8 +79,8 @@ var TagManager = new function () {
     this.SortByUses = function () {
         var result = [];
         // prepare list of id/usage
-        for ( var id in window.dataTags.data ) {
-            result.push({id: parseInt(id, 10), uses: window.dataTags.data[id][window.dataTags.defn.uses]});
+        for ( var id in this.data ) {
+            result.push({id: parseInt(id, 10), uses: this.data[id][this.defn.uses]});
         }
         // custom sort
         result.sort(function ( a, b ) {
@@ -82,6 +92,7 @@ var TagManager = new function () {
         }
         return result;
     };
+
 
     /**
      * Converts the array of tags ids to tags names
@@ -102,13 +113,14 @@ var TagManager = new function () {
                     if ( (name = app.decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
                 } else {
                     // seems normal tag id
-                    if ( window.dataTagsIdlist[data[i]] )
+                    if ( this.dataIdlist[data[i]] )
                     // tag found in the global list
-                        result.push((prefix ? prefix : '') + window.dataTagsIdlist[data[i]]);
+                        result.push((prefix ? prefix : '') + this.dataIdlist[data[i]]);
                 }
             }
         return result.sort();
     };
+
 
     /**
      * Returns the string of tag names from the tags ids
@@ -118,6 +130,7 @@ var TagManager = new function () {
         data = this.IDs2Names(data);
         return data.length > 0 ? data.join(' ') : '';
     };
+
 
     /**
      * Converts a tags names array to array of ids or encrypted strings
@@ -139,9 +152,9 @@ var TagManager = new function () {
                 var name = data[i].slice(0, maxlength_tag);
                 // check if this word already processed
                 if ( !words.has(name) ) {
-                    if ( window.dataTagsNmlist[name] ) {
+                    if ( this.dataNmlist[name] ) {
                         // tag found in the global data
-                        result.push(window.dataTagsNmlist[name]);
+                        result.push(this.dataNmlist[name]);
                     } else {
                         // not found so encrypt and cache if not skipped
                         if ( !skip_new && (enc = app.encode(name, true)) !== false ) {
@@ -156,6 +169,7 @@ var TagManager = new function () {
         return result;
     };
 
+
     /**
      * Converts a tags string to array of ids or encrypted strings
      * @param data tags string
@@ -168,6 +182,7 @@ var TagManager = new function () {
         // do convert
         return this.Names2IDs(this.Str2Names(data), skip_new);
     };
+
 
 //    this.NamesMissed = function ( names, data ) {
 //        var result = [];
@@ -186,6 +201,7 @@ var TagManager = new function () {
 //        }
 //        return result;
 //    };
+
 
     /**
      * Converts a string to array of words
@@ -213,6 +229,7 @@ var TagManager = new function () {
         return result;
     };
 
+
     /**
      * Parses the user input into inner data lists
      * @param data string of tags input
@@ -239,7 +256,7 @@ var TagManager = new function () {
                     wcmd.push(word);
                 } else {
                     // just a tag
-                    var tid = window.dataTagsNmlist[word];
+                    var tid = self.dataNmlist[word];
                     // tag id found in the global data
                     if ( tid ) {
                         if ( fexc ) {
@@ -268,7 +285,8 @@ var TagManager = new function () {
             winc: winc, wexc: wexc,
             wcmd: wcmd
         };
-    }
+    };
+
 
     /**
      * Build the user input string from the parsed inner data
@@ -295,7 +313,8 @@ var TagManager = new function () {
         });
         // implode data into one line separated by spaces
         return list.join(' ');
-    }
+    };
+
 
     /**
      * Splits the string with words into two lists - inc and exc
@@ -324,6 +343,7 @@ var TagManager = new function () {
 //        return { winc:winc, wexc:wexc };
 //    }
 
+
 //    this.StrCombine = function ( data ) {
 //        var texc = [];
 //        data.texc.forEach(function(id){
@@ -333,15 +353,16 @@ var TagManager = new function () {
 //        return texc.join(' ') + (texc.length > 0 ? ' ' : '') + this.IDs2Str(data.tinc);
 //    }
 
+
     this.Linked = function ( data ) {
         var result = [], list = {}, i;
         //data = data.slice();
         if ( data && data instanceof Array ) {
             if ( data.length === 1 ) {
-                result = window.dataTags.data[data[0]][window.dataTags.defn.links];
+                result = this.data[data[0]][this.defn.links];
             } else {
                 data.forEach(function ( id ) {
-                    var links = window.dataTags.data[id][window.dataTags.defn.links];
+                    var links = self.data[id][self.defn.links];
                     links.forEach(function ( link ) {
                         list[link] = (list[link] ? list[link] : 0) + 1;
                     });
@@ -365,6 +386,22 @@ var TagManager = new function () {
         }
         //fb(result);
         return result;
+    };
+
+
+    this.Init = function ( tags ) {
+        this.data = tags.data;
+        this.defn = tags.defn;
+
+        console.time('TagManager: decrypt tags');
+        // decrypt tags
+        for ( var id in this.data ) {
+            var name = app.decode(this.data[id][this.defn.name]);
+            // fill service lookup tables of tags by id and by name
+            this.dataNmlist[name] = id = parseInt(id, 10);
+            this.dataIdlist[id] = name;
+        }
+        console.timeEnd('TagManager: decrypt tags');
     }
 
 };

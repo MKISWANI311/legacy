@@ -39,95 +39,99 @@ window.NoteEditor = new function () {
     var hint_clone = 'Will save the current note as a copy.';
     var hint_save = 'Will save all your changes. You can also press Ctrl+Enter';
 
+
     // component state flag
     // true - everything is decoded
     // false - no plain data, everything is encrypted
-    this.open = false;
+    //this.open = false;
 
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        // open if there is a note
-        if ( this.data ) {
-            // iterate all entries
-            for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
-                var entry = this.dom.entries.childNodes[i];
-                //with ( this.dom.entries.childNodes[i] ) {
-
-                // set post data
-                entry.post.name_dec = app.decode(entry.post.name);
-                entry.post.data_dec = app.decode(entry.post.data);
-                // set current data (taking either from post or decrypt)
-                entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
-                entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
-                // enable all inputs
-                entry.dom.name.disabled = entry.dom.data.disabled = false;
-                // change input to decrypted values
-                entry.dom.name.value = entry.data.name_dec;
-                entry.dom.data.value = entry.data.data_dec;
-                // update counter value
-                entry.dom.data.onkeyup();
-                //}
-            }
-            EnableControls(true);
-            // tags block
-            this.dom.tags.input.disabled = false;
-            this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
-            // fill autocompleter
-            var data = [];
-            // prepare all tags
-            for ( var tid in window.dataTagsIdlist ) data.push([window.dataTagsIdlist[tid], tid]);
-            $(this.dom.tags.input).data('autocompleter').options.data = data;
-        }
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     // open if there is a note
+    //     if ( this.data ) {
+    //         // iterate all entries
+    //         for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
+    //             var entry = this.dom.entries.childNodes[i];
+    //             //with ( this.dom.entries.childNodes[i] ) {
+    //
+    //             // set post data
+    //             entry.post.name_dec = app.decode(entry.post.name);
+    //             entry.post.data_dec = app.decode(entry.post.data);
+    //             // set current data (taking either from post or decrypt)
+    //             entry.data.name_dec = (entry.post.name === entry.data.name) ? entry.post.name_dec : app.decode(entry.data.name);
+    //             entry.data.data_dec = (entry.post.data === entry.data.data) ? entry.post.data_dec : app.decode(entry.data.data);
+    //             // enable all inputs
+    //             entry.dom.name.disabled = entry.dom.data.disabled = false;
+    //             // change input to decrypted values
+    //             entry.dom.name.value = entry.data.name_dec;
+    //             entry.dom.data.value = entry.data.data_dec;
+    //             // update counter value
+    //             entry.dom.data.onkeyup();
+    //             //}
+    //         }
+    //         EnableControls(true);
+    //         // tags block
+    //         this.dom.tags.input.disabled = false;
+    //         this.dom.tags.input.value = TagManager.IDs2Str(this.data.tags).toLowerCase();
+    //         // fill autocompleter
+    //         var data = [];
+    //         // prepare all tags
+    //         for ( var tid in TagManager.dataIdlist ) {
+    //             data.push([TagManager.dataIdlist[tid], tid]);
+    //         }
+    //         $(this.dom.tags.input).data('autocompleter').options.data = data;
+    //     }
+    //     // component state flag
+    //     //this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment and there is a note
-        if ( this.data && this.open ) {
-            // iterate all entries
-            for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
-                var entry = this.dom.entries.childNodes[i];
-                //with ( this.dom.entries.childNodes[i] ) {
-                // if data changed than reassing (taking either from post or encrypt)
-                if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
-                if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
-                // clear post and current data
-                entry.post.name_dec = entry.data.name_dec = null;
-                entry.post.data_dec = entry.data.data_dec = null;
-                // disable all inputs
-                entry.dom.name.disabled = entry.dom.data.disabled = true;
-                // change input to default hidden values
-                entry.dom.name.value = '********';
-                entry.dom.data.value = '[encrypted data]';
-                // hide counter value
-                entry.dom.counter.innerHTML = '';
-                // hide history block and clear content
-                entry.dom.history.style.display = 'none';
-                elclear(entry.dom.history);
-                delete entry.data.history;
-                //}
-            }
-            EnableControls(false);
-            // tags block
-            this.dom.tags.input.disabled = true;
-            this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value.toLowerCase());
-            this.dom.tags.input.value = '[encrypted tags]';
-            // clear autocompleter
-            $(this.dom.tags.input).data('autocompleter').options.data = [];
-        }
-        // component state flag
-        this.open = false;
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment and there is a note
+    //     if ( this.data && this.open ) {
+    //         // iterate all entries
+    //         for ( var i = 0; i < this.dom.entries.childNodes.length; i++ ) {
+    //             var entry = this.dom.entries.childNodes[i];
+    //             //with ( this.dom.entries.childNodes[i] ) {
+    //             // if data changed than reassing (taking either from post or encrypt)
+    //             if ( entry.data.name_dec !== entry.dom.name.value ) entry.data.name = (entry.post.name_dec === entry.dom.name.value) ? entry.post.name : app.encode(entry.dom.name.value);
+    //             if ( entry.data.data_dec !== entry.dom.data.value ) entry.data.data = (entry.post.data_dec === entry.dom.data.value) ? entry.post.data : app.encode(entry.dom.data.value);
+    //             // clear post and current data
+    //             entry.post.name_dec = entry.data.name_dec = null;
+    //             entry.post.data_dec = entry.data.data_dec = null;
+    //             // disable all inputs
+    //             entry.dom.name.disabled = entry.dom.data.disabled = true;
+    //             // change input to default hidden values
+    //             entry.dom.name.value = '********';
+    //             entry.dom.data.value = '[encrypted data]';
+    //             // hide counter value
+    //             entry.dom.counter.innerHTML = '';
+    //             // hide history block and clear content
+    //             entry.dom.history.style.display = 'none';
+    //             elclear(entry.dom.history);
+    //             delete entry.data.history;
+    //             //}
+    //         }
+    //         EnableControls(false);
+    //         // tags block
+    //         this.dom.tags.input.disabled = true;
+    //         this.data.tags = TagManager.Str2IDs(this.dom.tags.input.value.toLowerCase());
+    //         this.dom.tags.input.value = '[encrypted tags]';
+    //         // clear autocompleter
+    //         $(this.dom.tags.input).data('autocompleter').options.data = [];
+    //     }
+    //     // component state flag
+    //     //this.open = false;
+    // };
+
 
     /**
      * Quick check if the tag input changed since the last post
@@ -143,7 +147,7 @@ window.NoteEditor = new function () {
         if ( data.length !== post.length ) return true;
         // check parsed string
         for ( var id = null, i = 0; i < data.length; i++ ) {
-            id = window.dataTagsNmlist[data[i]];
+            id = TagManager.dataNmlist[data[i]];
             // new tag not posted to the server
             if ( !id ) return true;
             // posted tags not include this id
@@ -151,6 +155,7 @@ window.NoteEditor = new function () {
         }
         return false;
     };
+
 
     /**
      * Collect all the note and entries data
@@ -224,6 +229,7 @@ window.NoteEditor = new function () {
 
         return self.post;
     };
+
 
     /**
      * Saves all note changes
@@ -345,6 +351,7 @@ window.NoteEditor = new function () {
         });
     };
 
+
     /**
      * Control button change type
      * @param entry pointer to the entry data
@@ -409,6 +416,7 @@ window.NoteEditor = new function () {
         entry.dom.type.style.display = (entry.dom.type.style.display !== 'block' ? 'block' : 'none');
     };
 
+
     /**
      * Control button to obtain and show entry history
      * @param entry pointer to the entry data
@@ -469,6 +477,7 @@ window.NoteEditor = new function () {
         entry.dom.history.style.display = (entry.dom.history.style.display !== 'block' ? 'block' : 'none');
     };
 
+
     /**
      * Control button add new
      * @param entry pointer to the entry data
@@ -495,6 +504,7 @@ window.NoteEditor = new function () {
         changed = true;
     };
 
+
     /**
      * Control button move up
      * @param entry pointer to the entry data
@@ -507,6 +517,7 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Control button move down
      * @param entry pointer to the entry data
@@ -518,6 +529,7 @@ window.NoteEditor = new function () {
             changed = true;
         }
     };
+
 
     /**
      * Control button delete
@@ -536,6 +548,7 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Block of note entry title name input with controls
      * @param entry pointer to the entry data
@@ -545,7 +558,7 @@ window.NoteEditor = new function () {
         entry.dom.name = element('input', {
             type: 'text',
             maxLength: maxlengthTitle,
-            disabled: !self.open,
+            //disabled: !self.open,
             value: entry.data.name_dec
         }, '', {
             onchange: function () {
@@ -585,6 +598,7 @@ window.NoteEditor = new function () {
         entry.dom.title = tblrow(element('table', {className: 'title'}), [entry.dom.icon, entry.dom.name, entry.dom.controls], [{className: 'icon'}, {className: 'name'}, {className: 'controls'}]);
     };
 
+
     /**
      * Block of note entry data input
      * @param entry pointer to the entry data
@@ -599,8 +613,8 @@ window.NoteEditor = new function () {
         if ( entry.data.id_type === 6 || entry.data.id_type === 7 ) {
             entry.dom.data = element('textarea', {
                 className: 'text',
-                maxLength: limit,
-                disabled: !self.open
+                maxLength: limit
+                //disabled: !self.open
             }, entry.data.data_dec);
 
             // keyboard navigation
@@ -621,7 +635,7 @@ window.NoteEditor = new function () {
                 type: entry.data.id_type === 5 ? 'email' : 'text',
                 maxLength: limit,
                 className: entry.data.id_type === 5 ? 'email' : 'line',
-                disabled: !self.open,
+                //disabled: !self.open,
                 value: entry.data.data_dec
             });
 
@@ -680,6 +694,7 @@ window.NoteEditor = new function () {
         entry.dom.data.onkeydown = entry.dom.data.onkeyup;
     };
 
+
     // var RequestUrlTitle = function ( url ) {
     //     //delete this.data.comment;
     //     var comment = null;
@@ -708,6 +723,7 @@ window.NoteEditor = new function () {
     //     }
     // };
 
+
     /**
      * Parse data and fill the select list
      */
@@ -716,6 +732,7 @@ window.NoteEditor = new function () {
             console.log(data);
         }
     };
+
 
     /**
      * Block of note entry hint
@@ -728,10 +745,11 @@ window.NoteEditor = new function () {
         //entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
         entry.dom.desc.value = entryTypes.hash[entry.data.id_type].description;
         // letters counter with max length check
-        entry.dom.counter = element('span', {className: entry.dom.data.value.length === entry.dom.data.maxLength ? 'limit' : ''}, !self.open ? '' : entry.dom.data.value.length);
+        entry.dom.counter = element('span', {className: entry.dom.data.value.length === entry.dom.data.maxLength ? 'limit' : ''}, entry.dom.data.value.length);
         // bottom entry description and counter
         entry.dom.hint = tblrow(element('table', {className: 'hint'}), [entry.dom.desc, entry.dom.counter], [{className: 'text'}, {className: 'counter'}]);
     };
+
 
     /**
      * Block of note entry floating controls
@@ -835,6 +853,7 @@ window.NoteEditor = new function () {
         return entry.dom.controls = element('div', {className: 'hidden'}, buttons);
     };
 
+
     /**
      * Single entry creation
      * @param data entry details
@@ -882,34 +901,34 @@ window.NoteEditor = new function () {
         //$(entry).mouseenter(function(){
         entry.addEventListener('mouseenter', function () {
             // only if not closed
-            if ( self.open ) {
-                if ( !entry.previousSibling ) {
-                    entry.dom.btn_up.className = 'disabled';
-                } else {
-                    entry.dom.btn_up.className = 'button';
-                }
-                if ( !entry.nextSibling ) {
-                    entry.dom.btn_down.className = 'disabled';
-                } else {
-                    entry.dom.btn_down.className = 'button';
-                }
-                //TODO: add real entries check (there are hidden entries so failure here)
-                if ( self.dom.entries.childNodes.length === 1 ) {
-                    entry.dom.btn_delete.className = 'disabled';
-                } else {
-                    entry.dom.btn_delete.className = 'button';
-                }
-                //$(entry.dom.controls).fadeIn();
-                entry.dom.controls.classList.remove('hidden');
+            //if ( self.open ) {
+            if ( !entry.previousSibling ) {
+                entry.dom.btn_up.className = 'disabled';
+            } else {
+                entry.dom.btn_up.className = 'button';
             }
+            if ( !entry.nextSibling ) {
+                entry.dom.btn_down.className = 'disabled';
+            } else {
+                entry.dom.btn_down.className = 'button';
+            }
+            //TODO: add real entries check (there are hidden entries so failure here)
+            if ( self.dom.entries.childNodes.length === 1 ) {
+                entry.dom.btn_delete.className = 'disabled';
+            } else {
+                entry.dom.btn_delete.className = 'button';
+            }
+            //$(entry.dom.controls).fadeIn();
+            entry.dom.controls.classList.remove('hidden');
+            //}
         });
         //$(entry).mouseleave(function(){
         entry.addEventListener('mouseleave', function () {
             // only if not closed
-            if ( self.open ) {
-                //$(entry.dom.controls).fadeOut();
-                entry.dom.controls.classList.add('hidden');
-            }
+            //if ( self.open ) {
+            //$(entry.dom.controls).fadeOut();
+            entry.dom.controls.classList.add('hidden');
+            //}
         });
         //$(entry).click(function(){
         // iterate all entries
@@ -921,6 +940,7 @@ window.NoteEditor = new function () {
         //});
         return entry;
     };
+
 
     /**
      * Block of note title
@@ -936,6 +956,7 @@ window.NoteEditor = new function () {
             ], [{className: 'icon'}, {className: 'name'}, {className: 'info'}])
         );
     };
+
 
     /**
      * Block of note entries
@@ -958,6 +979,7 @@ window.NoteEditor = new function () {
         return self.dom.entries;
     };
 
+
     /**
      * Block of tags work
      */
@@ -966,7 +988,7 @@ window.NoteEditor = new function () {
         var input = element('input', {
             type: 'text',
             maxLength: maxlengthTags,
-            disabled: !self.open,
+            //disabled: !self.open,
             className: 'line',
             value: ''
         });
@@ -1000,8 +1022,8 @@ window.NoteEditor = new function () {
 
         var data = [];
         // prepare all tags
-        for ( var tid in window.dataTagsIdlist ) {
-            data.push([window.dataTagsIdlist[tid], tid]);
+        for ( var tid in TagManager.dataIdlist ) {
+            data.push([TagManager.dataIdlist[tid], tid]);
         }
 
         /*autocomplete({
@@ -1089,6 +1111,7 @@ window.NoteEditor = new function () {
         return self.dom.tags;
     };
 
+
     /**
      * Block of button controls
      */
@@ -1152,6 +1175,7 @@ window.NoteEditor = new function () {
         ]);
     };
 
+
     /**
      * Event management
      */
@@ -1180,6 +1204,7 @@ window.NoteEditor = new function () {
         });
     };
 
+
     /**
      * Enebles/disables the control buttons
      * @param state bool flag
@@ -1193,12 +1218,14 @@ window.NoteEditor = new function () {
         }
     };
 
+
     /**
      * Asks user about modifications
      */
     this.ConfirmExit = function () {
         return confirm(msgHasChanges);
     }
+
 
     /**
      * Saves the current note as new
@@ -1218,6 +1245,7 @@ window.NoteEditor = new function () {
         // focus to the first input
         this.dom.entries.childNodes[0].dom.data.focus();
     }
+
 
     /**
      * Prepares a new note with the same set of entries as the current note has
@@ -1255,6 +1283,7 @@ window.NoteEditor = new function () {
         }
     }
 
+
     /**
      * Leaves the current note editing
      * asks user about modifications if present
@@ -1290,6 +1319,7 @@ window.NoteEditor = new function () {
         }
         return false;
     };
+
 
     /**
      * Creates a new note
@@ -1355,6 +1385,7 @@ window.NoteEditor = new function () {
         console.timeEnd('entry create');
     };
 
+
     /**
      * Loads the existing note
      * @param data note details
@@ -1388,12 +1419,14 @@ window.NoteEditor = new function () {
         console.timeEnd('entry load');
     };
 
+
     /**
      * Returns the open at the moment note id
      */
     this.GetNoteID = function () {
         return (this.data && this.data.id ? this.data.id : null);
     };
+
 
     var SetTitleIcon = function ( icon ) {
         var tags;
@@ -1422,6 +1455,7 @@ window.NoteEditor = new function () {
             self.dom.title.icon.src = icon;
         }
     };
+
 
     /**
      * Compiles all blocks together
@@ -1454,6 +1488,7 @@ window.NoteEditor = new function () {
 
     };
 
+
     /**
      * Shows/hides the component
      * @param state visibility flag: true - show, false - hide
@@ -1461,6 +1496,7 @@ window.NoteEditor = new function () {
     this.Show = function ( state ) {
         this.dom.handle.style.display = state ? 'block' : 'none';
     };
+
 
     /**
      * Checks if there are any unsaved modificatons
@@ -1492,6 +1528,7 @@ window.NoteEditor = new function () {
         }
         return flag;
     };
+
 
     /**
      * Main init method

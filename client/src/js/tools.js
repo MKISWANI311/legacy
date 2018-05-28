@@ -82,7 +82,7 @@ Array.prototype.has = function ( value ) {
 window.onEnterClick = function onEnterClick ( src, dest ) {
     src.addEventListener('keydown', function ( event ) {
         if ( event.keyCode === 13 ) {
-            dest.focus();
+            //dest.focus();
             dest.click();
         }
     });

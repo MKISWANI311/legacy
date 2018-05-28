@@ -6,7 +6,7 @@
 'use strict';
 
 var //autocomplete = require('autocompleter'),
-    app = require('./app'),
+    //app = require('./app'),
     api = require('./api'),
     NoteList = require('./note.list'),
     TagManager = require('./tag.manager');
@@ -23,7 +23,7 @@ var NoteFilter = new function () {
     // component state flag
     // true  - everything is decoded
     // false - no plain data, everything is encrypted
-    this.open = false;
+    //this.open = false;
 
     // hints
     var hint_wexclude = 'click on this word to remove it from the filtering';
@@ -42,59 +42,64 @@ var NoteFilter = new function () {
     var msg_info_no_data = 'There are no records to meet the given search options. You can change these options or see your ';
     var msg_fail_server_error = 'The request was not successful. The response from the server: ';
 
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        // decrypt input data if not the first time
-        if ( this.dom.input.data.length ) this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
-        // restore backuped value
-        this.dom.input.value = this.dom.input.data.encval;
-        // inner parsed data
-        this.data = TagManager.StrParse(this.dom.input.value);
-        this.post = TagManager.StrParse();
-        // build notes
-        PerformSearch();
-        // show/hide info and controls
-        NoteList.UpdateCtrlBlock(true);
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     // decrypt input data if not the first time
+    //     if ( this.dom.input.data.length ) {
+    //         this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
+    //     }
+    //     // restore backuped value
+    //     this.dom.input.value = this.dom.input.data.encval;
+    //     // inner parsed data
+    //     this.data = TagManager.StrParse(this.dom.input.value);
+    //     this.post = TagManager.StrParse();
+    //     // build notes
+    //     PerformSearch();
+    //     // show/hide info and controls
+    //     NoteList.UpdateCtrlBlock(true);
+    //     // component state flag
+    //     this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment
-        if ( this.open ) {
-            // delete messages
-            self.MsgClear();
-            // backup and clear search string
-            this.dom.input.data.encval = this.dom.input.value;
-            // encrypt input data
-            this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
-            // hide current value
-            this.dom.input.value = '[encrypted data]';
-            // inner parsed data
-            this.data = {};
-            this.post = {};
-            // clear autocompleter
-            $(this.dom.input).data('autocompleter').options.data = [true];
-            // component state flag
-            this.open = false;
-        }
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         // delete messages
+    //         self.MsgClear();
+    //         // backup and clear search string
+    //         this.dom.input.data.encval = this.dom.input.value;
+    //         // encrypt input data
+    //         this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
+    //         // hide current value
+    //         this.dom.input.value = '[encrypted data]';
+    //         // inner parsed data
+    //         this.data = {};
+    //         this.post = {};
+    //         // clear autocompleter
+    //         $(this.dom.input).data('autocompleter').options.data = [true];
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
 
     /**
      * Removes all the messages
      */
     this.MsgClear = function () {
         elclear(this.dom.messages);
-    }
+    };
+
 
     /**
      * Appends the given message
@@ -105,6 +110,7 @@ var NoteFilter = new function () {
         elchild(this.dom.messages, element('div', {className: type || 'info'}, text));
     };
 
+
     /**
      * Set focus to tag search field
      */
@@ -112,13 +118,15 @@ var NoteFilter = new function () {
         this.dom.input.focus();
     };
 
+
     /**
      * Visual flags
      */
     var LoadingStart = function () {
         self.dom.icon.className = 'icon loading';
         self.dom.messages.className = 'messages loading';
-    }
+    };
+
 
     /**
      * Visual flags
@@ -126,7 +134,8 @@ var NoteFilter = new function () {
     var LoadingStop = function () {
         self.dom.icon.className = 'icon';
         self.dom.messages.className = 'messages';
-    }
+    };
+
 
     /**
      * Resets the current search options
@@ -135,7 +144,8 @@ var NoteFilter = new function () {
     this.RequestLatest = function () {
         this.Reset();
         this.NotesRequest();
-    }
+    };
+
 
     /**
      * Resets the current search options
@@ -150,7 +160,8 @@ var NoteFilter = new function () {
         this.UpdateParsedInput();
         // get data and build note list
         this.NotesRequest();
-    }
+    };
+
 
     /**
      * Sends ajax request to receive notes by tags and
@@ -178,7 +189,7 @@ var NoteFilter = new function () {
                 // make note list using the received data
                 NoteList.BuildTable(data.notes, data.total);
                 // check if no data but show message only if there were some search options uses
-                if ( data.total == 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
+                if ( data.total === 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
                 // no data, need to inform and suggest to see for example the latest notes
                     self.MsgAdd([msg_info_no_data, element('a', {className: 'bold'}, 'latest notes', {
                         onclick: function () {
@@ -195,6 +206,7 @@ var NoteFilter = new function () {
         });
     };
 
+
     /**
      * Updates inner data from user input if changed since last time
      */
@@ -207,6 +219,7 @@ var NoteFilter = new function () {
             this.dom.input.data.oldval = this.dom.input.value;
         }
     };
+
 
     /**
      * Search handler
@@ -233,6 +246,7 @@ var NoteFilter = new function () {
         // do search
         PerformSearch();
     };
+
 
     /**
      * Keyboard input handler for tag search
@@ -277,13 +291,14 @@ var NoteFilter = new function () {
 //        }
     };
 
+
     /**
      * Adds the given tag to the search
      * @param tagnm string tag name to be processed
      */
     this.TagInclude = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataNmlist[tagnm];
         // not added already and valid id
         if ( tagid && !this.data.tinc.has(tagid) ) {
             // prepare inner parsed data
@@ -296,13 +311,14 @@ var NoteFilter = new function () {
         PerformSearch();
     };
 
+
     /**
      * Removes the given tag from the search
      * @param tagnm string tag name to be processed
      */
     this.TagExclude = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataNmlist[tagnm];
         // exists in the search line and valid id
         if ( tagid && this.data.tinc.has(tagid) ) {
             // locate tag name and id in the inner parsed data
@@ -319,13 +335,14 @@ var NoteFilter = new function () {
         PerformSearch();
     };
 
+
     /**
      * Subtracts the given tag in the search
      * @param tagnm string tag name to be processed
      */
     this.TagSubtract = function ( tagnm ) {
         // determine tag id
-        var tagid = window.dataTagsNmlist[tagnm];
+        var tagid = TagManager.dataNmlist[tagnm];
         // not subtracted already and valid id
         if ( tagid && !this.data.texc.has(tagid) ) {
             // locate tag name and id in the inner parsed data
@@ -344,6 +361,7 @@ var NoteFilter = new function () {
         // execute
         PerformSearch();
     };
+
 
     /**
      * Removes the clicked word from the search
@@ -367,6 +385,7 @@ var NoteFilter = new function () {
         }
     };
 
+
     /**
      * Set default search hints and remove messages
      */
@@ -379,7 +398,8 @@ var NoteFilter = new function () {
         this.post = TagManager.StrParse();
         // delete all messages
         self.MsgClear();
-    }
+    };
+
 
     /**
      * Main init method
@@ -535,9 +555,9 @@ var NoteFilter = new function () {
                         // get linked tags to already selected
                         if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
                         // iterate all tags
-                        for ( var tnm in window.dataTagsNmlist ) {
+                        for ( var tnm in TagManager.dataNmlist ) {
                             // get tag id
-                            var tid = window.dataTagsNmlist[tnm];
+                            var tid = TagManager.dataNmlist[tnm];
                             // there are no including tags selected or it's one of the linked tag
                             if ( self.data.tinc.length === 0 || lnids.has(tid) )
                             // was not added so add it
@@ -591,6 +611,11 @@ var NoteFilter = new function () {
                 self.ac.activate();
             }
         });
+
+        // build notes
+        PerformSearch();
+        // show/hide info and controls
+        NoteList.UpdateCtrlBlock(true);
     };
 };
 

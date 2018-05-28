@@ -292,9 +292,9 @@ DlgPassGet = new DialogModal({
                 var pass = modal.data.pass.value;
                 // check pass
                 if ( app.checkPass(pass) ) {
-                    initData(window.dataUser, function () {
+                    initData(window.dataUser, pass, function () {
                         //app.set('pass_store_time', modal.data.linkset.value, true);
-                        app.setPass(pass);
+                        //app.setPass(pass);
                         modal.data.attempts = 0;
                         // reset value
                         modal.data.pass.value = '';
@@ -309,7 +309,7 @@ DlgPassGet = new DialogModal({
                 } else {
                     modal.data.pass.focus();
                     modal.data.attempts++;
-                    if ( modal.data.attempts == 1 )
+                    if ( modal.data.attempts === 1 )
                         modal.SetMessage('Password is invalid!');
                     else
                         modal.SetMessage(['Password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
@@ -416,10 +416,10 @@ DlgUserLogin = new DialogModal({
                         if ( data ) {
                             // check returned data
                             if ( data && data.id ) {
-                                initData(data, function () {
+                                initData(data, modal.data.pass.value, function () {
                                     // save user name of last login
                                     app.set('username_last_used', modal.data.name.value, true);
-                                    app.setPass(modal.data.pass.value);
+                                    //app.setPass(modal.data.pass.value);
                                     // reset values
                                     modal.data.name.value = '';
                                     modal.data.pass.value = '';
@@ -596,10 +596,10 @@ DlgUserRegister = new DialogModal({
                             if ( data.code !== false ) {
                                 // check returned data
                                 if ( data && data.id ) {
-                                    initData(data, function () {
+                                    initData(data, password, function () {
                                         // save user name for future logins
                                         app.set('username_last_used', modal.data.name.value, true);
-                                        app.setPass(password);
+                                        //app.setPass(password);
                                         // reset values
                                         modal.data.name.value = '';
                                         modal.data.pass1.value = '';

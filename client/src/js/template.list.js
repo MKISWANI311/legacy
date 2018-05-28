@@ -17,30 +17,33 @@ var TemplateList = new function () {
     var hint_item = 'This template will create a note with this set of entries:<br>';
     //var hint_filter = 'filter by name or description ...';
 
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        this.Fill();
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     console.log('TemplateList.EventOpen');
+    //     //this.Fill();
+    //     // component state flag
+    //     this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment
-        if ( this.open ) {
-            elclear(this.dom.list);
-            // component state flag
-            this.open = false;
-        }
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         elclear(this.dom.list);
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
 
     /**
      * Fills the list with templates
@@ -80,6 +83,7 @@ var TemplateList = new function () {
         //this.Filter();
     };
 
+
     /**
      * Filters by given text
      * @param text string to search in each template name or description
@@ -98,6 +102,7 @@ var TemplateList = new function () {
     //     }
     // };
 
+
     /**
      * Shows/hides the component
      * @param state visibility flag: true - show, false - hide
@@ -105,6 +110,7 @@ var TemplateList = new function () {
     this.Show = function ( state ) {
         this.dom.handle.style.display = state ? 'block' : 'none';
     };
+
 
     /**
      * Main init method
@@ -138,6 +144,8 @@ var TemplateList = new function () {
 
         // title
         elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates')/*, this.dom.filter*/]);
+
+        this.Fill();
     };
 };
 

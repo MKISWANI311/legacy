@@ -22,10 +22,6 @@ require('./note.editor');
 require('./tools');
 require('./dialogs');
 
-//require('./jquery');
-//window.$ = require('jquery');
-//require('./_jquery-1.9.1.min');
-//require('./_jquery.simplemodal.1.4.4.min');
 
 window.Logout = function SignOut () {
     api.post('user/logout', null, function ( error, data ) {
@@ -42,48 +38,50 @@ window.Logout = function SignOut () {
 };
 
 
-window.initData = function initData ( data, callback ) {
-    window.dataUser = data;
+window.initData = function initData ( user, pass, callback ) {
+    app.setPass(pass);
+    window.dataUser = user;
 
-    api.get('user/tags', function ( error, data ) {
+    api.get('user/tags', function ( error, tags ) {
         if ( error ) {
             console.error(error);
-            callback();
+            //callback();
 
             return;
         }
 
-        console.log('user tags', data);
+        console.log('user tags', tags);
 
         //window.dataEntryTypes = data.entry_types;
         //window.dataTemplates = data.templates;
         //window.dataTemplateEntries = data.template_entries;
 
         // compacted list of all encoded tags with links and use counters
-        window.dataTags = data;
+        //window.dataTags = tags;
         // need to correct type if empty
         // if ( !window.dataTags.data.length ) {
         //     window.dataTags.data = {};
         //     window.dataTags.defn = {name:0, links:1, uses:2};
         // }
-        // decoded to these two lists
-        window.dataTagsNmlist = {}; // {note:1, site:2, email:3}
-        window.dataTagsIdlist = {}; // {1:note, 2:site, 3:email}
-        // they are filling on page loading and on note creation
-        // if there are some new tags
+        // // decoded to these two lists
+        // window.dataTagsNmlist = {}; // {note:1, site:2, email:3}
+        // window.dataTagsIdlist = {}; // {1:note, 2:site, 3:email}
+        // // they are filling on page loading and on note creation
+        // // if there are some new tags
 
         // main components initialization
-        NoteFilter.Init({handle: document.querySelector('div.notefilter')});
+        TagManager.Init(tags);
         NoteList.Init({handle: document.querySelector('div.notelist')});
+        NoteFilter.Init({handle: document.querySelector('div.notefilter')});
         TemplateList.Init({handle: document.querySelector('div.templatelist')});
         NoteEditor.Init({handle: document.querySelector('div.noteeditor')});
 
         // to receive password change events
-        app.subscribe(TagManager);
-        app.subscribe(TemplateList);
-        app.subscribe(NoteList);
-        app.subscribe(NoteFilter);
-        app.subscribe(NoteEditor);
+        //app.subscribe(TagManager);
+        //app.subscribe(TemplateList);
+        //app.subscribe(NoteList);
+        //app.subscribe(NoteFilter);
+        //app.subscribe(NoteEditor);
 
         // show
         window.pageMain.style.display = 'block';
@@ -135,6 +133,6 @@ api.get('user/info', function ( error, data ) {
         DlgPassGet.Show({escClose: false});
     } else {
         //window.pageInit.style.display = 'block';
-        DlgUserLogin.Show();
+        DlgUserLogin.Show({escClose: false});
     }
 });

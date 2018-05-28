@@ -24,7 +24,7 @@ var NoteList = new function () {
     // component state flag
     // true  - everything is decoded
     // false - no plain data, everything is encrypted
-    this.open = false;
+    //this.open = false;
 
     var hint_tag_include = 'click on this tag to include it to the search';
     var hint_tag_exclude = 'click on this tag to exclude it from the search';
@@ -40,46 +40,48 @@ var NoteList = new function () {
     var msg_checked_notes_removed = 'The selected notes were successfully removed ';
     var msg_checked_notes_restored = 'The selected notes were successfully restored ';
 
+
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    this.EventOpen = function () {
-        elclear(this.dom.notes);
-        // show info and controls
-        this.dom.tpbar.style.display = 'block';
-        // component state flag
-        this.open = true;
-    };
+    // this.EventOpen = function () {
+    //     elclear(this.dom.notes);
+    //     // show info and controls
+    //     this.dom.tpbar.style.display = 'block';
+    //     // component state flag
+    //     this.open = true;
+    // };
 
     /**
      * Close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    this.EventClose = function () {
-        // close only if opened at the moment
-        if ( this.open ) {
-            // clear decoded entries data in the requested notes
-            this.data.notes.forEach(function ( note ) {
-                // all note entries
-                note.entries.forEach(function ( entry ) {
-                    // remove if exist
-                    delete entry.name_dec;
-                    delete entry.data_dec;
-                });
-                // all data for filtering
-                delete note.fulltext;
-            });
-            // hide info and controls
-            this.dom.tpbar.style.display = 'none';
-            // clear notes
-            elclear(this.dom.notes);
-            // component state flag
-            this.open = false;
-        }
-    };
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         // clear decoded entries data in the requested notes
+    //         this.data.notes.forEach(function ( note ) {
+    //             // all note entries
+    //             note.entries.forEach(function ( entry ) {
+    //                 // remove if exist
+    //                 delete entry.name_dec;
+    //                 delete entry.data_dec;
+    //             });
+    //             // all data for filtering
+    //             delete note.fulltext;
+    //         });
+    //         // hide info and controls
+    //         this.dom.tpbar.style.display = 'none';
+    //         // clear notes
+    //         elclear(this.dom.notes);
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
 
     /**
      * Deletes or restores the given list of notes depending on the undo flag
@@ -121,6 +123,7 @@ var NoteList = new function () {
             });
         }
     };
+
 
     /**
      * Makes a visualization of the given note entries details
@@ -186,6 +189,7 @@ var NoteList = new function () {
         return list.length > 0 ? list : element('div', {className: 'warn'}, hint_info_missing);
     }
 
+
     /**
      * Tag button click handler
      * include, exclude and subtract
@@ -207,6 +211,7 @@ var NoteList = new function () {
         return false;
     };
 
+
     /**
      * Makes a list of note tags buttons with handlers
      * @param note array note attributes
@@ -219,9 +224,9 @@ var NoteList = new function () {
             // separate tags
             note.tags.forEach(function ( item ) {
                 if ( NoteFilter.data.tinc.has(item) ) {
-                    inc.push(window.dataTagsIdlist[item]);
+                    inc.push(TagManager.dataIdlist[item]);
                 } else {
-                    exc.push(window.dataTagsIdlist[item]);
+                    exc.push(TagManager.dataIdlist[item]);
                 }
             });
             // forms the list of tags already selected
@@ -246,6 +251,7 @@ var NoteList = new function () {
         // list of tags or missing hint
         return list.length > 0 ? list : hint_tags_missing;
     }
+
 
     /**
      * Returns the corresponding note icon image address
@@ -272,6 +278,7 @@ var NoteList = new function () {
 
         return icon;
     };
+
 
     /**
      * Shows/hides checked notes controls and general notes info
@@ -340,6 +347,7 @@ var NoteList = new function () {
         this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
     }
 
+
     /**
      * Set the default note state, removes additional classes and resets the state flags
      * @param notes if given than it's the only note list to be reset
@@ -355,6 +363,7 @@ var NoteList = new function () {
             list[i].state.active = list[i].state.marked = false;
         }
     }
+
 
     /**
      * Sets the flag and clall to the given note/notes
@@ -375,6 +384,7 @@ var NoteList = new function () {
         }
     };
 
+
     /**
      * Returns the list of notes with the given state
      * @param type string state name active | marked
@@ -390,6 +400,7 @@ var NoteList = new function () {
         return result;
     }
 
+
     /**
      * Returns the html note block by id if found or false otherwise
      * @param id int note attribute
@@ -404,6 +415,7 @@ var NoteList = new function () {
         return false;
     }
 
+
     /**
      * Returns the list of visible notes
      * @return array of nodes
@@ -416,6 +428,7 @@ var NoteList = new function () {
         }
         return result;
     }
+
 
     /**
      * Whole note ckick handler
@@ -473,6 +486,7 @@ var NoteList = new function () {
         //return false;
     }
 
+
     /**
      * Note checkbox ckick handler
      */
@@ -484,6 +498,7 @@ var NoteList = new function () {
         // prevent bubbling
         return false;
     }
+
 
     /**
      * Forms the note wrapper
@@ -515,6 +530,7 @@ var NoteList = new function () {
         // note html body
         return note;
     };
+
 
     /**
      * Shows/hides notes according to the filter
@@ -563,6 +579,7 @@ var NoteList = new function () {
         this.UpdateCtrlBlock();
     }
 
+
     /**
      * Fills the note list with generated notes
      * @param notes array of notes or false if gloabal latest list should be used
@@ -594,6 +611,7 @@ var NoteList = new function () {
         this.UpdateCtrlBlock();
     };
 
+
     /**
      * Deletes or restore selected notes depending on undo flag
      */
@@ -610,6 +628,7 @@ var NoteList = new function () {
             NotesDelete(list, this.undo);
         }
     }
+
 
     /**
      * Main init method
