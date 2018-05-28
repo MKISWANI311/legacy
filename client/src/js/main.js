@@ -98,7 +98,7 @@ window.initData = function initData ( data, callback ) {
 window.exportData = null;
 
 // list of tag names with title images
-window.iconTags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber', 'msn', 'database'];
+//window.iconTags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber', 'msn', 'database'];
 
 //window.pageInit = document.getElementById('pageInit');
 window.pageMain = document.getElementById('pageMain');

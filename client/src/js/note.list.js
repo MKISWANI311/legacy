@@ -9,6 +9,7 @@ var app = require('./app'),
     api = require('./api'),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
+    templates  = require('./data.templates'),
     TagManager = require('./tag.manager');
 
 
@@ -249,23 +250,28 @@ var NoteList = new function () {
     /**
      * Returns the corresponding note icon image address
      * @param note array note attributes
-     * @return url string
+     * @return string
      */
     var GetNoteIcon = function ( note ) {
         // prepare
         var icon = 'img/tags/note.svg',
             tags = TagManager.IDs2Names(note.tags);
+
         // iterate words in the tag list
-        tags.forEach(function ( item ) {
+        tags.forEach(function ( tag ) {
+            var has = templates.some(function ( template ) {
+                return template.name === tag;
+            });
+
             // it's a tag from the global set
-            if ( window.iconTags.has(item) ) {
+            if ( has ) {
                 // get the first match
-                icon = 'img/tags/' + item + '.svg';
-                return;
+                icon = 'img/tags/' + tag + '.svg';
             }
         });
+
         return icon;
-    }
+    };
 
     /**
      * Shows/hides checked notes controls and general notes info

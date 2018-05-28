@@ -13,6 +13,7 @@ var //autocomplete = require('autocompleter'),
     NoteList = require('./note.list'),
     TemplateList = require('./template.list'),
     TagManager = require('./tag.manager'),
+    templates  = require('./data.templates'),
     entryTypes = require('./data.entry.types');
 
 
@@ -1395,20 +1396,28 @@ window.NoteEditor = new function () {
     };
 
     var SetTitleIcon = function ( icon ) {
+        var tags;
+
         if ( !icon ) {
             icon = 'img/tags/note.svg';
-            var tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+            tags = self.dom.tags.input.value.toLowerCase().match(/(\S+)/g);
+
             // check parsed string
-            if ( tags && tags instanceof Array ) {
-                // iterate words in the input string
-                for ( var i = 0; i < tags.length; i++ ) {
-                    if ( window.iconTags.has(tags[i]) ) {
-                        icon = 'img/tags/' + tags[i] + '.svg';
-                        break;
+            if ( tags ) {
+                tags.forEach(function ( tag ) {
+                    var has = templates.some(function ( template ) {
+                        return template.name === tag;
+                    });
+
+                    if ( has ) {
+                        icon = 'img/tags/' + tag + '.svg';
                     }
-                }
+                });
             }
         }
+
+        console.log('SetTitleIcon', icon);
+
         if ( self.dom.title.icon.src.search(icon) < 0 ) {
             self.dom.title.icon.src = icon;
         }
