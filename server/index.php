@@ -14,7 +14,6 @@ define('PATH_LOGS', PATH_ROOT . 'logs' . DIRECTORY_SEPARATOR);
 // core modules
 include PATH_LIBRARY . 'init.php';
 include PATH_LIBRARY . 'app.php';
-include PATH_LIBRARY . 'cache.php';
 include PATH_LIBRARY . 'db.php';
 include PATH_LIBRARY . 'response.php';
 include PATH_LIBRARY . 'tools.php';
