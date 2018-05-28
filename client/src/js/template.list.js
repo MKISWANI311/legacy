@@ -6,7 +6,7 @@
 
 'use strict';
 
-//var NoteEditor = require('./app.note.editor');
+var templates = require('./data.templates');
 
 
 var TemplateList = new function () {
@@ -15,7 +15,7 @@ var TemplateList = new function () {
 
     var hint_main = 'In the list above please select a template to be used to create your new note.';
     var hint_item = 'This template will create a note with this set of entries:<br>';
-    var hint_filter = 'filter by name or description ...';
+    //var hint_filter = 'filter by name or description ...';
 
     /**
      * Open the subscriber
@@ -49,12 +49,13 @@ var TemplateList = new function () {
         // prepare
         elclear(self.dom.list);
         // iterate all templates
-        window.dataTemplates.data.forEach(function ( data ) {
+        //window.dataTemplates.data.forEach(function ( data ) {
+        templates.forEach(function ( data ) {
             // template body
             var item = element('div', {className: 'item', /*style:'display:none',*/ data: data},
-                element('div', {className: 'line'}, [
-                    element('div', {className: 'name'}, data[window.dataTemplates.defn.name]),
-                    element('div', {className: 'hint'}, data[window.dataTemplates.defn.description])
+                element('div', {className: 'line ' + data.name}, [
+                    element('div', {className: 'name'}, data.name),
+                    element('div', {className: 'hint'}, data.description)
                 ]));
             // append
             elchild(self.dom.list, item);
@@ -67,32 +68,35 @@ var TemplateList = new function () {
             //$(item).mouseenter(function(){
             item.addEventListener('mouseenter', function () {
                 var list = [];
-                window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
-                    list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
+                data.entries.forEach(function ( entry ) {
+                    list.push('<b>' + entry.name + '</b>');
                 });
+                // window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
+                //     list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
+                // });
                 self.dom.hint.innerHTML = hint_item + list.join(', ');
             });
         });
-        this.Filter();
+        //this.Filter();
     };
 
     /**
      * Filters by given text
      * @param text string to search in each template name or description
      */
-    this.Filter = function ( text ) {
-        text = text || this.dom.filter.value;
-        text = text.toLowerCase();
-        for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
-            // prepare
-            var item = self.dom.list.childNodes[i];
-            var name = item.data[window.dataTemplates.defn.name].toLowerCase();
-            var desc = item.data[window.dataTemplates.defn.description].toLowerCase();
-            // search substring and show/hide
-            //$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
-            item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
-        }
-    };
+    // this.Filter = function ( text ) {
+    //     text = text || this.dom.filter.value;
+    //     text = text.toLowerCase();
+    //     for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
+    //         // prepare
+    //         var item = self.dom.list.childNodes[i];
+    //         var name = item.data[window.dataTemplates.defn.name].toLowerCase();
+    //         var desc = item.data[window.dataTemplates.defn.description].toLowerCase();
+    //         // search substring and show/hide
+    //         //$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+    //         item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
+    //     }
+    // };
 
     /**
      * Shows/hides the component
@@ -100,7 +104,7 @@ var TemplateList = new function () {
      */
     this.Show = function ( state ) {
         this.dom.handle.style.display = state ? 'block' : 'none';
-    }
+    };
 
     /**
      * Main init method
@@ -124,17 +128,17 @@ var TemplateList = new function () {
         });
 
         //this.dom.filter = element('input', {type:'text', value:hint_filter});
-        this.dom.filter = element('input', {type: 'text', placeholder: hint_filter});
+        //this.dom.filter = element('input', {type: 'text', placeholder: hint_filter});
         // watermark and filtering
         //watermark(this.dom.filter, hint_filter, '#000');
         //$(this.dom.filter).keyup(function(){
-        this.dom.filter.addEventListener('keyup', function () {
-            self.Filter(this.value);
-        });
+        // this.dom.filter.addEventListener('keyup', function () {
+        //     self.Filter(this.value);
+        // });
 
         // title
-        elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates'), this.dom.filter]);
-    }
+        elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates')/*, this.dom.filter*/]);
+    };
 };
 
 

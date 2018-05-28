@@ -18,7 +18,7 @@ Apart from this page, instructions are available in the [blog](http://fortnotes.
 
 Install dependencies:
 
-`apt install php-cli php-sqlite3 php-gd php-apcu`
+`apt install php-cli php-sqlite3 php-gd`
 
 Start static server:
 
@@ -90,7 +90,6 @@ The following library is used during development but is not included:
 ### PHP Extensions Required ###
 
 The following PHP extensions are required:
-* [Alternative PHP Cache (APC)](http://php.net/manual/en/book.apc.php)
 * [GD](http://php.net/manual/en/book.image.php) Image Processing Library (required by simple-php-captcha)
 * [PDO-MySQL](http://www.php.net/manual/en/ref.pdo-mysql.php) database driver (or [SQLite](http://www.php.net/manual/en/sqlite3.installation.php))
 

@@ -45,7 +45,7 @@ window.SignOut = function SignOut () {
 window.initData = function initData ( data, callback ) {
     window.dataUser = data;
 
-    api.get('user/data', function ( error, data ) {
+    api.get('user/tags', function ( error, data ) {
         if ( error ) {
             console.error(error);
             callback();
@@ -53,14 +53,14 @@ window.initData = function initData ( data, callback ) {
             return;
         }
 
-        console.log('user data', data);
+        console.log('user tags', data);
 
-        window.dataEntryTypes = data.entry_types;
-        window.dataTemplates = data.templates;
-        window.dataTemplateEntries = data.template_entries;
+        //window.dataEntryTypes = data.entry_types;
+        //window.dataTemplates = data.templates;
+        //window.dataTemplateEntries = data.template_entries;
 
         // compacted list of all encoded tags with links and use counters
-        window.dataTags = data.tags;
+        window.dataTags = data;
         // need to correct type if empty
         // if ( !window.dataTags.data.length ) {
         //     window.dataTags.data = {};

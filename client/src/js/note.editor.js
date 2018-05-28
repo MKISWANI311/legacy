@@ -12,7 +12,8 @@ var //autocomplete = require('autocompleter'),
     //NoteFilter   = require('./app.note.filter'),
     NoteList = require('./note.list'),
     TemplateList = require('./template.list'),
-    TagManager = require('./tag.manager');
+    TagManager = require('./tag.manager'),
+    entryTypes = require('./data.entry.types');
 
 
 window.NoteEditor = new function () {
@@ -308,7 +309,8 @@ window.NoteEditor = new function () {
                     for ( var i = 0; i < self.dom.entries.childNodes.length; i++ ) {
                         //with ( self.dom.entries.childNodes[i] )
                         var child = self.dom.entries.childNodes[i];
-                        child.dom.icon.src = 'img/field_' + window.dataEntryTypes.data[child.data.id_type][window.dataEntryTypes.defn.name] + '.png';
+                        //child.dom.icon.src = 'img/field_' + window.dataEntryTypes.data[child.data.id_type][window.dataEntryTypes.defn.name] + '.png';
+                        child.dom.icon.src = 'img/field_' + entryTypes.hash[child.data.id_type].name + '.png';
                     }
                     self.dom.tags.icon.src = 'img/field_tag.png';
                 }, 2000);
@@ -358,9 +360,11 @@ window.NoteEditor = new function () {
 
             var cell = null;
             // build type list
-            for ( var id in window.dataEntryTypes.data ) {
+            //for ( var id in window.dataEntryTypes.data ) {
+            for ( var id in entryTypes.hash ) {
                 id = parseInt(id, 10);
-                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                //cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name], {
+                cell = element('td', {className: entry.data.id_type === id ? 'current' : 'item'}, entryTypes.hash[id].name, {
                     // set desc on mouse over action
                     onmouseover: function () {
                         entry.dom.desc.innerHTML = this.desc;
@@ -369,7 +373,8 @@ window.NoteEditor = new function () {
                         if ( this.className == 'item' ) {
                             // change name if default
                             //if ( entry.dom.name.value == window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] ) {
-                                entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
+                            //entry.dom.name.value = window.dataEntryTypes.data[this.type][window.dataEntryTypes.defn.name];
+                            entry.dom.name.value = entryTypes.hash[this.type].name;
                             //}
                             // prepare type, name and value
                             entry.data.id_type = this.type;
@@ -391,8 +396,10 @@ window.NoteEditor = new function () {
                     }
                 });
                 cell.type = id;
-                cell.name = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name];
-                cell.desc = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.description];
+                //cell.name = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.name];
+                cell.name = entryTypes.hash[id].name;
+                //cell.desc = window.dataEntryTypes.data[id][window.dataEntryTypes.defn.description];
+                cell.desc = entryTypes.hash[id].description;
                 elchild(list, cell);
             }
             elchild(entry.dom.type, list);
@@ -467,7 +474,8 @@ window.NoteEditor = new function () {
      */
     var EntryBtnAdd = function ( entry ) {
         // prepare name and value
-        var name = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name];
+        //var name = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name];
+        var name = entryTypes.hash[entry.data.id_type].name;
         // generate some password if pass type
         var data = (entry.data.id_type == 4) ? pwdgen(20) : '';
         // clone
@@ -568,7 +576,8 @@ window.NoteEditor = new function () {
 
         // icon image
         entry.dom.icon = element('img', {
-            src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
+            //src: 'img/field_' + window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.name] + '.png'
+            src: 'img/field_' + entryTypes.hash[entry.data.id_type].name + '.png'
             //title: 'drag and drop to change the entries order'
         });
         // top title line with name and controls
@@ -583,7 +592,8 @@ window.NoteEditor = new function () {
         // types
         entry.dom.type = element('div', {className: 'type'});
         // get the input data max length
-        var limit = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.max];
+        //var limit = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.max];
+        var limit = entryTypes.hash[entry.data.id_type].max;
         // create input depending on entry type
         if ( entry.data.id_type === 6 || entry.data.id_type === 7 ) {
             entry.dom.data = element('textarea', {
@@ -712,8 +722,10 @@ window.NoteEditor = new function () {
      */
     var EntryBlockHint = function ( entry ) {
         // entry description
-        entry.dom.desc = element('span', {}, window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description]);
-        entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
+        //entry.dom.desc = element('span', {}, window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description]);
+        entry.dom.desc = element('span', {}, entryTypes.hash[entry.data.id_type].description);
+        //entry.dom.desc.value = window.dataEntryTypes.data[entry.data.id_type][window.dataEntryTypes.defn.description];
+        entry.dom.desc.value = entryTypes.hash[entry.data.id_type].description;
         // letters counter with max length check
         entry.dom.counter = element('span', {className: entry.dom.data.value.length === entry.dom.data.maxLength ? 'limit' : ''}, !self.open ? '' : entry.dom.data.value.length);
         // bottom entry description and counter
@@ -1214,7 +1226,8 @@ window.NoteEditor = new function () {
         // iterate the current entry list
         this.data.entries.forEach(function ( entry ) {
             // prepare name and data
-            name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
+            //name = window.dataEntryTypes.data[entry.id_type][window.dataEntryTypes.defn.name];
+            name = entryTypes.hash[entry.id_type].name;
             // generate some password if pass type
             data = (entry.id_type == 4) ? pwdgen(20) : '';
             // append the entry list
@@ -1287,34 +1300,40 @@ window.NoteEditor = new function () {
         // data to be send on save
         this.post = {tags: []};
         // local vars
-        var id_template = template[window.dataTemplates.defn.id],
+        //var id_template = template[window.dataTemplates.defn.id],
+        var //id_template = template[window.dataTemplates.defn.id],
+            self = this,
             id_type, name, data, tag;
-        // template is given and valid
-        if ( template && window.dataTemplateEntries.data[id_template] ) {
+
+        // template is given
+        if ( template ) {
             // fill the list of entries
-            for ( var i = 0; i < window.dataTemplateEntries.data[id_template].length; i++ ) {
+            //for ( var i = 0; i < window.dataTemplateEntries.data[id_template].length; i++ ) {
+            template.entries.forEach(function ( entry ) {
                 //for ( var i in window.dataTemplateEntries.data[id_template] ) {
                 // get the entry type
-                id_type = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.id_type];
+                //id_type = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.id_type];
                 // prepare name and data
-                name = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.name];
+                //name = window.dataTemplateEntries.data[id_template][i][window.dataTemplateEntries.defn.name];
                 // generate some password if pass type
-                data = (id_type == 4) ? pwdgen(20) : '';
+                data = (entry.id === 4) ? pwdgen(20) : '';
                 // adding
-                this.data.entries.push({
-                    id_type: id_type,
-                    name: app.encode(name),
-                    name_dec: name,
+                self.data.entries.push({
+                    id_type: entry.id,
+                    name: app.encode(entry.name),
+                    name_dec: entry.name,
                     data: app.encode(data),
                     data_dec: data
                 });
-            }
+            });
+
             // default tag
-            tag = template[window.dataTemplates.defn.tag];
+            tag = template.name;
             this.data.tags = TagManager.Str2IDs(tag);
             // no templates selected so just add one simple entry
         } else {
-            name = window.dataEntryTypes.data[1][window.dataEntryTypes.defn.name];
+            //name = window.dataEntryTypes.data[1][window.dataEntryTypes.defn.name];
+            name = entryTypes.hash[1].name;
             data = tag = '';
             // adding
             this.data.entries = [{

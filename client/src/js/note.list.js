@@ -6,6 +6,7 @@
 'use strict';
 
 var app = require('./app'),
+    api = require('./api'),
     //NoteFilter = require('./app.note.filter'),
     //NoteEditor = require('./app.note.editor'),
     TagManager = require('./tag.manager');

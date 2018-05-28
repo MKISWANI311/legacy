@@ -1,7 +1,7 @@
 .templatelist > {
     .title {
         border: 1px solid $colorBorder;
-        background: url("img/folder.png") no-repeat 7px center;
+        //background: url("img/folder.png") no-repeat 7px center;
         background-color: $colorBackgroundShade;
         position: relative;
         height: 34px;
@@ -10,9 +10,10 @@
                 color: $colorTextHint;
                 /*font-size:13px;*/
                 font-weight: bold;
-                padding-left: 30px;
-                height: 30px;
-                line-height: 30px;
+                //padding-left: 30px;
+                height: 34px;
+                line-height: 34px;
+                text-align: center;
             }
             input {
                 position: absolute;
@@ -48,9 +49,30 @@
                 //color: white;
             }
             .line {
-                background: url("img/template.svg") no-repeat left center;
-                background-size: 20px;
+                //background: url("img/template.svg") no-repeat left center;
+                background-size: 20px !important;
                 padding-left: 30px;
+                &.database {
+                    background: url("img/tags/database.svg") no-repeat left center;
+                }
+                &.email {
+                    background: url("img/tags/email.svg") no-repeat left center;
+                }
+                &.ftp {
+                    background: url("img/tags/ftp.svg") no-repeat left center;
+                }
+                &.messenger {
+                    background: url("img/tags/messenger.svg") no-repeat left center;
+                }
+                &.note {
+                    background: url("img/tags/note.svg") no-repeat left center;
+                }
+                &.site {
+                    background: url("img/tags/site.svg") no-repeat left center;
+                }
+                &.ssh {
+                    background: url("img/tags/ssh.svg") no-repeat left center;
+                }
             }
             .name {
                 font-weight: bold;
