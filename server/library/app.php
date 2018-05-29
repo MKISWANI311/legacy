@@ -54,19 +54,17 @@ class app {
             return;
         }
 
-        ini_set('session.save_path',$_SERVER['DOCUMENT_ROOT'] . '/sessions/');
+        ini_set('session.save_path',SESSION_SAVE_PATH);
         ini_set('session.hash_function','sha512');
         ini_set('session.sid_length',64);
         ini_set('session.sid_bits_per_character',5);
         session_start();
 
-        /* mysql example database configuration
-        db::$dsn  = 'mysql:host=localhost;dbname=fortnotes;charset=utf8';
-        db::$user = 'fortnotes';
-        db::$pass = 'some-strong-password';*/
-
         // sqlite database configuration
-        db::$dsn = 'sqlite:./db.sqlite';
+        db::$dsn  = PDO_DSN;
+        db::$user = PDO_USER;
+        db::$pass = PDO_PASS;
+
         db::$onenginit = function () {
             // try to import data from the external previously generated struct file
             if ( ($data = include PATH_LIBRARY . 'db.struct.php') && is_array($data) ) db::$struct = $data;

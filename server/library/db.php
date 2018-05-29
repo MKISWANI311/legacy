@@ -105,7 +105,7 @@ class db {
             self::$onfailure = self::$onfailure && is_callable(self::$onfailure) ? self::$onfailure : null;
             // creates a pdo instance to represent a connection to the requested database
             self::$pdo = new PDO(self::$dsn, self::$user, self::$pass, array(
-                PDO::ATTR_PERSISTENT => false,
+                PDO::ATTR_PERSISTENT => PDO_PERSISTENT ? true : false,
                 PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION  // throw exceptions    on errors
             ));
             // call user-defined init handler if given

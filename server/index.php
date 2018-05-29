@@ -5,11 +5,8 @@
  * @author DarkPark, Ukraine Odessa 2012
  */
 
-// base paths of the app
-define('PATH_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
-define('PATH_CONTROLLERS', PATH_ROOT . 'controllers' . DIRECTORY_SEPARATOR);
-define('PATH_LIBRARY', PATH_ROOT . 'library' . DIRECTORY_SEPARATOR);
-define('PATH_LOGS', PATH_ROOT . 'logs' . DIRECTORY_SEPARATOR);
+// db access, sessions storage and so on
+include 'config.php';
 
 // core modules
 include PATH_LIBRARY . 'init.php';
