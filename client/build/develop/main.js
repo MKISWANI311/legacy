@@ -1100,7 +1100,8 @@ var NoteList = new function () {
             if ( url[2] && url[2] !== 'localhost' ) {
                 // try to get image, won't replace the current one if no icon found
                 // https://www.google.com/s2/favicons?domain=google.com gives only 16px images
-                element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
+                //element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
+                element('img', {className: 'icon', src: 'http://www.getfavicon.org/get.pl?url=' + url[2]}, null, {
                     onload: function () {
                         // icon loaded so get current icon parent
                         var parent = icon.parentNode;
