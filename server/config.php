@@ -14,4 +14,6 @@ define('PDO_USER', getenv('PDO_USER') ?: null);
 define('PDO_PASS', getenv('PDO_PASS') ?: null);
 define('PDO_PERSISTENT', getenv('PDO_PERSISTENT') ?: 0);
 
+define('DEBUG', getenv('DEBUG') ?: 0);
+
 define('SESSION_SAVE_PATH', getenv('SESSION_SAVE_PATH') ?: PATH_ROOT . 'sessions');

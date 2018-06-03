@@ -1,7 +1,7 @@
 <?php
 
 //application execution mode
-const DEBUG = true;
+//const DEBUG = true;
 
 // core initialization time mark
 define('INIT_TIMESTAMP', time());
@@ -38,14 +38,14 @@ function MainErrorHandler ( $errno, $errmsg, $filename, $linenum ) {
 }
 
 // we will do our own error handling
-error_reporting(0);
-set_error_handler('MainErrorHandler');
+//error_reporting(0);
+//set_error_handler('MainErrorHandler');
 
 // not catchable fatal error handler
-register_shutdown_function(function(){
+/*register_shutdown_function(function(){
     $error = error_get_last();
 
     if ( $error ) {
         MainErrorHandler($error['type'], $error['message'], $error['file'], $error['line']);
     }
-});
+});*/
