@@ -1,0 +1,16 @@
+FROM alpine
+
+COPY ./*.sh /
+
+RUN /setup.sh
+
+COPY ./httpd.conf /etc/apache2/conf.d/
+
+# external data
+VOLUME /server/data
+VOLUME /server/sessions
+
+EXPOSE 8080
+EXPOSE 8000
+
+CMD ["/start.sh"]

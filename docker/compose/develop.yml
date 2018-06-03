@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+    web:
+        image: nginx:alpine
+        container_name: fortnotes-web
+        ports:
+            - 8000:80
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - php
+
+    php:
+        image: fortnotes/legacy:fpm
+        container_name: fortnotes-php
+        volumes:
+            - ../../server:/server
+            - ../../../data:/server/data
+        #environment:
+        #    PDO_DSN: sqlite:/server/data/sqlite
+        #    SESSION_SAVE_PATH: /server/sessions

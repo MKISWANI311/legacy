@@ -1,0 +1,15 @@
+FROM alpine
+
+COPY ./*.sh /
+
+RUN /setup.sh
+
+COPY ./php-fpm.conf /etc/php7/php-fpm.d/www.conf
+
+# external data
+VOLUME /server/data
+VOLUME /server/sessions
+
+EXPOSE 9000
+
+CMD ["php-fpm7"]
