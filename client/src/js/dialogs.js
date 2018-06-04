@@ -571,7 +571,7 @@ DlgUserRegister = new DialogModal({
                 var pass1 = modal.data.pass1.value;
                 var pass2 = modal.data.pass2.value;
                 // verification
-                if ( username && pass1 && pass2 && pass1 == pass2 ) {
+                if ( username && pass1 && pass2 && pass1 === pass2 ) {
                     // make hash
                     username = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(username));
                     password = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(pass1));
@@ -602,7 +602,7 @@ DlgUserRegister = new DialogModal({
                             if ( data.code !== false ) {
                                 // check returned data
                                 if ( data && data.id ) {
-                                    initData(data, password, function () {
+                                    initData(data, pass1, function () {
                                         // save user name for future logins
                                         app.set('username_last_used', modal.data.name.value, true);
                                         //app.setPass(password);
