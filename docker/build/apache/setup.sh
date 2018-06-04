@@ -8,7 +8,7 @@ set -eux
 # install dependencies
 apk add --no-cache --virtual .rundeps unzip curl
 
-apk add --no-cache php7-apache2 php7-session php7-pdo php7-pdo_sqlite php7-pdo_mysql php7-json
+apk add --no-cache php7-apache2 php7-session php7-pdo php7-pdo_sqlite php7-pdo_mysql php7-json php7-gd
 
 # application source code
 curl -fsSL https://github.com/fortnotes/legacy/archive/master.zip -o master.zip
@@ -19,7 +19,7 @@ rm -rf legacy-master
 rm master.zip
 
 # make session storage writable
-chmod a+w /server/data
+chmod -R a+w /server/data
 chmod a+w /server/sessions
 
 # system dir

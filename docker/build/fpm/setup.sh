@@ -8,7 +8,7 @@ set -eux
 # install dependencies
 apk add --no-cache --virtual .rundeps unzip curl
 
-apk add --no-cache php7-fpm php7-session php7-pdo php7-pdo_sqlite php7-pdo_mysql php7-json
+apk add --no-cache php7-fpm php7-session php7-pdo php7-pdo_sqlite php7-pdo_mysql php7-json php7-gd
 
 # application source code
 curl -fsSL https://github.com/fortnotes/legacy/archive/master.zip -o master.zip
