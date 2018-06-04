@@ -376,11 +376,12 @@ DlgUserLogin = new DialogModal({
     },
 
     controls: {
-        /*'Cancel': {
+        'Register': {
             onClick: function () {
                 this.modal.Close();
+                DlgUserRegister.Show({escClose: false});
             }
-        },*/
+        },
         'Login': {
             main: true,
             onClick: function () {
@@ -480,7 +481,12 @@ DlgUserRegister = new DialogModal({
 
             console.log('user captcha', data);
 
-            self.data.cimg.src = api.defaults.server + data.src;
+            if ( data && data.src ) {
+                self.data.cimg.src = api.defaults.server + data.src;
+            } else {
+                self.SetHint('New accounts registration is disabled.');
+                self.SetContent('');
+            }
         });
     },
 

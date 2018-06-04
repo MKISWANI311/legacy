@@ -17,3 +17,5 @@ define('PDO_PERSISTENT', getenv('PDO_PERSISTENT') ?: 0);
 define('DEBUG', getenv('DEBUG') ?: 0);
 
 define('SESSION_SAVE_PATH', getenv('SESSION_SAVE_PATH') ?: PATH_ROOT . 'sessions');
+
+define('DISABLE_REGISTRATION', getenv('DISABLE_REGISTRATION') ?: 0);

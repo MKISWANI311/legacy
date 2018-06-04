@@ -3,6 +3,11 @@
 class captcha {
 
     function uri () {
+        if ( DISABLE_REGISTRATION ) {
+            response::json(null);
+            return;
+        }
+
         include(PATH_LIBRARY . 'captcha/index.php');
 
         $result = array();
