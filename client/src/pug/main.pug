@@ -1,16 +1,19 @@
 doctype html
-head
-    meta(charset='UTF-8')
-    title FortNotes Online Password Manager
-    meta(http-equiv='Content-Type' content='text/html; charset=utf-8')
-    meta(name='keywords' content='security online password manager AES encryption')
-    meta(name='description' content='FortNotes Online Password Manager is a highly secure open-source private information storing platform based on the AES encryption in the browser. Fort Knox for your notes.')
-    meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    link(rel='icon' type='image/png' href='img/castle.png')
-    link(rel='stylesheet' type='text/css' href='main.css')
+html
+    head
+        meta(charset='UTF-8')
+        title FortNotes Online Password Manager
+        meta(http-equiv='Content-Type' content='text/html; charset=utf-8')
+        meta(name='keywords' content='security online password manager AES encryption')
+        meta(name='description' content='FortNotes Online Password Manager is a highly secure open-source private information storing platform based on the AES encryption in the browser. Fort Knox for your notes.')
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        link(rel='icon' type='image/png' href='img/castle.png')
+        link(rel='stylesheet' type='text/css' href='main.css')
 
-//include page.init.pug
-include page.main.pug
+    body
+        //include page.init.pug
+        include page.main.pug
 
-script(type='text/javascript' src='main.js')
-script(type='text/javascript' src='jquery.js')
+        script(type='text/javascript' src='main.js')
+        script(type='text/javascript')
+            include ../js/jquery.js

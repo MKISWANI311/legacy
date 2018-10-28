@@ -36,12 +36,32 @@
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -59,12 +79,101 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/main.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./src/js/api.js":
+/*!***********************!*\
+  !*** ./src/js/api.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @license The MIT License (MIT)
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+var defaults = {
+    server: localStorage.getItem('server') || 'https://fortnotes.com/',
+    mode: 'cors',
+    credentials: 'include',
+    headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+    }
+};
+
+
+function status ( response ) {
+    if ( response.status >= 200 && response.status < 300 ) {
+        return Promise.resolve(response);
+    } else {
+        return Promise.reject(new Error(response.statusText));
+    }
+}
+
+function json ( response ) {
+    return response.json();
+}
+
+
+// public
+module.exports = {
+    defaults: defaults,
+
+    get: function ( uri, callback ) {
+        fetch(defaults.server + uri, defaults)
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    },
+
+    post: function ( uri, data, callback ) {
+        fetch(defaults.server + uri, Object.assign({}, defaults, {method: 'post', body: JSON.stringify(data)}))
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    },
+
+    postForm: function ( uri, data, callback ) {
+        var config = Object.assign({}, defaults, {
+            method: 'post', body: data, headers: {
+                Accept: 'application/json'
+            }
+        });
+
+        fetch(defaults.server + uri, config)
+            .then(status)
+            .then(json)
+            .then(function ( data ) {
+                callback(null, data);
+            })
+            .catch(callback);
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/js/app.js":
+/*!***********************!*\
+  !*** ./src/js/app.js ***!
+  \***********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76,7 +185,7 @@
 
 
 
-var sjcl = __webpack_require__(2);
+var sjcl = __webpack_require__(/*! ./sjcl.min */ "./src/js/sjcl.min.js");
 
 
 var app = new function () {
@@ -379,7 +488,12 @@ module.exports = app;
 
 
 /***/ }),
-/* 1 */
+
+/***/ "./src/js/data.entry.types.js":
+/*!************************************!*\
+  !*** ./src/js/data.entry.types.js ***!
+  \************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -390,1237 +504,78 @@ module.exports = app;
 
 
 
-var defaults = {
-    server: localStorage.getItem('server') || 'https://fortnotes.com/',
-    mode: 'cors',
-    credentials: 'include',
-    headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json'
-    }
-};
+var list = [
+        {
+            id: 1,
+            max: 1024,
+            name: 'line',
+            icon: 'https://image.flaticon.com/icons/svg/23/23187.svg',
+            description: 'title or short one line text description'
+        },
+        {
+            id: 2,
+            max: 2048,
+            name: 'uri',
+            icon: 'https://image.flaticon.com/icons/svg/117/117965.svg',
+            description: 'any addresses - http/https/ftp/ssh or file path'},
+        {
+            id: 3,
+            max: 1024,
+            name: 'login',
+            icon: 'https://image.flaticon.com/icons/svg/149/149452.svg',
+            description: 'user name, login or email in some cases'
+        },
+        {
+            id: 4,
+            max: 4096,
+            name: 'password',
+            icon: 'https://image.flaticon.com/icons/svg/263/263069.svg',
+            description: 'any secret letters sequence'
+        },
+        {
+            id: 5,
+            max: 1024,
+            name: 'email',
+            icon: 'https://image.flaticon.com/icons/svg/60/60381.svg',
+            description: 'email address line'
+        },
+        {
+            id: 6,
+            max: 65535,
+            name: 'text',
+            icon: 'https://image.flaticon.com/icons/svg/140/140952.svg',
+            description: 'plain text entry for notes'
+        },
+        {
+            id: 7,
+            max: 65535,
+            name: 'html',
+            icon: 'https://image.flaticon.com/icons/svg/25/25252.svg',
+            description: 'formatted text entry for notes'
+        }
+    ],
+    hash = {};
 
 
-function status ( response ) {
-    if ( response.status >= 200 && response.status < 300 ) {
-        return Promise.resolve(response);
-    } else {
-        return Promise.reject(new Error(response.statusText));
-    }
-}
-
-function json ( response ) {
-    return response.json();
-}
+list.forEach(function ( type ) {
+    hash[type.id] = type;
+});
 
 
 // public
 module.exports = {
-    defaults: defaults,
-
-    get: function ( uri, callback ) {
-        fetch(defaults.server + uri, defaults)
-            .then(status)
-            .then(json)
-            .then(function ( data ) {
-                callback(null, data);
-            })
-            .catch(callback);
-    },
-
-    post: function ( uri, data, callback ) {
-        fetch(defaults.server + uri, Object.assign({}, defaults, {method: 'post', body: JSON.stringify(data)}))
-            .then(status)
-            .then(json)
-            .then(function ( data ) {
-                callback(null, data);
-            })
-            .catch(callback);
-    },
-
-    postForm: function ( uri, data, callback ) {
-        var config = Object.assign({}, defaults, {
-            method: 'post', body: data, headers: {
-                Accept: 'application/json'
-            }
-        });
-
-        fetch(defaults.server + uri, config)
-            .then(status)
-            .then(json)
-            .then(function ( data ) {
-                callback(null, data);
-            })
-            .catch(callback);
-    }
+    list: list,
+    hash: hash
 };
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-var sjcl={cipher:{},hash:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a}}};
-sjcl.cipher.aes=function(a){this.h[0][0][0]||this.w();var b,c,d,e,f=this.h[0][4],g=this.h[1];b=a.length;var h=1;if(b!==4&&b!==6&&b!==8)throw new sjcl.exception.invalid("invalid aes key size");this.a=[d=a.slice(0),e=[]];for(a=b;a<4*b+28;a++){c=d[a-1];if(a%b===0||b===8&&a%b===4){c=f[c>>>24]<<24^f[c>>16&255]<<16^f[c>>8&255]<<8^f[c&255];if(a%b===0){c=c<<8^c>>>24^h<<24;h=h<<1^(h>>7)*283}}d[a]=d[a-b]^c}for(b=0;a;b++,a--){c=d[b&3?a:a-4];e[b]=a<=4||b<4?c:g[0][f[c>>>24]]^g[1][f[c>>16&255]]^g[2][f[c>>8&255]]^
-g[3][f[c&255]]}};
-sjcl.cipher.aes.prototype={encrypt:function(a){return this.H(a,0)},decrypt:function(a){return this.H(a,1)},h:[[[],[],[],[],[]],[[],[],[],[],[]]],w:function(){var a=this.h[0],b=this.h[1],c=a[4],d=b[4],e,f,g,h=[],i=[],k,j,l,m;for(e=0;e<0x100;e++)i[(h[e]=e<<1^(e>>7)*283)^e]=e;for(f=g=0;!c[f];f^=k||1,g=i[g]||1){l=g^g<<1^g<<2^g<<3^g<<4;l=l>>8^l&255^99;c[f]=l;d[l]=f;j=h[e=h[k=h[f]]];m=j*0x1010101^e*0x10001^k*0x101^f*0x1010100;j=h[l]*0x101^l*0x1010100;for(e=0;e<4;e++){a[e][f]=j=j<<24^j>>>8;b[e][l]=m=m<<24^m>>>8}}for(e=
-0;e<5;e++){a[e]=a[e].slice(0);b[e]=b[e].slice(0)}},H:function(a,b){if(a.length!==4)throw new sjcl.exception.invalid("invalid aes block size");var c=this.a[b],d=a[0]^c[0],e=a[b?3:1]^c[1],f=a[2]^c[2];a=a[b?1:3]^c[3];var g,h,i,k=c.length/4-2,j,l=4,m=[0,0,0,0];g=this.h[b];var n=g[0],o=g[1],p=g[2],q=g[3],r=g[4];for(j=0;j<k;j++){g=n[d>>>24]^o[e>>16&255]^p[f>>8&255]^q[a&255]^c[l];h=n[e>>>24]^o[f>>16&255]^p[a>>8&255]^q[d&255]^c[l+1];i=n[f>>>24]^o[a>>16&255]^p[d>>8&255]^q[e&255]^c[l+2];a=n[a>>>24]^o[d>>16&
-255]^p[e>>8&255]^q[f&255]^c[l+3];l+=4;d=g;e=h;f=i}for(j=0;j<4;j++){m[b?3&-j:j]=r[d>>>24]<<24^r[e>>16&255]<<16^r[f>>8&255]<<8^r[a&255]^c[l++];g=d;d=e;e=f;f=a;a=g}return m}};
-sjcl.bitArray={bitSlice:function(a,b,c){a=sjcl.bitArray.P(a.slice(b/32),32-(b&31)).slice(1);return c===undefined?a:sjcl.bitArray.clamp(a,c-b)},concat:function(a,b){if(a.length===0||b.length===0)return a.concat(b);var c=a[a.length-1],d=sjcl.bitArray.getPartial(c);return d===32?a.concat(b):sjcl.bitArray.P(b,d,c|0,a.slice(0,a.length-1))},bitLength:function(a){var b=a.length;if(b===0)return 0;return(b-1)*32+sjcl.bitArray.getPartial(a[b-1])},clamp:function(a,b){if(a.length*32<b)return a;a=a.slice(0,Math.ceil(b/
-32));var c=a.length;b&=31;if(c>0&&b)a[c-1]=sjcl.bitArray.partial(b,a[c-1]&2147483648>>b-1,1);return a},partial:function(a,b,c){if(a===32)return b;return(c?b|0:b<<32-a)+a*0x10000000000},getPartial:function(a){return Math.round(a/0x10000000000)||32},equal:function(a,b){if(sjcl.bitArray.bitLength(a)!==sjcl.bitArray.bitLength(b))return false;var c=0,d;for(d=0;d<a.length;d++)c|=a[d]^b[d];return c===0},P:function(a,b,c,d){var e;e=0;if(d===undefined)d=[];for(;b>=32;b-=32){d.push(c);c=0}if(b===0)return d.concat(a);
-for(e=0;e<a.length;e++){d.push(c|a[e]>>>b);c=a[e]<<32-b}e=a.length?a[a.length-1]:0;a=sjcl.bitArray.getPartial(e);d.push(sjcl.bitArray.partial(b+a&31,b+a>32?c:d.pop(),1));return d},k:function(a,b){return[a[0]^b[0],a[1]^b[1],a[2]^b[2],a[3]^b[3]]}};
-sjcl.codec.utf8String={fromBits:function(a){var b="",c=sjcl.bitArray.bitLength(a),d,e;for(d=0;d<c/8;d++){if((d&3)===0)e=a[d/4];b+=String.fromCharCode(e>>>24);e<<=8}return decodeURIComponent(escape(b))},toBits:function(a){a=unescape(encodeURIComponent(a));var b=[],c,d=0;for(c=0;c<a.length;c++){d=d<<8|a.charCodeAt(c);if((c&3)===3){b.push(d);d=0}}c&3&&b.push(sjcl.bitArray.partial(8*(c&3),d));return b}};
-sjcl.codec.hex={fromBits:function(a){var b="",c;for(c=0;c<a.length;c++)b+=((a[c]|0)+0xf00000000000).toString(16).substr(4);return b.substr(0,sjcl.bitArray.bitLength(a)/4)},toBits:function(a){var b,c=[],d;a=a.replace(/\s|0x/g,"");d=a.length;a+="00000000";for(b=0;b<a.length;b+=8)c.push(parseInt(a.substr(b,8),16)^0);return sjcl.bitArray.clamp(c,d*4)}};
-sjcl.codec.base64={D:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",fromBits:function(a,b){var c="",d,e=0,f=sjcl.codec.base64.D,g=0,h=sjcl.bitArray.bitLength(a);for(d=0;c.length*6<h;){c+=f.charAt((g^a[d]>>>e)>>>26);if(e<6){g=a[d]<<6-e;e+=26;d++}else{g<<=6;e-=6}}for(;c.length&3&&!b;)c+="=";return c},toBits:function(a){a=a.replace(/\s|=/g,"");var b=[],c,d=0,e=sjcl.codec.base64.D,f=0,g;for(c=0;c<a.length;c++){g=e.indexOf(a.charAt(c));if(g<0)throw new sjcl.exception.invalid("this isn't base64!");
-if(d>26){d-=26;b.push(f^g>>>d);f=g<<32-d}else{d+=6;f^=g<<32-d}}d&56&&b.push(sjcl.bitArray.partial(d&56,f,1));return b}};sjcl.hash.sha256=function(a){this.a[0]||this.w();if(a){this.n=a.n.slice(0);this.i=a.i.slice(0);this.e=a.e}else this.reset()};sjcl.hash.sha256.hash=function(a){return(new sjcl.hash.sha256).update(a).finalize()};
-sjcl.hash.sha256.prototype={blockSize:512,reset:function(){this.n=this.N.slice(0);this.i=[];this.e=0;return this},update:function(a){if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);var b,c=this.i=sjcl.bitArray.concat(this.i,a);b=this.e;a=this.e=b+sjcl.bitArray.bitLength(a);for(b=512+b&-512;b<=a;b+=512)this.C(c.splice(0,16));return this},finalize:function(){var a,b=this.i,c=this.n;b=sjcl.bitArray.concat(b,[sjcl.bitArray.partial(1,1)]);for(a=b.length+2;a&15;a++)b.push(0);b.push(Math.floor(this.e/
-4294967296));for(b.push(this.e|0);b.length;)this.C(b.splice(0,16));this.reset();return c},N:[],a:[],w:function(){function a(e){return(e-Math.floor(e))*0x100000000|0}var b=0,c=2,d;a:for(;b<64;c++){for(d=2;d*d<=c;d++)if(c%d===0)continue a;if(b<8)this.N[b]=a(Math.pow(c,0.5));this.a[b]=a(Math.pow(c,1/3));b++}},C:function(a){var b,c,d=a.slice(0),e=this.n,f=this.a,g=e[0],h=e[1],i=e[2],k=e[3],j=e[4],l=e[5],m=e[6],n=e[7];for(a=0;a<64;a++){if(a<16)b=d[a];else{b=d[a+1&15];c=d[a+14&15];b=d[a&15]=(b>>>7^b>>>18^
-b>>>3^b<<25^b<<14)+(c>>>17^c>>>19^c>>>10^c<<15^c<<13)+d[a&15]+d[a+9&15]|0}b=b+n+(j>>>6^j>>>11^j>>>25^j<<26^j<<21^j<<7)+(m^j&(l^m))+f[a];n=m;m=l;l=j;j=k+b|0;k=i;i=h;h=g;g=b+(h&i^k&(h^i))+(h>>>2^h>>>13^h>>>22^h<<30^h<<19^h<<10)|0}e[0]=e[0]+g|0;e[1]=e[1]+h|0;e[2]=e[2]+i|0;e[3]=e[3]+k|0;e[4]=e[4]+j|0;e[5]=e[5]+l|0;e[6]=e[6]+m|0;e[7]=e[7]+n|0}};
-sjcl.mode.ccm={name:"ccm",encrypt:function(a,b,c,d,e){var f,g=b.slice(0),h=sjcl.bitArray,i=h.bitLength(c)/8,k=h.bitLength(g)/8;e=e||64;d=d||[];if(i<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(f=2;f<4&&k>>>8*f;f++);if(f<15-i)f=15-i;c=h.clamp(c,8*(15-f));b=sjcl.mode.ccm.G(a,b,c,d,e,f);g=sjcl.mode.ccm.I(a,g,c,b,e,f);return h.concat(g.data,g.tag)},decrypt:function(a,b,c,d,e){e=e||64;d=d||[];var f=sjcl.bitArray,g=f.bitLength(c)/8,h=f.bitLength(b),i=f.clamp(b,h-e),k=f.bitSlice(b,
-h-e);h=(h-e)/8;if(g<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(b=2;b<4&&h>>>8*b;b++);if(b<15-g)b=15-g;c=f.clamp(c,8*(15-b));i=sjcl.mode.ccm.I(a,i,c,k,e,b);a=sjcl.mode.ccm.G(a,i.data,c,d,e,b);if(!f.equal(i.tag,a))throw new sjcl.exception.corrupt("ccm: tag doesn't match");return i.data},G:function(a,b,c,d,e,f){var g=[],h=sjcl.bitArray,i=h.k;e/=8;if(e%2||e<4||e>16)throw new sjcl.exception.invalid("ccm: invalid tag length");if(d.length>0xffffffff||b.length>0xffffffff)throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
-f=[h.partial(8,(d.length?64:0)|e-2<<2|f-1)];f=h.concat(f,c);f[3]|=h.bitLength(b)/8;f=a.encrypt(f);if(d.length){c=h.bitLength(d)/8;if(c<=65279)g=[h.partial(16,c)];else if(c<=0xffffffff)g=h.concat([h.partial(16,65534)],[c]);g=h.concat(g,d);for(d=0;d<g.length;d+=4)f=a.encrypt(i(f,g.slice(d,d+4)))}for(d=0;d<b.length;d+=4)f=a.encrypt(i(f,b.slice(d,d+4)));return h.clamp(f,e*8)},I:function(a,b,c,d,e,f){var g,h=sjcl.bitArray;g=h.k;var i=b.length,k=h.bitLength(b);c=h.concat([h.partial(8,f-1)],c).concat([0,
-0,0]).slice(0,4);d=h.bitSlice(g(d,a.encrypt(c)),0,e);if(!i)return{tag:d,data:[]};for(g=0;g<i;g+=4){c[3]++;e=a.encrypt(c);b[g]^=e[0];b[g+1]^=e[1];b[g+2]^=e[2];b[g+3]^=e[3]}return{tag:d,data:h.clamp(b,k)}}};
-sjcl.mode.ocb2={name:"ocb2",encrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");var g,h=sjcl.mode.ocb2.A,i=sjcl.bitArray,k=i.k,j=[0,0,0,0];c=h(a.encrypt(c));var l,m=[];d=d||[];e=e||64;for(g=0;g+4<b.length;g+=4){l=b.slice(g,g+4);j=k(j,l);m=m.concat(k(c,a.encrypt(k(c,l))));c=h(c)}l=b.slice(g);b=i.bitLength(l);g=a.encrypt(k(c,[0,0,0,b]));l=i.clamp(k(l,g),b);j=k(j,k(l,g));j=a.encrypt(k(j,k(c,h(c))));if(d.length)j=k(j,f?d:sjcl.mode.ocb2.pmac(a,
-d));return m.concat(i.concat(l,i.clamp(j,e)))},decrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");e=e||64;var g=sjcl.mode.ocb2.A,h=sjcl.bitArray,i=h.k,k=[0,0,0,0],j=g(a.encrypt(c)),l,m,n=sjcl.bitArray.bitLength(b)-e,o=[];d=d||[];for(c=0;c+4<n/32;c+=4){l=i(j,a.decrypt(i(j,b.slice(c,c+4))));k=i(k,l);o=o.concat(l);j=g(j)}m=n-c*32;l=a.encrypt(i(j,[0,0,0,m]));l=i(l,h.clamp(b.slice(c),m));k=i(k,l);k=a.encrypt(i(k,i(j,g(j))));if(d.length)k=
-i(k,f?d:sjcl.mode.ocb2.pmac(a,d));if(!h.equal(h.clamp(k,e),h.bitSlice(b,n)))throw new sjcl.exception.corrupt("ocb: tag doesn't match");return o.concat(h.clamp(l,m))},pmac:function(a,b){var c,d=sjcl.mode.ocb2.A,e=sjcl.bitArray,f=e.k,g=[0,0,0,0],h=a.encrypt([0,0,0,0]);h=f(h,d(d(h)));for(c=0;c+4<b.length;c+=4){h=d(h);g=f(g,a.encrypt(f(h,b.slice(c,c+4))))}b=b.slice(c);if(e.bitLength(b)<128){h=f(h,d(h));b=e.concat(b,[2147483648|0])}g=f(g,b);return a.encrypt(f(d(f(h,d(h))),g))},A:function(a){return[a[0]<<
-1^a[1]>>>31,a[1]<<1^a[2]>>>31,a[2]<<1^a[3]>>>31,a[3]<<1^(a[0]>>>31)*135]}};sjcl.misc.hmac=function(a,b){this.M=b=b||sjcl.hash.sha256;var c=[[],[]],d=b.prototype.blockSize/32;this.l=[new b,new b];if(a.length>d)a=b.hash(a);for(b=0;b<d;b++){c[0][b]=a[b]^909522486;c[1][b]=a[b]^1549556828}this.l[0].update(c[0]);this.l[1].update(c[1])};sjcl.misc.hmac.prototype.encrypt=sjcl.misc.hmac.prototype.mac=function(a,b){a=(new this.M(this.l[0])).update(a,b).finalize();return(new this.M(this.l[1])).update(a).finalize()};
-sjcl.misc.pbkdf2=function(a,b,c,d,e){c=c||1E3;if(d<0||c<0)throw sjcl.exception.invalid("invalid params to pbkdf2");if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);e=e||sjcl.misc.hmac;a=new e(a);var f,g,h,i,k=[],j=sjcl.bitArray;for(i=1;32*k.length<(d||1);i++){e=f=a.encrypt(j.concat(b,[i]));for(g=1;g<c;g++){f=a.encrypt(f);for(h=0;h<f.length;h++)e[h]^=f[h]}k=k.concat(e)}if(d)k=j.clamp(k,d);return k};
-sjcl.random={randomWords:function(a,b){var c=[];b=this.isReady(b);var d;if(b===0)throw new sjcl.exception.notready("generator isn't seeded");else b&2&&this.U(!(b&1));for(b=0;b<a;b+=4){(b+1)%0x10000===0&&this.L();d=this.u();c.push(d[0],d[1],d[2],d[3])}this.L();return c.slice(0,a)},setDefaultParanoia:function(a){this.t=a},addEntropy:function(a,b,c){c=c||"user";var d,e,f=(new Date).valueOf(),g=this.q[c],h=this.isReady();d=this.F[c];if(d===undefined)d=this.F[c]=this.R++;if(g===undefined)g=this.q[c]=0;this.q[c]=
-(this.q[c]+1)%this.b.length;switch(typeof a){case "number":break;case "object":if(b===undefined)for(c=b=0;c<a.length;c++)for(e=a[c];e>0;){b++;e>>>=1}this.b[g].update([d,this.J++,2,b,f,a.length].concat(a));break;case "string":if(b===undefined)b=a.length;this.b[g].update([d,this.J++,3,b,f,a.length]);this.b[g].update(a);break;default:throw new sjcl.exception.bug("random: addEntropy only supports number, array or string");}this.j[g]+=b;this.f+=b;if(h===0){this.isReady()!==0&&this.K("seeded",Math.max(this.g,
-this.f));this.K("progress",this.getProgress())}},isReady:function(a){a=this.B[a!==undefined?a:this.t];return this.g&&this.g>=a?this.j[0]>80&&(new Date).valueOf()>this.O?3:1:this.f>=a?2:0},getProgress:function(a){a=this.B[a?a:this.t];return this.g>=a?1["0"]:this.f>a?1["0"]:this.f/a},startCollectors:function(){if(!this.m){if(window.addEventListener){window.addEventListener("load",this.o,false);window.addEventListener("mousemove",this.p,false)}else if(document.attachEvent){document.attachEvent("onload",
-this.o);document.attachEvent("onmousemove",this.p)}else throw new sjcl.exception.bug("can't attach event");this.m=true}},stopCollectors:function(){if(this.m){if(window.removeEventListener){window.removeEventListener("load",this.o);window.removeEventListener("mousemove",this.p)}else if(window.detachEvent){window.detachEvent("onload",this.o);window.detachEvent("onmousemove",this.p)}this.m=false}},addEventListener:function(a,b){this.r[a][this.Q++]=b},removeEventListener:function(a,b){var c;a=this.r[a];
-var d=[];for(c in a)a.hasOwnProperty[c]&&a[c]===b&&d.push(c);for(b=0;b<d.length;b++){c=d[b];delete a[c]}},b:[new sjcl.hash.sha256],j:[0],z:0,q:{},J:0,F:{},R:0,g:0,f:0,O:0,a:[0,0,0,0,0,0,0,0],d:[0,0,0,0],s:undefined,t:6,m:false,r:{progress:{},seeded:{}},Q:0,B:[0,48,64,96,128,192,0x100,384,512,768,1024],u:function(){for(var a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}return this.s.encrypt(this.d)},L:function(){this.a=this.u().concat(this.u());this.s=new sjcl.cipher.aes(this.a)},T:function(a){this.a=
-sjcl.hash.sha256.hash(this.a.concat(a));this.s=new sjcl.cipher.aes(this.a);for(a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}},U:function(a){var b=[],c=0,d;this.O=b[0]=(new Date).valueOf()+3E4;for(d=0;d<16;d++)b.push(Math.random()*0x100000000|0);for(d=0;d<this.b.length;d++){b=b.concat(this.b[d].finalize());c+=this.j[d];this.j[d]=0;if(!a&&this.z&1<<d)break}if(this.z>=1<<this.b.length){this.b.push(new sjcl.hash.sha256);this.j.push(0)}this.f-=c;if(c>this.g)this.g=c;this.z++;this.T(b)},p:function(a){sjcl.random.addEntropy([a.x||
-a.clientX||a.offsetX,a.y||a.clientY||a.offsetY],2,"mouse")},o:function(){sjcl.random.addEntropy(new Date,2,"loadtime")},K:function(a,b){var c;a=sjcl.random.r[a];var d=[];for(c in a)a.hasOwnProperty(c)&&d.push(a[c]);for(c=0;c<d.length;c++)d[c](b)}};
-sjcl.json={defaults:{v:1,iter:1E3,ks:128,ts:64,mode:"ccm",adata:"",cipher:"aes"},encrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json,f=e.c({iv:sjcl.random.randomWords(4,0)},e.defaults);e.c(f,c);if(typeof f.salt==="string")f.salt=sjcl.codec.base64.toBits(f.salt);if(typeof f.iv==="string")f.iv=sjcl.codec.base64.toBits(f.iv);if(!sjcl.mode[f.mode]||!sjcl.cipher[f.cipher]||typeof a==="string"&&f.iter<=100||f.ts!==64&&f.ts!==96&&f.ts!==128||f.ks!==128&&f.ks!==192&&f.ks!==0x100||f.iv.length<2||f.iv.length>
-4)throw new sjcl.exception.invalid("json encrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,f);a=c.key.slice(0,f.ks/32);f.salt=c.salt}if(typeof b==="string")b=sjcl.codec.utf8String.toBits(b);c=new sjcl.cipher[f.cipher](a);e.c(d,f);d.key=a;f.ct=sjcl.mode[f.mode].encrypt(c,b,f.iv,f.adata,f.tag);return e.encode(e.V(f,e.defaults))},decrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json;b=e.c(e.c(e.c({},e.defaults),e.decode(b)),c,true);if(typeof b.salt==="string")b.salt=
-sjcl.codec.base64.toBits(b.salt);if(typeof b.iv==="string")b.iv=sjcl.codec.base64.toBits(b.iv);if(!sjcl.mode[b.mode]||!sjcl.cipher[b.cipher]||typeof a==="string"&&b.iter<=100||b.ts!==64&&b.ts!==96&&b.ts!==128||b.ks!==128&&b.ks!==192&&b.ks!==0x100||!b.iv||b.iv.length<2||b.iv.length>4)throw new sjcl.exception.invalid("json decrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,b);a=c.key.slice(0,b.ks/32);b.salt=c.salt}c=new sjcl.cipher[b.cipher](a);c=sjcl.mode[b.mode].decrypt(c,
-b.ct,b.iv,b.adata,b.tag);e.c(d,b);d.key=a;return sjcl.codec.utf8String.fromBits(c)},encode:function(a){var b,c="{",d="";for(b in a)if(a.hasOwnProperty(b)){if(!b.match(/^[a-z0-9]+$/i))throw new sjcl.exception.invalid("json encode: invalid property name");c+=d+b+":";d=",";switch(typeof a[b]){case "number":case "boolean":c+=a[b];break;case "string":c+='"'+escape(a[b])+'"';break;case "object":c+='"'+sjcl.codec.base64.fromBits(a[b],1)+'"';break;default:throw new sjcl.exception.bug("json encode: unsupported type");
-}}return c+"}"},decode:function(a){a=a.replace(/\s/g,"");if(!a.match(/^\{.*\}$/))throw new sjcl.exception.invalid("json decode: this isn't json!");a=a.replace(/^\{|\}$/g,"").split(/,/);var b={},c,d;for(c=0;c<a.length;c++){if(!(d=a[c].match(/^([a-z][a-z0-9]*):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i)))throw new sjcl.exception.invalid("json decode: this isn't json!");b[d[1]]=d[2]?parseInt(d[2],10):d[1].match(/^(ct|salt|iv)$/)?sjcl.codec.base64.toBits(d[3]):unescape(d[3])}return b},c:function(a,b,c){if(a===
-undefined)a={};if(b===undefined)return a;var d;for(d in b)if(b.hasOwnProperty(d)){if(c&&a[d]!==undefined&&a[d]!==b[d])throw new sjcl.exception.invalid("required parameter overridden");a[d]=b[d]}return a},V:function(a,b){var c={},d;for(d in a)if(a.hasOwnProperty(d)&&a[d]!==b[d])c[d]=a[d];return c},W:function(a,b){var c={},d;for(d=0;d<b.length;d++)if(a[b[d]]!==undefined)c[b[d]]=a[b[d]];return c}};sjcl.encrypt=sjcl.json.encrypt;sjcl.decrypt=sjcl.json.decrypt;sjcl.misc.S={};
-sjcl.misc.cachedPbkdf2=function(a,b){var c=sjcl.misc.S,d;b=b||{};d=b.iter||1E3;c=c[a]=c[a]||{};d=c[d]=c[d]||{firstSalt:b.salt&&b.salt.length?b.salt.slice(0):sjcl.random.randomWords(2,0)};c=b.salt===undefined?d.firstSalt:b.salt;d[c]=d[c]||sjcl.misc.pbkdf2(a,c,b.iter);return{key:d[c].slice(0),salt:c.slice(0)}};
-
-// public
-module.exports = sjcl;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * List of tags with managing
- * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
- */
-
-
-
-var app = __webpack_require__(0);
-
-
-var TagManager = new function () {
-    // for limited scopes
-    var self = this;
-
-    // max length of each tag, will be truncated on exceed
-    var maxlength_tag = 100;
-
-    // component state flag
-    // true  - everything is decoded
-    // false - no plain data, everything is encrypted
-    this.open = false;
-
-    // decoded to these two lists
-    this.dataNmlist = {}; // {note:1, site:2, email:3}
-    this.dataIdlist = {}; // {1:note, 2:site, 3:email}
-    // they are filling on page loading and on note creation
-    // if there are some new tags
-
-
-    /**
-     * Open the subscriber
-     * master password is accessible
-     * decrypt all the data and show it
-     */
-    // this.EventOpen = function () {
-    //     console.time('TagManager: decrypt tags');
-    //     // decrypt tags
-    //     for ( var id in window.dataTags.data ) {
-    //         var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
-    //         // fill service lookup tables of tags by id and by name
-    //         window.dataTagsNmlist[name] = id = parseInt(id, 10);
-    //         window.dataTagsIdlist[id] = name;
-    //     }
-    //     console.timeEnd('TagManager: decrypt tags');
-    // };
-
-
-    /**
-     * Close the subscriber
-     * master password is expired and cleared
-     * clear all the decrypted data
-     */
-    // this.EventClose = function () {
-    //     // clear service lookup tables
-    //     window.dataTagsNmlist = {};
-    //     window.dataTagsIdlist = {};
-    // };
-
-
-    /**
-     * Adds new tag id and enc/dev values to the global lookup tables
-     * @param id of the new tag
-     * @param enc encrypted tag name value
-     * @param dec optional decrypted tag name value, decrypted from enc if omitted
-     */
-    this.Add = function ( id, enc, dec ) {
-        // decrypt name if necessary
-        dec = dec || app.decode(enc, true);
-        this.data[id] = [enc, [], 1];
-        this.dataNmlist[dec] = id;
-        this.dataIdlist[id] = dec;
-    };
-
-
-    /**
-     * Returns the sorted list of tag ids by usage
-     * first ids the most used
-     */
-    this.SortByUses = function () {
-        var result = [];
-        // prepare list of id/usage
-        for ( var id in this.data ) {
-            result.push({id: parseInt(id, 10), uses: this.data[id][this.defn.uses]});
-        }
-        // custom sort
-        result.sort(function ( a, b ) {
-            return b.uses - a.uses
-        });
-        // rework output, get rid of objects
-        for ( var i = 0; i < result.length; i++ ) {
-            result[i] = result[i].id;
-        }
-        return result;
-    };
-
-
-    /**
-     * Converts the array of tags ids to tags names
-     * @param data array of tags (integers or encrypted strings)
-     * @param prefix string to prepend to each tag name
-     * @return tags names array
-     * @example [1,2,'***encrypted string***',3] -> ['ftp','note','ssh','site']
-     */
-    this.IDs2Names = function ( data, prefix ) {
-        var name, result = [];
-        // check input
-        if ( data && data instanceof Array )
-        // get tag names from ids
-            for ( var i = 0; i < data.length; i++ ) {
-                // check type
-                if ( isNaN(data[i]) ) {
-                    // seems this is a real-time encrypted string
-                    if ( (name = app.decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
-                } else {
-                    // seems normal tag id
-                    if ( this.dataIdlist[data[i]] )
-                    // tag found in the global list
-                        result.push((prefix ? prefix : '') + this.dataIdlist[data[i]]);
-                }
-            }
-        return result.sort();
-    };
-
-
-    /**
-     * Returns the string of tag names from the tags ids
-     * @example [1,2,3] -> "note site ftp"
-     */
-    this.IDs2Str = function ( data ) {
-        data = this.IDs2Names(data);
-        return data.length > 0 ? data.join(' ') : '';
-    };
-
-
-    /**
-     * Converts a tags names array to array of ids or encrypted strings
-     * @param data tags string
-     * @param skip_new optional flag to exclude all new not encrypted values
-     * @return array of tags (integers or encrypted strings)
-     * @example skip_new=true  ['ftp','note','ssh','site'] -> [1,2,3]
-     * @example skip_new=false ['ftp','note','ssh','site'] -> [1,2,'***encrypted string***',3]
-     */
-    this.Names2IDs = function ( data, skip_new ) {
-        var result = [];
-        // check input
-        if ( data && data instanceof Array ) {
-            // list of unique tag names
-            var words = [], enc = null;
-            // iterate words in the input string
-            for ( var i = 0; i < data.length; i++ ) {
-                // shorten too long lines
-                var name = data[i].slice(0, maxlength_tag);
-                // check if this word already processed
-                if ( !words.has(name) ) {
-                    if ( this.dataNmlist[name] ) {
-                        // tag found in the global data
-                        result.push(this.dataNmlist[name]);
-                    } else {
-                        // not found so encrypt and cache if not skipped
-                        if ( !skip_new && (enc = app.encode(name, true)) !== false ) {
-                            result.push(enc);
-                        }
-                    }
-                    // add word
-                    words.push(name);
-                }
-            }
-        }
-        return result;
-    };
-
-
-    /**
-     * Converts a tags string to array of ids or encrypted strings
-     * @param data tags string
-     * @param skip_new optional flag to exclude all new not encrypted values
-     * @return array of tags (integers or encrypted strings)
-     * @example skip_new=true  "ftp note ssh site" -> [1,2,3]
-     * @example skip_new=false "ftp note ssh site" -> [1,2,'***encrypted string***',3]
-     */
-    this.Str2IDs = function ( data, skip_new ) {
-        // do convert
-        return this.Names2IDs(this.Str2Names(data), skip_new);
-    };
-
-
-//    this.NamesMissed = function ( names, data ) {
-//        var result = [];
-//        // check input
-//        if ( data && data.match ) {
-//            // split to separate words
-//            data = data.match(/(\S+)/g);
-//            if ( data && data instanceof Array ) {
-//                // iterate words in the input string
-//                for ( var i = 0; i < data.length; i++ ) {
-//                    if ( !names.has(data[i]) ) {
-//                        result.push(data[i]);
-//                    }
-//                }
-//            }
-//        }
-//        return result;
-//    };
-
-
-    /**
-     * Converts a string to array of words
-     * @param data input string
-     * @return array of words
-     * @example 'ftp -note :ssh !site' -> ["ftp","-note",":ssh","!site"]
-     * @example 'ftp "my note" :ssh' -> ["ftp","my note",":ssh"]
-     */
-    this.Str2Names = function ( data ) {
-        var result = [];
-        // check input
-        if ( data && data.match ) {
-            // split to words
-            //data = data.match(/(?:"[^"]+"|[\S]+)/g);
-            data = data.match(/(\S+)/g);
-            // not empty list of words
-            if ( data && data instanceof Array ) {
-                // iterate words in the input string
-                data.forEach(function ( word ) {
-                    // prevent duplication
-                    if ( !result.has(word) ) result.push(word);
-                });
-            }
-        }
-        return result;
-    };
-
-
-    /**
-     * Parses the user input into inner data lists
-     * @param data string of tags input
-     * @return hash of lists
-     */
-    this.StrParse = function ( data ) {
-        var tinc = [],  // array of included tags ids
-            texc = [],  // array of excluded tags ids
-            ninc = [],  // array of included tags names
-            nexc = [],  // array of excluded tags names
-            winc = [],  // array of included words (not tags)
-            wexc = [],  // array of excluded words (not tags)
-            wcmd = [];  // array of command words
-        // prepare sorted list of words and iterate
-        this.Str2Names(data).sort().forEach(function ( word ) {
-            // find out if there are special chars at the beginning of the word
-            var fchar = word.charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
-            // get the word without special chars if present
-            if ( fexc || fcmd ) word = word.slice(1);
-            // not empty
-            if ( word ) {
-                // command
-                if ( fcmd ) {
-                    wcmd.push(word);
-                } else {
-                    // just a tag
-                    var tid = self.dataNmlist[word];
-                    // tag id found in the global data
-                    if ( tid ) {
-                        if ( fexc ) {
-                            // excluded
-                            texc.push(tid);
-                            nexc.push(word);
-                        } else {
-                            // included
-                            tinc.push(tid);
-                            ninc.push(word);
-                        }
-                    } else {
-                        // tag id not found so it's just a word
-                        if ( fexc )
-                            wexc.push(word);
-                        else
-                            winc.push(word);
-                    }
-                }
-            }
-        });
-        // build result struct
-        return {
-            tinc: tinc, texc: texc,
-            ninc: ninc, nexc: nexc,
-            winc: winc, wexc: wexc,
-            wcmd: wcmd
-        };
-    };
-
-
-    /**
-     * Build the user input string from the parsed inner data
-     * @param data hash of lists
-     * @return string of tags input
-     */
-    this.StrBuild = function ( data ) {
-        var list = [];
-        // check input and fill the list with the corresponding data
-        if ( data.wcmd && data.wcmd instanceof Array ) data.wcmd.sort().forEach(function ( item ) {
-            list.push(':' + item);
-        });
-        if ( data.ninc && data.ninc instanceof Array ) data.ninc.sort().forEach(function ( item ) {
-            list.push(item);
-        });
-        if ( data.nexc && data.nexc instanceof Array ) data.nexc.sort().forEach(function ( item ) {
-            list.push('-' + item);
-        });
-        if ( data.winc && data.winc instanceof Array ) data.winc.sort().forEach(function ( item ) {
-            list.push(item);
-        });
-        if ( data.wexc && data.wexc instanceof Array ) data.wexc.sort().forEach(function ( item ) {
-            list.push('-' + item);
-        });
-        // implode data into one line separated by spaces
-        return list.join(' ');
-    };
-
-
-    /**
-     * Splits the string with words into two lists - inc and exc
-     * @param data string with words
-     * @example data = "table window -chair -door" -> {winc:["table","window"],wexc:["chair","door"]}
-     */
-//    this.SeparateWords = function ( data ) {
-//        var list = [],  // array of all parts
-//            winc = [],  // array of included words (not tags)
-//            wexc = [];  // array of excluded words (not tags)
-//        // prepare list of words
-//        list = this.Str2Names(data);
-//        list.forEach(function(word){
-//            // find out if there is minus at the beginning of the word
-//            if ( word.charAt(0) === '-' ) {
-//                // get the word without minus
-//                word = word.slice(1);
-//                // append excluded
-//                if ( word ) wexc.push(word);
-//            } else {
-//                // append included
-//                if ( word ) winc.push(word);
-//            }
-//        });
-//        // build result struct
-//        return { winc:winc, wexc:wexc };
-//    }
-
-
-//    this.StrCombine = function ( data ) {
-//        var texc = [];
-//        data.texc.forEach(function(id){
-//            texc.push('-' + window.dataTagsIdlist[id]);
-//        });
-//        texc.sort();
-//        return texc.join(' ') + (texc.length > 0 ? ' ' : '') + this.IDs2Str(data.tinc);
-//    }
-
-
-    this.Linked = function ( data ) {
-        var result = [], list = {}, i;
-        //data = data.slice();
-        if ( data && data instanceof Array ) {
-            if ( data.length === 1 ) {
-                result = this.data[data[0]][this.defn.links];
-            } else {
-                data.forEach(function ( id ) {
-                    var links = self.data[id][self.defn.links];
-                    links.forEach(function ( link ) {
-                        list[link] = (list[link] ? list[link] : 0) + 1;
-                    });
-                });
-                for ( i in list ) {
-                    if ( list[i] === data.length ) {
-                        result.push(parseInt(i, 10));
-                    }
-                }
-                //fb(list);
-                //result = data[0].slice();
-                // iterate all rest
-                //            for ( var i = 1; i < data.length; i++ ) {
-                //                var links = window.dataTags.data[data[i]][window.dataTags.defn.links];
-                //
-                //            }
-                //                fb(id);
-                //                fb(window.dataTags.data[id][window.dataTags.defn.links].sort());
-                //});
-            }
-        }
-        //fb(result);
-        return result;
-    };
-
-
-    this.Init = function ( tags ) {
-        this.data = tags.data;
-        this.defn = tags.defn;
-
-        console.time('TagManager: decrypt tags');
-        // decrypt tags
-        for ( var id in this.data ) {
-            var name = app.decode(this.data[id][this.defn.name]);
-            // fill service lookup tables of tags by id and by name
-            this.dataNmlist[name] = id = parseInt(id, 10);
-            this.dataIdlist[id] = name;
-        }
-        console.timeEnd('TagManager: decrypt tags');
-    }
-
-};
-
-
-// public
-module.exports = TagManager;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @license The MIT License (MIT)
- * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
- */
-
-
-
-var app = __webpack_require__(0),
-    api = __webpack_require__(1),
-    //NoteFilter = require('./app.note.filter'),
-    //NoteEditor = require('./app.note.editor'),
-    templates  = __webpack_require__(5),
-    TagManager = __webpack_require__(3);
-
-
-/**
- * Module to work with note list
- * view all, selecting, checking, appending, filtering
- */
-var NoteList = new function () {
-    // for limited scopes
-    var self = this;
-
-    // component state flag
-    // true  - everything is decoded
-    // false - no plain data, everything is encrypted
-    //this.open = false;
-
-    var hint_tag_include = 'click on this tag to include it to the search';
-    var hint_tag_exclude = 'click on this tag to exclude it from the search';
-    var hint_info_missing = 'there is no data';
-    var hint_tags_missing = 'there are no tags';
-    var hint_notes_visible = 'the limited amount of visible notes received according the search options (usually the first 20)';
-    var hint_notes_total = 'the general amount of notes satisfying the giving search options';
-    var hint_notes_filtered = 'the amount of notes excluded from the note list due to the search filter';
-
-    var msg_checked_notes_remove = 'You are going to delete all checked notes in the note list. Do you really want to continue?';
-    var msg_checked_notes_restore = 'You are going to restore all checked notes in the note list. Do you really want to continue?';
-
-    var msg_checked_notes_removed = 'The selected notes were successfully removed ';
-    var msg_checked_notes_restored = 'The selected notes were successfully restored ';
-
-
-    /**
-     * Open the subscriber
-     * master password is accessible
-     * decrypt all the data and show it
-     */
-    // this.EventOpen = function () {
-    //     elclear(this.dom.notes);
-    //     // show info and controls
-    //     this.dom.tpbar.style.display = 'block';
-    //     // component state flag
-    //     this.open = true;
-    // };
-
-    /**
-     * Close the subscriber
-     * master password is expired and cleared
-     * clear all the decrypted data
-     */
-    // this.EventClose = function () {
-    //     // close only if opened at the moment
-    //     if ( this.open ) {
-    //         // clear decoded entries data in the requested notes
-    //         this.data.notes.forEach(function ( note ) {
-    //             // all note entries
-    //             note.entries.forEach(function ( entry ) {
-    //                 // remove if exist
-    //                 delete entry.name_dec;
-    //                 delete entry.data_dec;
-    //             });
-    //             // all data for filtering
-    //             delete note.fulltext;
-    //         });
-    //         // hide info and controls
-    //         this.dom.tpbar.style.display = 'none';
-    //         // clear notes
-    //         elclear(this.dom.notes);
-    //         // component state flag
-    //         this.open = false;
-    //     }
-    // };
-
-
-    /**
-     * Deletes or restores the given list of notes depending on the undo flag
-     * @param list array of note ids
-     * @param undo bool flag: true - restore notes, delete otherwise
-     */
-    var NotesDelete = function ( list, undo ) {
-        // check input
-        if ( list.length > 0 ) {
-            // send request
-            api.post('note/delete' + (undo ? '/undo' : ''), {ids: list}, function ( error, data ) {
-                if ( error ) {
-                    console.error(error);
-                }
-
-                console.log('note delete', data);
-
-                // remove old messages
-                NoteFilter.MsgClear();
-                // on success
-                if ( !data.error ) {
-                    // prepare message body
-                    var message = [(undo ? msg_checked_notes_restored : msg_checked_notes_removed) + '(amount:' + data.count + '). '];
-                    // after deletion allow to go to the deleted notes
-                    if ( !undo ) message.push(' It is still possible to ', element('a', {className: 'bold'}, 'restore them', {
-                        onclick: function () {
-                            NoteFilter.RequestDeleted();
-                        }
-                    }));
-                    // close currently edited note if affected
-                    if ( list.has(NoteEditor.GetNoteID()) ) NoteEditor.Escape();
-                    // show status message
-                    NoteFilter.MsgAdd(message);
-                    // refresh note list
-                    NoteFilter.NotesRequest();
-                } else {
-                    NoteFilter.MsgAdd('The request was not successful. The response from the server: ' + data.error, 'error');
-                }
-            });
-        }
-    };
-
-
-    /**
-     * Makes a visualization of the given note entries details
-     * @param note array note attributes
-     * @param icon img node for note icon
-     * @return array of html nodes or hint string
-     */
-    var BuildNoteInfo = function ( note, icon ) {
-        var list = [], fulltext = [], url = null;
-        // iterate all note entries
-        note.entries.forEach(function ( entry ) {
-            // decrypt data
-            var name = app.decode(entry.name);
-            var data = app.decode(entry.data);
-            // prepare fulltext data
-            fulltext.push(name.toLowerCase());
-            fulltext.push(data.toLowerCase());
-            // there is data and it's not a password
-            if ( entry.id_type !== 4 && data ) {
-                // truncate
-                var sname = name.length > 30 ? name.slice(0, 25) + '...' : name;
-                var sdata = data.length > 50 ? data.slice(0, 35) + '...' : data;
-                // url
-                if ( entry.id_type === 2 ) {
-                    // http/https/ftp and have point
-                    if ( (data.search('http://') >= 0 || data.search('https://') >= 0 || data.search('ftp://') >= 0) && data.search('.') >= 0 ) {
-                        sdata = element('a', {target: '_blank', href: data}, sdata);
-                        // the first available url
-                        if ( !url ) url = data;
-                    } else {
-                        // just server name
-                        sdata = element('b', {}, sdata);
-                    }
-                }
-                list.push(element('span', {className: 'name'}, sname + ':'));
-                list.push(element('span', {className: 'data'}, sdata));
-            }
-        });
-        // has valid url (the first one)
-        if ( url ) {
-            // get rid of all unnecessary parts
-            url = url.split('/');
-            // parts are valid
-            if ( url[2] && url[2] !== 'localhost' ) {
-                // try to get image, won't replace the current one if no icon found
-                // https://www.google.com/s2/favicons?domain=google.com gives only 16px images
-                //element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
-                element('img', {className: 'icon', src: 'http://www.getfavicon.org/get.pl?url=' + url[2]}, null, {
-                    onload: function () {
-                        // icon loaded so get current icon parent
-                        var parent = icon.parentNode;
-                        // and replace the current one
-                        parent.removeChild(icon);
-                        // with new
-                        elchild(parent, this);
-                        //self.dom.entries.insertBefore(entry, entry.previousSibling);
-                    }
-                })
-            }
-        }
-        // build search full text data
-        note.fulltext = fulltext.join('\n');
-        // warning if no data
-        return list.length > 0 ? list : element('div', {className: 'warn'}, hint_info_missing);
-    }
-
-
-    /**
-     * Tag button click handler
-     * include, exclude and subtract
-     */
-    var TagClickHandler = function ( event ) {
-        // ctrl holding
-        if ( event.ctrlKey ) {
-            NoteFilter.TagSubtract(this.tagnm);
-        } else {
-            if ( this.finc ) {
-                // available for selection
-                NoteFilter.TagInclude(this.tagnm);
-            } else {
-                // already selected
-                NoteFilter.TagExclude(this.tagnm);
-            }
-        }
-        // prevent bubbling
-        return false;
-    };
-
-
-    /**
-     * Makes a list of note tags buttons with handlers
-     * @param note array note attributes
-     * @return array of html tag nodes or hint string
-     */
-    var BuildNoteTags = function ( note ) {
-        var list = [], exc = [], inc = [];
-        // there is some data
-        if ( note.tags.length > 0 ) {
-            // separate tags
-            note.tags.forEach(function ( item ) {
-                if ( NoteFilter.data.tinc.has(item) ) {
-                    inc.push(TagManager.dataIdlist[item]);
-                } else {
-                    exc.push(TagManager.dataIdlist[item]);
-                }
-            });
-            // forms the list of tags already selected
-            inc.sort().forEach(function ( item ) {
-                // create html wrapper for tag
-                item = element('span', {className: 'tag include', tagnm: item, title: hint_tag_exclude}, item);
-                // mouse click handler
-                //$(item).bind('click', TagClickHandler);
-                item.addEventListener('click', TagClickHandler);
-                list.push(item);
-            });
-            // forms the list of tags available for selection
-            exc.sort().forEach(function ( item ) {
-                // create html wrapper for tag
-                item = element('span', {className: 'tag', finc: true, tagnm: item, title: hint_tag_include}, item);
-                // mouse click handler
-                //$(item).bind('click', TagClickHandler);
-                item.addEventListener('click', TagClickHandler);
-                list.push(item);
-            });
-        }
-        // list of tags or missing hint
-        return list.length > 0 ? list : hint_tags_missing;
-    }
-
-
-    /**
-     * Returns the corresponding note icon image address
-     * @param note array note attributes
-     * @return string
-     */
-    var GetNoteIcon = function ( note ) {
-        // prepare
-        var icon = 'img/tags/note.svg',
-            tags = TagManager.IDs2Names(note.tags);
-
-        // iterate words in the tag list
-        tags.forEach(function ( tag ) {
-            var has = templates.some(function ( template ) {
-                return template.name === tag;
-            });
-
-            // it's a tag from the global set
-            if ( has ) {
-                // get the first match
-                icon = 'img/tags/' + tag + '.svg';
-            }
-        });
-
-        return icon;
-    };
-
-
-    /**
-     * Shows/hides checked notes controls and general notes info
-     * @param ctrlonly flag to skip or not the control buttons
-     */
-    this.UpdateCtrlBlock = function ( ctrlonly ) {
-        //var total = self.dom.notes.childNodes.length;
-        if ( !ctrlonly ) {
-            // list of visible notes
-            var visible = this.GetNotesVisible();
-            // clear and fill
-            elchild(elclear(self.dom.tpinfo), [
-                // block with amount
-                element('span', {className: 'amount'}, [
-                    // title
-                    element('p', {}, 'notes '),
-                    // amount of visible notes
-                    element('b', {title: hint_notes_visible}, visible.length), ' of ', element('span', {title: hint_notes_total}, this.data.total),
-                    // total amount of notes
-                    (visible.length < this.data.notes.length ? [element('p', {className: 'div'}, '|'), element('b', {title: hint_notes_filtered}, this.data.notes.length - visible.length), ' filtered'] : null),
-                    // link to load all available notes
-                    (this.data.notes.length < this.data.total ? [element('p', {className: 'div'}, '|'), element('a', {}, 'load all', {
-                        onclick: function () {
-                            NoteFilter.NotesRequest(true);
-                        }
-                    })] : null)
-                ]),
-                // block with selection
-                element('span', {}, [
-                    // title
-                    element('p', {}, 'select '),
-                    // link to select all notes
-                    element('a', {}, 'all', {
-                        onclick: function () {
-                            self.SetNotesState(visible, 'marked', true);
-                            self.UpdateCtrlBlock(true);
-                        }
-                    }),
-                    element('p', {className: 'div'}, '|'),
-                    // link to remove selection from all notes
-                    element('a', {}, 'none', {
-                        onclick: function () {
-                            self.SetNotesState(visible, 'marked', false);
-                            self.UpdateCtrlBlock(true);
-                        }
-                    }),
-                    element('p', {className: 'div'}, '|'),
-                    // link to invert selection
-                    element('a', {}, 'invert', {
-                        onclick: function () {
-                            self.SetNotesState(visible, 'marked');
-                            self.UpdateCtrlBlock(true);
-                        }
-                    })
-                ])
-            ]);
-        }
-        // get the list of checked notes
-        var checked = this.GetNotesByState('marked');
-        // hide all buttons
-        this.dom.btndelete.style.display = 'none';
-        this.dom.btnrestore.style.display = 'none';
-        // show only the corresponding one
-        if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
-        // show/hide block depending on notes amount
-        this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
-    }
-
-
-    /**
-     * Set the default note state, removes additional classes and resets the state flags
-     * @param notes if given than it's the only note list to be reset
-     */
-    this.ClearNotesState = function ( notes ) {
-        // all notes or the given one/ones
-        var i, list = notes || self.dom.notes.childNodes;
-        // iterate formed list
-        for ( i = 0; i < list.length; i++ ) {
-            // reset class
-            list[i].className = 'note';
-            // reset state flags
-            list[i].state.active = list[i].state.marked = false;
-        }
-    }
-
-
-    /**
-     * Sets the flag and clall to the given note/notes
-     * @param notes to be processed
-     * @param type string name active | marked
-     * @param state optional bool flag, if set true - set, false - unset
-     */
-    this.SetNotesState = function ( notes, type, state ) {
-        // check input
-        if ( notes.length > 0 ) {
-            notes.forEach(function ( note ) {
-                // determine the state to switch to
-                note.state[type] = state !== undefined ? state : (note.state[type] ? false : true);
-                // invert class
-                //$(note).toggleClass(type, note.state[type]);
-                note.classList.toggle(type, note.state[type]);
-            });
-        }
-    };
-
-
-    /**
-     * Returns the list of notes with the given state
-     * @param type string state name active | marked
-     * @return array of nodes
-     */
-    this.GetNotesByState = function ( type ) {
-        // all notes or only the given one
-        var i, result = [], list = self.dom.notes.childNodes;
-        // iterate formed list
-        for ( i = 0; i < list.length; i++ ) {
-            if ( list[i].state[type] === true ) result.push(list[i]);
-        }
-        return result;
-    }
-
-
-    /**
-     * Returns the html note block by id if found or false otherwise
-     * @param id int note attribute
-     * @return node with data or false on failure
-     */
-    this.GetNoteByID = function ( id ) {
-        // iterate note list
-        for ( var i = 0, list = this.dom.notes.childNodes; i < list.length; i++ ) {
-            // return if matched
-            if ( list[i].data.id === id ) return list[i];
-        }
-        return false;
-    }
-
-
-    /**
-     * Returns the list of visible notes
-     * @return array of nodes
-     */
-    this.GetNotesVisible = function () {
-        // iterate note list
-        for ( var i = 0, result = [], list = this.dom.notes.childNodes; i < list.length; i++ ) {
-            // fill the visible notes list
-            if ( !list[i].style.display ) result.push(list[i]);
-        }
-        return result;
-    }
-
-
-    /**
-     * Whole note ckick handler
-     * highlights the active note or note range
-     * holding Ctrl checks/unchecks the selected notes
-     * holding Shift selects all the notes between old and new selected notes
-     * @param event event object
-     */
-    var NoteClickHandler = function ( event ) {
-        // holding Ctrl key
-        if ( event.ctrlKey ) {
-            self.SetNotesState([this], 'marked');
-            // simple mouse click
-        } else {
-            // currently active note list
-            var alast = self.GetNotesByState('active');
-            // flag true if the clicked note is the same as already active
-            var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
-            // check current note modifications
-            var has_changes = NoteEditor.HasChanges();
-            // not changed or user confirmed his wish
-            if ( !has_changes || fsame || (has_changes && NoteEditor.ConfirmExit()) ) {
-                // reset all notes states
-                self.ClearNotesState();
-                // check if the edited note is not already active
-                if ( NoteEditor.GetNoteID() !== this.data.id ) {
-                    // show note details
-                    NoteEditor.Load(this.data);
-                }
-                // make active
-                self.SetNotesState([this], 'active');
-                // holding Shift key
-                if ( event.shiftKey ) {
-                    var i, item, cflag = false;
-                    // iterate all notes
-                    for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
-                        // cursor
-                        item = self.dom.notes.childNodes[i];
-                        // flag showing that the cursor is inside the range
-                        if ( item.data.id === alast[0].data.id || item.data.id === this.data.id ) cflag = !cflag;
-                        // check inside the range or edge items
-                        if ( cflag || item.data.id === alast[0].data.id || item.data.id === this.data.id ) {
-                            self.SetNotesState([item], 'marked');
-                        }
-                    }
-                } else {
-                    // check the only clicked note
-                    self.SetNotesState([this], 'marked');
-                }
-            }
-        }
-        // show/hide checked notes controls
-        self.UpdateCtrlBlock();
-        // prevent bubbling
-        //return false;
-    }
-
-
-    /**
-     * Note checkbox ckick handler
-     */
-    var NoteTickClickHandler = function () {
-        // check/uncheck
-        self.SetNotesState([this.note], 'marked');
-        // show/hide checked notes controls
-        self.UpdateCtrlBlock();
-        // prevent bubbling
-        return false;
-    }
-
-
-    /**
-     * Forms the note wrapper
-     * @param data array of note parameters
-     * @return formed node with data
-     */
-    this.BuildNote = function ( data ) {
-        // note body
-        var note = element('div', {className: 'note', data: data, dom: {}, state: {}});
-        // note content
-        elchild(note, [
-            element('div', {className: 'icon'}, [
-                note.dom.icon = element('img', {className: 'icon', src: GetNoteIcon(data)}),
-                //note.dom.icon = BuildNoteIcon(data),
-                note.dom.tick = element('div', {className: 'tick', note: note})
-            ]),
-            element('div', {className: 'body'}, [
-                note.dom.info = element('div', {className: 'info'}, BuildNoteInfo(data, note.dom.icon)),
-                //note.dom.time = element('div', {className: 'time'}, TimestampToDateStr(data.mtime)),
-                note.dom.tags = element('div', {className: 'tags'}, BuildNoteTags(data))
-            ])
-        ]);
-        // whole note ckick
-        //$(note).bind('click', NoteClickHandler);
-        note.addEventListener('click', NoteClickHandler);
-        // checkbox click
-        //$(note.dom.tick).bind('click', NoteTickClickHandler);
-        note.dom.tick.addEventListener('click', NoteTickClickHandler);
-        // note html body
-        return note;
-    };
-
-
-    /**
-     * Shows/hides notes according to the filter
-     * @param notes array of notes that should be processed, all if not given
-     */
-    this.SetNotesVisibility = function ( notes ) {
-        // all notes or the given one/ones
-        notes = notes || this.dom.notes.childNodes;
-        var i, visible,  // flag for visibility
-            hlist = [];  // list of the notes that should be hidden
-        // iterate formed list
-        for ( i = 0; i < notes.length; i++ ) {
-            // by default is visible
-            visible = true;
-            // check by tags
-            //TODO:???
-            // check by filter string if still visible
-            if ( visible ) {
-                // check included words
-                NoteFilter.data.winc.forEach(function ( word ) {
-                    // not found in fulltext so exit
-                    if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {
-                        visible = false;
-                        return;
-                    }
-                });
-                // still visible
-                if ( visible ) {
-                    // check excluded words
-                    NoteFilter.data.wexc.forEach(function ( word ) {
-                        // found in fulltext so exit
-                        if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {
-                            visible = false;
-                            return;
-                        }
-                    });
-                }
-            }
-            // apply visibility flag
-            notes[i].style.display = visible ? '' : 'none';
-            // fill the list of notes to be hidden
-            if ( !visible ) hlist.push(notes[i]);
-        }
-        // clear inner state for hidden notes
-        this.ClearNotesState(hlist);
-        this.UpdateCtrlBlock();
-    }
-
-
-    /**
-     * Fills the note list with generated notes
-     * @param notes array of notes or false if gloabal latest list should be used
-     * @param total int general amount of notes
-     */
-    this.BuildTable = function ( notes, total ) {
-        // check input
-        notes = notes instanceof Array ? notes : [];
-        // set global data
-        this.data.notes = notes;
-        this.data.total = total;
-        // clearing the container
-        elclear(this.dom.notes);
-        // there are some notes
-        if ( total > 0 ) {
-            // determine the note id beeing edited at the moment
-            var note, neid = NoteEditor.GetNoteID();
-            // iterate all notes
-            notes.forEach(function ( item ) {
-                // append the created note to the list
-                note = self.BuildNote(item);
-                self.SetNotesVisibility([note]);
-                elchild(self.dom.notes, note);
-                // highlight the edited at the moment note
-                if ( neid === item.id ) self.SetNotesState([note], 'active');
-            });
-        }
-        // show/hide control panel
-        this.UpdateCtrlBlock();
-    };
-
-
-    /**
-     * Deletes or restore selected notes depending on undo flag
-     */
-    var BtnDeleteHandler = function () {
-        // ask user
-        if ( confirm(this.undo ? msg_checked_notes_restore : msg_checked_notes_remove) ) {
-            var list = [];
-            // iterate all checked notes
-            self.GetNotesByState('marked').forEach(function ( note ) {
-                // fill id list
-                if ( note.data.id ) list.push(note.data.id);
-            });
-            // send request
-            NotesDelete(list, this.undo);
-        }
-    }
-
-
-    /**
-     * Main init method
-     * @param params list of configuration parameters
-     */
-    this.Init = function ( params ) {
-        // check input
-        if ( !params.handle ) return;
-        // html parent object
-        this.dom = {handle: params.handle};
-
-        this.data = {
-            total: 0,  // total amount on notes
-            notes: []  // all requested notes data array
-        };
-
-        // build all blocks together
-        elchild(this.dom.handle, [
-            // top panel
-            this.dom.tpbar = element('div', {className: 'tpbar'}, [
-                // controls
-                this.dom.tpctrl = element('div', {className: 'ctrl'}, [
-                    this.dom.btndelete = element('input', {
-                        type: 'button',
-                        value: 'Delete',
-                        undo: false,
-                        className: 'button hidden'
-                    }, null, {onclick: BtnDeleteHandler}),
-                    this.dom.btnrestore = element('input', {
-                        type: 'button',
-                        value: 'Restore',
-                        undo: true,
-                        className: 'button hidden'
-                    }, null, {onclick: BtnDeleteHandler})
-                ]),
-                // general info, load all, select all/none/invert
-                this.dom.tpinfo = element('div', {className: 'info'})
-            ]),
-            // note list
-            this.dom.notes = element('div', {className: 'notes'})
-            // bottom panel
-            //this.dom.btbar = element('div', {className: 'btbar'})
-        ]);
-
-        // disable selection
-        // this.dom.notes.onselectstart = function () {
-        //     return false;
-        // } // ie
-        // this.dom.notes.onmousedown = function () {
-        //     return false;
-        // } // mozilla
-    };
-};
-
-
-// public
-module.exports = NoteList;
-
-
-/***/ }),
-/* 5 */
+/***/ "./src/js/data.templates.js":
+/*!**********************************!*\
+  !*** ./src/js/data.templates.js ***!
+  \**********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1711,168 +666,767 @@ module.exports = list;
 
 
 /***/ }),
-/* 6 */
+
+/***/ "./src/js/dialogs.js":
+/*!***************************!*\
+  !*** ./src/js/dialogs.js ***!
+  \***************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * List of note templates
  * @license The MIT License (MIT)
  * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
  */
 
 
 
-var templates = __webpack_require__(5);
+var app = __webpack_require__(/*! ./app */ "./src/js/app.js"),
+    sjcl = __webpack_require__(/*! ./sjcl.min */ "./src/js/sjcl.min.js"),
+    api = __webpack_require__(/*! ./api */ "./src/js/api.js"),
+    DialogModal = __webpack_require__(/*! ./modal */ "./src/js/modal.js"),
+    FieldList = __webpack_require__(/*! ./fldlist */ "./src/js/fldlist.js");
 
 
-var TemplateList = new function () {
-    // for limited scopes
-    var self = this;
+var DlgExport = null;
+var DlgOptions = null;
+var DlgPassGet = null;
+var DlgUserLogin = null;
+var DlgUserRegister = null;
 
-    var hint_main = 'In the list above please select a template to be used to create your new note.';
-    var hint_item = 'This template will create a note with this set of entries:<br>';
-    //var hint_filter = 'filter by name or description ...';
 
+//document.addEventListener('DOMContentLoaded', function () {
+DlgExport = new DialogModal({
+    width: 750,
+    title: 'Data export',
+    hint: 'Here you can get all your data unencrypted.',
+    dom: {},
+
+    onCreate: function () {
+        this.SetContent(this.dom.text = element('textarea', {className: 'export'}));
+    },
 
     /**
      * Open the subscriber
      * master password is accessible
      * decrypt all the data and show it
      */
-    // this.EventOpen = function () {
-    //     console.log('TemplateList.EventOpen');
-    //     //this.Fill();
-    //     // component state flag
-    //     this.open = true;
-    // };
+    EventOpen: function () {
+        if ( window.exportData ) {
+            setTimeout(function () {
+                DlgExport.Show();
+                for ( var idNote in window.exportData.notes ) {
+                    // check type
+                    if ( window.exportData.notes[idNote] instanceof Array ) {
+                        window.exportData.notes[idNote].forEach(function ( entry ) {
+                            var name = app.decode(entry.name, true);
+                            var data = app.decode(entry.data, true);
+                            if ( name && data ) {
+                                DlgExport.dom.text.value += name + ': ' + data + '\n';
+                            }
+                        });
+                    }
+                    // check type
+                    if ( window.exportData.note_tags[idNote] instanceof Array ) {
+                        var tags = [];
+                        window.exportData.note_tags[idNote].forEach(function ( idTag ) {
+                            if ( window.exportData.tags[idTag] ) tags.push(app.decode(window.exportData.tags[idTag], true));
+                        });
+                        if ( tags.length > 0 ) {
+                            DlgExport.dom.text.value += 'tags: ' + tags.join(' ') + '\n';
+                        }
+                    }
+                    DlgExport.dom.text.value += '\n';
+                }
+                // strip
+                DlgExport.dom.text.value = DlgExport.dom.text.value.trim();
+                window.exportData = null;
+            }, 50);
+        }
+    },
 
     /**
-     * Close the subscriber
+     * close the subscriber
      * master password is expired and cleared
      * clear all the decrypted data
      */
-    // this.EventClose = function () {
-    //     // close only if opened at the moment
-    //     if ( this.open ) {
-    //         elclear(this.dom.list);
-    //         // component state flag
-    //         this.open = false;
-    //     }
-    // };
+    EventClose: function () {
+        DlgExport.Close();
+    },
+
+    controls: {
+        'Close': {
+            main: true,
+            onClick: function () {
+                //var modal = this.modal;
+                this.modal.Close();
+            }
+        }
+    }
+});
 
 
-    /**
-     * Fills the list with templates
-     */
-    this.Fill = function () {
-        // prepare
-        elclear(self.dom.list);
-        // iterate all templates
-        //window.dataTemplates.data.forEach(function ( data ) {
-        templates.forEach(function ( data ) {
-            // template body
-            var item = element('div', {className: 'item', /*style:'display:none',*/ data: data},
-                element('div', {className: 'line ' + data.name}, [
-                    element('div', {className: 'name'}, data.name),
-                    element('div', {className: 'hint'}, data.description)
-                ]));
-            // append
-            elchild(self.dom.list, item);
-            // template item handlers
-            //$(item).click(function(){
-            item.addEventListener('click', function () {
-                self.Show(false);
-                NoteEditor.Create(this.data);
-            });
-            //$(item).mouseenter(function(){
-            item.addEventListener('mouseenter', function () {
-                var list = [];
-                data.entries.forEach(function ( entry ) {
-                    list.push('<b>' + entry.name + '</b>');
-                });
-                // window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
-                //     list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
-                // });
-                self.dom.hint.innerHTML = hint_item + list.join(', ');
-            });
+DlgOptions = new DialogModal({
+    width: 650,
+    title: 'Options',
+    hint: 'Here you can create/restore backups and export all your data.',
+
+    onCreate: function () {
+        var file = element('input', {
+            type: 'file', name: 'file', id: 'file-upload', onchange: function () {
+                hint.innerHTML = this.value;
+                fbtn.value = 'File selected';
+            }
         });
-        //this.Filter();
-    };
+        var fbtn = element('input', {
+            type: 'button', className: 'button long', value: 'Choose file ...', onclick: function () {
+                //$(file).trigger('click');
+                file.click();
+            }
+        });
+        var hint = element('div', {className: 'fhint'});
 
+        this.SetContent([
+            element('div', {className: 'desc'}, "Backup is an archived package of all your encrypted data. It can't be read by human but can be used to restore your account info or setup a copy on some other FortNotes instance."),
+            element('input', {
+                type: 'button', className: 'button long', value: 'Create backup', onclick: function () {
+                    window.location = api.defaults.server + 'user/export/txt';
+                }
+            }),
+            element('div', {className: 'desc'}, "Please specify your previously downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
+            element('div', {}, [
+                element('input', {
+                    type: 'button', className: 'button long', value: 'Restore backup', onclick: function () {
+                        var btn = this;
+                        btn.value = 'Uploading ...';
+                        btn.disabled = true;
 
-    /**
-     * Filters by given text
-     * @param text string to search in each template name or description
-     */
-    // this.Filter = function ( text ) {
-    //     text = text || this.dom.filter.value;
-    //     text = text.toLowerCase();
-    //     for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
-    //         // prepare
-    //         var item = self.dom.list.childNodes[i];
-    //         var name = item.data[window.dataTemplates.defn.name].toLowerCase();
-    //         var desc = item.data[window.dataTemplates.defn.description].toLowerCase();
-    //         // search substring and show/hide
-    //         //$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
-    //         item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
-    //     }
-    // };
+                        var data = new FormData();
+                        data.append('file', file.files[0]);
+                        console.log(data);
 
+                        api.postForm('user/import/txt', data, function ( error, data ) {
+                            if ( error ) {
+                                console.error(error);
+                                return;
+                            }
 
-    /**
-     * Shows/hides the component
-     * @param state visibility flag: true - show, false - hide
-     */
-    this.Show = function ( state ) {
-        this.dom.handle.style.display = state ? 'block' : 'none';
-    };
+                            console.log('user import', data);
 
+                            btn.value = 'Restore backup';
+                            btn.disabled = false;
+                            if ( data && data.error ) {
+                                alert('Restore from backup failed. Error: ' + data.error);
+                            } else {
+                                alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
+                                // We must reload the whole page to update window.dataTags
+                                window.location.reload();
+                            }
+                        });
 
-    /**
-     * Main init method
-     * @param params list of configuration parameters
-     */
-    this.Init = function ( params ) {
-        // check input
-        if ( !params.handle ) return;
-        // html parent object
-        this.dom = {handle: params.handle};
-        // build main blocks together
-        elchild(this.dom.handle, [
-            this.dom.title = element('div', {className: 'title'}),
-            this.dom.list = element('div', {className: 'list'}),
-            this.dom.hint = element('div', {className: 'hint'}, hint_main)
+                        // $.ajax({
+                        //     url: 'user/import/txt',
+                        //     data: data,
+                        //     cache: false,
+                        //     contentType: false,
+                        //     processData: false,
+                        //     type: 'POST',
+                        //     dataType: 'json',
+                        //     success: function(data) {
+                        //         btn.value = 'Restore backup';
+                        //         btn.disabled = false;
+                        //         if ( data && data.error ) {
+                        //             alert('Restore from backup failed. Error: ' + data.error);
+                        //         } else {
+                        //             alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
+                        //             // We must reload the whole page to update window.dataTags
+                        //             window.location.reload();
+                        //         }
+                        //     }
+                        // });
+                    }
+                }), ' ',
+                fbtn,
+                hint
+            ]),
+            element('div', {className: 'desc'}, "It's possible to export all the data in a human readable form in order to print it or save in file on some storage. It'll give all the data in plain unencrypted form. The password is required."),
+            element('input', {
+                type: 'button', className: 'button long', value: 'Export data', onclick: function () {
+                    var btn = this;
+
+                    btn.value = 'Loading ...';
+                    btn.disabled = true;
+
+                    api.get('user/export/plain', function ( error, data ) {
+                        if ( error ) {
+                            console.error(error);
+                            return;
+                        }
+
+                        console.log('user export', data);
+
+                        btn.value = 'Export data';
+                        btn.disabled = false;
+                        window.exportData = data;
+                        app.expirePass();
+                    });
+                }
+            })
         ]);
-        // reset hint
-        //$(this.dom.handle).mouseleave(function(){
-        this.dom.handle.addEventListener('mouseleave', function () {
-            self.dom.hint.innerHTML = hint_main;
+    },
+
+    /**
+     * close the subscriber
+     * master password is expired and cleared
+     * clear all the decrypted data
+     */
+    EventClose: function () {
+        DlgOptions.Close();
+    },
+
+    controls: {
+        Close: {
+            main: true,
+            onClick: function () {
+                this.modal.Close();
+            }
+        }
+    }
+});
+
+
+DlgPassGet = new DialogModal({
+    width: 500,
+    title: 'Password',
+    hint: 'Please enter your password to unlock encrypted data.',
+    data: {attempts: 0},
+
+    onCreate: function () {
+        this.data.fldlist = new FieldList({
+            cols: [
+                {className: 'colname'},
+                {className: 'colvalue'}
+            ],
+            attr: {}
+        });
+        this.data.pass = element('input', {type: 'password', autocomplete: 'current-password', className: 'line'});
+        this.data.linkset = element('a', {className: 'combo', title: 'click to change the password storing time'});
+        onEnterClick(this.data.pass, this.params.controls['Continue'].dom);
+
+        this.data.fldlist.AddRow([
+            [
+                element('span', {className: 'fldname'}, 'password'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'your secret key')
+            ],
+            [
+                element('input', {
+                    type: 'text',
+                    autocomplete: 'username',
+                    className: 'hidden',
+                    value: app.get('username_last_used', '')
+                }),
+                this.data.pass
+            ]
+        ], {});
+        //this.data.fldlist.AddRow([null, ['remember password for ', this.data.linkset]], {});
+
+        this.SetContent(element('form', {}, this.data.fldlist.dom.table));
+    },
+
+    onShow: function () {
+        // new LinkSet(DlgPassGet.data.linkset, {
+        //     300:   {next:1200,  title: '5 minutes'},
+        //     1200:  {next:3600,  title: '20 minutes'},
+        //     3600:  {next:18000, title: '1 hour'},
+        //     18000: {next:86400, title: '5 hours'},
+        //     86400: {next:300,   title: '1 day'}
+        // }, app.get('pass_store_time', 300));
+    },
+
+    /**
+     * close the subscriber
+     * master password is expired and cleared
+     * clear all the decrypted data
+     */
+    EventClose: function () {
+        DlgPassGet.Show({escClose: false});
+    },
+
+    controls: {
+        'Log off': {
+            main: false,
+            onClick: function () {
+                this.modal.Close();
+                Logout();
+            }
+        },
+        Continue: {
+            main: true,
+            onClick: function () {
+                var modal = this.modal;
+                var pass = modal.data.pass.value;
+                // check pass
+                if ( app.checkPass(pass) ) {
+                    initData(window.dataUser, pass, function () {
+                        //app.set('pass_store_time', modal.data.linkset.value, true);
+                        //app.setPass(pass);
+                        modal.data.attempts = 0;
+                        // reset value
+                        modal.data.pass.value = '';
+                        modal.Close();
+                        //NoteFilter.SetFocus();
+                    });
+                    // if ( modal.data.linkset.value ) {
+                    //     //fb(modal.data.linkset.value);
+                    //     app.set('pass_store_time', modal.data.linkset.value, true);
+                    //     app.setPassTime(modal.data.linkset.value);
+                    // }
+                } else {
+                    modal.data.pass.focus();
+                    modal.data.attempts++;
+                    if ( modal.data.attempts === 1 )
+                        modal.SetMessage('Password is invalid!');
+                    else
+                        modal.SetMessage(['Password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
+                }
+            }
+        }
+    }
+});
+
+
+DlgUserLogin = new DialogModal({
+    width: 500,
+    title: 'Authentication',
+    hint: "Welcome back! Please authorize.",
+    data: {attempts: 0},
+
+    onCreate: function () {
+        this.data.fldlist = new FieldList({
+            cols: [
+                {className: 'colname'},
+                {className: 'colvalue'}],
+            attr: {}
+        });
+        this.data.name = element('input', {
+            className: 'line',
+            autocomplete: 'username',
+            type: 'text',
+            value: app.get('username_last_used', '')
+        });
+        this.data.pass = element('input', {
+            className: 'line',
+            autocomplete: 'current-password',
+            type: 'password'
+        });
+        this.data.serv = element('input', {
+            className: 'line',
+            autocomplete: 'server',
+            type: 'url',
+            value: app.get('server', 'https://fortnotes.com/')
         });
 
-        //this.dom.filter = element('input', {type:'text', value:hint_filter});
-        //this.dom.filter = element('input', {type: 'text', placeholder: hint_filter});
-        // watermark and filtering
-        //watermark(this.dom.filter, hint_filter, '#000');
-        //$(this.dom.filter).keyup(function(){
-        // this.dom.filter.addEventListener('keyup', function () {
-        //     self.Filter(this.value);
-        // });
+        //onEnterFocus(this.data.name, this.data.pass);
+        onEnterClick(this.data.pass, this.params.controls['Login'].dom);
 
-        // title
-        elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates')/*, this.dom.filter*/]);
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'username'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'your name or email')],
+            this.data.name
+        ], {});
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'password'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'your secret key')],
+            this.data.pass
+        ], {});
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'server'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'data storage')],
+            this.data.serv
+        ], {});
+        this.SetContent(element('form', {}, this.data.fldlist.dom.table));
+    },
 
-        this.Fill();
-    };
-};
+    controls: {
+        'Register': {
+            onClick: function () {
+                this.modal.Close();
+                DlgUserRegister.Show({escClose: false});
+            }
+        },
+        'Login': {
+            main: true,
+            onClick: function () {
+                var modal = this.modal;
+                // get name and pass
+                var username = modal.data.name.value;
+                var password = modal.data.pass.value;
+                // verification
+                if ( username && password ) {
+                    // ajax request
+                    username = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(username));
+                    password = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(password));
+                    // block all inputs and buttons
+                    modal.EnableControls(false);
+                    modal.data.name.disabled = true;
+                    modal.data.pass.disabled = true;
+                    if ( modal.data.attempts > 1 ) {
+                        modal.SetLoading("Sending server request ...");
+                    }
+
+                    app.set('server', modal.data.serv.value, true);
+                    api.defaults.server = modal.data.serv.value;
+
+                    api.post('user/auth', {name: username, pass: password, mode: 'login'}, function ( error, data ) {
+                        if ( error ) {
+                            console.error(error);
+                            modal.SetMessage('Request error.', 'error');
+                            return;
+                        }
+
+                        console.log('user auth', data);
+
+                        if ( data ) {
+                            // check returned data
+                            if ( data && data.id ) {
+                                initData(data, modal.data.pass.value, function () {
+                                    // save user name of last login
+                                    app.set('username_last_used', modal.data.name.value, true);
+                                    //app.setPass(modal.data.pass.value);
+                                    // reset values
+                                    modal.data.name.value = '';
+                                    modal.data.pass.value = '';
+                                    //modal.SetHint();
+                                    //modal.SetContent();
+                                    //$(modal.dom.footer).hide();
+                                    //modal.SetMessage(['Authentication was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
+                                    // redirect to home with delay
+                                    //setTimeout(function(){
+                                    //window.location.href = window.location.href;
+                                    modal.Close();
+                                    //NoteFilter.SetFocus();
+
+                                    //window.pageInit.style.display = 'none';
+                                    //window.pageMain.style.display = 'block';
+                                    //}, 500);
+                                });
+                                return;
+                            } else {
+                                modal.data.attempts++;
+                                if ( modal.data.attempts === 1 ) {
+                                    modal.SetMessage('Invalid user name or password.', 'error');
+                                } else {
+                                    modal.SetMessage(['Invalid user name or password.', element('br'), 'Logged attempts: ' + modal.data.attempts], 'error');
+                                }
+                            }
+                        } else {
+                            modal.SetMessage('Invalid response from the server.');
+                        }
+                        // unblock all inputs and buttons
+                        modal.EnableControls(true);
+                        modal.data.name.disabled = false;
+                        modal.data.pass.disabled = false;
+                    });
+                } else {
+                    modal.SetMessage('Empty user name or password.');
+                }
+            }
+        }
+    }
+});
+
+
+DlgUserRegister = new DialogModal({
+    width: 550,
+    title: 'Registration',
+    hint: "You are going to register in the system. Please note that the password you are going to enter will be used not only to login but also to encrypt/decrypt your data so choose a strong and long password. Your registration data won't be sent to the server in plain unencrypted form. Only hashes are stored on the server. We don't know your password and will never ask you to send it to us but at the same time we won't be able to remind it to you so please keep that password utmost safe.",
+    data: {attempts: 0},
+
+    onShow: function () {
+        var self = this;
+
+        api.get('captcha/uri', function ( error, data ) {
+            if ( error ) {
+                console.error(error);
+                return;
+            }
+
+            console.log('user captcha', data);
+
+            if ( data && data.src ) {
+                self.data.cimg.src = api.defaults.server + data.src;
+            } else {
+                self.SetHint('New accounts registration is disabled.');
+                self.SetContent('');
+            }
+        });
+    },
+
+    onCreate: function () {
+        this.data.fldlist = new FieldList({
+            cols: [
+                {className: 'colname'},
+                {className: 'colvalue'}],
+            attr: {}
+        });
+        this.data.name = element('input', {type: 'text', autocomplete: 'username', className: 'line'});
+        this.data.pass1 = element('input', {type: 'password', autocomplete: 'new-password', className: 'line'});
+        this.data.pass2 = element('input', {type: 'password', autocomplete: 'new-password', className: 'line'});
+        this.data.cimg = element('img', {width: 161, height: 75});
+        this.data.code = element('input', {
+            type: 'text',
+            autocomplete: 'off',
+            className: 'line cline',
+            title: 'case insensitive code above'
+        });
+
+        // onEnterFocus(this.data.name, this.data.pass1);
+        // onEnterFocus(this.data.pass1, this.data.pass2);
+        // onEnterFocus(this.data.pass2, this.data.code);
+        onEnterClick(this.data.code, this.params.controls['Register'].dom);
+
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'username'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'your name or email')],
+            this.data.name
+        ], {});
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'password'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'your secret key')],
+            this.data.pass1
+        ], {});
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'confirm password'),
+                element('br'),
+                element('span', {className: 'fldhint'}, 'your secret key once more')],
+            this.data.pass2
+        ], {});
+        this.data.fldlist.AddRow([
+            [element('span', {className: 'fldname'}, 'captcha'),
+                element('br'),
+                element('span', {className: 'fldwhint'}, 'enter the code on the image to make sure this is not an automated registration')],
+            [this.data.cimg, element('br'), this.data.code]
+        ], {});
+        //console.log(this.dom.footer);
+        //$(this.dom.footer).hide();
+        this.dom.footer.classList.add('hidden');
+        var self = this;
+        this.SetContent(element('a', {}, "I understand that my password can't be restored and will keep it safe", {
+            onclick: function () {
+                var container = document.getElementById('simplemodal-container');
+
+                self.SetHint('Keep your password safe - you are the only one who knows it so there is no way to restore it!');
+                //$('#simplemodal-container').css('top', ($('#simplemodal-container').css('top').replace('px','') - 80) + 'px');
+                container.style.top = parseInt(container.style.top, 10) - 100 + 'px';
+                self.SetContent(element('form', {}, self.data.fldlist.dom.table));
+                //$(self.dom.footer).show();
+                self.dom.footer.classList.remove('hidden');
+                self.data.name.focus();
+            }
+        }));
+    },
+
+    controls: {
+        Cancel: {
+            onClick: function () {
+                this.modal.Close();
+            }
+        },
+        Register: {
+            main: true,
+            onClick: function () {
+                var modal = this.modal;
+                // get name and pass
+                var password, username = modal.data.name.value;
+                var pass1 = modal.data.pass1.value;
+                var pass2 = modal.data.pass2.value;
+                // verification
+                if ( username && pass1 && pass2 && pass1 === pass2 ) {
+                    // make hash
+                    username = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(username));
+                    password = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(pass1));
+                    // block all inputs and buttons
+                    modal.EnableControls(false);
+                    modal.data.name.disabled = true;
+                    modal.data.pass1.disabled = true;
+                    modal.data.pass2.disabled = true;
+                    if ( modal.data.attempts > 1 ) {
+                        modal.SetLoading("Sending server request ...");
+                    }
+
+                    api.post('user/auth', {
+                        name: username,
+                        pass: password,
+                        code: modal.data.code.value,
+                        mode: 'register'
+                    }, function ( error, data ) {
+                        if ( error ) {
+                            console.error(error);
+                            modal.SetMessage('Request error.', 'error');
+                            return;
+                        }
+
+                        console.log('user auth', data);
+
+                        if ( data ) {
+                            if ( data.code !== false ) {
+                                // check returned data
+                                if ( data && data.id ) {
+                                    initData(data, pass1, function () {
+                                        // save user name for future logins
+                                        app.set('username_last_used', modal.data.name.value, true);
+                                        //app.setPass(password);
+                                        // reset values
+                                        modal.data.name.value = '';
+                                        modal.data.pass1.value = '';
+                                        modal.data.pass2.value = '';
+                                        //modal.SetHint();
+                                        //modal.SetContent();
+                                        //$(modal.dom.footer).hide();
+                                        //modal.dom.footer.classList.add('hidden');
+                                        //modal.SetMessage(['Registration was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
+                                        // redirect to home with delay
+                                        //setTimeout(function(){
+                                        //window.location.href = window.location.href;
+                                        modal.Close();
+
+                                        //window.pageInit.style.display = 'none';
+                                        window.pageMain.style.display = 'block';
+                                        //}, 500);
+                                    });
+                                    return;
+                                } else {
+                                    modal.data.attempts++;
+                                    if ( modal.data.attempts === 1 )
+                                        modal.SetMessage(['Invalid user name or password.', element('br'), 'There maybe already a user with the same name or there are some technical problems on the server.'], 'error');
+                                    else
+                                        modal.SetMessage(['Invalid user name or password.', element('br'), 'Logged attempts: ' + modal.data.attempts], 'error');
+                                }
+                            } else {
+                                modal.SetMessage('Invalid captcha code. Please correct it and try once again.');
+                            }
+                        } else {
+                            modal.SetMessage('Invalid responce from the server.');
+                        }
+                        // unblock all inputs and buttons
+                        modal.EnableControls(true);
+                        modal.data.name.disabled = false;
+                        modal.data.pass1.disabled = false;
+                        modal.data.pass2.disabled = false;
+                    });
+                } else {
+                    modal.SetMessage("Empty one of the required field or passwords don't match.");
+                }
+            }
+        }
+    }
+});
+
+
+app.subscribe(DlgExport);
+app.subscribe(DlgOptions);
+app.subscribe(DlgPassGet);
+
+window.DlgExport = DlgExport;
+window.DlgOptions = DlgOptions;
+window.DlgPassGet = DlgPassGet;
+window.DlgUserLogin = DlgUserLogin;
+window.DlgUserRegister = DlgUserRegister;
+//});
 
 
 // public
-module.exports = TemplateList;
+module.exports = {
+    DlgExport: DlgExport,
+    DlgOptions: DlgOptions,
+    DlgPassGet: DlgPassGet,
+    DlgUserLogin: DlgUserLogin,
+    DlgUserRegister: DlgUserRegister
+};
 
 
 /***/ }),
-/* 7 */
+
+/***/ "./src/js/fldlist.js":
+/*!***************************!*\
+  !*** ./src/js/fldlist.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Table manager for fields
+ * @license The MIT License (MIT)
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+/**
+ * @param params list of configuration parameters
+ *     cols - name of table columns (also class names for corresponding cells)
+ *     attr - table attributes overwriting the default ones
+ */
+function FieldList ( params ) {
+    this.params = params;
+
+    // html elements
+    this.dom = {};
+
+    this.SetCols = function ( cols ) {
+        this.params.cols = cols;
+    };
+
+    this.AddRow = function ( cells, attr ) {
+        if ( cells && cells instanceof Array && cells.length === this.params.cols.length ) {
+            var cell = null;
+            var row = this.dom.table.insertRow(-1);
+            elattr(row, attr);
+            for ( var i = 0; i < this.params.cols.length; i++ ) {
+                cell = row.insertCell(-1);
+                cell.className = this.params.cols[i];
+                elchild(cell, cells[i]);
+                elattr(cell, this.params.cols[i]);
+            }
+            return row;
+        }
+        return false;
+    };
+
+    this.AddDivider = function ( cells, attr ) {
+        var row = this.dom.table.insertRow(-1);
+        var cell = row.insertCell(-1);
+        elattr(cell, {colspan: this.params.cols.length});
+        elchild(cell, element('div', {className: 'divider'}));
+    };
+
+    this.Init = function () {
+        this.dom.table = element('table', {className: 'fldlist'});
+        elattr(this.dom.table, this.params.attr);
+    };
+    this.Init();
+}
+
+
+// public
+module.exports = FieldList;
+
+
+/***/ }),
+
+/***/ "./src/js/main.js":
+/*!************************!*\
+  !*** ./src/js/main.js ***!
+  \************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1883,22 +1437,22 @@ module.exports = TemplateList;
 
 
 
-var app     = __webpack_require__(0),
-    sjcl    = __webpack_require__(2),
-    api     = __webpack_require__(1),
+var app     = __webpack_require__(/*! ./app */ "./src/js/app.js"),
+    sjcl    = __webpack_require__(/*! ./sjcl.min */ "./src/js/sjcl.min.js"),
+    api     = __webpack_require__(/*! ./api */ "./src/js/api.js"),
     //dialogs = require('./app.dialogs'),
     //NoteFilter   = require('./app.note.filter'),
-    NoteList     = __webpack_require__(4),
-    TemplateList = __webpack_require__(6),
+    NoteList     = __webpack_require__(/*! ./note.list */ "./src/js/note.list.js"),
+    TemplateList = __webpack_require__(/*! ./template.list */ "./src/js/template.list.js"),
     //NoteEditor   = require('./app.note.editor'),
-    TagManager   = __webpack_require__(3),
+    TagManager   = __webpack_require__(/*! ./tag.manager */ "./src/js/tag.manager.js"),
     collectTimer;
 
 
-__webpack_require__(8);
-__webpack_require__(9);
-__webpack_require__(11);
-__webpack_require__(12);
+__webpack_require__(/*! ./note.filter */ "./src/js/note.filter.js");
+__webpack_require__(/*! ./note.editor */ "./src/js/note.editor.js");
+__webpack_require__(/*! ./tools */ "./src/js/tools.js");
+__webpack_require__(/*! ./dialogs */ "./src/js/dialogs.js");
 
 
 window.Logout = function SignOut () {
@@ -2017,640 +1571,169 @@ api.get('user/info', function ( error, data ) {
 
 
 /***/ }),
-/* 8 */
+
+/***/ "./src/js/modal.js":
+/*!*************************!*\
+  !*** ./src/js/modal.js ***!
+  \*************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
+ * Modal window wrapper
  * @license The MIT License (MIT)
  * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
  */
 
 
 
-var //autocomplete = require('autocompleter'),
-    //app = require('./app'),
-    api = __webpack_require__(1),
-    NoteList = __webpack_require__(4),
-    TagManager = __webpack_require__(3);
+function DialogModal ( params ) {
+    this.params = params;
+    this.data = params.data || {};
 
+    // html elements of the dialog
+    this.dom = {};
 
-/**
- * Main module to work with user tags and words input
- * sends ajax request to the server side, helps to render results, shows messages
- */
-var NoteFilter = new function () {
-    // for limited scopes
-    var self = this;
-
-    // component state flag
-    // true  - everything is decoded
-    // false - no plain data, everything is encrypted
-    //this.open = false;
-
-    // hints
-    var hint_wexclude = 'click on this word to remove it from the filtering';
-    var hint_home = 'reset all search parameters and filters and request the latest active notes';
-
-    // autocompleter commands hints
-    var hint_cmd = {
-        ':day': 'notes modified during the last 24 hours',
-        ':week': 'notes modified during the last week',
-        ':month': 'notes modified during the last month',
-        ':notags': 'notes without tags',
-        ':deleted': 'deleted notes'
+    this.SetWidth = function ( value ) {
+        this.dom.body.style.width = value + 'px';
     };
 
-    // message texts
-    var msg_info_no_data = 'There are no records to meet the given search options. You can change these options or see your ';
-    var msg_fail_server_error = 'The request was not successful. The response from the server: ';
-
-
-    /**
-     * Open the subscriber
-     * master password is accessible
-     * decrypt all the data and show it
-     */
-    // this.EventOpen = function () {
-    //     // decrypt input data if not the first time
-    //     if ( this.dom.input.data.length ) {
-    //         this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
-    //     }
-    //     // restore backuped value
-    //     this.dom.input.value = this.dom.input.data.encval;
-    //     // inner parsed data
-    //     this.data = TagManager.StrParse(this.dom.input.value);
-    //     this.post = TagManager.StrParse();
-    //     // build notes
-    //     PerformSearch();
-    //     // show/hide info and controls
-    //     NoteList.UpdateCtrlBlock(true);
-    //     // component state flag
-    //     this.open = true;
-    // };
-
-    /**
-     * Close the subscriber
-     * master password is expired and cleared
-     * clear all the decrypted data
-     */
-    // this.EventClose = function () {
-    //     // close only if opened at the moment
-    //     if ( this.open ) {
-    //         // delete messages
-    //         self.MsgClear();
-    //         // backup and clear search string
-    //         this.dom.input.data.encval = this.dom.input.value;
-    //         // encrypt input data
-    //         this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
-    //         // hide current value
-    //         this.dom.input.value = '[encrypted data]';
-    //         // inner parsed data
-    //         this.data = {};
-    //         this.post = {};
-    //         // clear autocompleter
-    //         $(this.dom.input).data('autocompleter').options.data = [true];
-    //         // component state flag
-    //         this.open = false;
-    //     }
-    // };
-
-
-    /**
-     * Removes all the messages
-     */
-    this.MsgClear = function () {
-        elclear(this.dom.messages);
-    };
-
-
-    /**
-     * Appends the given message
-     * @param text string message to add
-     * @param type string message type: info (default), warn, fail
-     */
-    this.MsgAdd = function ( text, type ) {
-        elchild(this.dom.messages, element('div', {className: type || 'info'}, text));
-    };
-
-
-    /**
-     * Set focus to tag search field
-     */
-    this.SetFocus = function () {
-        this.dom.input.focus();
-    };
-
-
-    /**
-     * Visual flags
-     */
-    var LoadingStart = function () {
-        self.dom.icon.className = 'icon loading';
-        self.dom.messages.className = 'messages loading';
-    };
-
-
-    /**
-     * Visual flags
-     */
-    var LoadingStop = function () {
-        self.dom.icon.className = 'icon';
-        self.dom.messages.className = 'messages';
-    };
-
-
-    /**
-     * Resets the current search options
-     * and get the lates notes
-     */
-    this.RequestLatest = function () {
-        this.Reset();
-        this.NotesRequest();
-    };
-
-
-    /**
-     * Resets the current search options
-     * and get the deleted notes using :deleted tag
-     */
-    this.RequestDeleted = function () {
-        //this.Reset();
-        this.MsgClear();
-        // update user input
-        this.dom.input.value = ':deleted';
-        // prepare inner data
-        this.UpdateParsedInput();
-        // get data and build note list
-        this.NotesRequest();
-    };
-
-
-    /**
-     * Sends ajax request to receive notes by tags and
-     * makes a note list using the received data
-     */
-    this.NotesRequest = function ( isall ) {
-        // show loading progress
-        LoadingStart();
-        // clone current data to post data
-        for ( var item in this.data ) this.post[item] = this.data[item].slice();
-
-        api.post('note/search', {
-            tinc: this.post.tinc,
-            texc: this.post.texc,
-            wcmd: this.post.wcmd,
-            all: isall
-        }, function ( error, data ) {
-            if ( error ) {
-                console.error(error);
-            }
-
-            console.log('note search', data);
-
-            if ( !data.error ) {
-                // make note list using the received data
-                NoteList.BuildTable(data.notes, data.total);
-                // check if no data but show message only if there were some search options uses
-                if ( data.total === 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
-                // no data, need to inform and suggest to see for example the latest notes
-                    self.MsgAdd([msg_info_no_data, element('a', {className: 'bold'}, 'latest notes', {
-                        onclick: function () {
-                            self.RequestLatest();
-                        }
-                    })]);
-            } else {
-                // server error
-                self.MsgAdd(msg_fail_server_error + data.error, 'fail');
-            }
-
-            // hide loading progress
-            LoadingStop();
-        });
-    };
-
-
-    /**
-     * Updates inner data from user input if changed since last time
-     */
-    this.UpdateParsedInput = function () {
-        // check if old and current values match
-        if ( this.dom.input.value.trim() !== this.dom.input.data.oldval.trim() ) {
-            // updating parsed data
-            this.data = TagManager.StrParse(this.dom.input.value);
-            // save current values
-            this.dom.input.data.oldval = this.dom.input.value;
+    this.Show = function ( params ) {
+        params = params || {};
+        if ( this.params.onShow && this.params.onShow instanceof Function ) {
+            this.params.onShow.call(this);
         }
+        $(this.dom.main).modal(params);
     };
 
-
-    /**
-     * Search handler
-     * updates the inner parsed data, saves the history and do the search
-     * Ctrl+Enter does the search and reformats the search string
-     * @param ctrl bool flag for Ctrl key holding
-     */
-    this.DoSearch = function ( ctrl ) {
-        var data = this.dom.input.data;
-
-        // prepare inner data
-        this.UpdateParsedInput();
-        // history
-        //with ( self.dom.input ) {
-        // first record or not the same as the last one
-        if ( data.history.length === 0 || data.history[data.history.length - 1] !== this.dom.input.value ) {
-            // fill history and reset cursor
-            data.history.push(this.dom.input.value);
-            data.histpos = data.history.length;
-        }
-        //}
-        // update user input if necessary
-        if ( ctrl ) this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
-        // do search
-        PerformSearch();
-    };
-
-
-    /**
-     * Keyboard input handler for tag search
-     */
-    var PerformSearch = function () {
-        // delete old messages
-        self.MsgClear();
-        // not empty input
-//        if ( self.dom.input.value.trim() != '' ) {
-        // parsed tags and already posted don't match
-        if ( self.data.tinc.sort().join() != self.post.tinc.sort().join() ||
-            self.data.texc.sort().join() != self.post.texc.sort().join() ||
-            self.data.wcmd.sort().join() != self.post.wcmd.sort().join() ||
-            self.dom.input.value.trim() == '' ) {
-            // there are changes
-            self.NotesRequest();
+    this.Close = function ( delay ) {
+        if ( delay ) {
+            var self = this;
+            setTimeout(function () {
+                $.modal.close();
+                self.Reset();
+            }, parseInt(delay, 10));
         } else {
-            // manual filtering all the table as it was not recreated
-            NoteList.SetNotesVisibility();
-        }
-        // check input for wrong tags
-        if ( self.data.winc.length > 0 || self.data.wexc.length > 0 ) {
-            var list = []; // shows them comma-separated
-            self.data.winc.sort().forEach(function ( item ) {
-                list.push(element('a', {title: hint_wexclude, word: item, fexc: false}, item, {onclick: WordExclude}));
-            });
-            self.data.wexc.sort().forEach(function ( item ) {
-                list.push(element('a', {
-                    title: hint_wexclude,
-                    word: item,
-                    fexc: true
-                }, '-' + item, {onclick: WordExclude}));
-            });
-            self.MsgAdd(['Here is the list of words used which are not your tags:', list, '. It was used for text filtering.']);
-        }
-//        } else {
-//            // show latest
-//            NoteList.BuildTable(false);
-//            // reset inner data
-//            self.data = TagManager.StrParse();
-//            self.post = TagManager.StrParse();
-//        }
-    };
-
-
-    /**
-     * Adds the given tag to the search
-     * @param tagnm string tag name to be processed
-     */
-    this.TagInclude = function ( tagnm ) {
-        // determine tag id
-        var tagid = TagManager.dataNmlist[tagnm];
-        // not added already and valid id
-        if ( tagid && !this.data.tinc.has(tagid) ) {
-            // prepare inner parsed data
-            this.data.tinc.push(tagid);
-            this.data.ninc.push(tagnm);
-            // reforman input
-            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
-        }
-        // execute
-        PerformSearch();
-    };
-
-
-    /**
-     * Removes the given tag from the search
-     * @param tagnm string tag name to be processed
-     */
-    this.TagExclude = function ( tagnm ) {
-        // determine tag id
-        var tagid = TagManager.dataNmlist[tagnm];
-        // exists in the search line and valid id
-        if ( tagid && this.data.tinc.has(tagid) ) {
-            // locate tag name and id in the inner parsed data
-            var tinci = this.data.tinc.indexOf(tagid);
-            var ninci = this.data.ninc.indexOf(tagnm);
-            // and clear
-            if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
-            if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
-            // reforman input
-            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
-            //ReworkSearchStr();
-        }
-        // execute
-        PerformSearch();
-    };
-
-
-    /**
-     * Subtracts the given tag in the search
-     * @param tagnm string tag name to be processed
-     */
-    this.TagSubtract = function ( tagnm ) {
-        // determine tag id
-        var tagid = TagManager.dataNmlist[tagnm];
-        // not subtracted already and valid id
-        if ( tagid && !this.data.texc.has(tagid) ) {
-            // locate tag name and id in the inner parsed data
-            var tinci = this.data.tinc.indexOf(tagid);
-            var ninci = this.data.ninc.indexOf(tagnm);
-            // and clear
-            if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
-            if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
-            // prepare inner parsed data
-            this.data.texc.push(tagid);
-            this.data.nexc.push(tagnm);
-            // reforman input
-            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
-            //ReworkSearchStr();
-        }
-        // execute
-        PerformSearch();
-    };
-
-
-    /**
-     * Removes the clicked word from the search
-     */
-    var WordExclude = function () {
-        var list = this.fexc ? self.data.wexc : self.data.winc,
-            wind = list.indexOf(this.word);
-        if ( wind >= 0 ) {
-            // delete word from inner data
-            list.splice(wind, 1);
-            // remove html element
-            this.parentNode.removeChild(this);
-            // remove message if there are no more words
-            if ( self.data.winc.length === 0 && self.data.wexc.length === 0 ) {
-                self.MsgClear();
-            }
-            // reforman input
-            self.dom.input.data.oldval = self.dom.input.value = TagManager.StrBuild(self.data);
-            // filtering all the table
-            NoteList.SetNotesVisibility();
+            $.modal.close();
+            this.Reset();
         }
     };
 
-
-    /**
-     * Set default search hints and remove messages
-     */
     this.Reset = function () {
-        // clear search string and set focus
-        this.dom.input.data.oldval = this.dom.input.value = '';
-        self.dom.input.focus();
-        // clear tags data
-        this.data = TagManager.StrParse();
-        this.post = TagManager.StrParse();
-        // delete all messages
-        self.MsgClear();
+        this.SetMessage();
     };
 
+    this.SetTitle = function ( hint ) {
 
-    /**
-     * Main init method
-     * @param params list of configuration parameters
-     */
-    this.Init = function ( params ) {
-        // check input
-        if ( !params.handle ) return;
-        // html parent object
-        this.dom = {handle: params.handle};
+    };
 
-        // parsed input data and its copy on post
-        this.data = TagManager.StrParse();
-        this.post = TagManager.StrParse();
+    this.SetHint = function ( hint ) {
+        if ( hint ) {
+            if ( this.dom.hint.childNodes.length === 0 ) {
+                this.dom.hint.appendChild(element('div', {className: 'info'}, hint));
+            }
+            this.dom.hint.childNodes[0].innerHTML = hint;
+            this.dom.hint.style.display = '';
+        } else {
+            this.dom.hint.style.display = 'none';
+        }
+    };
 
-        // build all blocks together
-        elchild(this.dom.handle, [
-            // main block
-            element('div', {className: 'search'}, [
-                // home button and tags search input
-                this.dom.home = element('div', {className: 'home'}, element('div', {title: hint_home}, null, {
-                    onclick: function () {
-                        self.RequestLatest();
-                    }
-                })),
-                this.dom.input = element('input', {
-                    className: 'line',
-                    placeholder: 'search by tags or content ...',
-                    type: 'text',
-                    data: {encval: '', oldval: '', history: [], histpos: 0}
-                }),
-                this.dom.icon = element('div', {className: 'icon'})
-            ]),
-            // hidden messages
-            this.dom.messages = element('div', {className: 'messages'})
+    this.SetMessage = function ( text, type ) {
+        if ( text ) {
+            type = type || 'warning';
+            elchild(elclear(this.dom.message), element('div', {className: 'message ' + type}, text));
+            this.dom.message.style.display = '';
+        } else {
+            this.dom.message.style.display = 'none';
+        }
+    };
+
+    this.SetLoading = function ( text ) {
+        this.SetMessage(text, 'loading');
+    };
+
+    this.SetContent = function ( content ) {
+        if ( content ) {
+            elclear(this.dom.content);
+            elchild(this.dom.content, content);
+        } else {
+            this.dom.content.style.display = 'none';
+        }
+    };
+
+    this.EnableControls = function ( state ) {
+        if ( this.params.controls ) {
+            for ( var cname in this.params.controls ) {
+                this.params.controls[cname].dom.disabled = !state;
+            }
+        }
+    };
+
+    this.Init = function () {
+        this.dom.body = element('div', {className: 'body'}, [
+            this.dom.title = element('div', {className: 'block title'}, this.params.title),
+            this.dom.hint = element('div', {className: 'block hint'}),
+            this.dom.content = element('div', {className: 'block content'}),
+            this.dom.message = element('div', {className: 'block info'}),
+            this.dom.footer = element('div', {className: 'block footer'})
         ]);
 
-        /*autocomplete({
-            minLength: 1,
-            input: this.dom.input,
-            fetch: function ( text, update ) {
-                var tags = text.toLowerCase().match(/(\S+)/g);
+        this.dom.main = element('div', {className: 'dialogmodal'}, this.dom.body);
 
-                console.log('input', text, tags);
+        if ( this.params.width ) this.SetWidth(this.params.width);
 
-                // only if there should be some results
-                //if ( data.length > 0 ) {
-                // prepare inner parsed data
-                self.UpdateParsedInput();
-                // preparing
-                var data = [];
-                // commands
-                if ( !self.data.wcmd.has('deleted') ) {
-                    data.push({item: [':deleted', 0]});
+        this.SetHint(this.params.hint);
+        this.SetMessage(this.params.message);
+
+        if ( this.params.controls ) {
+            for ( var cname in this.params.controls ) {
+                var cdata = this.params.controls[cname];
+                cdata.dom = element('input', {type: 'button', value: cname, className: 'button'});
+                // for inline indirect future use
+                cdata.dom.modal = this;
+                // default action
+                if ( cdata.main ) cdata.dom.className += ' bold';
+                // set callback
+                if ( cdata.onClick && cdata.onClick instanceof Function ) {
+                    cdata.dom.onclick = cdata.onClick;
                 }
-                if ( !self.data.wcmd.has('notags') ) {
-                    data.push({item: [':notags', 0]});
-                }
-                if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
-                    data.push({item: [':day', 0]}, {item: [':week', 0]}, {item: [':month', 0]});
-                // if notags mode than no tags suggesting
-                if ( !self.data.wcmd.has('notags') ) {
-                    var lnids = [];
-                    // get linked tags to already selected
-                    if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
-                    // iterate all tags
-                    for ( var tnm in window.dataTagsNmlist ) {
-                        // get tag id
-                        var tid = window.dataTagsNmlist[tnm];
-                        // there are no including tags selected or it's one of the linked tag
-                        if ( self.data.tinc.length === 0 || lnids.has(tid) ) {
-                            // was not added so add it
-                            if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) {
-                                data.push({item: [tnm, tid]}, {item: ['-' + tnm, tid]});
-                            }
-                        }
-                    }
-                }
-                console.log('data', data);
-                //}
-
-                update(data);
-                //update(data.filter(function ( item ) {
-                //    return item.item[0].startsWith(text.toLowerCase());
-                //}));
-            },
-            render: function ( item ) {
-                var type  = 'tag',
-                    $body = document.createElement('div'),
-                    $hint;
-
-                $body.textContent = item.item[0];
-
-                if ( item.item[0][0] === ':' ) {
-                    // command
-                    type  = 'cmd';
-                    $hint = document.createElement('div');
-                    $hint.textContent = hint_cmd[item.item[0]];
-                    $body.appendChild($hint);
-                } else {
-                    // tag
-
-                }
-
-                $body.className = type;
-
-                return $body;
-            },
-            onSelect: function ( item ) {
-                console.log(item);
-                self.dom.input.value = item[0];
+                this.dom.footer.appendChild(cdata.dom);
             }
-        });/**/
+        }
 
+        if ( this.params.onCreate && this.params.onCreate instanceof Function ) {
+            this.params.onCreate.call(this);
+        }
 
-        // autocompleter init
-        $(this.dom.input).autocomplete({
-            matchInside: false,
-            selectFirst: true,
-            useDelimiter: true,
-            delimiterChar: ' ',
-            delimiterKeyCode: 32,
-            minChars: 1,
-            autoWidth: 'width',
-            delay: 200,
-            data: [true],
-            showResult: function ( tag ) {
-                // degradation fix
-                return tag;
+        if ( this.params.EventClose && this.params.EventClose instanceof Function ) {
+            this.EventClose = this.params.EventClose;
+        }
+        if ( this.params.EventOpen && this.params.EventOpen instanceof Function ) {
+            this.EventOpen = this.params.EventOpen;
+        }
 
-                var hint = '', fcmd = tag.charAt(0) == ':';
-                if ( fcmd ) {
-                    hint = '<div class="hint">' + hint_cmd[tag] + '</div>';
-                }
-                // wrap to div with icon
-                return '<div class="' + (fcmd ? 'cmd' : 'tag') + '">' + tag + hint + '</div>';
-            },
-            processData: function ( data ) {
-                // only if there should be some results
-                if ( data.length > 0 ) {
-                    // prepare inner parsed data
-                    self.UpdateParsedInput();
-                    // preparing
-                    data = [];
-                    // commands
-                    if ( !self.data.wcmd.has('deleted') ) data.push([':deleted', 0]);
-                    if ( !self.data.wcmd.has('notags') ) data.push([':notags', 0]);
-                    if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
-                        data.push([':day', 0], [':week', 0], [':month', 0]);
-                    // if notags mode than no tags suggesting
-                    if ( !self.data.wcmd.has('notags') ) {
-                        var lnids = [];
-                        // get linked tags to already selected
-                        if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
-                        // iterate all tags
-                        for ( var tnm in TagManager.dataNmlist ) {
-                            // get tag id
-                            var tid = TagManager.dataNmlist[tnm];
-                            // there are no including tags selected or it's one of the linked tag
-                            if ( self.data.tinc.length === 0 || lnids.has(tid) )
-                            // was not added so add it
-                                if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) data.push([tnm, tid], ['-' + tnm, tid]);
-                        }
-                    }
-                }
-                return data;
-            }
-        });
-
-        // autocompleter for global access
-        this.ac = $(this.dom.input).data('autocompleter');
-        /**/
-
-        // search input handler
-        //$(this.dom.input).bind('keydown', function(event) {
-        this.dom.input.addEventListener('keydown', function ( event ) {
-            // enter
-            if ( event.keyCode === 13 ) {
-                self.DoSearch(event.ctrlKey);
-            }
-
-            // up
-            if ( event.keyCode === 38 ) {
-                // no autocompleter and valid history cursor
-                if ( !self.ac.active_ && this.data.histpos > 0 ) {
-                    // move up cursor position to the first non-duplicate item in the history
-                    while ( this.data.history[--this.data.histpos] && this.data.history[this.data.histpos].trim() === this.value.trim() ) {
-                    }
-                    // valid position found
-                    if ( this.data.histpos >= 0 ) this.value = this.data.history[this.data.histpos];
-                }
-            }
-
-            // down
-            if ( event.keyCode === 40 ) {
-                // no autocompleter and valid history cursor
-                if ( !self.ac.active_ && this.data.histpos < this.data.history.length - 1 ) {
-                    // move down cursor position to the first non-duplicate item in the history
-                    while ( this.data.history[++this.data.histpos] && this.data.history[this.data.histpos].trim() === this.value.trim() ) {
-                    }
-                    // valid position found
-                    if ( this.data.histpos < this.data.history.length ) this.value = this.data.history[this.data.histpos];
-                }
-            }
-
-            // ctrl + space
-            if ( event.ctrlKey && event.keyCode === 32 ) {
-                // show autocompleter if possible
-                self.ac.activate();
-            }
-        });
-
-        // build notes
-        PerformSearch();
-        // show/hide info and controls
-        NoteList.UpdateCtrlBlock(true);
+        if ( this.params.content ) {
+            this.params.content.style.display = '';
+            this.dom.content.appendChild(this.params.content);
+        }
     };
-};
-
-window.NoteFilter = NoteFilter;
+    this.Init();
+}
 
 
 // public
-module.exports = NoteFilter;
+module.exports = DialogModal;
 
 
 /***/ }),
-/* 9 */
+
+/***/ "./src/js/note.editor.js":
+/*!*******************************!*\
+  !*** ./src/js/note.editor.js ***!
+  \*******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2663,14 +1746,14 @@ module.exports = NoteFilter;
 
 
 var //autocomplete = require('autocompleter'),
-    app = __webpack_require__(0),
-    api = __webpack_require__(1),
+    app = __webpack_require__(/*! ./app */ "./src/js/app.js"),
+    api = __webpack_require__(/*! ./api */ "./src/js/api.js"),
     //NoteFilter   = require('./app.note.filter'),
-    NoteList = __webpack_require__(4),
-    TemplateList = __webpack_require__(6),
-    TagManager = __webpack_require__(3),
-    templates  = __webpack_require__(5),
-    entryTypes = __webpack_require__(10);
+    NoteList = __webpack_require__(/*! ./note.list */ "./src/js/note.list.js"),
+    TemplateList = __webpack_require__(/*! ./template.list */ "./src/js/template.list.js"),
+    TagManager = __webpack_require__(/*! ./tag.manager */ "./src/js/tag.manager.js"),
+    templates  = __webpack_require__(/*! ./data.templates */ "./src/js/data.templates.js"),
+    entryTypes = __webpack_require__(/*! ./data.entry.types */ "./src/js/data.entry.types.js");
 
 
 window.NoteEditor = new function () {
@@ -4214,7 +3297,12 @@ window.NoteEditor = new function () {
 
 
 /***/ }),
-/* 10 */
+
+/***/ "./src/js/note.filter.js":
+/*!*******************************!*\
+  !*** ./src/js/note.filter.js ***!
+  \*******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4225,80 +3313,1985 @@ window.NoteEditor = new function () {
 
 
 
-var list = [
-        {
-            id: 1,
-            max: 1024,
-            name: 'line',
-            icon: 'https://image.flaticon.com/icons/svg/23/23187.svg',
-            description: 'title or short one line text description'
-        },
-        {
-            id: 2,
-            max: 2048,
-            name: 'uri',
-            icon: 'https://image.flaticon.com/icons/svg/117/117965.svg',
-            description: 'any addresses - http/https/ftp/ssh or file path'},
-        {
-            id: 3,
-            max: 1024,
-            name: 'login',
-            icon: 'https://image.flaticon.com/icons/svg/149/149452.svg',
-            description: 'user name, login or email in some cases'
-        },
-        {
-            id: 4,
-            max: 4096,
-            name: 'password',
-            icon: 'https://image.flaticon.com/icons/svg/263/263069.svg',
-            description: 'any secret letters sequence'
-        },
-        {
-            id: 5,
-            max: 1024,
-            name: 'email',
-            icon: 'https://image.flaticon.com/icons/svg/60/60381.svg',
-            description: 'email address line'
-        },
-        {
-            id: 6,
-            max: 65535,
-            name: 'text',
-            icon: 'https://image.flaticon.com/icons/svg/140/140952.svg',
-            description: 'plain text entry for notes'
-        },
-        {
-            id: 7,
-            max: 65535,
-            name: 'html',
-            icon: 'https://image.flaticon.com/icons/svg/25/25252.svg',
-            description: 'formatted text entry for notes'
+var //autocomplete = require('autocompleter'),
+    //app = require('./app'),
+    api = __webpack_require__(/*! ./api */ "./src/js/api.js"),
+    NoteList = __webpack_require__(/*! ./note.list */ "./src/js/note.list.js"),
+    TagManager = __webpack_require__(/*! ./tag.manager */ "./src/js/tag.manager.js");
+
+
+/**
+ * Main module to work with user tags and words input
+ * sends ajax request to the server side, helps to render results, shows messages
+ */
+var NoteFilter = new function () {
+    // for limited scopes
+    var self = this;
+
+    // component state flag
+    // true  - everything is decoded
+    // false - no plain data, everything is encrypted
+    //this.open = false;
+
+    // hints
+    var hint_wexclude = 'click on this word to remove it from the filtering';
+    var hint_home = 'reset all search parameters and filters and request the latest active notes';
+
+    // autocompleter commands hints
+    var hint_cmd = {
+        ':day': 'notes modified during the last 24 hours',
+        ':week': 'notes modified during the last week',
+        ':month': 'notes modified during the last month',
+        ':notags': 'notes without tags',
+        ':deleted': 'deleted notes'
+    };
+
+    // message texts
+    var msg_info_no_data = 'There are no records to meet the given search options. You can change these options or see your ';
+    var msg_fail_server_error = 'The request was not successful. The response from the server: ';
+
+
+    /**
+     * Open the subscriber
+     * master password is accessible
+     * decrypt all the data and show it
+     */
+    // this.EventOpen = function () {
+    //     // decrypt input data if not the first time
+    //     if ( this.dom.input.data.length ) {
+    //         this.dom.input.data = JSON.parse(app.decode(this.dom.input.data));
+    //     }
+    //     // restore backuped value
+    //     this.dom.input.value = this.dom.input.data.encval;
+    //     // inner parsed data
+    //     this.data = TagManager.StrParse(this.dom.input.value);
+    //     this.post = TagManager.StrParse();
+    //     // build notes
+    //     PerformSearch();
+    //     // show/hide info and controls
+    //     NoteList.UpdateCtrlBlock(true);
+    //     // component state flag
+    //     this.open = true;
+    // };
+
+    /**
+     * Close the subscriber
+     * master password is expired and cleared
+     * clear all the decrypted data
+     */
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         // delete messages
+    //         self.MsgClear();
+    //         // backup and clear search string
+    //         this.dom.input.data.encval = this.dom.input.value;
+    //         // encrypt input data
+    //         this.dom.input.data = app.encode(JSON.stringify(this.dom.input.data));
+    //         // hide current value
+    //         this.dom.input.value = '[encrypted data]';
+    //         // inner parsed data
+    //         this.data = {};
+    //         this.post = {};
+    //         // clear autocompleter
+    //         $(this.dom.input).data('autocompleter').options.data = [true];
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
+
+    /**
+     * Removes all the messages
+     */
+    this.MsgClear = function () {
+        elclear(this.dom.messages);
+    };
+
+
+    /**
+     * Appends the given message
+     * @param text string message to add
+     * @param type string message type: info (default), warn, fail
+     */
+    this.MsgAdd = function ( text, type ) {
+        elchild(this.dom.messages, element('div', {className: type || 'info'}, text));
+    };
+
+
+    /**
+     * Set focus to tag search field
+     */
+    this.SetFocus = function () {
+        this.dom.input.focus();
+    };
+
+
+    /**
+     * Visual flags
+     */
+    var LoadingStart = function () {
+        self.dom.icon.className = 'icon loading';
+        self.dom.messages.className = 'messages loading';
+    };
+
+
+    /**
+     * Visual flags
+     */
+    var LoadingStop = function () {
+        self.dom.icon.className = 'icon';
+        self.dom.messages.className = 'messages';
+    };
+
+
+    /**
+     * Resets the current search options
+     * and get the lates notes
+     */
+    this.RequestLatest = function () {
+        this.Reset();
+        this.NotesRequest();
+    };
+
+
+    /**
+     * Resets the current search options
+     * and get the deleted notes using :deleted tag
+     */
+    this.RequestDeleted = function () {
+        //this.Reset();
+        this.MsgClear();
+        // update user input
+        this.dom.input.value = ':deleted';
+        // prepare inner data
+        this.UpdateParsedInput();
+        // get data and build note list
+        this.NotesRequest();
+    };
+
+
+    /**
+     * Sends ajax request to receive notes by tags and
+     * makes a note list using the received data
+     */
+    this.NotesRequest = function ( isall ) {
+        // show loading progress
+        LoadingStart();
+        // clone current data to post data
+        for ( var item in this.data ) this.post[item] = this.data[item].slice();
+
+        api.post('note/search', {
+            tinc: this.post.tinc,
+            texc: this.post.texc,
+            wcmd: this.post.wcmd,
+            all: isall
+        }, function ( error, data ) {
+            if ( error ) {
+                console.error(error);
+            }
+
+            console.log('note search', data);
+
+            if ( !data.error ) {
+                // make note list using the received data
+                NoteList.BuildTable(data.notes, data.total);
+                // check if no data but show message only if there were some search options uses
+                if ( data.total === 0 && (self.data.tinc.length || self.data.texc.length || self.data.wcmd.length) )
+                // no data, need to inform and suggest to see for example the latest notes
+                    self.MsgAdd([msg_info_no_data, element('a', {className: 'bold'}, 'latest notes', {
+                        onclick: function () {
+                            self.RequestLatest();
+                        }
+                    })]);
+            } else {
+                // server error
+                self.MsgAdd(msg_fail_server_error + data.error, 'fail');
+            }
+
+            // hide loading progress
+            LoadingStop();
+        });
+    };
+
+
+    /**
+     * Updates inner data from user input if changed since last time
+     */
+    this.UpdateParsedInput = function () {
+        // check if old and current values match
+        if ( this.dom.input.value.trim() !== this.dom.input.data.oldval.trim() ) {
+            // updating parsed data
+            this.data = TagManager.StrParse(this.dom.input.value);
+            // save current values
+            this.dom.input.data.oldval = this.dom.input.value;
         }
-    ],
-    hash = {};
+    };
 
 
-list.forEach(function ( type ) {
-    hash[type.id] = type;
-});
+    /**
+     * Search handler
+     * updates the inner parsed data, saves the history and do the search
+     * Ctrl+Enter does the search and reformats the search string
+     * @param ctrl bool flag for Ctrl key holding
+     */
+    this.DoSearch = function ( ctrl ) {
+        var data = this.dom.input.data;
+
+        // prepare inner data
+        this.UpdateParsedInput();
+        // history
+        //with ( self.dom.input ) {
+        // first record or not the same as the last one
+        if ( data.history.length === 0 || data.history[data.history.length - 1] !== this.dom.input.value ) {
+            // fill history and reset cursor
+            data.history.push(this.dom.input.value);
+            data.histpos = data.history.length;
+        }
+        //}
+        // update user input if necessary
+        if ( ctrl ) this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+        // do search
+        PerformSearch();
+    };
+
+
+    /**
+     * Keyboard input handler for tag search
+     */
+    var PerformSearch = function () {
+        // delete old messages
+        self.MsgClear();
+        // not empty input
+//        if ( self.dom.input.value.trim() != '' ) {
+        // parsed tags and already posted don't match
+        if ( self.data.tinc.sort().join() != self.post.tinc.sort().join() ||
+            self.data.texc.sort().join() != self.post.texc.sort().join() ||
+            self.data.wcmd.sort().join() != self.post.wcmd.sort().join() ||
+            self.dom.input.value.trim() == '' ) {
+            // there are changes
+            self.NotesRequest();
+        } else {
+            // manual filtering all the table as it was not recreated
+            NoteList.SetNotesVisibility();
+        }
+        // check input for wrong tags
+        if ( self.data.winc.length > 0 || self.data.wexc.length > 0 ) {
+            var list = []; // shows them comma-separated
+            self.data.winc.sort().forEach(function ( item ) {
+                list.push(element('a', {title: hint_wexclude, word: item, fexc: false}, item, {onclick: WordExclude}));
+            });
+            self.data.wexc.sort().forEach(function ( item ) {
+                list.push(element('a', {
+                    title: hint_wexclude,
+                    word: item,
+                    fexc: true
+                }, '-' + item, {onclick: WordExclude}));
+            });
+            self.MsgAdd(['Here is the list of words used which are not your tags:', list, '. It was used for text filtering.']);
+        }
+//        } else {
+//            // show latest
+//            NoteList.BuildTable(false);
+//            // reset inner data
+//            self.data = TagManager.StrParse();
+//            self.post = TagManager.StrParse();
+//        }
+    };
+
+
+    /**
+     * Adds the given tag to the search
+     * @param tagnm string tag name to be processed
+     */
+    this.TagInclude = function ( tagnm ) {
+        // determine tag id
+        var tagid = TagManager.dataNmlist[tagnm];
+        // not added already and valid id
+        if ( tagid && !this.data.tinc.has(tagid) ) {
+            // prepare inner parsed data
+            this.data.tinc.push(tagid);
+            this.data.ninc.push(tagnm);
+            // reforman input
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+        }
+        // execute
+        PerformSearch();
+    };
+
+
+    /**
+     * Removes the given tag from the search
+     * @param tagnm string tag name to be processed
+     */
+    this.TagExclude = function ( tagnm ) {
+        // determine tag id
+        var tagid = TagManager.dataNmlist[tagnm];
+        // exists in the search line and valid id
+        if ( tagid && this.data.tinc.has(tagid) ) {
+            // locate tag name and id in the inner parsed data
+            var tinci = this.data.tinc.indexOf(tagid);
+            var ninci = this.data.ninc.indexOf(tagnm);
+            // and clear
+            if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
+            if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
+            // reforman input
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+            //ReworkSearchStr();
+        }
+        // execute
+        PerformSearch();
+    };
+
+
+    /**
+     * Subtracts the given tag in the search
+     * @param tagnm string tag name to be processed
+     */
+    this.TagSubtract = function ( tagnm ) {
+        // determine tag id
+        var tagid = TagManager.dataNmlist[tagnm];
+        // not subtracted already and valid id
+        if ( tagid && !this.data.texc.has(tagid) ) {
+            // locate tag name and id in the inner parsed data
+            var tinci = this.data.tinc.indexOf(tagid);
+            var ninci = this.data.ninc.indexOf(tagnm);
+            // and clear
+            if ( tinci >= 0 ) this.data.tinc.splice(tinci, 1);
+            if ( ninci >= 0 ) this.data.ninc.splice(ninci, 1);
+            // prepare inner parsed data
+            this.data.texc.push(tagid);
+            this.data.nexc.push(tagnm);
+            // reforman input
+            this.dom.input.data.oldval = this.dom.input.value = TagManager.StrBuild(this.data);
+            //ReworkSearchStr();
+        }
+        // execute
+        PerformSearch();
+    };
+
+
+    /**
+     * Removes the clicked word from the search
+     */
+    var WordExclude = function () {
+        var list = this.fexc ? self.data.wexc : self.data.winc,
+            wind = list.indexOf(this.word);
+        if ( wind >= 0 ) {
+            // delete word from inner data
+            list.splice(wind, 1);
+            // remove html element
+            this.parentNode.removeChild(this);
+            // remove message if there are no more words
+            if ( self.data.winc.length === 0 && self.data.wexc.length === 0 ) {
+                self.MsgClear();
+            }
+            // reforman input
+            self.dom.input.data.oldval = self.dom.input.value = TagManager.StrBuild(self.data);
+            // filtering all the table
+            NoteList.SetNotesVisibility();
+        }
+    };
+
+
+    /**
+     * Set default search hints and remove messages
+     */
+    this.Reset = function () {
+        // clear search string and set focus
+        this.dom.input.data.oldval = this.dom.input.value = '';
+        self.dom.input.focus();
+        // clear tags data
+        this.data = TagManager.StrParse();
+        this.post = TagManager.StrParse();
+        // delete all messages
+        self.MsgClear();
+    };
+
+
+    /**
+     * Main init method
+     * @param params list of configuration parameters
+     */
+    this.Init = function ( params ) {
+        // check input
+        if ( !params.handle ) return;
+        // html parent object
+        this.dom = {handle: params.handle};
+
+        // parsed input data and its copy on post
+        this.data = TagManager.StrParse();
+        this.post = TagManager.StrParse();
+
+        // build all blocks together
+        elchild(this.dom.handle, [
+            // main block
+            element('div', {className: 'search'}, [
+                // home button and tags search input
+                this.dom.home = element('div', {className: 'home'}, element('div', {title: hint_home}, null, {
+                    onclick: function () {
+                        self.RequestLatest();
+                    }
+                })),
+                this.dom.input = element('input', {
+                    className: 'line',
+                    placeholder: 'search by tags or content ...',
+                    type: 'text',
+                    data: {encval: '', oldval: '', history: [], histpos: 0}
+                }),
+                this.dom.icon = element('div', {className: 'icon'})
+            ]),
+            // hidden messages
+            this.dom.messages = element('div', {className: 'messages'})
+        ]);
+
+        /*autocomplete({
+            minLength: 1,
+            input: this.dom.input,
+            fetch: function ( text, update ) {
+                var tags = text.toLowerCase().match(/(\S+)/g);
+
+                console.log('input', text, tags);
+
+                // only if there should be some results
+                //if ( data.length > 0 ) {
+                // prepare inner parsed data
+                self.UpdateParsedInput();
+                // preparing
+                var data = [];
+                // commands
+                if ( !self.data.wcmd.has('deleted') ) {
+                    data.push({item: [':deleted', 0]});
+                }
+                if ( !self.data.wcmd.has('notags') ) {
+                    data.push({item: [':notags', 0]});
+                }
+                if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+                    data.push({item: [':day', 0]}, {item: [':week', 0]}, {item: [':month', 0]});
+                // if notags mode than no tags suggesting
+                if ( !self.data.wcmd.has('notags') ) {
+                    var lnids = [];
+                    // get linked tags to already selected
+                    if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+                    // iterate all tags
+                    for ( var tnm in window.dataTagsNmlist ) {
+                        // get tag id
+                        var tid = window.dataTagsNmlist[tnm];
+                        // there are no including tags selected or it's one of the linked tag
+                        if ( self.data.tinc.length === 0 || lnids.has(tid) ) {
+                            // was not added so add it
+                            if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) {
+                                data.push({item: [tnm, tid]}, {item: ['-' + tnm, tid]});
+                            }
+                        }
+                    }
+                }
+                console.log('data', data);
+                //}
+
+                update(data);
+                //update(data.filter(function ( item ) {
+                //    return item.item[0].startsWith(text.toLowerCase());
+                //}));
+            },
+            render: function ( item ) {
+                var type  = 'tag',
+                    $body = document.createElement('div'),
+                    $hint;
+
+                $body.textContent = item.item[0];
+
+                if ( item.item[0][0] === ':' ) {
+                    // command
+                    type  = 'cmd';
+                    $hint = document.createElement('div');
+                    $hint.textContent = hint_cmd[item.item[0]];
+                    $body.appendChild($hint);
+                } else {
+                    // tag
+
+                }
+
+                $body.className = type;
+
+                return $body;
+            },
+            onSelect: function ( item ) {
+                console.log(item);
+                self.dom.input.value = item[0];
+            }
+        });/**/
+
+
+        // autocompleter init
+        $(this.dom.input).autocomplete({
+            matchInside: false,
+            selectFirst: true,
+            useDelimiter: true,
+            delimiterChar: ' ',
+            delimiterKeyCode: 32,
+            minChars: 1,
+            autoWidth: 'width',
+            delay: 200,
+            data: [true],
+            showResult: function ( tag ) {
+                // degradation fix
+                return tag;
+
+                var hint = '', fcmd = tag.charAt(0) == ':';
+                if ( fcmd ) {
+                    hint = '<div class="hint">' + hint_cmd[tag] + '</div>';
+                }
+                // wrap to div with icon
+                return '<div class="' + (fcmd ? 'cmd' : 'tag') + '">' + tag + hint + '</div>';
+            },
+            processData: function ( data ) {
+                // only if there should be some results
+                if ( data.length > 0 ) {
+                    // prepare inner parsed data
+                    self.UpdateParsedInput();
+                    // preparing
+                    data = [];
+                    // commands
+                    if ( !self.data.wcmd.has('deleted') ) data.push([':deleted', 0]);
+                    if ( !self.data.wcmd.has('notags') ) data.push([':notags', 0]);
+                    if ( !self.data.wcmd.has('day') && !self.data.wcmd.has('week') && !self.data.wcmd.has('month') )
+                        data.push([':day', 0], [':week', 0], [':month', 0]);
+                    // if notags mode than no tags suggesting
+                    if ( !self.data.wcmd.has('notags') ) {
+                        var lnids = [];
+                        // get linked tags to already selected
+                        if ( self.data.tinc.length > 0 ) lnids = TagManager.Linked(self.data.tinc);
+                        // iterate all tags
+                        for ( var tnm in TagManager.dataNmlist ) {
+                            // get tag id
+                            var tid = TagManager.dataNmlist[tnm];
+                            // there are no including tags selected or it's one of the linked tag
+                            if ( self.data.tinc.length === 0 || lnids.has(tid) )
+                            // was not added so add it
+                                if ( !self.data.tinc.has(tid) && !self.data.texc.has(tid) ) data.push([tnm, tid], ['-' + tnm, tid]);
+                        }
+                    }
+                }
+                return data;
+            }
+        });
+
+        // autocompleter for global access
+        this.ac = $(this.dom.input).data('autocompleter');
+        /**/
+
+        // search input handler
+        //$(this.dom.input).bind('keydown', function(event) {
+        this.dom.input.addEventListener('keydown', function ( event ) {
+            // enter
+            if ( event.keyCode === 13 ) {
+                self.DoSearch(event.ctrlKey);
+            }
+
+            // up
+            if ( event.keyCode === 38 ) {
+                // no autocompleter and valid history cursor
+                if ( !self.ac.active_ && this.data.histpos > 0 ) {
+                    // move up cursor position to the first non-duplicate item in the history
+                    while ( this.data.history[--this.data.histpos] && this.data.history[this.data.histpos].trim() === this.value.trim() ) {
+                    }
+                    // valid position found
+                    if ( this.data.histpos >= 0 ) this.value = this.data.history[this.data.histpos];
+                }
+            }
+
+            // down
+            if ( event.keyCode === 40 ) {
+                // no autocompleter and valid history cursor
+                if ( !self.ac.active_ && this.data.histpos < this.data.history.length - 1 ) {
+                    // move down cursor position to the first non-duplicate item in the history
+                    while ( this.data.history[++this.data.histpos] && this.data.history[this.data.histpos].trim() === this.value.trim() ) {
+                    }
+                    // valid position found
+                    if ( this.data.histpos < this.data.history.length ) this.value = this.data.history[this.data.histpos];
+                }
+            }
+
+            // ctrl + space
+            if ( event.ctrlKey && event.keyCode === 32 ) {
+                // show autocompleter if possible
+                self.ac.activate();
+            }
+        });
+
+        // build notes
+        PerformSearch();
+        // show/hide info and controls
+        NoteList.UpdateCtrlBlock(true);
+    };
+};
+
+window.NoteFilter = NoteFilter;
 
 
 // public
-module.exports = {
-    list: list,
-    hash: hash
-};
+module.exports = NoteFilter;
 
 
 /***/ }),
-/* 11 */
+
+/***/ "./src/js/note.list.js":
+/*!*****************************!*\
+  !*** ./src/js/note.list.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @license The MIT License (MIT)
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+var app = __webpack_require__(/*! ./app */ "./src/js/app.js"),
+    api = __webpack_require__(/*! ./api */ "./src/js/api.js"),
+    //NoteFilter = require('./app.note.filter'),
+    //NoteEditor = require('./app.note.editor'),
+    templates  = __webpack_require__(/*! ./data.templates */ "./src/js/data.templates.js"),
+    TagManager = __webpack_require__(/*! ./tag.manager */ "./src/js/tag.manager.js");
+
+
+/**
+ * Module to work with note list
+ * view all, selecting, checking, appending, filtering
+ */
+var NoteList = new function () {
+    // for limited scopes
+    var self = this;
+
+    // component state flag
+    // true  - everything is decoded
+    // false - no plain data, everything is encrypted
+    //this.open = false;
+
+    var hint_tag_include = 'click on this tag to include it to the search';
+    var hint_tag_exclude = 'click on this tag to exclude it from the search';
+    var hint_info_missing = 'there is no data';
+    var hint_tags_missing = 'there are no tags';
+    var hint_notes_visible = 'the limited amount of visible notes received according the search options (usually the first 20)';
+    var hint_notes_total = 'the general amount of notes satisfying the giving search options';
+    var hint_notes_filtered = 'the amount of notes excluded from the note list due to the search filter';
+
+    var msg_checked_notes_remove = 'You are going to delete all checked notes in the note list. Do you really want to continue?';
+    var msg_checked_notes_restore = 'You are going to restore all checked notes in the note list. Do you really want to continue?';
+
+    var msg_checked_notes_removed = 'The selected notes were successfully removed ';
+    var msg_checked_notes_restored = 'The selected notes were successfully restored ';
+
+
+    /**
+     * Open the subscriber
+     * master password is accessible
+     * decrypt all the data and show it
+     */
+    // this.EventOpen = function () {
+    //     elclear(this.dom.notes);
+    //     // show info and controls
+    //     this.dom.tpbar.style.display = 'block';
+    //     // component state flag
+    //     this.open = true;
+    // };
+
+    /**
+     * Close the subscriber
+     * master password is expired and cleared
+     * clear all the decrypted data
+     */
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         // clear decoded entries data in the requested notes
+    //         this.data.notes.forEach(function ( note ) {
+    //             // all note entries
+    //             note.entries.forEach(function ( entry ) {
+    //                 // remove if exist
+    //                 delete entry.name_dec;
+    //                 delete entry.data_dec;
+    //             });
+    //             // all data for filtering
+    //             delete note.fulltext;
+    //         });
+    //         // hide info and controls
+    //         this.dom.tpbar.style.display = 'none';
+    //         // clear notes
+    //         elclear(this.dom.notes);
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
+
+    /**
+     * Deletes or restores the given list of notes depending on the undo flag
+     * @param list array of note ids
+     * @param undo bool flag: true - restore notes, delete otherwise
+     */
+    var NotesDelete = function ( list, undo ) {
+        // check input
+        if ( list.length > 0 ) {
+            // send request
+            api.post('note/delete' + (undo ? '/undo' : ''), {ids: list}, function ( error, data ) {
+                if ( error ) {
+                    console.error(error);
+                }
+
+                console.log('note delete', data);
+
+                // remove old messages
+                NoteFilter.MsgClear();
+                // on success
+                if ( !data.error ) {
+                    // prepare message body
+                    var message = [(undo ? msg_checked_notes_restored : msg_checked_notes_removed) + '(amount:' + data.count + '). '];
+                    // after deletion allow to go to the deleted notes
+                    if ( !undo ) message.push(' It is still possible to ', element('a', {className: 'bold'}, 'restore them', {
+                        onclick: function () {
+                            NoteFilter.RequestDeleted();
+                        }
+                    }));
+                    // close currently edited note if affected
+                    if ( list.has(NoteEditor.GetNoteID()) ) NoteEditor.Escape();
+                    // show status message
+                    NoteFilter.MsgAdd(message);
+                    // refresh note list
+                    NoteFilter.NotesRequest();
+                } else {
+                    NoteFilter.MsgAdd('The request was not successful. The response from the server: ' + data.error, 'error');
+                }
+            });
+        }
+    };
+
+
+    /**
+     * Makes a visualization of the given note entries details
+     * @param note array note attributes
+     * @param icon img node for note icon
+     * @return array of html nodes or hint string
+     */
+    var BuildNoteInfo = function ( note, icon ) {
+        var list = [], fulltext = [], url = null;
+        // iterate all note entries
+        note.entries.forEach(function ( entry ) {
+            // decrypt data
+            var name = app.decode(entry.name);
+            var data = app.decode(entry.data);
+            // prepare fulltext data
+            fulltext.push(name.toLowerCase());
+            fulltext.push(data.toLowerCase());
+            // there is data and it's not a password
+            if ( entry.id_type !== 4 && data ) {
+                // truncate
+                var sname = name.length > 30 ? name.slice(0, 25) + '...' : name;
+                var sdata = data.length > 50 ? data.slice(0, 35) + '...' : data;
+                // url
+                if ( entry.id_type === 2 ) {
+                    // http/https/ftp and have point
+                    if ( (data.search('http://') >= 0 || data.search('https://') >= 0 || data.search('ftp://') >= 0) && data.search('.') >= 0 ) {
+                        sdata = element('a', {target: '_blank', href: data}, sdata);
+                        // the first available url
+                        if ( !url ) url = data;
+                    } else {
+                        // just server name
+                        sdata = element('b', {}, sdata);
+                    }
+                }
+                list.push(element('span', {className: 'name'}, sname + ':'));
+                list.push(element('span', {className: 'data'}, sdata));
+            }
+        });
+        // has valid url (the first one)
+        if ( url ) {
+            // get rid of all unnecessary parts
+            url = url.split('/');
+            // parts are valid
+            if ( url[2] && url[2] !== 'localhost' ) {
+                // try to get image, won't replace the current one if no icon found
+                // https://www.google.com/s2/favicons?domain=google.com gives only 16px images
+                //element('img', {className: 'icon', src: 'https://favicons.githubusercontent.com/' + url[2]}, null, {
+                element('img', {className: 'icon', src: 'http://www.getfavicon.org/get.pl?url=' + url[2]}, null, {
+                    onload: function () {
+                        // icon loaded so get current icon parent
+                        var parent = icon.parentNode;
+                        // and replace the current one
+                        parent.removeChild(icon);
+                        // with new
+                        elchild(parent, this);
+                        //self.dom.entries.insertBefore(entry, entry.previousSibling);
+                    }
+                })
+            }
+        }
+        // build search full text data
+        note.fulltext = fulltext.join('\n');
+        // warning if no data
+        return list.length > 0 ? list : element('div', {className: 'warn'}, hint_info_missing);
+    }
+
+
+    /**
+     * Tag button click handler
+     * include, exclude and subtract
+     */
+    var TagClickHandler = function ( event ) {
+        // ctrl holding
+        if ( event.ctrlKey ) {
+            NoteFilter.TagSubtract(this.tagnm);
+        } else {
+            if ( this.finc ) {
+                // available for selection
+                NoteFilter.TagInclude(this.tagnm);
+            } else {
+                // already selected
+                NoteFilter.TagExclude(this.tagnm);
+            }
+        }
+        // prevent bubbling
+        return false;
+    };
+
+
+    /**
+     * Makes a list of note tags buttons with handlers
+     * @param note array note attributes
+     * @return array of html tag nodes or hint string
+     */
+    var BuildNoteTags = function ( note ) {
+        var list = [], exc = [], inc = [];
+        // there is some data
+        if ( note.tags.length > 0 ) {
+            // separate tags
+            note.tags.forEach(function ( item ) {
+                if ( NoteFilter.data.tinc.has(item) ) {
+                    inc.push(TagManager.dataIdlist[item]);
+                } else {
+                    exc.push(TagManager.dataIdlist[item]);
+                }
+            });
+            // forms the list of tags already selected
+            inc.sort().forEach(function ( item ) {
+                // create html wrapper for tag
+                item = element('span', {className: 'tag include', tagnm: item, title: hint_tag_exclude}, item);
+                // mouse click handler
+                //$(item).bind('click', TagClickHandler);
+                item.addEventListener('click', TagClickHandler);
+                list.push(item);
+            });
+            // forms the list of tags available for selection
+            exc.sort().forEach(function ( item ) {
+                // create html wrapper for tag
+                item = element('span', {className: 'tag', finc: true, tagnm: item, title: hint_tag_include}, item);
+                // mouse click handler
+                //$(item).bind('click', TagClickHandler);
+                item.addEventListener('click', TagClickHandler);
+                list.push(item);
+            });
+        }
+        // list of tags or missing hint
+        return list.length > 0 ? list : hint_tags_missing;
+    }
+
+
+    /**
+     * Returns the corresponding note icon image address
+     * @param note array note attributes
+     * @return string
+     */
+    var GetNoteIcon = function ( note ) {
+        // prepare
+        var icon = 'img/tags/note.svg',
+            tags = TagManager.IDs2Names(note.tags);
+
+        // iterate words in the tag list
+        tags.forEach(function ( tag ) {
+            var has = templates.some(function ( template ) {
+                return template.name === tag;
+            });
+
+            // it's a tag from the global set
+            if ( has ) {
+                // get the first match
+                icon = 'img/tags/' + tag + '.svg';
+            }
+        });
+
+        return icon;
+    };
+
+
+    /**
+     * Shows/hides checked notes controls and general notes info
+     * @param ctrlonly flag to skip or not the control buttons
+     */
+    this.UpdateCtrlBlock = function ( ctrlonly ) {
+        //var total = self.dom.notes.childNodes.length;
+        if ( !ctrlonly ) {
+            // list of visible notes
+            var visible = this.GetNotesVisible();
+            // clear and fill
+            elchild(elclear(self.dom.tpinfo), [
+                // block with amount
+                element('span', {className: 'amount'}, [
+                    // title
+                    element('p', {}, 'notes '),
+                    // amount of visible notes
+                    element('b', {title: hint_notes_visible}, visible.length), ' of ', element('span', {title: hint_notes_total}, this.data.total),
+                    // total amount of notes
+                    (visible.length < this.data.notes.length ? [element('p', {className: 'div'}, '|'), element('b', {title: hint_notes_filtered}, this.data.notes.length - visible.length), ' filtered'] : null),
+                    // link to load all available notes
+                    (this.data.notes.length < this.data.total ? [element('p', {className: 'div'}, '|'), element('a', {}, 'load all', {
+                        onclick: function () {
+                            NoteFilter.NotesRequest(true);
+                        }
+                    })] : null)
+                ]),
+                // block with selection
+                element('span', {}, [
+                    // title
+                    element('p', {}, 'select '),
+                    // link to select all notes
+                    element('a', {}, 'all', {
+                        onclick: function () {
+                            self.SetNotesState(visible, 'marked', true);
+                            self.UpdateCtrlBlock(true);
+                        }
+                    }),
+                    element('p', {className: 'div'}, '|'),
+                    // link to remove selection from all notes
+                    element('a', {}, 'none', {
+                        onclick: function () {
+                            self.SetNotesState(visible, 'marked', false);
+                            self.UpdateCtrlBlock(true);
+                        }
+                    }),
+                    element('p', {className: 'div'}, '|'),
+                    // link to invert selection
+                    element('a', {}, 'invert', {
+                        onclick: function () {
+                            self.SetNotesState(visible, 'marked');
+                            self.UpdateCtrlBlock(true);
+                        }
+                    })
+                ])
+            ]);
+        }
+        // get the list of checked notes
+        var checked = this.GetNotesByState('marked');
+        // hide all buttons
+        this.dom.btndelete.style.display = 'none';
+        this.dom.btnrestore.style.display = 'none';
+        // show only the corresponding one
+        if ( checked.length > 0 ) (NoteFilter.data.wcmd.has('deleted') ? this.dom.btnrestore : this.dom.btndelete).style.display = 'block';
+        // show/hide block depending on notes amount
+        this.dom.tpbar.style.display = this.data.total === 0 ? 'none' : 'block';
+    }
+
+
+    /**
+     * Set the default note state, removes additional classes and resets the state flags
+     * @param notes if given than it's the only note list to be reset
+     */
+    this.ClearNotesState = function ( notes ) {
+        // all notes or the given one/ones
+        var i, list = notes || self.dom.notes.childNodes;
+        // iterate formed list
+        for ( i = 0; i < list.length; i++ ) {
+            // reset class
+            list[i].className = 'note';
+            // reset state flags
+            list[i].state.active = list[i].state.marked = false;
+        }
+    }
+
+
+    /**
+     * Sets the flag and clall to the given note/notes
+     * @param notes to be processed
+     * @param type string name active | marked
+     * @param state optional bool flag, if set true - set, false - unset
+     */
+    this.SetNotesState = function ( notes, type, state ) {
+        // check input
+        if ( notes.length > 0 ) {
+            notes.forEach(function ( note ) {
+                // determine the state to switch to
+                note.state[type] = state !== undefined ? state : (note.state[type] ? false : true);
+                // invert class
+                //$(note).toggleClass(type, note.state[type]);
+                note.classList.toggle(type, note.state[type]);
+            });
+        }
+    };
+
+
+    /**
+     * Returns the list of notes with the given state
+     * @param type string state name active | marked
+     * @return array of nodes
+     */
+    this.GetNotesByState = function ( type ) {
+        // all notes or only the given one
+        var i, result = [], list = self.dom.notes.childNodes;
+        // iterate formed list
+        for ( i = 0; i < list.length; i++ ) {
+            if ( list[i].state[type] === true ) result.push(list[i]);
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns the html note block by id if found or false otherwise
+     * @param id int note attribute
+     * @return node with data or false on failure
+     */
+    this.GetNoteByID = function ( id ) {
+        // iterate note list
+        for ( var i = 0, list = this.dom.notes.childNodes; i < list.length; i++ ) {
+            // return if matched
+            if ( list[i].data.id === id ) return list[i];
+        }
+        return false;
+    }
+
+
+    /**
+     * Returns the list of visible notes
+     * @return array of nodes
+     */
+    this.GetNotesVisible = function () {
+        // iterate note list
+        for ( var i = 0, result = [], list = this.dom.notes.childNodes; i < list.length; i++ ) {
+            // fill the visible notes list
+            if ( !list[i].style.display ) result.push(list[i]);
+        }
+        return result;
+    }
+
+
+    /**
+     * Whole note ckick handler
+     * highlights the active note or note range
+     * holding Ctrl checks/unchecks the selected notes
+     * holding Shift selects all the notes between old and new selected notes
+     * @param event event object
+     */
+    var NoteClickHandler = function ( event ) {
+        // holding Ctrl key
+        if ( event.ctrlKey ) {
+            self.SetNotesState([this], 'marked');
+            // simple mouse click
+        } else {
+            // currently active note list
+            var alast = self.GetNotesByState('active');
+            // flag true if the clicked note is the same as already active
+            var fsame = alast.length > 0 && alast[0].data.id === this.data.id;
+            // check current note modifications
+            var has_changes = NoteEditor.HasChanges();
+            // not changed or user confirmed his wish
+            if ( !has_changes || fsame || (has_changes && NoteEditor.ConfirmExit()) ) {
+                // reset all notes states
+                self.ClearNotesState();
+                // check if the edited note is not already active
+                if ( NoteEditor.GetNoteID() !== this.data.id ) {
+                    // show note details
+                    NoteEditor.Load(this.data);
+                }
+                // make active
+                self.SetNotesState([this], 'active');
+                // holding Shift key
+                if ( event.shiftKey ) {
+                    var i, item, cflag = false;
+                    // iterate all notes
+                    for ( i = 0; i < self.dom.notes.childNodes.length; i++ ) {
+                        // cursor
+                        item = self.dom.notes.childNodes[i];
+                        // flag showing that the cursor is inside the range
+                        if ( item.data.id === alast[0].data.id || item.data.id === this.data.id ) cflag = !cflag;
+                        // check inside the range or edge items
+                        if ( cflag || item.data.id === alast[0].data.id || item.data.id === this.data.id ) {
+                            self.SetNotesState([item], 'marked');
+                        }
+                    }
+                } else {
+                    // check the only clicked note
+                    self.SetNotesState([this], 'marked');
+                }
+            }
+        }
+        // show/hide checked notes controls
+        self.UpdateCtrlBlock();
+        // prevent bubbling
+        //return false;
+    }
+
+
+    /**
+     * Note checkbox ckick handler
+     */
+    var NoteTickClickHandler = function () {
+        // check/uncheck
+        self.SetNotesState([this.note], 'marked');
+        // show/hide checked notes controls
+        self.UpdateCtrlBlock();
+        // prevent bubbling
+        return false;
+    }
+
+
+    /**
+     * Forms the note wrapper
+     * @param data array of note parameters
+     * @return formed node with data
+     */
+    this.BuildNote = function ( data ) {
+        // note body
+        var note = element('div', {className: 'note', data: data, dom: {}, state: {}});
+        // note content
+        elchild(note, [
+            element('div', {className: 'icon'}, [
+                note.dom.icon = element('img', {className: 'icon', src: GetNoteIcon(data)}),
+                //note.dom.icon = BuildNoteIcon(data),
+                note.dom.tick = element('div', {className: 'tick', note: note})
+            ]),
+            element('div', {className: 'body'}, [
+                note.dom.info = element('div', {className: 'info'}, BuildNoteInfo(data, note.dom.icon)),
+                //note.dom.time = element('div', {className: 'time'}, TimestampToDateStr(data.mtime)),
+                note.dom.tags = element('div', {className: 'tags'}, BuildNoteTags(data))
+            ])
+        ]);
+        // whole note ckick
+        //$(note).bind('click', NoteClickHandler);
+        note.addEventListener('click', NoteClickHandler);
+        // checkbox click
+        //$(note.dom.tick).bind('click', NoteTickClickHandler);
+        note.dom.tick.addEventListener('click', NoteTickClickHandler);
+        // note html body
+        return note;
+    };
+
+
+    /**
+     * Shows/hides notes according to the filter
+     * @param notes array of notes that should be processed, all if not given
+     */
+    this.SetNotesVisibility = function ( notes ) {
+        // all notes or the given one/ones
+        notes = notes || this.dom.notes.childNodes;
+        var i, visible,  // flag for visibility
+            hlist = [];  // list of the notes that should be hidden
+        // iterate formed list
+        for ( i = 0; i < notes.length; i++ ) {
+            // by default is visible
+            visible = true;
+            // check by tags
+            //TODO:???
+            // check by filter string if still visible
+            if ( visible ) {
+                // check included words
+                NoteFilter.data.winc.forEach(function ( word ) {
+                    // not found in fulltext so exit
+                    if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) < 0 ) {
+                        visible = false;
+                        return;
+                    }
+                });
+                // still visible
+                if ( visible ) {
+                    // check excluded words
+                    NoteFilter.data.wexc.forEach(function ( word ) {
+                        // found in fulltext so exit
+                        if ( notes[i].data.fulltext.indexOf(word.toLowerCase()) >= 0 ) {
+                            visible = false;
+                            return;
+                        }
+                    });
+                }
+            }
+            // apply visibility flag
+            notes[i].style.display = visible ? '' : 'none';
+            // fill the list of notes to be hidden
+            if ( !visible ) hlist.push(notes[i]);
+        }
+        // clear inner state for hidden notes
+        this.ClearNotesState(hlist);
+        this.UpdateCtrlBlock();
+    }
+
+
+    /**
+     * Fills the note list with generated notes
+     * @param notes array of notes or false if gloabal latest list should be used
+     * @param total int general amount of notes
+     */
+    this.BuildTable = function ( notes, total ) {
+        // check input
+        notes = notes instanceof Array ? notes : [];
+        // set global data
+        this.data.notes = notes;
+        this.data.total = total;
+        // clearing the container
+        elclear(this.dom.notes);
+        // there are some notes
+        if ( total > 0 ) {
+            // determine the note id beeing edited at the moment
+            var note, neid = NoteEditor.GetNoteID();
+            // iterate all notes
+            notes.forEach(function ( item ) {
+                // append the created note to the list
+                note = self.BuildNote(item);
+                self.SetNotesVisibility([note]);
+                elchild(self.dom.notes, note);
+                // highlight the edited at the moment note
+                if ( neid === item.id ) self.SetNotesState([note], 'active');
+            });
+        }
+        // show/hide control panel
+        this.UpdateCtrlBlock();
+    };
+
+
+    /**
+     * Deletes or restore selected notes depending on undo flag
+     */
+    var BtnDeleteHandler = function () {
+        // ask user
+        if ( confirm(this.undo ? msg_checked_notes_restore : msg_checked_notes_remove) ) {
+            var list = [];
+            // iterate all checked notes
+            self.GetNotesByState('marked').forEach(function ( note ) {
+                // fill id list
+                if ( note.data.id ) list.push(note.data.id);
+            });
+            // send request
+            NotesDelete(list, this.undo);
+        }
+    }
+
+
+    /**
+     * Main init method
+     * @param params list of configuration parameters
+     */
+    this.Init = function ( params ) {
+        // check input
+        if ( !params.handle ) return;
+        // html parent object
+        this.dom = {handle: params.handle};
+
+        this.data = {
+            total: 0,  // total amount on notes
+            notes: []  // all requested notes data array
+        };
+
+        // build all blocks together
+        elchild(this.dom.handle, [
+            // top panel
+            this.dom.tpbar = element('div', {className: 'tpbar'}, [
+                // controls
+                this.dom.tpctrl = element('div', {className: 'ctrl'}, [
+                    this.dom.btndelete = element('input', {
+                        type: 'button',
+                        value: 'Delete',
+                        undo: false,
+                        className: 'button hidden'
+                    }, null, {onclick: BtnDeleteHandler}),
+                    this.dom.btnrestore = element('input', {
+                        type: 'button',
+                        value: 'Restore',
+                        undo: true,
+                        className: 'button hidden'
+                    }, null, {onclick: BtnDeleteHandler})
+                ]),
+                // general info, load all, select all/none/invert
+                this.dom.tpinfo = element('div', {className: 'info'})
+            ]),
+            // note list
+            this.dom.notes = element('div', {className: 'notes'})
+            // bottom panel
+            //this.dom.btbar = element('div', {className: 'btbar'})
+        ]);
+
+        // disable selection
+        // this.dom.notes.onselectstart = function () {
+        //     return false;
+        // } // ie
+        // this.dom.notes.onmousedown = function () {
+        //     return false;
+        // } // mozilla
+    };
+};
+
+
+// public
+module.exports = NoteList;
+
+
+/***/ }),
+
+/***/ "./src/js/sjcl.min.js":
+/*!****************************!*\
+  !*** ./src/js/sjcl.min.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var sjcl={cipher:{},hash:{},mode:{},misc:{},codec:{},exception:{corrupt:function(a){this.toString=function(){return"CORRUPT: "+this.message};this.message=a},invalid:function(a){this.toString=function(){return"INVALID: "+this.message};this.message=a},bug:function(a){this.toString=function(){return"BUG: "+this.message};this.message=a}}};
+sjcl.cipher.aes=function(a){this.h[0][0][0]||this.w();var b,c,d,e,f=this.h[0][4],g=this.h[1];b=a.length;var h=1;if(b!==4&&b!==6&&b!==8)throw new sjcl.exception.invalid("invalid aes key size");this.a=[d=a.slice(0),e=[]];for(a=b;a<4*b+28;a++){c=d[a-1];if(a%b===0||b===8&&a%b===4){c=f[c>>>24]<<24^f[c>>16&255]<<16^f[c>>8&255]<<8^f[c&255];if(a%b===0){c=c<<8^c>>>24^h<<24;h=h<<1^(h>>7)*283}}d[a]=d[a-b]^c}for(b=0;a;b++,a--){c=d[b&3?a:a-4];e[b]=a<=4||b<4?c:g[0][f[c>>>24]]^g[1][f[c>>16&255]]^g[2][f[c>>8&255]]^
+g[3][f[c&255]]}};
+sjcl.cipher.aes.prototype={encrypt:function(a){return this.H(a,0)},decrypt:function(a){return this.H(a,1)},h:[[[],[],[],[],[]],[[],[],[],[],[]]],w:function(){var a=this.h[0],b=this.h[1],c=a[4],d=b[4],e,f,g,h=[],i=[],k,j,l,m;for(e=0;e<0x100;e++)i[(h[e]=e<<1^(e>>7)*283)^e]=e;for(f=g=0;!c[f];f^=k||1,g=i[g]||1){l=g^g<<1^g<<2^g<<3^g<<4;l=l>>8^l&255^99;c[f]=l;d[l]=f;j=h[e=h[k=h[f]]];m=j*0x1010101^e*0x10001^k*0x101^f*0x1010100;j=h[l]*0x101^l*0x1010100;for(e=0;e<4;e++){a[e][f]=j=j<<24^j>>>8;b[e][l]=m=m<<24^m>>>8}}for(e=
+0;e<5;e++){a[e]=a[e].slice(0);b[e]=b[e].slice(0)}},H:function(a,b){if(a.length!==4)throw new sjcl.exception.invalid("invalid aes block size");var c=this.a[b],d=a[0]^c[0],e=a[b?3:1]^c[1],f=a[2]^c[2];a=a[b?1:3]^c[3];var g,h,i,k=c.length/4-2,j,l=4,m=[0,0,0,0];g=this.h[b];var n=g[0],o=g[1],p=g[2],q=g[3],r=g[4];for(j=0;j<k;j++){g=n[d>>>24]^o[e>>16&255]^p[f>>8&255]^q[a&255]^c[l];h=n[e>>>24]^o[f>>16&255]^p[a>>8&255]^q[d&255]^c[l+1];i=n[f>>>24]^o[a>>16&255]^p[d>>8&255]^q[e&255]^c[l+2];a=n[a>>>24]^o[d>>16&
+255]^p[e>>8&255]^q[f&255]^c[l+3];l+=4;d=g;e=h;f=i}for(j=0;j<4;j++){m[b?3&-j:j]=r[d>>>24]<<24^r[e>>16&255]<<16^r[f>>8&255]<<8^r[a&255]^c[l++];g=d;d=e;e=f;f=a;a=g}return m}};
+sjcl.bitArray={bitSlice:function(a,b,c){a=sjcl.bitArray.P(a.slice(b/32),32-(b&31)).slice(1);return c===undefined?a:sjcl.bitArray.clamp(a,c-b)},concat:function(a,b){if(a.length===0||b.length===0)return a.concat(b);var c=a[a.length-1],d=sjcl.bitArray.getPartial(c);return d===32?a.concat(b):sjcl.bitArray.P(b,d,c|0,a.slice(0,a.length-1))},bitLength:function(a){var b=a.length;if(b===0)return 0;return(b-1)*32+sjcl.bitArray.getPartial(a[b-1])},clamp:function(a,b){if(a.length*32<b)return a;a=a.slice(0,Math.ceil(b/
+32));var c=a.length;b&=31;if(c>0&&b)a[c-1]=sjcl.bitArray.partial(b,a[c-1]&2147483648>>b-1,1);return a},partial:function(a,b,c){if(a===32)return b;return(c?b|0:b<<32-a)+a*0x10000000000},getPartial:function(a){return Math.round(a/0x10000000000)||32},equal:function(a,b){if(sjcl.bitArray.bitLength(a)!==sjcl.bitArray.bitLength(b))return false;var c=0,d;for(d=0;d<a.length;d++)c|=a[d]^b[d];return c===0},P:function(a,b,c,d){var e;e=0;if(d===undefined)d=[];for(;b>=32;b-=32){d.push(c);c=0}if(b===0)return d.concat(a);
+for(e=0;e<a.length;e++){d.push(c|a[e]>>>b);c=a[e]<<32-b}e=a.length?a[a.length-1]:0;a=sjcl.bitArray.getPartial(e);d.push(sjcl.bitArray.partial(b+a&31,b+a>32?c:d.pop(),1));return d},k:function(a,b){return[a[0]^b[0],a[1]^b[1],a[2]^b[2],a[3]^b[3]]}};
+sjcl.codec.utf8String={fromBits:function(a){var b="",c=sjcl.bitArray.bitLength(a),d,e;for(d=0;d<c/8;d++){if((d&3)===0)e=a[d/4];b+=String.fromCharCode(e>>>24);e<<=8}return decodeURIComponent(escape(b))},toBits:function(a){a=unescape(encodeURIComponent(a));var b=[],c,d=0;for(c=0;c<a.length;c++){d=d<<8|a.charCodeAt(c);if((c&3)===3){b.push(d);d=0}}c&3&&b.push(sjcl.bitArray.partial(8*(c&3),d));return b}};
+sjcl.codec.hex={fromBits:function(a){var b="",c;for(c=0;c<a.length;c++)b+=((a[c]|0)+0xf00000000000).toString(16).substr(4);return b.substr(0,sjcl.bitArray.bitLength(a)/4)},toBits:function(a){var b,c=[],d;a=a.replace(/\s|0x/g,"");d=a.length;a+="00000000";for(b=0;b<a.length;b+=8)c.push(parseInt(a.substr(b,8),16)^0);return sjcl.bitArray.clamp(c,d*4)}};
+sjcl.codec.base64={D:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",fromBits:function(a,b){var c="",d,e=0,f=sjcl.codec.base64.D,g=0,h=sjcl.bitArray.bitLength(a);for(d=0;c.length*6<h;){c+=f.charAt((g^a[d]>>>e)>>>26);if(e<6){g=a[d]<<6-e;e+=26;d++}else{g<<=6;e-=6}}for(;c.length&3&&!b;)c+="=";return c},toBits:function(a){a=a.replace(/\s|=/g,"");var b=[],c,d=0,e=sjcl.codec.base64.D,f=0,g;for(c=0;c<a.length;c++){g=e.indexOf(a.charAt(c));if(g<0)throw new sjcl.exception.invalid("this isn't base64!");
+if(d>26){d-=26;b.push(f^g>>>d);f=g<<32-d}else{d+=6;f^=g<<32-d}}d&56&&b.push(sjcl.bitArray.partial(d&56,f,1));return b}};sjcl.hash.sha256=function(a){this.a[0]||this.w();if(a){this.n=a.n.slice(0);this.i=a.i.slice(0);this.e=a.e}else this.reset()};sjcl.hash.sha256.hash=function(a){return(new sjcl.hash.sha256).update(a).finalize()};
+sjcl.hash.sha256.prototype={blockSize:512,reset:function(){this.n=this.N.slice(0);this.i=[];this.e=0;return this},update:function(a){if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);var b,c=this.i=sjcl.bitArray.concat(this.i,a);b=this.e;a=this.e=b+sjcl.bitArray.bitLength(a);for(b=512+b&-512;b<=a;b+=512)this.C(c.splice(0,16));return this},finalize:function(){var a,b=this.i,c=this.n;b=sjcl.bitArray.concat(b,[sjcl.bitArray.partial(1,1)]);for(a=b.length+2;a&15;a++)b.push(0);b.push(Math.floor(this.e/
+4294967296));for(b.push(this.e|0);b.length;)this.C(b.splice(0,16));this.reset();return c},N:[],a:[],w:function(){function a(e){return(e-Math.floor(e))*0x100000000|0}var b=0,c=2,d;a:for(;b<64;c++){for(d=2;d*d<=c;d++)if(c%d===0)continue a;if(b<8)this.N[b]=a(Math.pow(c,0.5));this.a[b]=a(Math.pow(c,1/3));b++}},C:function(a){var b,c,d=a.slice(0),e=this.n,f=this.a,g=e[0],h=e[1],i=e[2],k=e[3],j=e[4],l=e[5],m=e[6],n=e[7];for(a=0;a<64;a++){if(a<16)b=d[a];else{b=d[a+1&15];c=d[a+14&15];b=d[a&15]=(b>>>7^b>>>18^
+b>>>3^b<<25^b<<14)+(c>>>17^c>>>19^c>>>10^c<<15^c<<13)+d[a&15]+d[a+9&15]|0}b=b+n+(j>>>6^j>>>11^j>>>25^j<<26^j<<21^j<<7)+(m^j&(l^m))+f[a];n=m;m=l;l=j;j=k+b|0;k=i;i=h;h=g;g=b+(h&i^k&(h^i))+(h>>>2^h>>>13^h>>>22^h<<30^h<<19^h<<10)|0}e[0]=e[0]+g|0;e[1]=e[1]+h|0;e[2]=e[2]+i|0;e[3]=e[3]+k|0;e[4]=e[4]+j|0;e[5]=e[5]+l|0;e[6]=e[6]+m|0;e[7]=e[7]+n|0}};
+sjcl.mode.ccm={name:"ccm",encrypt:function(a,b,c,d,e){var f,g=b.slice(0),h=sjcl.bitArray,i=h.bitLength(c)/8,k=h.bitLength(g)/8;e=e||64;d=d||[];if(i<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(f=2;f<4&&k>>>8*f;f++);if(f<15-i)f=15-i;c=h.clamp(c,8*(15-f));b=sjcl.mode.ccm.G(a,b,c,d,e,f);g=sjcl.mode.ccm.I(a,g,c,b,e,f);return h.concat(g.data,g.tag)},decrypt:function(a,b,c,d,e){e=e||64;d=d||[];var f=sjcl.bitArray,g=f.bitLength(c)/8,h=f.bitLength(b),i=f.clamp(b,h-e),k=f.bitSlice(b,
+h-e);h=(h-e)/8;if(g<7)throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");for(b=2;b<4&&h>>>8*b;b++);if(b<15-g)b=15-g;c=f.clamp(c,8*(15-b));i=sjcl.mode.ccm.I(a,i,c,k,e,b);a=sjcl.mode.ccm.G(a,i.data,c,d,e,b);if(!f.equal(i.tag,a))throw new sjcl.exception.corrupt("ccm: tag doesn't match");return i.data},G:function(a,b,c,d,e,f){var g=[],h=sjcl.bitArray,i=h.k;e/=8;if(e%2||e<4||e>16)throw new sjcl.exception.invalid("ccm: invalid tag length");if(d.length>0xffffffff||b.length>0xffffffff)throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
+f=[h.partial(8,(d.length?64:0)|e-2<<2|f-1)];f=h.concat(f,c);f[3]|=h.bitLength(b)/8;f=a.encrypt(f);if(d.length){c=h.bitLength(d)/8;if(c<=65279)g=[h.partial(16,c)];else if(c<=0xffffffff)g=h.concat([h.partial(16,65534)],[c]);g=h.concat(g,d);for(d=0;d<g.length;d+=4)f=a.encrypt(i(f,g.slice(d,d+4)))}for(d=0;d<b.length;d+=4)f=a.encrypt(i(f,b.slice(d,d+4)));return h.clamp(f,e*8)},I:function(a,b,c,d,e,f){var g,h=sjcl.bitArray;g=h.k;var i=b.length,k=h.bitLength(b);c=h.concat([h.partial(8,f-1)],c).concat([0,
+0,0]).slice(0,4);d=h.bitSlice(g(d,a.encrypt(c)),0,e);if(!i)return{tag:d,data:[]};for(g=0;g<i;g+=4){c[3]++;e=a.encrypt(c);b[g]^=e[0];b[g+1]^=e[1];b[g+2]^=e[2];b[g+3]^=e[3]}return{tag:d,data:h.clamp(b,k)}}};
+sjcl.mode.ocb2={name:"ocb2",encrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");var g,h=sjcl.mode.ocb2.A,i=sjcl.bitArray,k=i.k,j=[0,0,0,0];c=h(a.encrypt(c));var l,m=[];d=d||[];e=e||64;for(g=0;g+4<b.length;g+=4){l=b.slice(g,g+4);j=k(j,l);m=m.concat(k(c,a.encrypt(k(c,l))));c=h(c)}l=b.slice(g);b=i.bitLength(l);g=a.encrypt(k(c,[0,0,0,b]));l=i.clamp(k(l,g),b);j=k(j,k(l,g));j=a.encrypt(k(j,k(c,h(c))));if(d.length)j=k(j,f?d:sjcl.mode.ocb2.pmac(a,
+d));return m.concat(i.concat(l,i.clamp(j,e)))},decrypt:function(a,b,c,d,e,f){if(sjcl.bitArray.bitLength(c)!==128)throw new sjcl.exception.invalid("ocb iv must be 128 bits");e=e||64;var g=sjcl.mode.ocb2.A,h=sjcl.bitArray,i=h.k,k=[0,0,0,0],j=g(a.encrypt(c)),l,m,n=sjcl.bitArray.bitLength(b)-e,o=[];d=d||[];for(c=0;c+4<n/32;c+=4){l=i(j,a.decrypt(i(j,b.slice(c,c+4))));k=i(k,l);o=o.concat(l);j=g(j)}m=n-c*32;l=a.encrypt(i(j,[0,0,0,m]));l=i(l,h.clamp(b.slice(c),m));k=i(k,l);k=a.encrypt(i(k,i(j,g(j))));if(d.length)k=
+i(k,f?d:sjcl.mode.ocb2.pmac(a,d));if(!h.equal(h.clamp(k,e),h.bitSlice(b,n)))throw new sjcl.exception.corrupt("ocb: tag doesn't match");return o.concat(h.clamp(l,m))},pmac:function(a,b){var c,d=sjcl.mode.ocb2.A,e=sjcl.bitArray,f=e.k,g=[0,0,0,0],h=a.encrypt([0,0,0,0]);h=f(h,d(d(h)));for(c=0;c+4<b.length;c+=4){h=d(h);g=f(g,a.encrypt(f(h,b.slice(c,c+4))))}b=b.slice(c);if(e.bitLength(b)<128){h=f(h,d(h));b=e.concat(b,[2147483648|0])}g=f(g,b);return a.encrypt(f(d(f(h,d(h))),g))},A:function(a){return[a[0]<<
+1^a[1]>>>31,a[1]<<1^a[2]>>>31,a[2]<<1^a[3]>>>31,a[3]<<1^(a[0]>>>31)*135]}};sjcl.misc.hmac=function(a,b){this.M=b=b||sjcl.hash.sha256;var c=[[],[]],d=b.prototype.blockSize/32;this.l=[new b,new b];if(a.length>d)a=b.hash(a);for(b=0;b<d;b++){c[0][b]=a[b]^909522486;c[1][b]=a[b]^1549556828}this.l[0].update(c[0]);this.l[1].update(c[1])};sjcl.misc.hmac.prototype.encrypt=sjcl.misc.hmac.prototype.mac=function(a,b){a=(new this.M(this.l[0])).update(a,b).finalize();return(new this.M(this.l[1])).update(a).finalize()};
+sjcl.misc.pbkdf2=function(a,b,c,d,e){c=c||1E3;if(d<0||c<0)throw sjcl.exception.invalid("invalid params to pbkdf2");if(typeof a==="string")a=sjcl.codec.utf8String.toBits(a);e=e||sjcl.misc.hmac;a=new e(a);var f,g,h,i,k=[],j=sjcl.bitArray;for(i=1;32*k.length<(d||1);i++){e=f=a.encrypt(j.concat(b,[i]));for(g=1;g<c;g++){f=a.encrypt(f);for(h=0;h<f.length;h++)e[h]^=f[h]}k=k.concat(e)}if(d)k=j.clamp(k,d);return k};
+sjcl.random={randomWords:function(a,b){var c=[];b=this.isReady(b);var d;if(b===0)throw new sjcl.exception.notready("generator isn't seeded");else b&2&&this.U(!(b&1));for(b=0;b<a;b+=4){(b+1)%0x10000===0&&this.L();d=this.u();c.push(d[0],d[1],d[2],d[3])}this.L();return c.slice(0,a)},setDefaultParanoia:function(a){this.t=a},addEntropy:function(a,b,c){c=c||"user";var d,e,f=(new Date).valueOf(),g=this.q[c],h=this.isReady();d=this.F[c];if(d===undefined)d=this.F[c]=this.R++;if(g===undefined)g=this.q[c]=0;this.q[c]=
+(this.q[c]+1)%this.b.length;switch(typeof a){case "number":break;case "object":if(b===undefined)for(c=b=0;c<a.length;c++)for(e=a[c];e>0;){b++;e>>>=1}this.b[g].update([d,this.J++,2,b,f,a.length].concat(a));break;case "string":if(b===undefined)b=a.length;this.b[g].update([d,this.J++,3,b,f,a.length]);this.b[g].update(a);break;default:throw new sjcl.exception.bug("random: addEntropy only supports number, array or string");}this.j[g]+=b;this.f+=b;if(h===0){this.isReady()!==0&&this.K("seeded",Math.max(this.g,
+this.f));this.K("progress",this.getProgress())}},isReady:function(a){a=this.B[a!==undefined?a:this.t];return this.g&&this.g>=a?this.j[0]>80&&(new Date).valueOf()>this.O?3:1:this.f>=a?2:0},getProgress:function(a){a=this.B[a?a:this.t];return this.g>=a?1["0"]:this.f>a?1["0"]:this.f/a},startCollectors:function(){if(!this.m){if(window.addEventListener){window.addEventListener("load",this.o,false);window.addEventListener("mousemove",this.p,false)}else if(document.attachEvent){document.attachEvent("onload",
+this.o);document.attachEvent("onmousemove",this.p)}else throw new sjcl.exception.bug("can't attach event");this.m=true}},stopCollectors:function(){if(this.m){if(window.removeEventListener){window.removeEventListener("load",this.o);window.removeEventListener("mousemove",this.p)}else if(window.detachEvent){window.detachEvent("onload",this.o);window.detachEvent("onmousemove",this.p)}this.m=false}},addEventListener:function(a,b){this.r[a][this.Q++]=b},removeEventListener:function(a,b){var c;a=this.r[a];
+var d=[];for(c in a)a.hasOwnProperty[c]&&a[c]===b&&d.push(c);for(b=0;b<d.length;b++){c=d[b];delete a[c]}},b:[new sjcl.hash.sha256],j:[0],z:0,q:{},J:0,F:{},R:0,g:0,f:0,O:0,a:[0,0,0,0,0,0,0,0],d:[0,0,0,0],s:undefined,t:6,m:false,r:{progress:{},seeded:{}},Q:0,B:[0,48,64,96,128,192,0x100,384,512,768,1024],u:function(){for(var a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}return this.s.encrypt(this.d)},L:function(){this.a=this.u().concat(this.u());this.s=new sjcl.cipher.aes(this.a)},T:function(a){this.a=
+sjcl.hash.sha256.hash(this.a.concat(a));this.s=new sjcl.cipher.aes(this.a);for(a=0;a<4;a++){this.d[a]=this.d[a]+1|0;if(this.d[a])break}},U:function(a){var b=[],c=0,d;this.O=b[0]=(new Date).valueOf()+3E4;for(d=0;d<16;d++)b.push(Math.random()*0x100000000|0);for(d=0;d<this.b.length;d++){b=b.concat(this.b[d].finalize());c+=this.j[d];this.j[d]=0;if(!a&&this.z&1<<d)break}if(this.z>=1<<this.b.length){this.b.push(new sjcl.hash.sha256);this.j.push(0)}this.f-=c;if(c>this.g)this.g=c;this.z++;this.T(b)},p:function(a){sjcl.random.addEntropy([a.x||
+a.clientX||a.offsetX,a.y||a.clientY||a.offsetY],2,"mouse")},o:function(){sjcl.random.addEntropy(new Date,2,"loadtime")},K:function(a,b){var c;a=sjcl.random.r[a];var d=[];for(c in a)a.hasOwnProperty(c)&&d.push(a[c]);for(c=0;c<d.length;c++)d[c](b)}};
+sjcl.json={defaults:{v:1,iter:1E3,ks:128,ts:64,mode:"ccm",adata:"",cipher:"aes"},encrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json,f=e.c({iv:sjcl.random.randomWords(4,0)},e.defaults);e.c(f,c);if(typeof f.salt==="string")f.salt=sjcl.codec.base64.toBits(f.salt);if(typeof f.iv==="string")f.iv=sjcl.codec.base64.toBits(f.iv);if(!sjcl.mode[f.mode]||!sjcl.cipher[f.cipher]||typeof a==="string"&&f.iter<=100||f.ts!==64&&f.ts!==96&&f.ts!==128||f.ks!==128&&f.ks!==192&&f.ks!==0x100||f.iv.length<2||f.iv.length>
+4)throw new sjcl.exception.invalid("json encrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,f);a=c.key.slice(0,f.ks/32);f.salt=c.salt}if(typeof b==="string")b=sjcl.codec.utf8String.toBits(b);c=new sjcl.cipher[f.cipher](a);e.c(d,f);d.key=a;f.ct=sjcl.mode[f.mode].encrypt(c,b,f.iv,f.adata,f.tag);return e.encode(e.V(f,e.defaults))},decrypt:function(a,b,c,d){c=c||{};d=d||{};var e=sjcl.json;b=e.c(e.c(e.c({},e.defaults),e.decode(b)),c,true);if(typeof b.salt==="string")b.salt=
+sjcl.codec.base64.toBits(b.salt);if(typeof b.iv==="string")b.iv=sjcl.codec.base64.toBits(b.iv);if(!sjcl.mode[b.mode]||!sjcl.cipher[b.cipher]||typeof a==="string"&&b.iter<=100||b.ts!==64&&b.ts!==96&&b.ts!==128||b.ks!==128&&b.ks!==192&&b.ks!==0x100||!b.iv||b.iv.length<2||b.iv.length>4)throw new sjcl.exception.invalid("json decrypt: invalid parameters");if(typeof a==="string"){c=sjcl.misc.cachedPbkdf2(a,b);a=c.key.slice(0,b.ks/32);b.salt=c.salt}c=new sjcl.cipher[b.cipher](a);c=sjcl.mode[b.mode].decrypt(c,
+b.ct,b.iv,b.adata,b.tag);e.c(d,b);d.key=a;return sjcl.codec.utf8String.fromBits(c)},encode:function(a){var b,c="{",d="";for(b in a)if(a.hasOwnProperty(b)){if(!b.match(/^[a-z0-9]+$/i))throw new sjcl.exception.invalid("json encode: invalid property name");c+=d+b+":";d=",";switch(typeof a[b]){case "number":case "boolean":c+=a[b];break;case "string":c+='"'+escape(a[b])+'"';break;case "object":c+='"'+sjcl.codec.base64.fromBits(a[b],1)+'"';break;default:throw new sjcl.exception.bug("json encode: unsupported type");
+}}return c+"}"},decode:function(a){a=a.replace(/\s/g,"");if(!a.match(/^\{.*\}$/))throw new sjcl.exception.invalid("json decode: this isn't json!");a=a.replace(/^\{|\}$/g,"").split(/,/);var b={},c,d;for(c=0;c<a.length;c++){if(!(d=a[c].match(/^([a-z][a-z0-9]*):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i)))throw new sjcl.exception.invalid("json decode: this isn't json!");b[d[1]]=d[2]?parseInt(d[2],10):d[1].match(/^(ct|salt|iv)$/)?sjcl.codec.base64.toBits(d[3]):unescape(d[3])}return b},c:function(a,b,c){if(a===
+undefined)a={};if(b===undefined)return a;var d;for(d in b)if(b.hasOwnProperty(d)){if(c&&a[d]!==undefined&&a[d]!==b[d])throw new sjcl.exception.invalid("required parameter overridden");a[d]=b[d]}return a},V:function(a,b){var c={},d;for(d in a)if(a.hasOwnProperty(d)&&a[d]!==b[d])c[d]=a[d];return c},W:function(a,b){var c={},d;for(d=0;d<b.length;d++)if(a[b[d]]!==undefined)c[b[d]]=a[b[d]];return c}};sjcl.encrypt=sjcl.json.encrypt;sjcl.decrypt=sjcl.json.decrypt;sjcl.misc.S={};
+sjcl.misc.cachedPbkdf2=function(a,b){var c=sjcl.misc.S,d;b=b||{};d=b.iter||1E3;c=c[a]=c[a]||{};d=c[d]=c[d]||{firstSalt:b.salt&&b.salt.length?b.salt.slice(0):sjcl.random.randomWords(2,0)};c=b.salt===undefined?d.firstSalt:b.salt;d[c]=d[c]||sjcl.misc.pbkdf2(a,c,b.iter);return{key:d[c].slice(0),salt:c.slice(0)}};
+
+// public
+module.exports = sjcl;
+
+
+/***/ }),
+
+/***/ "./src/js/tag.manager.js":
+/*!*******************************!*\
+  !*** ./src/js/tag.manager.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * List of tags with managing
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+var app = __webpack_require__(/*! ./app */ "./src/js/app.js");
+
+
+var TagManager = new function () {
+    // for limited scopes
+    var self = this;
+
+    // max length of each tag, will be truncated on exceed
+    var maxlength_tag = 100;
+
+    // component state flag
+    // true  - everything is decoded
+    // false - no plain data, everything is encrypted
+    this.open = false;
+
+    // decoded to these two lists
+    this.dataNmlist = {}; // {note:1, site:2, email:3}
+    this.dataIdlist = {}; // {1:note, 2:site, 3:email}
+    // they are filling on page loading and on note creation
+    // if there are some new tags
+
+
+    /**
+     * Open the subscriber
+     * master password is accessible
+     * decrypt all the data and show it
+     */
+    // this.EventOpen = function () {
+    //     console.time('TagManager: decrypt tags');
+    //     // decrypt tags
+    //     for ( var id in window.dataTags.data ) {
+    //         var name = app.decode(window.dataTags.data[id][window.dataTags.defn.name]);
+    //         // fill service lookup tables of tags by id and by name
+    //         window.dataTagsNmlist[name] = id = parseInt(id, 10);
+    //         window.dataTagsIdlist[id] = name;
+    //     }
+    //     console.timeEnd('TagManager: decrypt tags');
+    // };
+
+
+    /**
+     * Close the subscriber
+     * master password is expired and cleared
+     * clear all the decrypted data
+     */
+    // this.EventClose = function () {
+    //     // clear service lookup tables
+    //     window.dataTagsNmlist = {};
+    //     window.dataTagsIdlist = {};
+    // };
+
+
+    /**
+     * Adds new tag id and enc/dev values to the global lookup tables
+     * @param id of the new tag
+     * @param enc encrypted tag name value
+     * @param dec optional decrypted tag name value, decrypted from enc if omitted
+     */
+    this.Add = function ( id, enc, dec ) {
+        // decrypt name if necessary
+        dec = dec || app.decode(enc, true);
+        this.data[id] = [enc, [], 1];
+        this.dataNmlist[dec] = id;
+        this.dataIdlist[id] = dec;
+    };
+
+
+    /**
+     * Returns the sorted list of tag ids by usage
+     * first ids the most used
+     */
+    this.SortByUses = function () {
+        var result = [];
+        // prepare list of id/usage
+        for ( var id in this.data ) {
+            result.push({id: parseInt(id, 10), uses: this.data[id][this.defn.uses]});
+        }
+        // custom sort
+        result.sort(function ( a, b ) {
+            return b.uses - a.uses
+        });
+        // rework output, get rid of objects
+        for ( var i = 0; i < result.length; i++ ) {
+            result[i] = result[i].id;
+        }
+        return result;
+    };
+
+
+    /**
+     * Converts the array of tags ids to tags names
+     * @param data array of tags (integers or encrypted strings)
+     * @param prefix string to prepend to each tag name
+     * @return tags names array
+     * @example [1,2,'***encrypted string***',3] -> ['ftp','note','ssh','site']
+     */
+    this.IDs2Names = function ( data, prefix ) {
+        var name, result = [];
+        // check input
+        if ( data && data instanceof Array )
+        // get tag names from ids
+            for ( var i = 0; i < data.length; i++ ) {
+                // check type
+                if ( isNaN(data[i]) ) {
+                    // seems this is a real-time encrypted string
+                    if ( (name = app.decode(data[i], true)) !== false ) result.push((prefix ? prefix : '') + name);
+                } else {
+                    // seems normal tag id
+                    if ( this.dataIdlist[data[i]] )
+                    // tag found in the global list
+                        result.push((prefix ? prefix : '') + this.dataIdlist[data[i]]);
+                }
+            }
+        return result.sort();
+    };
+
+
+    /**
+     * Returns the string of tag names from the tags ids
+     * @example [1,2,3] -> "note site ftp"
+     */
+    this.IDs2Str = function ( data ) {
+        data = this.IDs2Names(data);
+        return data.length > 0 ? data.join(' ') : '';
+    };
+
+
+    /**
+     * Converts a tags names array to array of ids or encrypted strings
+     * @param data tags string
+     * @param skip_new optional flag to exclude all new not encrypted values
+     * @return array of tags (integers or encrypted strings)
+     * @example skip_new=true  ['ftp','note','ssh','site'] -> [1,2,3]
+     * @example skip_new=false ['ftp','note','ssh','site'] -> [1,2,'***encrypted string***',3]
+     */
+    this.Names2IDs = function ( data, skip_new ) {
+        var result = [];
+        // check input
+        if ( data && data instanceof Array ) {
+            // list of unique tag names
+            var words = [], enc = null;
+            // iterate words in the input string
+            for ( var i = 0; i < data.length; i++ ) {
+                // shorten too long lines
+                var name = data[i].slice(0, maxlength_tag);
+                // check if this word already processed
+                if ( !words.has(name) ) {
+                    if ( this.dataNmlist[name] ) {
+                        // tag found in the global data
+                        result.push(this.dataNmlist[name]);
+                    } else {
+                        // not found so encrypt and cache if not skipped
+                        if ( !skip_new && (enc = app.encode(name, true)) !== false ) {
+                            result.push(enc);
+                        }
+                    }
+                    // add word
+                    words.push(name);
+                }
+            }
+        }
+        return result;
+    };
+
+
+    /**
+     * Converts a tags string to array of ids or encrypted strings
+     * @param data tags string
+     * @param skip_new optional flag to exclude all new not encrypted values
+     * @return array of tags (integers or encrypted strings)
+     * @example skip_new=true  "ftp note ssh site" -> [1,2,3]
+     * @example skip_new=false "ftp note ssh site" -> [1,2,'***encrypted string***',3]
+     */
+    this.Str2IDs = function ( data, skip_new ) {
+        // do convert
+        return this.Names2IDs(this.Str2Names(data), skip_new);
+    };
+
+
+//    this.NamesMissed = function ( names, data ) {
+//        var result = [];
+//        // check input
+//        if ( data && data.match ) {
+//            // split to separate words
+//            data = data.match(/(\S+)/g);
+//            if ( data && data instanceof Array ) {
+//                // iterate words in the input string
+//                for ( var i = 0; i < data.length; i++ ) {
+//                    if ( !names.has(data[i]) ) {
+//                        result.push(data[i]);
+//                    }
+//                }
+//            }
+//        }
+//        return result;
+//    };
+
+
+    /**
+     * Converts a string to array of words
+     * @param data input string
+     * @return array of words
+     * @example 'ftp -note :ssh !site' -> ["ftp","-note",":ssh","!site"]
+     * @example 'ftp "my note" :ssh' -> ["ftp","my note",":ssh"]
+     */
+    this.Str2Names = function ( data ) {
+        var result = [];
+        // check input
+        if ( data && data.match ) {
+            // split to words
+            //data = data.match(/(?:"[^"]+"|[\S]+)/g);
+            data = data.match(/(\S+)/g);
+            // not empty list of words
+            if ( data && data instanceof Array ) {
+                // iterate words in the input string
+                data.forEach(function ( word ) {
+                    // prevent duplication
+                    if ( !result.has(word) ) result.push(word);
+                });
+            }
+        }
+        return result;
+    };
+
+
+    /**
+     * Parses the user input into inner data lists
+     * @param data string of tags input
+     * @return hash of lists
+     */
+    this.StrParse = function ( data ) {
+        var tinc = [],  // array of included tags ids
+            texc = [],  // array of excluded tags ids
+            ninc = [],  // array of included tags names
+            nexc = [],  // array of excluded tags names
+            winc = [],  // array of included words (not tags)
+            wexc = [],  // array of excluded words (not tags)
+            wcmd = [];  // array of command words
+        // prepare sorted list of words and iterate
+        this.Str2Names(data).sort().forEach(function ( word ) {
+            // find out if there are special chars at the beginning of the word
+            var fchar = word.charAt(0), fexc = (fchar === '-'), fcmd = (fchar === ':');
+            // get the word without special chars if present
+            if ( fexc || fcmd ) word = word.slice(1);
+            // not empty
+            if ( word ) {
+                // command
+                if ( fcmd ) {
+                    wcmd.push(word);
+                } else {
+                    // just a tag
+                    var tid = self.dataNmlist[word];
+                    // tag id found in the global data
+                    if ( tid ) {
+                        if ( fexc ) {
+                            // excluded
+                            texc.push(tid);
+                            nexc.push(word);
+                        } else {
+                            // included
+                            tinc.push(tid);
+                            ninc.push(word);
+                        }
+                    } else {
+                        // tag id not found so it's just a word
+                        if ( fexc )
+                            wexc.push(word);
+                        else
+                            winc.push(word);
+                    }
+                }
+            }
+        });
+        // build result struct
+        return {
+            tinc: tinc, texc: texc,
+            ninc: ninc, nexc: nexc,
+            winc: winc, wexc: wexc,
+            wcmd: wcmd
+        };
+    };
+
+
+    /**
+     * Build the user input string from the parsed inner data
+     * @param data hash of lists
+     * @return string of tags input
+     */
+    this.StrBuild = function ( data ) {
+        var list = [];
+        // check input and fill the list with the corresponding data
+        if ( data.wcmd && data.wcmd instanceof Array ) data.wcmd.sort().forEach(function ( item ) {
+            list.push(':' + item);
+        });
+        if ( data.ninc && data.ninc instanceof Array ) data.ninc.sort().forEach(function ( item ) {
+            list.push(item);
+        });
+        if ( data.nexc && data.nexc instanceof Array ) data.nexc.sort().forEach(function ( item ) {
+            list.push('-' + item);
+        });
+        if ( data.winc && data.winc instanceof Array ) data.winc.sort().forEach(function ( item ) {
+            list.push(item);
+        });
+        if ( data.wexc && data.wexc instanceof Array ) data.wexc.sort().forEach(function ( item ) {
+            list.push('-' + item);
+        });
+        // implode data into one line separated by spaces
+        return list.join(' ');
+    };
+
+
+    /**
+     * Splits the string with words into two lists - inc and exc
+     * @param data string with words
+     * @example data = "table window -chair -door" -> {winc:["table","window"],wexc:["chair","door"]}
+     */
+//    this.SeparateWords = function ( data ) {
+//        var list = [],  // array of all parts
+//            winc = [],  // array of included words (not tags)
+//            wexc = [];  // array of excluded words (not tags)
+//        // prepare list of words
+//        list = this.Str2Names(data);
+//        list.forEach(function(word){
+//            // find out if there is minus at the beginning of the word
+//            if ( word.charAt(0) === '-' ) {
+//                // get the word without minus
+//                word = word.slice(1);
+//                // append excluded
+//                if ( word ) wexc.push(word);
+//            } else {
+//                // append included
+//                if ( word ) winc.push(word);
+//            }
+//        });
+//        // build result struct
+//        return { winc:winc, wexc:wexc };
+//    }
+
+
+//    this.StrCombine = function ( data ) {
+//        var texc = [];
+//        data.texc.forEach(function(id){
+//            texc.push('-' + window.dataTagsIdlist[id]);
+//        });
+//        texc.sort();
+//        return texc.join(' ') + (texc.length > 0 ? ' ' : '') + this.IDs2Str(data.tinc);
+//    }
+
+
+    this.Linked = function ( data ) {
+        var result = [], list = {}, i;
+        //data = data.slice();
+        if ( data && data instanceof Array ) {
+            if ( data.length === 1 ) {
+                result = this.data[data[0]][this.defn.links];
+            } else {
+                data.forEach(function ( id ) {
+                    var links = self.data[id][self.defn.links];
+                    links.forEach(function ( link ) {
+                        list[link] = (list[link] ? list[link] : 0) + 1;
+                    });
+                });
+                for ( i in list ) {
+                    if ( list[i] === data.length ) {
+                        result.push(parseInt(i, 10));
+                    }
+                }
+                //fb(list);
+                //result = data[0].slice();
+                // iterate all rest
+                //            for ( var i = 1; i < data.length; i++ ) {
+                //                var links = window.dataTags.data[data[i]][window.dataTags.defn.links];
+                //
+                //            }
+                //                fb(id);
+                //                fb(window.dataTags.data[id][window.dataTags.defn.links].sort());
+                //});
+            }
+        }
+        //fb(result);
+        return result;
+    };
+
+
+    this.Init = function ( tags ) {
+        this.data = tags.data;
+        this.defn = tags.defn;
+
+        console.time('TagManager: decrypt tags');
+        // decrypt tags
+        for ( var id in this.data ) {
+            var name = app.decode(this.data[id][this.defn.name]);
+            // fill service lookup tables of tags by id and by name
+            this.dataNmlist[name] = id = parseInt(id, 10);
+            this.dataIdlist[id] = name;
+        }
+        console.timeEnd('TagManager: decrypt tags');
+    }
+
+};
+
+
+// public
+module.exports = TagManager;
+
+
+/***/ }),
+
+/***/ "./src/js/template.list.js":
+/*!*********************************!*\
+  !*** ./src/js/template.list.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * List of note templates
+ * @license The MIT License (MIT)
+ * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
+ */
+
+
+
+var templates = __webpack_require__(/*! ./data.templates */ "./src/js/data.templates.js");
+
+
+var TemplateList = new function () {
+    // for limited scopes
+    var self = this;
+
+    var hint_main = 'In the list above please select a template to be used to create your new note.';
+    var hint_item = 'This template will create a note with this set of entries:<br>';
+    //var hint_filter = 'filter by name or description ...';
+
+
+    /**
+     * Open the subscriber
+     * master password is accessible
+     * decrypt all the data and show it
+     */
+    // this.EventOpen = function () {
+    //     console.log('TemplateList.EventOpen');
+    //     //this.Fill();
+    //     // component state flag
+    //     this.open = true;
+    // };
+
+    /**
+     * Close the subscriber
+     * master password is expired and cleared
+     * clear all the decrypted data
+     */
+    // this.EventClose = function () {
+    //     // close only if opened at the moment
+    //     if ( this.open ) {
+    //         elclear(this.dom.list);
+    //         // component state flag
+    //         this.open = false;
+    //     }
+    // };
+
+
+    /**
+     * Fills the list with templates
+     */
+    this.Fill = function () {
+        // prepare
+        elclear(self.dom.list);
+        // iterate all templates
+        //window.dataTemplates.data.forEach(function ( data ) {
+        templates.forEach(function ( data ) {
+            // template body
+            var item = element('div', {className: 'item', /*style:'display:none',*/ data: data},
+                element('div', {className: 'line ' + data.name}, [
+                    element('div', {className: 'name'}, data.name),
+                    element('div', {className: 'hint'}, data.description)
+                ]));
+            // append
+            elchild(self.dom.list, item);
+            // template item handlers
+            //$(item).click(function(){
+            item.addEventListener('click', function () {
+                self.Show(false);
+                NoteEditor.Create(this.data);
+            });
+            //$(item).mouseenter(function(){
+            item.addEventListener('mouseenter', function () {
+                var list = [];
+                data.entries.forEach(function ( entry ) {
+                    list.push('<b>' + entry.name + '</b>');
+                });
+                // window.dataTemplateEntries.data[this.data[window.dataTemplates.defn.id]].forEach(function ( entry ) {
+                //     list.push('<b>' + entry[window.dataTemplateEntries.defn.name] + '</b>');
+                // });
+                self.dom.hint.innerHTML = hint_item + list.join(', ');
+            });
+        });
+        //this.Filter();
+    };
+
+
+    /**
+     * Filters by given text
+     * @param text string to search in each template name or description
+     */
+    // this.Filter = function ( text ) {
+    //     text = text || this.dom.filter.value;
+    //     text = text.toLowerCase();
+    //     for ( var i = 0; i < self.dom.list.childNodes.length; i++ ) {
+    //         // prepare
+    //         var item = self.dom.list.childNodes[i];
+    //         var name = item.data[window.dataTemplates.defn.name].toLowerCase();
+    //         var desc = item.data[window.dataTemplates.defn.description].toLowerCase();
+    //         // search substring and show/hide
+    //         //$(item).toggle(name.indexOf(text) >= 0 || desc.indexOf(text) >= 0);
+    //         item.classList.toggle('hidden', !(!text || name.indexOf(text) >= 0 || desc.indexOf(text) >= 0));
+    //     }
+    // };
+
+
+    /**
+     * Shows/hides the component
+     * @param state visibility flag: true - show, false - hide
+     */
+    this.Show = function ( state ) {
+        this.dom.handle.style.display = state ? 'block' : 'none';
+    };
+
+
+    /**
+     * Main init method
+     * @param params list of configuration parameters
+     */
+    this.Init = function ( params ) {
+        // check input
+        if ( !params.handle ) return;
+        // html parent object
+        this.dom = {handle: params.handle};
+        // build main blocks together
+        elchild(this.dom.handle, [
+            this.dom.title = element('div', {className: 'title'}),
+            this.dom.list = element('div', {className: 'list'}),
+            this.dom.hint = element('div', {className: 'hint'}, hint_main)
+        ]);
+        // reset hint
+        //$(this.dom.handle).mouseleave(function(){
+        this.dom.handle.addEventListener('mouseleave', function () {
+            self.dom.hint.innerHTML = hint_main;
+        });
+
+        //this.dom.filter = element('input', {type:'text', value:hint_filter});
+        //this.dom.filter = element('input', {type: 'text', placeholder: hint_filter});
+        // watermark and filtering
+        //watermark(this.dom.filter, hint_filter, '#000');
+        //$(this.dom.filter).keyup(function(){
+        // this.dom.filter.addEventListener('keyup', function () {
+        //     self.Filter(this.value);
+        // });
+
+        // title
+        elchild(this.dom.title, [element('div', {className: 'text'}, 'Templates')/*, this.dom.filter*/]);
+
+        this.Fill();
+    };
+};
+
+
+// public
+module.exports = TemplateList;
+
+
+/***/ }),
+
+/***/ "./src/js/tools.js":
+/*!*************************!*\
+  !*** ./src/js/tools.js ***!
+  \*************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Helper functions
  */
 
-var sjcl = __webpack_require__(2);
+var sjcl = __webpack_require__(/*! ./sjcl.min */ "./src/js/sjcl.min.js");
 
 
 // array prototypes
@@ -4644,903 +5637,7 @@ window.pwdgen = function pwdgen ( length ) {
 // }
 
 
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @license The MIT License (MIT)
- * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
- */
-
-
-
-var app = __webpack_require__(0),
-    sjcl = __webpack_require__(2),
-    api = __webpack_require__(1),
-    DialogModal = __webpack_require__(13),
-    FieldList = __webpack_require__(14);
-
-
-var DlgExport = null;
-var DlgOptions = null;
-var DlgPassGet = null;
-var DlgUserLogin = null;
-var DlgUserRegister = null;
-
-
-//document.addEventListener('DOMContentLoaded', function () {
-DlgExport = new DialogModal({
-    width: 750,
-    title: 'Data export',
-    hint: 'Here you can get all your data unencrypted.',
-    dom: {},
-
-    onCreate: function () {
-        this.SetContent(this.dom.text = element('textarea', {className: 'export'}));
-    },
-
-    /**
-     * Open the subscriber
-     * master password is accessible
-     * decrypt all the data and show it
-     */
-    EventOpen: function () {
-        if ( window.exportData ) {
-            setTimeout(function () {
-                DlgExport.Show();
-                for ( var idNote in window.exportData.notes ) {
-                    // check type
-                    if ( window.exportData.notes[idNote] instanceof Array ) {
-                        window.exportData.notes[idNote].forEach(function ( entry ) {
-                            var name = app.decode(entry.name, true);
-                            var data = app.decode(entry.data, true);
-                            if ( name && data ) {
-                                DlgExport.dom.text.value += name + ': ' + data + '\n';
-                            }
-                        });
-                    }
-                    // check type
-                    if ( window.exportData.note_tags[idNote] instanceof Array ) {
-                        var tags = [];
-                        window.exportData.note_tags[idNote].forEach(function ( idTag ) {
-                            if ( window.exportData.tags[idTag] ) tags.push(app.decode(window.exportData.tags[idTag], true));
-                        });
-                        if ( tags.length > 0 ) {
-                            DlgExport.dom.text.value += 'tags: ' + tags.join(' ') + '\n';
-                        }
-                    }
-                    DlgExport.dom.text.value += '\n';
-                }
-                // strip
-                DlgExport.dom.text.value = DlgExport.dom.text.value.trim();
-                window.exportData = null;
-            }, 50);
-        }
-    },
-
-    /**
-     * close the subscriber
-     * master password is expired and cleared
-     * clear all the decrypted data
-     */
-    EventClose: function () {
-        DlgExport.Close();
-    },
-
-    controls: {
-        'Close': {
-            main: true,
-            onClick: function () {
-                //var modal = this.modal;
-                this.modal.Close();
-            }
-        }
-    }
-});
-
-
-DlgOptions = new DialogModal({
-    width: 650,
-    title: 'Options',
-    hint: 'Here you can create/restore backups and export all your data.',
-
-    onCreate: function () {
-        var file = element('input', {
-            type: 'file', name: 'file', id: 'file-upload', onchange: function () {
-                hint.innerHTML = this.value;
-                fbtn.value = 'File selected';
-            }
-        });
-        var fbtn = element('input', {
-            type: 'button', className: 'button long', value: 'Choose file ...', onclick: function () {
-                //$(file).trigger('click');
-                file.click();
-            }
-        });
-        var hint = element('div', {className: 'fhint'});
-
-        this.SetContent([
-            element('div', {className: 'desc'}, "Backup is an archived package of all your encrypted data. It can't be read by human but can be used to restore your account info or setup a copy on some other FortNotes instance."),
-            element('input', {
-                type: 'button', className: 'button long', value: 'Create backup', onclick: function () {
-                    window.location = api.defaults.server + 'user/export/txt';
-                }
-            }),
-            element('div', {className: 'desc'}, "Please specify your previously downloaded backup package and then press the \"Restore backup\" button. It will upload your backup to the server and replace all your current data with the data from this backup. Warning: this operation can't be reverted!"),
-            element('div', {}, [
-                element('input', {
-                    type: 'button', className: 'button long', value: 'Restore backup', onclick: function () {
-                        var btn = this;
-                        btn.value = 'Uploading ...';
-                        btn.disabled = true;
-
-                        var data = new FormData();
-                        data.append('file', file.files[0]);
-                        console.log(data);
-
-                        api.postForm('user/import/txt', data, function ( error, data ) {
-                            if ( error ) {
-                                console.error(error);
-                                return;
-                            }
-
-                            console.log('user import', data);
-
-                            btn.value = 'Restore backup';
-                            btn.disabled = false;
-                            if ( data && data.error ) {
-                                alert('Restore from backup failed. Error: ' + data.error);
-                            } else {
-                                alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
-                                // We must reload the whole page to update window.dataTags
-                                window.location.reload();
-                            }
-                        });
-
-                        // $.ajax({
-                        //     url: 'user/import/txt',
-                        //     data: data,
-                        //     cache: false,
-                        //     contentType: false,
-                        //     processData: false,
-                        //     type: 'POST',
-                        //     dataType: 'json',
-                        //     success: function(data) {
-                        //         btn.value = 'Restore backup';
-                        //         btn.disabled = false;
-                        //         if ( data && data.error ) {
-                        //             alert('Restore from backup failed. Error: ' + data.error);
-                        //         } else {
-                        //             alert('The restore process has completed successfully and now the page will be reloaded to apply the restored data.');
-                        //             // We must reload the whole page to update window.dataTags
-                        //             window.location.reload();
-                        //         }
-                        //     }
-                        // });
-                    }
-                }), ' ',
-                fbtn,
-                hint
-            ]),
-            element('div', {className: 'desc'}, "It's possible to export all the data in a human readable form in order to print it or save in file on some storage. It'll give all the data in plain unencrypted form. The password is required."),
-            element('input', {
-                type: 'button', className: 'button long', value: 'Export data', onclick: function () {
-                    var btn = this;
-
-                    btn.value = 'Loading ...';
-                    btn.disabled = true;
-
-                    api.get('user/export/plain', function ( error, data ) {
-                        if ( error ) {
-                            console.error(error);
-                            return;
-                        }
-
-                        console.log('user export', data);
-
-                        btn.value = 'Export data';
-                        btn.disabled = false;
-                        window.exportData = data;
-                        app.expirePass();
-                    });
-                }
-            })
-        ]);
-    },
-
-    /**
-     * close the subscriber
-     * master password is expired and cleared
-     * clear all the decrypted data
-     */
-    EventClose: function () {
-        DlgOptions.Close();
-    },
-
-    controls: {
-        Close: {
-            main: true,
-            onClick: function () {
-                this.modal.Close();
-            }
-        }
-    }
-});
-
-
-DlgPassGet = new DialogModal({
-    width: 500,
-    title: 'Password',
-    hint: 'Please enter your password to unlock encrypted data.',
-    data: {attempts: 0},
-
-    onCreate: function () {
-        this.data.fldlist = new FieldList({
-            cols: [
-                {className: 'colname'},
-                {className: 'colvalue'}
-            ],
-            attr: {}
-        });
-        this.data.pass = element('input', {type: 'password', autocomplete: 'current-password', className: 'line'});
-        this.data.linkset = element('a', {className: 'combo', title: 'click to change the password storing time'});
-        onEnterClick(this.data.pass, this.params.controls['Continue'].dom);
-
-        this.data.fldlist.AddRow([
-            [
-                element('span', {className: 'fldname'}, 'password'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'your secret key')
-            ],
-            [
-                element('input', {
-                    type: 'text',
-                    autocomplete: 'username',
-                    className: 'hidden',
-                    value: app.get('username_last_used', '')
-                }),
-                this.data.pass
-            ]
-        ], {});
-        //this.data.fldlist.AddRow([null, ['remember password for ', this.data.linkset]], {});
-
-        this.SetContent(element('form', {}, this.data.fldlist.dom.table));
-    },
-
-    onShow: function () {
-        // new LinkSet(DlgPassGet.data.linkset, {
-        //     300:   {next:1200,  title: '5 minutes'},
-        //     1200:  {next:3600,  title: '20 minutes'},
-        //     3600:  {next:18000, title: '1 hour'},
-        //     18000: {next:86400, title: '5 hours'},
-        //     86400: {next:300,   title: '1 day'}
-        // }, app.get('pass_store_time', 300));
-    },
-
-    /**
-     * close the subscriber
-     * master password is expired and cleared
-     * clear all the decrypted data
-     */
-    EventClose: function () {
-        DlgPassGet.Show({escClose: false});
-    },
-
-    controls: {
-        'Log off': {
-            main: false,
-            onClick: function () {
-                this.modal.Close();
-                Logout();
-            }
-        },
-        Continue: {
-            main: true,
-            onClick: function () {
-                var modal = this.modal;
-                var pass = modal.data.pass.value;
-                // check pass
-                if ( app.checkPass(pass) ) {
-                    initData(window.dataUser, pass, function () {
-                        //app.set('pass_store_time', modal.data.linkset.value, true);
-                        //app.setPass(pass);
-                        modal.data.attempts = 0;
-                        // reset value
-                        modal.data.pass.value = '';
-                        modal.Close();
-                        //NoteFilter.SetFocus();
-                    });
-                    // if ( modal.data.linkset.value ) {
-                    //     //fb(modal.data.linkset.value);
-                    //     app.set('pass_store_time', modal.data.linkset.value, true);
-                    //     app.setPassTime(modal.data.linkset.value);
-                    // }
-                } else {
-                    modal.data.pass.focus();
-                    modal.data.attempts++;
-                    if ( modal.data.attempts === 1 )
-                        modal.SetMessage('Password is invalid!');
-                    else
-                        modal.SetMessage(['Password is invalid!', element('br'), 'Logged attempts: ' + modal.data.attempts]);
-                }
-            }
-        }
-    }
-});
-
-
-DlgUserLogin = new DialogModal({
-    width: 500,
-    title: 'Authentication',
-    hint: "Welcome back! Please authorize.",
-    data: {attempts: 0},
-
-    onCreate: function () {
-        this.data.fldlist = new FieldList({
-            cols: [
-                {className: 'colname'},
-                {className: 'colvalue'}],
-            attr: {}
-        });
-        this.data.name = element('input', {
-            className: 'line',
-            autocomplete: 'username',
-            type: 'text',
-            value: app.get('username_last_used', '')
-        });
-        this.data.pass = element('input', {
-            className: 'line',
-            autocomplete: 'current-password',
-            type: 'password'
-        });
-        this.data.serv = element('input', {
-            className: 'line',
-            autocomplete: 'server',
-            type: 'url',
-            value: app.get('server', 'https://fortnotes.com/')
-        });
-
-        //onEnterFocus(this.data.name, this.data.pass);
-        onEnterClick(this.data.pass, this.params.controls['Login'].dom);
-
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'username'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'your name or email')],
-            this.data.name
-        ], {});
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'password'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'your secret key')],
-            this.data.pass
-        ], {});
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'server'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'data storage')],
-            this.data.serv
-        ], {});
-        this.SetContent(element('form', {}, this.data.fldlist.dom.table));
-    },
-
-    controls: {
-        'Register': {
-            onClick: function () {
-                this.modal.Close();
-                DlgUserRegister.Show({escClose: false});
-            }
-        },
-        'Login': {
-            main: true,
-            onClick: function () {
-                var modal = this.modal;
-                // get name and pass
-                var username = modal.data.name.value;
-                var password = modal.data.pass.value;
-                // verification
-                if ( username && password ) {
-                    // ajax request
-                    username = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(username));
-                    password = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(password));
-                    // block all inputs and buttons
-                    modal.EnableControls(false);
-                    modal.data.name.disabled = true;
-                    modal.data.pass.disabled = true;
-                    if ( modal.data.attempts > 1 ) {
-                        modal.SetLoading("Sending server request ...");
-                    }
-
-                    app.set('server', modal.data.serv.value, true);
-                    api.defaults.server = modal.data.serv.value;
-
-                    api.post('user/auth', {name: username, pass: password, mode: 'login'}, function ( error, data ) {
-                        if ( error ) {
-                            console.error(error);
-                            modal.SetMessage('Request error.', 'error');
-                            return;
-                        }
-
-                        console.log('user auth', data);
-
-                        if ( data ) {
-                            // check returned data
-                            if ( data && data.id ) {
-                                initData(data, modal.data.pass.value, function () {
-                                    // save user name of last login
-                                    app.set('username_last_used', modal.data.name.value, true);
-                                    //app.setPass(modal.data.pass.value);
-                                    // reset values
-                                    modal.data.name.value = '';
-                                    modal.data.pass.value = '';
-                                    //modal.SetHint();
-                                    //modal.SetContent();
-                                    //$(modal.dom.footer).hide();
-                                    //modal.SetMessage(['Authentication was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
-                                    // redirect to home with delay
-                                    //setTimeout(function(){
-                                    //window.location.href = window.location.href;
-                                    modal.Close();
-                                    //NoteFilter.SetFocus();
-
-                                    //window.pageInit.style.display = 'none';
-                                    //window.pageMain.style.display = 'block';
-                                    //}, 500);
-                                });
-                                return;
-                            } else {
-                                modal.data.attempts++;
-                                if ( modal.data.attempts === 1 ) {
-                                    modal.SetMessage('Invalid user name or password.', 'error');
-                                } else {
-                                    modal.SetMessage(['Invalid user name or password.', element('br'), 'Logged attempts: ' + modal.data.attempts], 'error');
-                                }
-                            }
-                        } else {
-                            modal.SetMessage('Invalid response from the server.');
-                        }
-                        // unblock all inputs and buttons
-                        modal.EnableControls(true);
-                        modal.data.name.disabled = false;
-                        modal.data.pass.disabled = false;
-                    });
-                } else {
-                    modal.SetMessage('Empty user name or password.');
-                }
-            }
-        }
-    }
-});
-
-
-DlgUserRegister = new DialogModal({
-    width: 550,
-    title: 'Registration',
-    hint: "You are going to register in the system. Please note that the password you are going to enter will be used not only to login but also to encrypt/decrypt your data so choose a strong and long password. Your registration data won't be sent to the server in plain unencrypted form. Only hashes are stored on the server. We don't know your password and will never ask you to send it to us but at the same time we won't be able to remind it to you so please keep that password utmost safe.",
-    data: {attempts: 0},
-
-    onShow: function () {
-        var self = this;
-
-        api.get('captcha/uri', function ( error, data ) {
-            if ( error ) {
-                console.error(error);
-                return;
-            }
-
-            console.log('user captcha', data);
-
-            if ( data && data.src ) {
-                self.data.cimg.src = api.defaults.server + data.src;
-            } else {
-                self.SetHint('New accounts registration is disabled.');
-                self.SetContent('');
-            }
-        });
-    },
-
-    onCreate: function () {
-        this.data.fldlist = new FieldList({
-            cols: [
-                {className: 'colname'},
-                {className: 'colvalue'}],
-            attr: {}
-        });
-        this.data.name = element('input', {type: 'text', autocomplete: 'username', className: 'line'});
-        this.data.pass1 = element('input', {type: 'password', autocomplete: 'new-password', className: 'line'});
-        this.data.pass2 = element('input', {type: 'password', autocomplete: 'new-password', className: 'line'});
-        this.data.cimg = element('img', {width: 161, height: 75});
-        this.data.code = element('input', {
-            type: 'text',
-            autocomplete: 'off',
-            className: 'line cline',
-            title: 'case insensitive code above'
-        });
-
-        // onEnterFocus(this.data.name, this.data.pass1);
-        // onEnterFocus(this.data.pass1, this.data.pass2);
-        // onEnterFocus(this.data.pass2, this.data.code);
-        onEnterClick(this.data.code, this.params.controls['Register'].dom);
-
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'username'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'your name or email')],
-            this.data.name
-        ], {});
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'password'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'your secret key')],
-            this.data.pass1
-        ], {});
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'confirm password'),
-                element('br'),
-                element('span', {className: 'fldhint'}, 'your secret key once more')],
-            this.data.pass2
-        ], {});
-        this.data.fldlist.AddRow([
-            [element('span', {className: 'fldname'}, 'captcha'),
-                element('br'),
-                element('span', {className: 'fldwhint'}, 'enter the code on the image to make sure this is not an automated registration')],
-            [this.data.cimg, element('br'), this.data.code]
-        ], {});
-        //console.log(this.dom.footer);
-        //$(this.dom.footer).hide();
-        this.dom.footer.classList.add('hidden');
-        var self = this;
-        this.SetContent(element('a', {}, "I understand that my password can't be restored and will keep it safe", {
-            onclick: function () {
-                var container = document.getElementById('simplemodal-container');
-
-                self.SetHint('Keep your password safe - you are the only one who knows it so there is no way to restore it!');
-                //$('#simplemodal-container').css('top', ($('#simplemodal-container').css('top').replace('px','') - 80) + 'px');
-                container.style.top = parseInt(container.style.top, 10) - 100 + 'px';
-                self.SetContent(element('form', {}, self.data.fldlist.dom.table));
-                //$(self.dom.footer).show();
-                self.dom.footer.classList.remove('hidden');
-                self.data.name.focus();
-            }
-        }));
-    },
-
-    controls: {
-        Cancel: {
-            onClick: function () {
-                this.modal.Close();
-            }
-        },
-        Register: {
-            main: true,
-            onClick: function () {
-                var modal = this.modal;
-                // get name and pass
-                var password, username = modal.data.name.value;
-                var pass1 = modal.data.pass1.value;
-                var pass2 = modal.data.pass2.value;
-                // verification
-                if ( username && pass1 && pass2 && pass1 === pass2 ) {
-                    // make hash
-                    username = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(username));
-                    password = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(pass1));
-                    // block all inputs and buttons
-                    modal.EnableControls(false);
-                    modal.data.name.disabled = true;
-                    modal.data.pass1.disabled = true;
-                    modal.data.pass2.disabled = true;
-                    if ( modal.data.attempts > 1 ) {
-                        modal.SetLoading("Sending server request ...");
-                    }
-
-                    api.post('user/auth', {
-                        name: username,
-                        pass: password,
-                        code: modal.data.code.value,
-                        mode: 'register'
-                    }, function ( error, data ) {
-                        if ( error ) {
-                            console.error(error);
-                            modal.SetMessage('Request error.', 'error');
-                            return;
-                        }
-
-                        console.log('user auth', data);
-
-                        if ( data ) {
-                            if ( data.code !== false ) {
-                                // check returned data
-                                if ( data && data.id ) {
-                                    initData(data, pass1, function () {
-                                        // save user name for future logins
-                                        app.set('username_last_used', modal.data.name.value, true);
-                                        //app.setPass(password);
-                                        // reset values
-                                        modal.data.name.value = '';
-                                        modal.data.pass1.value = '';
-                                        modal.data.pass2.value = '';
-                                        //modal.SetHint();
-                                        //modal.SetContent();
-                                        //$(modal.dom.footer).hide();
-                                        //modal.dom.footer.classList.add('hidden');
-                                        //modal.SetMessage(['Registration was completed successfully.', element('br'), 'Entering secure private section ...'], 'auth');
-                                        // redirect to home with delay
-                                        //setTimeout(function(){
-                                        //window.location.href = window.location.href;
-                                        modal.Close();
-
-                                        //window.pageInit.style.display = 'none';
-                                        window.pageMain.style.display = 'block';
-                                        //}, 500);
-                                    });
-                                    return;
-                                } else {
-                                    modal.data.attempts++;
-                                    if ( modal.data.attempts === 1 )
-                                        modal.SetMessage(['Invalid user name or password.', element('br'), 'There maybe already a user with the same name or there are some technical problems on the server.'], 'error');
-                                    else
-                                        modal.SetMessage(['Invalid user name or password.', element('br'), 'Logged attempts: ' + modal.data.attempts], 'error');
-                                }
-                            } else {
-                                modal.SetMessage('Invalid captcha code. Please correct it and try once again.');
-                            }
-                        } else {
-                            modal.SetMessage('Invalid responce from the server.');
-                        }
-                        // unblock all inputs and buttons
-                        modal.EnableControls(true);
-                        modal.data.name.disabled = false;
-                        modal.data.pass1.disabled = false;
-                        modal.data.pass2.disabled = false;
-                    });
-                } else {
-                    modal.SetMessage("Empty one of the required field or passwords don't match.");
-                }
-            }
-        }
-    }
-});
-
-
-app.subscribe(DlgExport);
-app.subscribe(DlgOptions);
-app.subscribe(DlgPassGet);
-
-window.DlgExport = DlgExport;
-window.DlgOptions = DlgOptions;
-window.DlgPassGet = DlgPassGet;
-window.DlgUserLogin = DlgUserLogin;
-window.DlgUserRegister = DlgUserRegister;
-//});
-
-
-// public
-module.exports = {
-    DlgExport: DlgExport,
-    DlgOptions: DlgOptions,
-    DlgPassGet: DlgPassGet,
-    DlgUserLogin: DlgUserLogin,
-    DlgUserRegister: DlgUserRegister
-};
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Modal window wrapper
- * @license The MIT License (MIT)
- * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
- */
-
-
-
-function DialogModal ( params ) {
-    this.params = params;
-    this.data = params.data || {};
-
-    // html elements of the dialog
-    this.dom = {};
-
-    this.SetWidth = function ( value ) {
-        this.dom.body.style.width = value + 'px';
-    };
-
-    this.Show = function ( params ) {
-        params = params || {};
-        if ( this.params.onShow && this.params.onShow instanceof Function ) {
-            this.params.onShow.call(this);
-        }
-        $(this.dom.main).modal(params);
-    };
-
-    this.Close = function ( delay ) {
-        if ( delay ) {
-            var self = this;
-            setTimeout(function () {
-                $.modal.close();
-                self.Reset();
-            }, parseInt(delay, 10));
-        } else {
-            $.modal.close();
-            this.Reset();
-        }
-    };
-
-    this.Reset = function () {
-        this.SetMessage();
-    };
-
-    this.SetTitle = function ( hint ) {
-
-    };
-
-    this.SetHint = function ( hint ) {
-        if ( hint ) {
-            if ( this.dom.hint.childNodes.length === 0 ) {
-                this.dom.hint.appendChild(element('div', {className: 'info'}, hint));
-            }
-            this.dom.hint.childNodes[0].innerHTML = hint;
-            this.dom.hint.style.display = '';
-        } else {
-            this.dom.hint.style.display = 'none';
-        }
-    };
-
-    this.SetMessage = function ( text, type ) {
-        if ( text ) {
-            type = type || 'warning';
-            elchild(elclear(this.dom.message), element('div', {className: 'message ' + type}, text));
-            this.dom.message.style.display = '';
-        } else {
-            this.dom.message.style.display = 'none';
-        }
-    };
-
-    this.SetLoading = function ( text ) {
-        this.SetMessage(text, 'loading');
-    };
-
-    this.SetContent = function ( content ) {
-        if ( content ) {
-            elclear(this.dom.content);
-            elchild(this.dom.content, content);
-        } else {
-            this.dom.content.style.display = 'none';
-        }
-    };
-
-    this.EnableControls = function ( state ) {
-        if ( this.params.controls ) {
-            for ( var cname in this.params.controls ) {
-                this.params.controls[cname].dom.disabled = !state;
-            }
-        }
-    };
-
-    this.Init = function () {
-        this.dom.body = element('div', {className: 'body'}, [
-            this.dom.title = element('div', {className: 'block title'}, this.params.title),
-            this.dom.hint = element('div', {className: 'block hint'}),
-            this.dom.content = element('div', {className: 'block content'}),
-            this.dom.message = element('div', {className: 'block info'}),
-            this.dom.footer = element('div', {className: 'block footer'})
-        ]);
-
-        this.dom.main = element('div', {className: 'dialogmodal'}, this.dom.body);
-
-        if ( this.params.width ) this.SetWidth(this.params.width);
-
-        this.SetHint(this.params.hint);
-        this.SetMessage(this.params.message);
-
-        if ( this.params.controls ) {
-            for ( var cname in this.params.controls ) {
-                var cdata = this.params.controls[cname];
-                cdata.dom = element('input', {type: 'button', value: cname, className: 'button'});
-                // for inline indirect future use
-                cdata.dom.modal = this;
-                // default action
-                if ( cdata.main ) cdata.dom.className += ' bold';
-                // set callback
-                if ( cdata.onClick && cdata.onClick instanceof Function ) {
-                    cdata.dom.onclick = cdata.onClick;
-                }
-                this.dom.footer.appendChild(cdata.dom);
-            }
-        }
-
-        if ( this.params.onCreate && this.params.onCreate instanceof Function ) {
-            this.params.onCreate.call(this);
-        }
-
-        if ( this.params.EventClose && this.params.EventClose instanceof Function ) {
-            this.EventClose = this.params.EventClose;
-        }
-        if ( this.params.EventOpen && this.params.EventOpen instanceof Function ) {
-            this.EventOpen = this.params.EventOpen;
-        }
-
-        if ( this.params.content ) {
-            this.params.content.style.display = '';
-            this.dom.content.appendChild(this.params.content);
-        }
-    };
-    this.Init();
-}
-
-
-// public
-module.exports = DialogModal;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Table manager for fields
- * @license The MIT License (MIT)
- * @copyright Stanislav Kalashnik <darkpark.main@gmail.com>
- */
-
-
-
-/**
- * @param params list of configuration parameters
- *     cols - name of table columns (also class names for corresponding cells)
- *     attr - table attributes overwriting the default ones
- */
-function FieldList ( params ) {
-    this.params = params;
-
-    // html elements
-    this.dom = {};
-
-    this.SetCols = function ( cols ) {
-        this.params.cols = cols;
-    };
-
-    this.AddRow = function ( cells, attr ) {
-        if ( cells && cells instanceof Array && cells.length === this.params.cols.length ) {
-            var cell = null;
-            var row = this.dom.table.insertRow(-1);
-            elattr(row, attr);
-            for ( var i = 0; i < this.params.cols.length; i++ ) {
-                cell = row.insertCell(-1);
-                cell.className = this.params.cols[i];
-                elchild(cell, cells[i]);
-                elattr(cell, this.params.cols[i]);
-            }
-            return row;
-        }
-        return false;
-    };
-
-    this.AddDivider = function ( cells, attr ) {
-        var row = this.dom.table.insertRow(-1);
-        var cell = row.insertCell(-1);
-        elattr(cell, {colspan: this.params.cols.length});
-        elchild(cell, element('div', {className: 'divider'}));
-    };
-
-    this.Init = function () {
-        this.dom.table = element('table', {className: 'fldlist'});
-        elattr(this.dom.table, this.params.attr);
-    };
-    this.Init();
-}
-
-
-// public
-module.exports = FieldList;
-
-
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=main.js.map

@@ -12,17 +12,19 @@
         "url": "https://github.com/fortnotes/client.git"
     },
     "scripts": {
-        "jsdoc": "jsdoc --destination docs src/js/lib/*.js readme.md",
         "develop": "runner -c tasks/develop.js",
         "release": "runner -c tasks/release.js",
-        "lint": "eslint src/js",
-        "test": "npm run lint"
+        "init": "npm run develop init && npm run release init",
+        "build": "npm run develop build && npm run release build",
+        "jsdoc": "jsdoc --destination docs src/js/lib/*.js readme.md",
+        "lint": "eslint .",
+        "test": "npm run lint",
+        "start": "npm run develop"
     },
     "dependencies": {
         "autocompleter": "^1.0.31",
         "cjs-emitter": "^1.5.1",
         "cjs-query": "^1.4.0",
-        "jquery": "^3.3.1",
         "spa-app": "^1.5.0",
         "spa-component": "^1.4.0",
         "spa-component-button": "^1.0.0",
@@ -31,18 +33,24 @@
         "spa-component-page": "^1.4.0",
         "spa-component-tab": "^1.0.0",
         "spa-dom": "^1.4.0",
-        "spa-gettext": "^1.4.0",
-        "spa-wamp": "^1.0.0",
-        "webpack": "^3.11.0"
+        "spa-wamp": "^1.0.0"
     },
     "devDependencies": {
-        "eslint": "^4.19.1",
         "jsdoc": "^3.5.5",
-        "node-runner": "^1.0.2",
         "sjcl": "^1.0.7",
-        "spa-eslint-config": "^1.0.1",
-        "spa-tasks": "^1.1.0",
-        "xml-js": "^1.6.2"
+        "runner": "^2.0.1",
+        "runner-generator-eslint": "^1.0.2",
+        "runner-generator-livereload": "^1.1.1",
+        "runner-generator-notify": "^1.0.1",
+        "runner-generator-pug": "^1.0.1",
+        "runner-generator-repl": "^1.0.2",
+        "runner-generator-sass": "^1.0.1",
+        "runner-generator-static": "^1.0.2",
+        "runner-generator-webpack": "^1.0.2",
+        "runner-logger": "^1.0.1",
+        "runner-tools": "^1.2.1",
+        "spa-eslint": "^1.0.1",
+        "uglifyjs-webpack-plugin": "^2.0.0"
     },
     "keywords": [
         "aes",

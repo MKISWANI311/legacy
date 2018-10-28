@@ -1,125 +1,126 @@
 /**
- * Runner tasks
+ * Develop tasks
  */
 
 'use strict';
 
 var path    = require('path'),
-    runner  = require('node-runner'),
-    tools   = require('node-runner/lib/tools'),
+    runner  = require('runner'),
+    tools   = require('runner-tools'),
+    logger  = require('runner-logger'),
     webpack = require('webpack'),
-    tasks   = require('spa-tasks'),
     source  = 'src',
     target  = path.join('build', 'develop');
 
 
-// activate popup notifications on errors
-require('node-runner/lib/notify');
-
 // add system task "status"
 // to get all tasks running state
-require('node-runner/lib/status');
+//require('node-runner/lib/status');
 
+Object.assign(
+    runner.tasks,
 
-tasks.eslint({
-    watch: [
-        path.join(source, 'js', '**', '*.js'),
-        path.join('tasks', '**', '*.js')
-    ]
-});
+    // activate popup notifications on errors
+    require('runner-generator-notify')(),
 
-tasks.gettext({
-    languages: ['ru'],
-    source: path.join(source, 'lang'),
-    target: path.join(target, 'lang'),
-    jsData: path.join(target, 'main.js')
-});
+    require('runner-generator-repl')({
+        runner: runner
+    }),
 
-tasks.livereload({
-    watch: [
-        path.join(target, '**', '*'),
-        '!' + path.join(target, '**', '*.map')
-        //'!' + path.join(target, '**', '*.svg')
-    ]
-});
+    require('runner-generator-eslint')({
+        watch: [
+            path.join(source, 'js', '**', '*.js'),
+            path.join('tasks', '**', '*.js')
+        ]
+    }),
 
-tasks.pug({
-    source: path.join(source, 'pug', 'main.pug'),
-    target: path.join(target, 'index.html'),
-    variables: {
-        develop: true,
-        package: require('../package')
-    }
-});
+    require('runner-generator-livereload')({
+        watch: [
+            path.join(target, '**', '*'),
+            '!' + path.join(target, '**', '*.map')
+        ]
+    }),
 
-tasks.repl({});
-
-tasks.sass({
-    file: path.join(source, 'sass', 'develop.scss'),
-    outFile: path.join(target, 'main.css'),
-    sourceMap: path.join(target, 'main.css.map')
-});
-
-tasks.static({
-    open: path.join(target)
-});
-
-tasks.webpack({
-    entry: path.resolve(path.join(source, 'js', 'main.js')),
-    output: {
-        filename: 'main.js',
-        path: path.resolve(target),
-        sourceMapFilename: 'main.js.map'
-    },
-    resolve: {
-        mainFiles: ['index', 'main'],
-        alias: {
-            'app:config': path.resolve(path.join(source, 'js', 'config.js'))
+    require('runner-generator-pug')({
+        source: path.join(source, 'pug', 'main.pug'),
+        target: path.join(target, 'index.html'),
+        options: {
+            pretty: true
+        },
+        variables: {
+            develop: true,
+            package: require('../package')
         }
-    },
-    devtool: 'source-map',
-    plugins: [
-        // global constants
-        new webpack.DefinePlugin({
-            DEVELOP: true,
-            LIVERELOAD: {
-                port: 35729
+    }),
+
+    require('runner-generator-sass')({
+        file: path.join(source, 'sass', 'develop.scss'),
+        outFile: path.join(target, 'main.css'),
+        sourceMap: path.join(target, 'main.css.map')
+    }),
+
+    require('runner-generator-static')({
+        open: path.join(target)
+    }),
+
+    require('runner-generator-webpack')({
+        mode: 'development',
+        entry: path.resolve(path.join(source, 'js', 'main.js')),
+        output: {
+            filename: 'main.js',
+            path: path.resolve(target)
+        },
+        watchOptions: {
+            // delay rebuilding after the first change (in ms)
+            aggregateTimeout: 50
+        },
+        resolve: {
+            alias: {
+                'app:config': path.resolve(path.join(source, 'js', 'config.js'))
             }
-        })
-    ]
-});
+        },
+        devtool: 'source-map',
+        plugins: [
+            // global constants
+            new webpack.DefinePlugin({
+                DEVELOP: true,
+                LIVERELOAD: {
+                    port: 35729
+                }
+            }),
+            new webpack.optimize.OccurrenceOrderPlugin()
+        ]
+    })
+);
 
-// require('./svg')({
-//     source: path.join(source, 'svg', 'template.xml'),
-//     target: path.join(target, 'images.svg'),
-//     spaces: 4
-// });
 
+// main tasks
 runner.task('init', function ( done ) {
-    tools.mkdir([target], runner.log.wrap('init'), function ( error ) {
-        done(error);
-    });
+    tools.mkdir([path.join(target)], logger.wrap('init'), done);
 });
 
-runner.task('build', runner.serial(/*'svg:build',*/ 'sass:build', 'webpack:build', 'pug:build'));
+runner.task('copy', function ( done ) {
+    tools.copy(
+        {
+            source: path.join(source, 'img'),
+            target: path.join(target, 'img')
+        },
+        logger.wrap('copy'),
+        done
+    );
+});
+
+runner.task('build', runner.parallel('pug:build', 'sass:build', 'webpack:build', 'copy'));
 
 // eslint-disable-next-line no-unused-vars
 runner.task('watch', function ( done ) {
-    //runner.watch(path.join(source, 'js', '**', '*.js'), 'webpack:build');
-    runner.watch([
-        path.join(source, 'pug', '**', '*.pug')
-        //path.join(target, 'images.svg')
-        //path.join(target, 'main.css'),
-        //path.join(target, 'main.js')
-    ], 'pug:build');
+    runner.watch(path.join(source, 'pug', '**', '*.pug'), 'pug:build');
     runner.watch(path.join(source, 'sass', '**', '*.scss'), 'sass:build');
-    //runner.watch(path.join(source, 'svg', '**', '*'), 'svg:build');
-    //runner.run('eslint:watch');
+    runner.watch(path.join(source, 'img', '**', '*'), 'copy');
+    runner.run('eslint:watch');
     runner.run('webpack:watch');
-    //runner.run('livereload:watch');
 });
 
-runner.task('serve', runner.parallel('static:start', 'livereload:start', 'repl:start'));
+runner.task('serve', runner.parallel('static:start', 'livereload:start', 'repl:start', 'notify:start'));
 
-//runner.task('default', runner.serial('build', runner.parallel('watch', 'serve')));
-runner.task('default', runner.parallel('build', 'watch', 'serve'));
+runner.task('default', runner.serial('build', runner.parallel('watch', 'serve')));
