@@ -20,11 +20,18 @@ Install dependencies:
 
 `apt install php-cli php-sqlite3 php-gd`
 
-Start static server:
+Start API server:
 
 ```
-cd public
+cd server
 php -S 0.0.0.0:8000
+```
+
+Serve frontend files:
+
+```
+cd client/build/release
+python3 -m http.server 8080
 ```
 
 There is also an old manual for installation on Windows - https://bitbucket.org/DarkPark/fortnotes/wiki/Home.
