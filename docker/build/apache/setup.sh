@@ -13,7 +13,7 @@ apk add --no-cache php7-apache2 php7-session php7-pdo php7-pdo_sqlite php7-pdo_m
 # application source code
 curl -fsSL https://github.com/fortnotes/legacy/archive/master.zip -o master.zip
 unzip -q master.zip -d .
-mv legacy-master/client/build/develop /client
+mv legacy-master/client/build/release /client
 mv legacy-master/server /
 rm -rf legacy-master
 rm master.zip
