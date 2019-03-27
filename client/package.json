@@ -50,7 +50,7 @@
         "runner-tools": "^1.2.1",
         "sjcl": "^1.0.8",
         "spa-eslint": "^1.0.1",
-        "uglifyjs-webpack-plugin": "^2.0.0"
+        "terser-webpack-plugin": "^1.2.3"
     },
     "keywords": [
         "aes",

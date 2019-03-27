@@ -9,7 +9,7 @@ var path     = require('path'),
     tools    = require('runner-tools'),
     logger   = require('runner-logger'),
     webpack  = require('webpack'),
-    UglifyJS = require('uglifyjs-webpack-plugin'),
+    Terser   = require('terser-webpack-plugin'),
     source   = 'src',
     target   = path.join('build', 'release');
 
@@ -65,10 +65,10 @@ Object.assign(
         optimization: {
             minimize: true,
             minimizer: [
-                new UglifyJS({
+                new Terser({
                     // set true to sourceMap to get correct map-file
                     sourceMap: true,
-                    uglifyOptions: {
+                    terserOptions: {
                         output: {
                             comments: false
                         },
