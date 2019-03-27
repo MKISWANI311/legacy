@@ -816,8 +816,8 @@ DlgExport = new DialogModal({
                 DlgExport.Show();
 
                 // strip
-                DlgExport.dom.text.value = JSON.stringify(convert(window.exportDataJson), null, '    ');
-                //window.exportData = null;
+                DlgExport.dom.text.value = window.exportDataJson;
+                window.exportDataJson = null;
             }, 50);
         }
     },
@@ -942,9 +942,9 @@ DlgOptions = new DialogModal({
 
                         console.log('user export', data);
 
-                        btn.value = 'Export data';
-                        btn.disabled = false;
                         window.exportData = data;
+                        btn.value = 'Export as TEXT';
+                        btn.disabled = false;
                         app.expirePass();
                     });
                 }
@@ -965,9 +965,9 @@ DlgOptions = new DialogModal({
 
                         console.log('user export', data);
 
-                        btn.value = 'Export data';
+                        window.exportDataJson = JSON.stringify(convert(data), null, '    ');
+                        btn.value = 'Export as JSON';
                         btn.disabled = false;
-                        window.exportDataJson = data;
                         app.expirePass();
                     });
                 }
@@ -1573,6 +1573,13 @@ window.initData = function initData ( user, pass, callback ) {
     app.setPass(pass);
     window.dataUser = user;
 
+    // this check required to prevent double components creation after EventOpen
+    if ( window.done ) {
+        callback();
+
+        return;
+    }
+
     api.get('user/tags', function ( error, tags ) {
         if ( error ) {
             console.error(error);
@@ -1616,6 +1623,8 @@ window.initData = function initData ( user, pass, callback ) {
 
         // show
         window.pageMain.style.display = 'block';
+
+        window.done = true;
 
         callback();
     });
