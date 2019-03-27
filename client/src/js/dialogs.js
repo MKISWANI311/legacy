@@ -19,6 +19,74 @@ var DlgUserLogin = null;
 var DlgUserRegister = null;
 
 
+function convert ( data ) {
+    let result = {
+            notes: [],
+            tags: []
+        },
+        types = {
+            1: 'line',
+            2: 'uri',
+            3: 'login',
+            4: 'password',
+            5: 'email',
+            6: 'text',
+            7: 'html'
+        };
+
+    console.log(data);
+    /*Object.values(data.entry_values).forEach(entry => {
+        entry.name = app.decode(entry.name);
+        entry.data = app.decode(entry.data);
+    });*/
+    Object.values(data.note_entries).forEach(entry => {
+        entry.name = app.decode(entry.name);
+        entry.data = app.decode(entry.data);
+
+        let note = data.notes[entry.id_note];
+        let block = {
+            type: types[entry.id_type],
+            name: entry.name,
+            data: entry.data
+        };
+        if ( block.type === 'text' || block.type === 'html' ) {
+            block.hidden = true;
+        }
+        note.blocks = note.blocks || [];
+        note.blocks.push(block);
+    });
+    Object.values(data.tags).forEach(entry => {
+        entry.name = app.decode(entry.name);
+        result.tags.push({
+            name: entry.name,
+            ctime: entry.ctime * 1000
+        });
+    });
+    Object.values(data.note_tags).forEach(link => {
+        let note = data.notes[link.id_note];
+        let tag = data.tags[link.id_tag];
+        note.tags = note.tags || [];
+        note.tags.push(tag.name);
+    });
+
+    Object.values(data.notes).forEach(note => {
+        if ( note.is_active ) {
+            result.notes.push({
+                ctime: note.ctime * 1000,
+                mtime: note.mtime * 1000,
+                blocks: note.blocks,
+                tags: note.tags
+            });
+        }
+    });
+
+    console.log(result);
+    console.log(JSON.stringify(result, null, '    '));
+
+    return result;
+}
+
+
 //document.addEventListener('DOMContentLoaded', function () {
 DlgExport = new DialogModal({
     width: 750,
@@ -65,6 +133,14 @@ DlgExport = new DialogModal({
                 // strip
                 DlgExport.dom.text.value = DlgExport.dom.text.value.trim();
                 window.exportData = null;
+            }, 50);
+        } else if ( window.exportDataJson ) {
+            setTimeout(function () {
+                DlgExport.Show();
+
+                // strip
+                DlgExport.dom.text.value = JSON.stringify(convert(window.exportDataJson), null, '    ');
+                //window.exportData = null;
             }, 50);
         }
     },
@@ -175,7 +251,7 @@ DlgOptions = new DialogModal({
             ]),
             element('div', {className: 'desc'}, "It's possible to export all the data in a human readable form in order to print it or save in file on some storage. It'll give all the data in plain unencrypted form. The password is required."),
             element('input', {
-                type: 'button', className: 'button long', value: 'Export data', onclick: function () {
+                type: 'button', className: 'button long', value: 'Export as TEXT', onclick: function () {
                     var btn = this;
 
                     btn.value = 'Loading ...';
@@ -192,6 +268,29 @@ DlgOptions = new DialogModal({
                         btn.value = 'Export data';
                         btn.disabled = false;
                         window.exportData = data;
+                        app.expirePass();
+                    });
+                }
+            }),
+            ' ',
+            element('input', {
+                type: 'button', className: 'button long', value: 'Export as JSON', onclick: function () {
+                    var btn = this;
+
+                    btn.value = 'Loading ...';
+                    btn.disabled = true;
+
+                    api.get('user/export/txt', function ( error, data ) {
+                        if ( error ) {
+                            console.error(error);
+                            return;
+                        }
+
+                        console.log('user export', data);
+
+                        btn.value = 'Export data';
+                        btn.disabled = false;
+                        window.exportDataJson = data;
                         app.expirePass();
                     });
                 }

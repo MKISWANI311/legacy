@@ -94,6 +94,7 @@ window.initData = function initData ( user, pass, callback ) {
 // contains encrypted data for export
 // if not null an export window appears
 window.exportData = null;
+window.exportDataJson = null;
 
 // list of tag names with title images
 //window.iconTags = ['email', 'ftp', 'ssh', 'icq', 'note', 'site', 'skype', 'jabber', 'msn', 'database'];
