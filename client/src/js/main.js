@@ -42,6 +42,13 @@ window.initData = function initData ( user, pass, callback ) {
     app.setPass(pass);
     window.dataUser = user;
 
+    // this check required to prevent double components creation after EventOpen
+    if ( window.done ) {
+        callback();
+
+        return;
+    }
+
     api.get('user/tags', function ( error, tags ) {
         if ( error ) {
             console.error(error);
@@ -85,6 +92,8 @@ window.initData = function initData ( user, pass, callback ) {
 
         // show
         window.pageMain.style.display = 'block';
+
+        window.done = true;
 
         callback();
     });

@@ -139,8 +139,8 @@ DlgExport = new DialogModal({
                 DlgExport.Show();
 
                 // strip
-                DlgExport.dom.text.value = JSON.stringify(convert(window.exportDataJson), null, '    ');
-                //window.exportData = null;
+                DlgExport.dom.text.value = window.exportDataJson;
+                window.exportDataJson = null;
             }, 50);
         }
     },
@@ -265,9 +265,9 @@ DlgOptions = new DialogModal({
 
                         console.log('user export', data);
 
-                        btn.value = 'Export data';
-                        btn.disabled = false;
                         window.exportData = data;
+                        btn.value = 'Export as TEXT';
+                        btn.disabled = false;
                         app.expirePass();
                     });
                 }
@@ -288,9 +288,9 @@ DlgOptions = new DialogModal({
 
                         console.log('user export', data);
 
-                        btn.value = 'Export data';
+                        window.exportDataJson = JSON.stringify(convert(data), null, '    ');
+                        btn.value = 'Export as JSON';
                         btn.disabled = false;
-                        window.exportDataJson = data;
                         app.expirePass();
                     });
                 }
