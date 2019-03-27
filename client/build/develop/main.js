@@ -726,9 +726,9 @@ function convert ( data ) {
             name: entry.name,
             data: entry.data
         };
-        if ( block.type === 'text' || block.type === 'html' ) {
+        /*if ( block.type === 'text' || block.type === 'html' ) {
             block.hidden = true;
-        }
+        }*/
         note.blocks = note.blocks || [];
         note.blocks.push(block);
     });
