@@ -22,7 +22,7 @@ var DlgUserRegister = null;
 function convert ( data ) {
     let result = {
             notes: [],
-            tags: []
+            tags: {}
         },
         types = {
             1: 'line',
@@ -57,16 +57,20 @@ function convert ( data ) {
     });
     Object.values(data.tags).forEach(entry => {
         entry.name = app.decode(entry.name);
-        result.tags.push({
+        /*result.tags.push({
             name: entry.name,
             ctime: entry.ctime * 1000
-        });
+        });*/
+        result.tags[entry.name] = {ctime: entry.ctime * 1000};
     });
     Object.values(data.note_tags).forEach(link => {
         let note = data.notes[link.id_note];
         let tag = data.tags[link.id_tag];
         note.tags = note.tags || [];
         note.tags.push(tag.name);
+        // count tag uses
+        result.tags[tag.name].uses = result.tags[tag.name].uses || 0;
+        result.tags[tag.name].uses++;
     });
 
     Object.values(data.notes).forEach(note => {
