@@ -230,6 +230,10 @@ textarea {
     &.export {
         height: 450px;
         width: 100%;
+        font-family: monospace;
+        font-size: 90%;
+        resize: none;
+        white-space: nowrap;
     }
 }
 
