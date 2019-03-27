@@ -27,12 +27,21 @@ cd server
 php -S 0.0.0.0:8000
 ```
 
-Serve frontend files:
+Serve release frontend files:
 
 ```
 cd client/build/release
 python3 -m http.server 8080
 ```
+
+Start development:
+
+```
+cd client
+npm run develop
+```
+
+
 
 There is also an old manual for installation on Windows - https://bitbucket.org/DarkPark/fortnotes/wiki/Home.
 
