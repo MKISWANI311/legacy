@@ -812,12 +812,11 @@ DlgExport = new DialogModal({
                 window.exportData = null;
             }, 50);
         } else if ( window.exportDataJson ) {
+            DlgExport.dom.text.value = window.exportDataJson;
+            window.exportDataJson = null;
+
             setTimeout(function () {
                 DlgExport.Show();
-
-                // strip
-                DlgExport.dom.text.value = window.exportDataJson;
-                window.exportDataJson = null;
             }, 50);
         }
     },
