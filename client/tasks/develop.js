@@ -21,7 +21,7 @@ Object.assign(
     runner.tasks,
 
     // activate popup notifications on errors
-    require('runner-generator-notify')(),
+    //require('runner-generator-notify')(),
 
     require('runner-generator-repl')({
         runner: runner
@@ -121,6 +121,6 @@ runner.task('watch', function ( done ) {
     runner.run('webpack:watch');
 });
 
-runner.task('serve', runner.parallel('static:start', 'livereload:start', 'repl:start', 'notify:start'));
+runner.task('serve', runner.parallel('static:start', 'livereload:start', 'repl:start'/*, 'notify:start'*/));
 
 runner.task('default', runner.serial('build', runner.parallel('watch', 'serve')));
