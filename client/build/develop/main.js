@@ -736,9 +736,9 @@ function convert ( data ) {
         entry.name = app.decode(entry.name);
         /*result.tags.push({
             name: entry.name,
-            ctime: entry.ctime * 1000
+            ctime: entry.ctime
         });*/
-        result.tags[entry.name] = {ctime: entry.ctime * 1000};
+        result.tags[entry.name] = {ctime: entry.ctime};
     });
     Object.values(data.note_tags).forEach(link => {
         let note = data.notes[link.id_note];
@@ -753,8 +753,8 @@ function convert ( data ) {
     Object.values(data.notes).forEach(note => {
         if ( note.is_active ) {
             result.notes.push({
-                ctime: note.ctime * 1000,
-                mtime: note.mtime * 1000,
+                ctime: note.ctime,
+                mtime: note.mtime,
                 blocks: note.blocks,
                 tags: note.tags
             });
@@ -762,7 +762,7 @@ function convert ( data ) {
     });
 
     console.log(result);
-    console.log(JSON.stringify(result, null, '    '));
+    //console.log(JSON.stringify(result, null, '    '));
 
     return result;
 }
