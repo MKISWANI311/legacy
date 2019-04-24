@@ -450,7 +450,7 @@ DlgUserLogin = new DialogModal({
             className: 'line',
             autocomplete: 'server',
             type: 'url',
-            value: app.get('server', 'https://fortnotes.com/')
+            value: app.get('server', 'https://api.fortnotes.com/')
         });
 
         //onEnterFocus(this.data.name, this.data.pass);
