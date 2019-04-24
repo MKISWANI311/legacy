@@ -102,7 +102,7 @@
 
 
 var defaults = {
-    server: localStorage.getItem('server') || 'https://fortnotes.com/',
+    server: localStorage.getItem('server') || 'https://api.fortnotes.com/',
     mode: 'cors',
     credentials: 'include',
     headers: {
@@ -1127,7 +1127,7 @@ DlgUserLogin = new DialogModal({
             className: 'line',
             autocomplete: 'server',
             type: 'url',
-            value: app.get('server', 'https://fortnotes.com/')
+            value: app.get('server', 'https://api.fortnotes.com/')
         });
 
         //onEnterFocus(this.data.name, this.data.pass);
