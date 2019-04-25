@@ -530,12 +530,12 @@ var NoteFilter = new function () {
                 // degradation fix
                 return tag;
 
-                var hint = '', fcmd = tag.charAt(0) == ':';
+                /*var hint = '', fcmd = tag.charAt(0) == ':';
                 if ( fcmd ) {
                     hint = '<div class="hint">' + hint_cmd[tag] + '</div>';
                 }
                 // wrap to div with icon
-                return '<div class="' + (fcmd ? 'cmd' : 'tag') + '">' + tag + hint + '</div>';
+                return '<div class="' + (fcmd ? 'cmd' : 'tag') + '">' + tag + hint + '</div>';*/
             },
             processData: function ( data ) {
                 // only if there should be some results
