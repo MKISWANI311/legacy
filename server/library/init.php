@@ -38,8 +38,8 @@ function MainErrorHandler ( $errno, $errmsg, $filename, $linenum ) {
 }
 
 // we will do our own error handling
-//error_reporting(0);
-//set_error_handler('MainErrorHandler');
+error_reporting(E_ALL);
+set_error_handler('MainErrorHandler');
 
 // not catchable fatal error handler
 /*register_shutdown_function(function(){

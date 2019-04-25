@@ -4,7 +4,7 @@
 define('PATH_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
 define('PATH_CONTROLLERS', PATH_ROOT . 'controllers' . DIRECTORY_SEPARATOR);
 define('PATH_LIBRARY', PATH_ROOT . 'library' . DIRECTORY_SEPARATOR);
-define('PATH_LOGS', PATH_ROOT . 'logs' . DIRECTORY_SEPARATOR);
+define('PATH_LOGS', getenv('PATH_LOGS') ?: PATH_ROOT . 'logs' . DIRECTORY_SEPARATOR);
 
 // dsn example for mysql
 // mysql:host=localhost;dbname=fortnotes;charset=utf8
