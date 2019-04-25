@@ -104,7 +104,7 @@
 var defaults = {
     server: localStorage.getItem('server') || 'https://api.fortnotes.com/',
     mode: 'cors',
-    //credentials: 'include',
+    credentials: 'include',
     headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json'
