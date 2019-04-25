@@ -42,13 +42,15 @@ class app {
     public static function run ()
     {
         // CORS
-        if ( array_key_exists('HTTP_ORIGIN', $_SERVER) ) {
-            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            header('Access-Control-Allow-Credentials: true');
-            header('Access-Control-Allow-Headers: Content-Type');
-            header('Access-Control-Allow-Methods: *');
-            header('Access-Control-Max-Age: 3600');
-        }
+        //if ( array_key_exists('HTTP_ORIGIN', $_SERVER) ) {
+            //header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            header('Access-Control-Allow-Origin: *');
+            //header('Access-Control-Allow-Credentials: true');
+            //header('Access-Control-Allow-Headers: Content-Type');
+            header('Access-Control-Allow-Headers: *');
+            //header('Access-Control-Allow-Methods: *');
+            //header('Access-Control-Max-Age: 3600');
+        //}
 
         if ( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' ) {
             return;
