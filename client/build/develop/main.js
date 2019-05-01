@@ -103,6 +103,7 @@
 
 var defaults = {
     server: localStorage.getItem('server') || 'https://api.fortnotes.com/',
+    //server: (localStorage.getItem('server') || 'https://api.fortnotes.com/') + 'v1/',
     mode: 'cors',
     credentials: 'include',
     headers: {
