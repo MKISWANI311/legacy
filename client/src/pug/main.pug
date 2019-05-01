@@ -1,19 +1,27 @@
 doctype html
 html
     head
-        meta(charset='UTF-8')
-        title FortNotes Online Password Manager
-        meta(http-equiv='Content-Type' content='text/html; charset=utf-8')
-        meta(name='keywords' content='security online password manager AES encryption')
-        meta(name='description' content='FortNotes Online Password Manager is a highly secure open-source private information storing platform based on the AES encryption in the browser. Fort Knox for your notes.')
-        meta(name='viewport' content='width=device-width, initial-scale=1.0')
-        link(rel='icon' type='image/png' href='img/castle.png')
-        link(rel='stylesheet' type='text/css' href='main.css')
+        title FortNotes - private information management
+
+        meta(charset="utf-8")
+        meta(name="description" content=package.description)
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        meta(name="keywords" content="security online private information management password manager platform AES encryption")
+
+        meta(property="og:site_name", content="FortNotes")
+        meta(property="og:title", content=package.description)
+        meta(property="og:description", content="Encrypt all your sensitive data online. Deploy on your own server. Organize and structure your data.")
+        meta(property="og:image", content="https://fortnotes.com/img/social.preview.png")
+        meta(property="og:image:width" content="1280")
+        meta(property="og:image:height" content="640")
+        meta(property="og:type", content="website")
+
+        link(rel="icon" type="image/png" href="img/favicon.png")
+        link(rel="stylesheet" href="main.css")
 
     body
-        //include page.init.pug
         include page.main.pug
 
-        script(type='text/javascript' src='main.js')
-        script(type='text/javascript')
+        script(type="text/javascript" src="main.js")
+        script(type="text/javascript")
             include ../js/jquery.js

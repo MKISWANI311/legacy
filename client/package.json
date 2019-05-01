@@ -1,7 +1,7 @@
 {
     "name": "fortnotes-client",
     "version": "1.0.0",
-    "description": "FortNotes web application",
+    "description": "Online private information management platform.",
     "author": {
         "name": "Stanislav Kalashnik",
         "email": "darkpark.main@gmail.com"
