@@ -511,7 +511,7 @@ a {
   .body_content td.logo {
     padding: 0 10px 0 42px;
     font-size: 140%;
-    background: url("img/safebox.svg") no-repeat 10px center;
+    background: url("img/logo.svg") no-repeat 10px center;
     background-size: 26px; }
   .body_content td.menu {
     text-align: right;
